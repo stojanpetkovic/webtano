@@ -1,0 +1,459 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { createClient } from '@supabase/supabase-js'
+import { client } from '../config/client'
+
+const supabase = createClient(
+  import.meta.env.PUBLIC_SUPABASE_URL,
+  import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+)
+
+const { data: leads, error } = await supabase
+  .from('leads')
+  .select('*')
+  .eq('client_id', client.id)
+  .order('created_at', { ascending: false })
+
+if (error) {
+  console.error(error)
+}
+---
+
+<Layout>
+
+  <!-- AUTH -->
+
+  <div
+    id="authLoader"
+    class="fixed inset-0 bg-black z-[9999] flex items-center justify-center text-white text-xl"
+  >
+    Checking authentication...
+  </div>
+
+  <!-- CONTENT -->
+
+  <main
+    id="adminContent"
+    class="min-h-screen bg-black text-white p-4 md:p-6 hidden"
+  >
+
+    <div class="max-w-7xl mx-auto">
+
+      <!-- HEADER -->
+
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+
+        <div>
+
+          <p class="uppercase tracking-[0.2em] text-xs text-zinc-500">
+            Lead Dashboard
+          </p>
+
+          <h1 class="text-3xl font-bold">
+            {client.businessName}
+          </h1>
+
+        </div>
+
+        <div class="flex items-center gap-3">
+
+          <div class="bg-zinc-900 border border-zinc-800 rounded-2xl px-4 py-3">
+
+            <p class="text-zinc-500 text-xs">
+              Total Leads
+            </p>
+
+            <p class="text-2xl font-bold">
+              {leads?.length || 0}
+            </p>
+
+          </div>
+
+          <button
+            id="logoutBtn"
+            class="bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 px-4 py-3 rounded-2xl text-sm transition"
+          >
+            Logout
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- TABLE -->
+
+      <div class="border border-zinc-800 rounded-3xl bg-zinc-950 overflow-hidden">
+
+        <table class="w-full text-sm">
+
+          <thead class="bg-zinc-900 border-b border-zinc-800">
+
+            <tr class="text-zinc-400">
+
+              <th class="p-4 text-left">
+                Lead
+              </th>
+
+              <th class="p-4 text-left">
+                Source
+              </th>
+
+              <th class="p-4 text-left">
+                Campaign
+              </th>
+
+              <th class="p-4 text-left">
+                Status
+              </th>
+
+              <th class="p-4 text-left">
+                Message
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            {
+              leads?.map((lead, index) => (
+
+                <tr class="border-t border-zinc-800 hover:bg-zinc-900/40 transition">
+
+                  <!-- LEAD -->
+
+                  <td class="p-4">
+
+                    <div class="space-y-1">
+
+                      <p class="font-semibold text-white">
+                        {lead.name}
+                      </p>
+
+                      <a
+                        href={`tel:${lead.phone}`}
+                        class="text-green-400 hover:text-green-300 transition block"
+                      >
+                        {lead.phone}
+                      </a>
+
+                      <p class="text-xs text-zinc-500">
+                        {
+                          new Date(lead.created_at)
+                            .toLocaleString()
+                        }
+                      </p>
+
+                    </div>
+
+                  </td>
+
+                  <!-- SOURCE -->
+
+                  <td class="p-4">
+
+                    <span class="bg-zinc-800 border border-zinc-700 px-3 py-1 rounded-full text-xs text-zinc-300 inline-flex">
+
+                      {lead.utm_source || lead.source || '-'}
+
+                    </span>
+
+                  </td>
+
+                  <!-- CAMPAIGN -->
+
+                  <td class="p-4 text-zinc-400">
+
+                    {lead.utm_campaign || '-'}
+
+                  </td>
+
+                  <!-- STATUS -->
+
+                  <td class="p-4">
+
+                    <div class="flex items-center gap-2">
+
+                      <select
+                        id={`status-${lead.id}`}
+                        class="bg-zinc-900 border border-zinc-700 hover:border-zinc-500 rounded-xl px-3 py-2 text-sm outline-none transition"
+                      >
+
+                        {
+                          client.leadStatuses.map((status) => (
+
+                            <option
+                              value={status}
+                              selected={lead.status === status}
+                            >
+                              {status}
+                            </option>
+
+                          ))
+                        }
+
+                      </select>
+
+                      <button
+                        class="saveBtn bg-green-600 hover:bg-green-700 px-3 py-2 rounded-xl text-xs font-semibold transition"
+                        data-id={lead.id}
+                      >
+                        Save
+                      </button>
+
+                    </div>
+
+                    <p
+                      id={`saved-${lead.id}`}
+                      class="text-xs text-zinc-500 mt-1"
+                    ></p>
+
+                  </td>
+
+                  <!-- MESSAGE -->
+
+                  <td class="p-4">
+
+                    <button
+                      onclick={`openModal(${index})`}
+                      class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 px-3 py-2 rounded-xl text-xs transition"
+                    >
+                      View Message
+                    </button>
+
+                    <!-- MODAL -->
+
+                    <div
+                      id={`modal-${index}`}
+                      class="hidden fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-6"
+                    >
+
+                      <div class="bg-zinc-950 border border-zinc-800 rounded-3xl max-w-2xl w-full p-8 relative">
+
+                        <button
+                          onclick={`closeModal(${index})`}
+                          class="absolute top-4 right-4 text-zinc-500 hover:text-white text-xl"
+                        >
+                          ×
+                        </button>
+
+                        <h2 class="text-2xl font-bold mb-6">
+                          Lead Message
+                        </h2>
+
+                        <div class="space-y-4">
+
+                          <div>
+
+                            <p class="text-zinc-500 text-sm mb-1">
+                              Name
+                            </p>
+
+                            <p class="text-white">
+                              {lead.name}
+                            </p>
+
+                          </div>
+
+                          <div>
+
+                            <p class="text-zinc-500 text-sm mb-1">
+                              Phone
+                            </p>
+
+                            <p class="text-white">
+                              {lead.phone}
+                            </p>
+
+                          </div>
+
+                          <div>
+
+                            <p class="text-zinc-500 text-sm mb-1">
+                              Message
+                            </p>
+
+                            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 whitespace-pre-wrap text-zinc-300">
+
+                              {lead.message || 'No message'}
+
+                            </div>
+
+                          </div>
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  </td>
+
+                </tr>
+
+              ))
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</Layout>
+
+<script
+  define:vars={{
+    supabaseUrl:
+      import.meta.env.PUBLIC_SUPABASE_URL,
+
+    supabaseKey:
+      import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+  }}
+  type="module"
+>
+
+  import { createClient }
+  from 'https://esm.sh/@supabase/supabase-js'
+
+  const supabase = createClient(
+    supabaseUrl,
+    supabaseKey
+  )
+
+  // AUTH
+
+  const {
+    data: { session }
+  } = await supabase.auth.getSession()
+
+  if (!session) {
+
+    window.location.href = '/login'
+
+  } else {
+
+    document
+      .getElementById('authLoader')
+      .classList
+      .add('hidden')
+
+    document
+      .getElementById('adminContent')
+      .classList
+      .remove('hidden')
+
+  }
+
+  // LOGOUT
+
+  const logoutBtn =
+    document.getElementById('logoutBtn')
+
+  logoutBtn.addEventListener('click', async () => {
+
+    await supabase.auth.signOut()
+
+    window.location.href = '/login'
+
+  })
+
+  // MODALS
+
+  window.openModal = (index) => {
+
+    document
+      .getElementById(`modal-${index}`)
+      .classList
+      .remove('hidden')
+
+  }
+
+  window.closeModal = (index) => {
+
+    document
+      .getElementById(`modal-${index}`)
+      .classList
+      .add('hidden')
+
+  }
+
+  // STATUS SAVE
+
+  const saveButtons =
+    document.querySelectorAll('.saveBtn')
+
+  saveButtons.forEach((button) => {
+
+    button.addEventListener('click', async () => {
+
+      const id =
+        button.dataset.id
+
+      const statusSelect =
+        document.getElementById(`status-${id}`)
+
+      const status =
+        statusSelect.value
+
+      const savedText =
+        document.getElementById(`saved-${id}`)
+
+      savedText.innerText =
+        'Saving...'
+
+      try {
+
+        const response =
+          await fetch('/api/update-status', {
+
+            method: 'POST',
+
+            headers: {
+              'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify({
+              id,
+              status
+            })
+
+          })
+
+        const result =
+          await response.json()
+
+        if (!response.ok) {
+
+          console.error(result)
+
+          savedText.innerText =
+            'Error'
+
+          return
+
+        }
+
+        savedText.innerText =
+          'Saved ✓'
+
+      } catch (err) {
+
+        console.error(err)
+
+        savedText.innerText =
+          'Error'
+
+      }
+
+    })
+
+  })
+
+</script>
+

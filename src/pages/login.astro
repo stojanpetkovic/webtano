@@ -1,0 +1,132 @@
+---
+import Layout from '../layouts/Layout.astro'
+---
+
+<Layout>
+
+  <main class="min-h-screen bg-black text-white flex items-center justify-center p-6">
+
+    <form
+      id="loginForm"
+      class="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-3xl p-8 space-y-5"
+    >
+
+      <div>
+
+        <p class="uppercase tracking-[0.2em] text-xs text-zinc-500">
+          Secure Access
+        </p>
+
+        <h1 class="text-3xl font-bold mt-2">
+          Admin Login
+        </h1>
+
+      </div>
+
+      <!-- EMAIL -->
+
+      <input
+        type="email"
+        name="email"
+        placeholder="Email"
+        required
+        class="w-full p-4 rounded-2xl bg-zinc-800 border border-zinc-700"
+      />
+
+      <!-- PASSWORD -->
+
+      <input
+        type="password"
+        name="password"
+        placeholder="Password"
+        required
+        class="w-full p-4 rounded-2xl bg-zinc-800 border border-zinc-700"
+      />
+
+      <!-- BUTTON -->
+
+      <button
+        type="submit"
+        class="w-full bg-green-600 hover:bg-green-700 transition p-4 rounded-2xl font-bold"
+      >
+        Login
+      </button>
+
+      <!-- STATUS -->
+
+      <p
+        id="status"
+        class="text-sm text-red-400"
+      ></p>
+
+    </form>
+
+  </main>
+
+</Layout>
+
+<script
+  define:vars={{
+    supabaseUrl:
+      import.meta.env.PUBLIC_SUPABASE_URL,
+
+    supabaseKey:
+      import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+  }}
+  type="module"
+>
+
+  import { createClient }
+  from 'https://esm.sh/@supabase/supabase-js'
+
+  const supabase = createClient(
+    supabaseUrl,
+    supabaseKey
+  )
+
+  const form =
+    document.getElementById('loginForm')
+
+  const status =
+    document.getElementById('status')
+
+  form.addEventListener('submit', async (e) => {
+
+    e.preventDefault()
+
+    const formData = new FormData(form)
+
+    const email =
+      formData.get('email')
+
+    const password =
+      formData.get('password')
+
+    const {
+      data,
+      error
+    } = await supabase.auth.signInWithPassword({
+
+      email,
+      password
+
+    })
+
+    console.log(data)
+
+    if (error) {
+
+      console.error(error)
+
+      status.innerText =
+        error.message
+
+      return
+
+    }
+
+    window.location.href = '/admin'
+
+  })
+
+</script>

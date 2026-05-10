@@ -1,0 +1,170 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { client } from '../config/client'
+---
+
+<Layout>
+
+  <main class="min-h-screen bg-black text-white flex items-center justify-center p-10">
+
+    <form
+      id="leadForm"
+      class="w-full max-w-xl bg-zinc-900 border border-zinc-800 p-8 rounded-3xl space-y-5 shadow-2xl"
+    >
+
+      <div class="space-y-2">
+
+        <p
+          class="uppercase tracking-[0.2em] text-sm text-zinc-400"
+        >
+          {client.niche}
+        </p>
+
+        <h1 class="text-4xl font-bold leading-tight">
+          {client.businessName}
+        </h1>
+
+        <p class="text-zinc-400">
+          Get a fast quote from our team in {client.city}.
+        </p>
+
+      </div>
+
+      <input
+        type="text"
+        name="name"
+        placeholder="Your Name"
+        required
+        class="w-full p-4 rounded-2xl bg-zinc-800 border border-zinc-700 outline-none focus:border-green-600"
+      />
+
+      <input
+        type="text"
+        name="phone"
+        placeholder="Phone Number"
+        required
+        class="w-full p-4 rounded-2xl bg-zinc-800 border border-zinc-700 outline-none focus:border-green-600"
+      />
+
+      <textarea
+        name="message"
+        placeholder="Tell us what you need..."
+        class="w-full p-4 rounded-2xl bg-zinc-800 border border-zinc-700 h-32 outline-none focus:border-green-600"
+      ></textarea>
+
+      <button
+        type="submit"
+        class="w-full text-white transition p-4 rounded-2xl font-bold text-lg hover:scale-[1.02]"
+        style={`background:${client.primaryColor}`}
+      >
+        Request Free Estimate
+      </button>
+
+      <div class="flex items-center justify-between text-sm text-zinc-500">
+
+        <a
+          href={`tel:${client.phone}`}
+          class="hover:text-white transition"
+        >
+          {client.phone}
+        </a>
+
+        <span>
+          Source: {client.formSource}
+        </span>
+
+      </div>
+
+      <p
+        id="status"
+        class="text-center text-sm font-medium"
+      ></p>
+
+    </form>
+
+  </main>
+
+</Layout>
+
+<script define:vars={{ client }} type="module">
+
+  const form = document.getElementById('leadForm')
+  const status = document.getElementById('status')
+
+  form.addEventListener('submit', async (e) => {
+
+    e.preventDefault()
+
+    status.innerText = 'Sending...'
+
+    const formData = new FormData(form)
+
+    const params = new URLSearchParams(window.location.search)
+
+    const payload = {
+
+      // Lead data
+      name: formData.get('name'),
+      phone: formData.get('phone'),
+      message: formData.get('message'),
+
+      // Client system
+      client_id: client.id,
+
+      source: client.formSource,
+
+      status: 'new',
+
+      // Page tracking
+      page_url: window.location.href,
+
+      // UTM tracking
+      utm_source: params.get('utm_source'),
+      utm_campaign: params.get('utm_campaign'),
+      utm_medium: params.get('utm_medium'),
+
+      // Ads tracking
+      gclid: params.get('gclid')
+
+    }
+
+    try {
+
+      const response = await fetch('/api/lead', {
+
+        method: 'POST',
+
+        headers: {
+          'Content-Type': 'application/json'
+        },
+
+        body: JSON.stringify(payload)
+
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+
+        console.error(result)
+
+        status.innerText = 'Something went wrong.'
+
+        return
+      }
+
+      status.innerText = 'Request sent successfully!'
+
+      form.reset()
+
+    } catch (err) {
+
+      console.error(err)
+
+      status.innerText = 'Server error.'
+
+    }
+
+  })
+
+</script>
