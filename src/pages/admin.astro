@@ -1,36 +1,20 @@
 ---
 import Layout from '../layouts/Layout.astro'
-import { createClient } from '@supabase/supabase-js'
 import { client } from '../config/client'
-
-const supabase = createClient(
-  import.meta.env.PUBLIC_SUPABASE_URL,
-  import.meta.env.PUBLIC_SUPABASE_ANON_KEY
-)
-
-const { data: leads, error } = await supabase
-  .from('leads')
-  .select('*')
-  .eq('client_id', client.id)
-  .order('created_at', { ascending: false })
-
-if (error) {
-  console.error(error)
-}
 ---
 
 <Layout>
 
-  <!-- AUTH -->
+  <!-- AUTH LOADER -->
 
   <div
     id="authLoader"
     class="fixed inset-0 bg-black z-[9999] flex items-center justify-center text-white text-xl"
   >
-    Checking authentication...
+    Loading dashboard...
   </div>
 
-  <!-- CONTENT -->
+  <!-- ADMIN -->
 
   <main
     id="adminContent"
@@ -49,7 +33,10 @@ if (error) {
             Lead Dashboard
           </p>
 
-          <h1 class="text-3xl font-bold">
+          <h1
+            id="businessName"
+            class="text-3xl font-bold"
+          >
             {client.businessName}
           </h1>
 
@@ -63,8 +50,11 @@ if (error) {
               Total Leads
             </p>
 
-            <p class="text-2xl font-bold">
-              {leads?.length || 0}
+            <p
+              id="totalLeads"
+              class="text-2xl font-bold"
+            >
+              0
             </p>
 
           </div>
@@ -82,9 +72,9 @@ if (error) {
 
       <!-- TABLE -->
 
-      <div class="border border-zinc-800 rounded-3xl bg-zinc-950 overflow-hidden">
+      <div class="border border-zinc-800 rounded-3xl bg-zinc-950 overflow-hidden overflow-x-auto">
 
-        <table class="w-full text-sm">
+        <table class="w-full text-sm min-w-[1000px]">
 
           <thead class="bg-zinc-900 border-b border-zinc-800">
 
@@ -114,188 +104,7 @@ if (error) {
 
           </thead>
 
-          <tbody>
-
-            {
-              leads?.map((lead, index) => (
-
-                <tr class="border-t border-zinc-800 hover:bg-zinc-900/40 transition">
-
-                  <!-- LEAD -->
-
-                  <td class="p-4">
-
-                    <div class="space-y-1">
-
-                      <p class="font-semibold text-white">
-                        {lead.name}
-                      </p>
-
-                      <a
-                        href={`tel:${lead.phone}`}
-                        class="text-green-400 hover:text-green-300 transition block"
-                      >
-                        {lead.phone}
-                      </a>
-
-                      <p class="text-xs text-zinc-500">
-                        {
-                          new Date(lead.created_at)
-                            .toLocaleString()
-                        }
-                      </p>
-
-                    </div>
-
-                  </td>
-
-                  <!-- SOURCE -->
-
-                  <td class="p-4">
-
-                    <span class="bg-zinc-800 border border-zinc-700 px-3 py-1 rounded-full text-xs text-zinc-300 inline-flex">
-
-                      {lead.utm_source || lead.source || '-'}
-
-                    </span>
-
-                  </td>
-
-                  <!-- CAMPAIGN -->
-
-                  <td class="p-4 text-zinc-400">
-
-                    {lead.utm_campaign || '-'}
-
-                  </td>
-
-                  <!-- STATUS -->
-
-                  <td class="p-4">
-
-                    <div class="flex items-center gap-2">
-
-                      <select
-                        id={`status-${lead.id}`}
-                        class="bg-zinc-900 border border-zinc-700 hover:border-zinc-500 rounded-xl px-3 py-2 text-sm outline-none transition"
-                      >
-
-                        {
-                          client.leadStatuses.map((status) => (
-
-                            <option
-                              value={status}
-                              selected={lead.status === status}
-                            >
-                              {status}
-                            </option>
-
-                          ))
-                        }
-
-                      </select>
-
-                      <button
-                        class="saveBtn bg-green-600 hover:bg-green-700 px-3 py-2 rounded-xl text-xs font-semibold transition"
-                        data-id={lead.id}
-                      >
-                        Save
-                      </button>
-
-                    </div>
-
-                    <p
-                      id={`saved-${lead.id}`}
-                      class="text-xs text-zinc-500 mt-1"
-                    ></p>
-
-                  </td>
-
-                  <!-- MESSAGE -->
-
-                  <td class="p-4">
-
-                    <button
-                      onclick={`openModal(${index})`}
-                      class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 px-3 py-2 rounded-xl text-xs transition"
-                    >
-                      View Message
-                    </button>
-
-                    <!-- MODAL -->
-
-                    <div
-                      id={`modal-${index}`}
-                      class="hidden fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-6"
-                    >
-
-                      <div class="bg-zinc-950 border border-zinc-800 rounded-3xl max-w-2xl w-full p-8 relative">
-
-                        <button
-                          onclick={`closeModal(${index})`}
-                          class="absolute top-4 right-4 text-zinc-500 hover:text-white text-xl"
-                        >
-                          ×
-                        </button>
-
-                        <h2 class="text-2xl font-bold mb-6">
-                          Lead Message
-                        </h2>
-
-                        <div class="space-y-4">
-
-                          <div>
-
-                            <p class="text-zinc-500 text-sm mb-1">
-                              Name
-                            </p>
-
-                            <p class="text-white">
-                              {lead.name}
-                            </p>
-
-                          </div>
-
-                          <div>
-
-                            <p class="text-zinc-500 text-sm mb-1">
-                              Phone
-                            </p>
-
-                            <p class="text-white">
-                              {lead.phone}
-                            </p>
-
-                          </div>
-
-                          <div>
-
-                            <p class="text-zinc-500 text-sm mb-1">
-                              Message
-                            </p>
-
-                            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 whitespace-pre-wrap text-zinc-300">
-
-                              {lead.message || 'No message'}
-
-                            </div>
-
-                          </div>
-
-                        </div>
-
-                      </div>
-
-                    </div>
-
-                  </td>
-
-                </tr>
-
-              ))
-            }
-
-          </tbody>
+          <tbody id="leadsTable"></tbody>
 
         </table>
 
@@ -313,7 +122,10 @@ if (error) {
       import.meta.env.PUBLIC_SUPABASE_URL,
 
     supabaseKey:
-      import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+      import.meta.env.PUBLIC_SUPABASE_ANON_KEY,
+
+    leadStatuses:
+      client.leadStatuses
   }}
   type="module"
 >
@@ -336,32 +148,301 @@ if (error) {
 
     window.location.href = '/login'
 
-  } else {
+  }
 
-    document
-      .getElementById('authLoader')
-      .classList
-      .add('hidden')
+  // USER
 
-    document
-      .getElementById('adminContent')
-      .classList
-      .remove('hidden')
+// USER
+
+const userEmail =
+  session.user.email
+
+console.log(
+  'RAW EMAIL:',
+  JSON.stringify(userEmail)
+)
+
+console.log(
+  'SESSION EMAIL:',
+  userEmail
+)
+
+const {
+  data: userData,
+  error: userError
+} = await supabase
+
+  .from('users')
+
+  .select('*')
+
+  .ilike(
+    'email',
+    userEmail.trim()
+  )
+
+  .maybeSingle()
+
+console.log(
+  'USER DATA:',
+  userData
+)
+
+console.log(
+  'USER ERROR:',
+  userError
+)
+
+if (userError) {
+
+  console.error(userError)
+
+  alert('Users table error')
+
+  throw userError
+
+}
+
+if (!userData) {
+
+  console.error(
+    'NO USER FOUND'
+  )
+
+  alert(
+    `No user found for: ${userEmail}`
+  )
+
+  throw new Error(
+    'No user found'
+  )
+
+}
+
+const clientId =
+  userData.client_id
+
+console.log(
+  'CLIENT ID:',
+  clientId
+)
+
+  // LEADS
+
+  const {
+    data: leads,
+    error: leadsError
+  } = await supabase
+
+    .from('leads')
+
+    .select('*')
+
+    .eq('client_id', clientId)
+
+    .order('created_at', {
+      ascending: false
+    })
+
+  if (leadsError) {
+
+    console.error(leadsError)
 
   }
 
-  // LOGOUT
+  // SHOW CONTENT
 
-  const logoutBtn =
-    document.getElementById('logoutBtn')
+  document
+    .getElementById('authLoader')
+    .classList
+    .add('hidden')
 
-  logoutBtn.addEventListener('click', async () => {
+  document
+    .getElementById('adminContent')
+    .classList
+    .remove('hidden')
 
-    await supabase.auth.signOut()
+  // TOTAL
 
-    window.location.href = '/login'
+  document
+    .getElementById('totalLeads')
+    .innerText = leads?.length || 0
 
-  })
+  // TABLE
+
+  const table =
+    document.getElementById('leadsTable')
+
+  table.innerHTML =
+    leads.map((lead, index) => `
+
+      <tr class="border-t border-zinc-800 hover:bg-zinc-900/40 transition">
+
+        <!-- LEAD -->
+
+        <td class="p-4">
+
+          <div class="space-y-1">
+
+            <p class="font-semibold text-white">
+              ${lead.name || '-'}
+            </p>
+
+            <a
+              href="tel:${lead.phone}"
+              class="text-green-400 hover:text-green-300 transition block"
+            >
+              ${lead.phone || '-'}
+            </a>
+
+            <p class="text-xs text-zinc-500">
+              ${new Date(lead.created_at).toLocaleString()}
+            </p>
+
+          </div>
+
+        </td>
+
+        <!-- SOURCE -->
+
+        <td class="p-4">
+
+          <span class="bg-zinc-800 border border-zinc-700 px-3 py-1 rounded-full text-xs text-zinc-300 inline-flex">
+
+            ${lead.utm_source || lead.source || '-'}
+
+          </span>
+
+        </td>
+
+        <!-- CAMPAIGN -->
+
+        <td class="p-4 text-zinc-400">
+
+          ${lead.utm_campaign || '-'}
+
+        </td>
+
+        <!-- STATUS -->
+
+        <td class="p-4">
+
+          <div class="flex items-center gap-2">
+
+            <select
+              id="status-${lead.id}"
+              class="bg-zinc-900 border border-zinc-700 hover:border-zinc-500 rounded-xl px-3 py-2 text-sm outline-none transition"
+            >
+
+              ${leadStatuses.map(status => `
+
+                <option
+                  value="${status}"
+                  ${lead.status === status ? 'selected' : ''}
+                >
+                  ${status}
+                </option>
+
+              `).join('')}
+
+            </select>
+
+            <button
+              class="saveBtn bg-green-600 hover:bg-green-700 px-3 py-2 rounded-xl text-xs font-semibold transition"
+              data-id="${lead.id}"
+            >
+              Save
+            </button>
+
+          </div>
+
+          <p
+            id="saved-${lead.id}"
+            class="text-xs text-zinc-500 mt-1"
+          ></p>
+
+        </td>
+
+        <!-- MESSAGE -->
+
+        <td class="p-4">
+
+          <button
+            onclick="openModal(${index})"
+            class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 px-3 py-2 rounded-xl text-xs transition"
+          >
+            View Message
+          </button>
+
+          <div
+            id="modal-${index}"
+            class="hidden fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-6"
+          >
+
+            <div class="bg-zinc-950 border border-zinc-800 rounded-3xl max-w-2xl w-full p-8 relative">
+
+              <button
+                onclick="closeModal(${index})"
+                class="absolute top-4 right-4 text-zinc-500 hover:text-white text-xl"
+              >
+                ×
+              </button>
+
+              <h2 class="text-2xl font-bold mb-6">
+                Lead Message
+              </h2>
+
+              <div class="space-y-4">
+
+                <div>
+
+                  <p class="text-zinc-500 text-sm mb-1">
+                    Name
+                  </p>
+
+                  <p class="text-white">
+                    ${lead.name || '-'}
+                  </p>
+
+                </div>
+
+                <div>
+
+                  <p class="text-zinc-500 text-sm mb-1">
+                    Phone
+                  </p>
+
+                  <p class="text-white">
+                    ${lead.phone || '-'}
+                  </p>
+
+                </div>
+
+                <div>
+
+                  <p class="text-zinc-500 text-sm mb-1">
+                    Message
+                  </p>
+
+                  <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 whitespace-pre-wrap text-zinc-300">
+
+                    ${lead.message || 'No message'}
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </td>
+
+      </tr>
+
+    `).join('')
 
   // MODALS
 
@@ -382,6 +463,19 @@ if (error) {
       .add('hidden')
 
   }
+
+  // LOGOUT
+
+  const logoutBtn =
+    document.getElementById('logoutBtn')
+
+  logoutBtn.addEventListener('click', async () => {
+
+    await supabase.auth.signOut()
+
+    window.location.href = '/login'
+
+  })
 
   // STATUS SAVE
 
@@ -425,12 +519,7 @@ if (error) {
 
           })
 
-        const result =
-          await response.json()
-
         if (!response.ok) {
-
-          console.error(result)
 
           savedText.innerText =
             'Error'
