@@ -26,6 +26,9 @@ import {
 }
 from '../lib/client/leads.js'
 
+import appScript
+from '../scripts/admin/app.js?url'
+
 // =========================
 // CLIENT
 // =========================
@@ -233,8 +236,7 @@ const selectedLead =
 
 </Layout>
 
-<script type="module">
-
-  import '/src/scripts/admin/app.js'
-
-</script>
+<script
+  type="module"
+  src={appScript}
+></script>
