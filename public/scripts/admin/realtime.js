@@ -1,7 +1,7 @@
 import {
   supabase
 }
-from '../../lib/client/supabase.js'
+from '../../../src/lib/client/supabase.js'
 
 // =========================
 // REALTIME LEADS
