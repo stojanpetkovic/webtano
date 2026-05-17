@@ -30,6 +30,12 @@ export function initPagination() {
       'currentPage'
     )
 
+  const totalPagesEl =
+
+    document.getElementById(
+      'totalPages'
+    )
+
   const nextPageBtn =
 
     document.getElementById(
@@ -74,6 +80,8 @@ export function initPagination() {
       }
     )
 
+    // CURRENT PAGE
+
     if (currentPageEl) {
 
       currentPageEl.innerText =
@@ -81,7 +89,37 @@ export function initPagination() {
 
     }
 
+    // TOTAL PAGES
+
+    if (totalPagesEl) {
+
+      totalPagesEl.innerText =
+        totalPages
+
+    }
+
+    // BUTTON STATES
+
+    if (prevPageBtn) {
+
+      prevPageBtn.disabled =
+        currentPage === 1
+
+    }
+
+    if (nextPageBtn) {
+
+      nextPageBtn.disabled =
+        currentPage === totalPages
+
+    }
+
   }
+
+  // GLOBAL ACCESS
+
+  window.renderPagination =
+    renderPage
 
   // NEXT
 
@@ -127,3 +165,9 @@ export function initPagination() {
   renderPage()
 
 }
+
+// =========================
+// INIT
+// =========================
+
+initPagination()

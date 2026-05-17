@@ -145,6 +145,11 @@ export function initFilters() {
 
   }
 
+  // GLOBAL ACCESS
+
+  window.filterLeads =
+    filterLeads
+
   // EVENTS
 
   searchInput?.addEventListener(
@@ -168,3 +173,9 @@ export function initFilters() {
   )
 
 }
+
+// =========================
+// INIT
+// =========================
+
+initFilters()

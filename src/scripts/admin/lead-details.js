@@ -14,6 +14,13 @@ export function initLeadDetails() {
         'leadDetails'
       )
 
+      // SAVE ACTIVE LEAD
+
+      localStorage.setItem(
+        'crmActiveLead',
+        leadId
+      )
+
       // URL
 
       const url =
@@ -43,6 +50,12 @@ export function initLeadDetails() {
         'leads'
       )
 
+      // REMOVE ACTIVE LEAD
+
+      localStorage.removeItem(
+        'crmActiveLead'
+      )
+
       // URL
 
       const url =
@@ -61,4 +74,48 @@ export function initLeadDetails() {
 
     }
 
+  // AUTO OPEN DETAILS SECTION
+
+  const params =
+    new URLSearchParams(
+      window.location.search
+    )
+
+  const leadId =
+    params.get('lead')
+
+  if (leadId) {
+
+    const dashboardSections =
+
+      document.querySelectorAll(
+        '.dashboard-section'
+      )
+
+    dashboardSections.forEach(
+      (section) => {
+
+        section.classList.add(
+          'hidden'
+        )
+
+      }
+    )
+
+    document
+      .getElementById(
+        'leadDetailsSection'
+      )
+      ?.classList.remove(
+        'hidden'
+      )
+
+  }
+
 }
+
+// =========================
+// INIT
+// =========================
+
+initLeadDetails()

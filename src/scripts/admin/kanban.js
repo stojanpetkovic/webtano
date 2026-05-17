@@ -28,6 +28,27 @@ export function initKanban() {
 
         draggedCard = card
 
+        // DRAG STYLE
+
+        card.classList.add(
+          'opacity-50',
+          'scale-[0.98]'
+        )
+
+      }
+    )
+
+    // DRAG END
+
+    card.addEventListener(
+      'dragend',
+      () => {
+
+        card.classList.remove(
+          'opacity-50',
+          'scale-[0.98]'
+        )
+
       }
     )
 
@@ -45,6 +66,25 @@ export function initKanban() {
 
         e.preventDefault()
 
+        column.classList.add(
+          'ring-2',
+          'ring-zinc-300'
+        )
+
+      }
+    )
+
+    // DRAG LEAVE
+
+    column.addEventListener(
+      'dragleave',
+      () => {
+
+        column.classList.remove(
+          'ring-2',
+          'ring-zinc-300'
+        )
+
       }
     )
 
@@ -53,6 +93,11 @@ export function initKanban() {
     column.addEventListener(
       'drop',
       async () => {
+
+        column.classList.remove(
+          'ring-2',
+          'ring-zinc-300'
+        )
 
         if (!draggedCard) return
 
@@ -103,28 +148,38 @@ export function initKanban() {
 
         try {
 
-          await fetch(
-            '/api/update-status',
-            {
+          const response =
 
-              method: 'POST',
+            await fetch(
+              '/api/update-status',
+              {
 
-              headers: {
+                method: 'POST',
 
-                'Content-Type':
-                  'application/json'
+                headers: {
 
-              },
+                  'Content-Type':
+                    'application/json'
 
-              body: JSON.stringify({
+                },
 
-                id,
-                status
+                body: JSON.stringify({
 
-              })
+                  id,
+                  status
 
-            }
-          )
+                })
+
+              }
+            )
+
+          if (!response.ok) {
+
+            console.error(
+              'Failed to update status'
+            )
+
+          }
 
         } catch (err) {
 
@@ -138,3 +193,9 @@ export function initKanban() {
   })
 
 }
+
+// =========================
+// INIT
+// =========================
+
+initKanban()

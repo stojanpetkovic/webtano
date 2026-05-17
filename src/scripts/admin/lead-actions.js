@@ -36,10 +36,21 @@ export function initLeadActions() {
             `saved-${id}`
           )
 
+        // LOADING
+
         if (savedText) {
 
           savedText.innerText =
             'Saving...'
+
+          savedText.classList.remove(
+            'text-red-500',
+            'text-emerald-600'
+          )
+
+          savedText.classList.add(
+            'text-zinc-400'
+          )
 
         }
 
@@ -70,6 +81,8 @@ export function initLeadActions() {
               }
             )
 
+          // ERROR
+
           if (!response.ok) {
 
             if (savedText) {
@@ -77,16 +90,34 @@ export function initLeadActions() {
               savedText.innerText =
                 'Error'
 
+              savedText.classList.remove(
+                'text-zinc-400'
+              )
+
+              savedText.classList.add(
+                'text-red-500'
+              )
+
             }
 
             return
 
           }
 
+          // SUCCESS
+
           if (savedText) {
 
             savedText.innerText =
               'Saved ✓'
+
+            savedText.classList.remove(
+              'text-zinc-400'
+            )
+
+            savedText.classList.add(
+              'text-emerald-600'
+            )
 
           }
 
@@ -98,6 +129,14 @@ export function initLeadActions() {
 
             savedText.innerText =
               'Error'
+
+            savedText.classList.remove(
+              'text-zinc-400'
+            )
+
+            savedText.classList.add(
+              'text-red-500'
+            )
 
           }
 
@@ -140,10 +179,21 @@ export function initLeadActions() {
             `notesSaved-${id}`
           )
 
+        // LOADING
+
         if (savedText) {
 
           savedText.innerText =
             'Saving...'
+
+          savedText.classList.remove(
+            'text-red-500',
+            'text-emerald-600'
+          )
+
+          savedText.classList.add(
+            'text-zinc-400'
+          )
 
         }
 
@@ -174,6 +224,8 @@ export function initLeadActions() {
               }
             )
 
+          // ERROR
+
           if (!response.ok) {
 
             if (savedText) {
@@ -181,16 +233,34 @@ export function initLeadActions() {
               savedText.innerText =
                 'Error'
 
+              savedText.classList.remove(
+                'text-zinc-400'
+              )
+
+              savedText.classList.add(
+                'text-red-500'
+              )
+
             }
 
             return
 
           }
 
+          // SUCCESS
+
           if (savedText) {
 
             savedText.innerText =
               'Saved ✓'
+
+            savedText.classList.remove(
+              'text-zinc-400'
+            )
+
+            savedText.classList.add(
+              'text-emerald-600'
+            )
 
           }
 
@@ -203,6 +273,14 @@ export function initLeadActions() {
             savedText.innerText =
               'Error'
 
+            savedText.classList.remove(
+              'text-zinc-400'
+            )
+
+            savedText.classList.add(
+              'text-red-500'
+            )
+
           }
 
         }
@@ -213,3 +291,9 @@ export function initLeadActions() {
   })
 
 }
+
+// =========================
+// INIT
+// =========================
+
+initLeadActions()

@@ -111,3 +111,9 @@ export function initNavigation() {
   }
 
 }
+
+// =========================
+// INIT
+// =========================
+
+initNavigation()

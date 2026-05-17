@@ -123,6 +123,11 @@ export function initLeadsView() {
 
   }
 
+  // GLOBAL ACCESS
+
+  window.setLeadsView =
+    setLeadsView
+
   // EVENTS
 
   tableViewBtn?.addEventListener(
@@ -170,3 +175,9 @@ export function initLeadsView() {
   }
 
 }
+
+// =========================
+// INIT
+// =========================
+
+initLeadsView()
