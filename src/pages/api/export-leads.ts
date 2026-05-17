@@ -9,7 +9,7 @@ from 'xlsx'
 import {
   supabase
 }
-from '../../lib/client/supabase'
+from '../../../public/scripts/supabase'
 
 // =========================
 // EXPORT LEADS

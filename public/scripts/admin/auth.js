@@ -1,7 +1,7 @@
 import {
   supabase
 }
-from '../../../src/lib/client/supabase.js'
+from '/scripts/supabase.js'
 
 // =========================
 // AUTH
