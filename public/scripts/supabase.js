@@ -1,11 +1,14 @@
-import { createClient }
+import {
+  createClient
+}
 from 'https://esm.sh/@supabase/supabase-js'
 
 export const supabase =
+
   createClient(
 
-    import.meta.env.PUBLIC_SUPABASE_URL,
+    'https://bddydgqfukwuhmvwvhyf.supabase.co',
 
-    import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+    'sb_publishable_JMRjCw7EkO7dDKNhI5N9eg_hPCz9sy2'
 
   )
