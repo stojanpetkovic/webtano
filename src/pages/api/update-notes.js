@@ -1,5 +1,5 @@
 import { supabase }
-from './supabase.js'
+from '../../lib/client/supabase.js'
 
 export async function POST({
   request
