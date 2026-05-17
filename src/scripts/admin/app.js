@@ -57,28 +57,24 @@ from './export.js'
 // INIT CRM APP
 // =========================
 
-export function initCRMApp() {
+initLeadDetails()
 
-  initLeadDetails()
+initNavigation()
 
-  initNavigation()
+initLeadsView()
 
-  initLeadsView()
+initFilters()
 
-  initFilters()
+initKanban()
 
-  initKanban()
+initPagination()
 
-  initPagination()
+initModals()
 
-  initModals()
+initLeadActions()
 
-  initLeadActions()
+initRealtime()
 
-  initRealtime()
+initAuth()
 
-  initAuth()
-
-  initExport()
-
-}
+initExport()
