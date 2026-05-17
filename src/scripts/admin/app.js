@@ -1,57 +1,57 @@
 import {
   initNavigation
 }
-from './navigation.js'
+from '/src/scripts/admin/navigation.js'
 
 import {
   initLeadsView
 }
-from './leads-view.js'
+from '/src/scripts/admin/leads-view.js'
 
 import {
   initFilters
 }
-from './filters.js'
+from '/src/scripts/admin/filters.js'
 
 import {
   initPagination
 }
-from './pagination.js'
+from '/src/scripts/admin/pagination.js'
 
 import {
   initKanban
 }
-from './kanban.js'
+from '/src/scripts/admin/kanban.js'
 
 import {
   initLeadDetails
 }
-from './lead-details.js'
+from '/src/scripts/admin/lead-details.js'
 
 import {
   initModals
 }
-from './modals.js'
+from '/src/scripts/admin/modals.js'
 
 import {
   initLeadActions
 }
-from './lead-actions.js'
+from '/src/scripts/admin/lead-actions.js'
 
 import {
   initRealtime
 }
-from './realtime.js'
+from '/src/scripts/admin/realtime.js'
 
 import {
   initAuth
 }
-from './auth.js'
+from '/src/scripts/admin/auth.js'
 
 import {
   initExport
 }
-from './export.js'
+from '/src/scripts/admin/export.js'
 
 // =========================
 // INIT CRM APP
