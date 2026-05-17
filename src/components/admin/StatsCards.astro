@@ -1,0 +1,88 @@
+---
+const {
+  analytics
+} = Astro.props
+
+const cards = [
+
+  {
+    label: 'Total',
+    value: analytics.total,
+    color: 'bg-blue-50 text-blue-600 border-blue-100',
+    icon: '📋'
+  },
+
+  {
+    label: 'New',
+    value: analytics.newLeads,
+    color: 'bg-indigo-50 text-indigo-600 border-indigo-100',
+    icon: '✨'
+  },
+
+  {
+    label: 'Contacted',
+    value: analytics.contacted,
+    color: 'bg-amber-50 text-amber-600 border-amber-100',
+    icon: '📞'
+  },
+
+  {
+    label: 'Won',
+    value: analytics.won,
+    color: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+    icon: '🏆'
+  },
+
+  {
+    label: 'Lost',
+    value: analytics.lost,
+    color: 'bg-rose-50 text-rose-600 border-rose-100',
+    icon: '❌'
+  }
+
+]
+---
+
+<div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+
+  {
+    cards.map((card) => (
+
+      <div class="bg-white border border-zinc-200 rounded-[24px] px-5 py-4 shadow-sm hover:shadow-md transition">
+
+        <!-- TOP -->
+
+        <div class="flex items-center justify-between">
+
+          <!-- ICON -->
+
+          <div class={`w-11 h-11 rounded-2xl border flex items-center justify-center text-lg ${card.color}`}>
+
+            {card.icon}
+
+          </div>
+
+          <!-- VALUE -->
+
+          <p class="text-3xl font-bold tracking-tight text-zinc-900">
+
+            {card.value}
+
+          </p>
+
+        </div>
+
+        <!-- LABEL -->
+
+        <p class="text-sm text-zinc-500 font-medium mt-4">
+
+          {card.label}
+
+        </p>
+
+      </div>
+
+    ))
+  }
+
+</div>

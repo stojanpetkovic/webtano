@@ -1,0 +1,128 @@
+---
+import NotesBox
+from './NotesBox.astro'
+
+const {
+  lead,
+  index
+} = Astro.props
+---
+
+<div>
+
+  <!-- BUTTON -->
+
+  <button
+    onclick={`openModal(${index})`}
+    class="bg-white hover:bg-zinc-100 border border-zinc-200 px-4 py-3 rounded-2xl text-sm font-medium transition shadow-sm"
+  >
+
+    View Message
+
+  </button>
+
+  <!-- MODAL -->
+
+  <div
+    id={`modal-${index}`}
+    class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-6"
+  >
+
+    <div class="bg-white border border-zinc-200 rounded-[32px] max-w-2xl w-full p-8 relative overflow-y-auto max-h-[90vh] shadow-2xl">
+
+      <!-- CLOSE -->
+
+      <button
+        onclick={`closeModal(${index})`}
+        class="absolute top-5 right-5 w-10 h-10 rounded-2xl hover:bg-zinc-100 text-zinc-500 hover:text-zinc-900 text-xl transition"
+      >
+        ×
+      </button>
+
+      <!-- TITLE -->
+
+      <div class="mb-8">
+
+        <p class="text-sm text-zinc-500 font-medium">
+          Lead Details
+        </p>
+
+        <h2 class="text-3xl font-bold tracking-tight text-zinc-900 mt-1">
+          Message Overview
+        </h2>
+
+      </div>
+
+      <!-- CONTENT -->
+
+      <div class="space-y-6">
+
+        <!-- NAME -->
+
+        <div>
+
+          <p class="text-xs uppercase tracking-[0.15em] text-zinc-400 font-semibold mb-2">
+            Name
+          </p>
+
+          <div class="bg-zinc-50 border border-zinc-200 rounded-2xl px-5 py-4 text-zinc-900 font-medium">
+
+            {String(lead.name || '-')}
+
+          </div>
+
+        </div>
+
+        <!-- PHONE -->
+
+        <div>
+
+          <p class="text-xs uppercase tracking-[0.15em] text-zinc-400 font-semibold mb-2">
+            Phone
+          </p>
+
+          <a
+            href={`tel:${lead.phone}`}
+            class="bg-zinc-50 border border-zinc-200 rounded-2xl px-5 py-4 text-green-600 hover:text-green-700 font-medium block transition"
+          >
+
+            {String(lead.phone || '-')}
+
+          </a>
+
+        </div>
+
+        <!-- MESSAGE -->
+
+        <div>
+
+          <p class="text-xs uppercase tracking-[0.15em] text-zinc-400 font-semibold mb-2">
+            Message
+          </p>
+
+          <div class="bg-zinc-50 border border-zinc-200 rounded-3xl p-6 whitespace-pre-wrap text-zinc-700 leading-relaxed">
+
+            {
+              String(
+                lead.message ||
+                'No message'
+              )
+            }
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- NOTES -->
+
+      <NotesBox
+        lead={lead}
+      />
+
+    </div>
+
+  </div>
+
+</div>

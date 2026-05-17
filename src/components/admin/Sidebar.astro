@@ -1,0 +1,98 @@
+---
+const {
+  businessName
+} = Astro.props
+
+const menuItems = [
+
+  {
+    id: 'dashboard',
+    label: 'Dashboard',
+    icon: '🏠'
+  },
+
+  {
+    id: 'leads',
+    label: 'Leads',
+    icon: '📋'
+  },
+
+  {
+    id: 'analytics',
+    label: 'Analytics',
+    icon: '📊'
+  },
+
+  {
+    id: 'settings',
+    label: 'Settings',
+    icon: '⚙️'
+  }
+
+]
+---
+
+<aside class="w-[280px] min-h-screen bg-white border-r border-zinc-200 flex flex-col shadow-sm">
+
+  <!-- LOGO -->
+
+  <div class="p-8 border-b border-zinc-200">
+
+    <p class="text-xs uppercase tracking-[0.3em] text-zinc-400 mb-3 font-medium">
+      CRM SYSTEM
+    </p>
+
+    <h1 class="text-3xl font-bold tracking-tight text-zinc-900">
+      {businessName}
+    </h1>
+
+    <p class="text-sm text-zinc-500 mt-2">
+      Professional Lead Management
+    </p>
+
+  </div>
+
+  <!-- MENU -->
+
+  <nav class="flex-1 p-4 space-y-2">
+
+    {
+      menuItems.map((item) => (
+
+        <button
+          class="sidebar-link w-full flex items-center gap-4 px-5 py-4 rounded-2xl hover:bg-zinc-100 transition text-left group"
+          data-view={item.id}
+        >
+
+          <!-- ICON -->
+
+          <div class="w-11 h-11 rounded-2xl bg-zinc-100 group-hover:bg-white flex items-center justify-center transition shadow-sm">
+
+            <span class="text-lg">
+              {item.icon}
+            </span>
+
+          </div>
+
+          <!-- TEXT -->
+
+          <div>
+
+            <p class="text-sm font-semibold text-zinc-900">
+              {item.label}
+            </p>
+
+            <p class="text-xs text-zinc-500 mt-0.5">
+              Open section
+            </p>
+
+          </div>
+
+        </button>
+
+      ))
+    }
+
+  </nav>
+
+</aside>

@@ -1,0 +1,35 @@
+---
+import StatsCards
+from '../StatsCards.astro'
+
+import RecentLeads
+from '../RecentLeads.astro'
+
+const {
+  analytics,
+  leads
+} = Astro.props
+---
+
+<section
+  id="dashboardSection"
+  class="dashboard-section"
+>
+
+  <div class="space-y-8">
+
+    <!-- STATS -->
+
+    <StatsCards
+      analytics={analytics}
+    />
+
+    <!-- RECENT LEADS -->
+
+    <RecentLeads
+      leads={leads}
+    />
+
+  </div>
+
+</section>

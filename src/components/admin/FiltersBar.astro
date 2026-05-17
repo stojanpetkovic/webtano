@@ -1,0 +1,181 @@
+---
+const {
+  leadStatuses
+} = Astro.props
+---
+
+<div class="mb-8">
+
+  <!-- TOP -->
+
+  <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+
+    <!-- LEFT -->
+
+    <div>
+
+      <p class="text-sm font-medium text-zinc-500">
+        Lead Management
+      </p>
+
+      <h2 class="text-4xl font-bold tracking-tight text-zinc-900 mt-1">
+        Leads
+      </h2>
+
+    </div>
+
+    <!-- RIGHT -->
+
+    <div class="flex items-center gap-3">
+
+      <!-- VIEW TOGGLE -->
+
+      <div class="flex items-center bg-white border border-zinc-200 rounded-2xl p-1 shadow-sm">
+
+        <!-- TABLE -->
+
+        <button
+          id="tableViewBtn"
+          class="viewToggleBtn bg-zinc-900 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition"
+        >
+
+          Table
+
+        </button>
+
+        <!-- KANBAN -->
+
+        <button
+          id="kanbanViewBtn"
+          class="viewToggleBtn px-5 py-2.5 rounded-xl text-sm font-semibold text-zinc-600 hover:bg-zinc-100 transition"
+        >
+
+          Kanban
+
+        </button>
+
+      </div>
+
+      <!-- EXPORT -->
+
+      <button
+        id="exportExcelBtn"
+        class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-2xl text-sm font-semibold transition shadow-sm whitespace-nowrap"
+      >
+
+        Export Excel
+
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- FILTER BAR -->
+
+  <div
+    id="advancedFilters"
+    class="mt-6 bg-white border border-zinc-200 rounded-[28px] p-4 shadow-sm"
+  >
+
+    <div class="flex flex-col 2xl:flex-row gap-4">
+
+      <!-- SEARCH -->
+
+      <div class="relative flex-1 min-w-[280px]">
+
+        <!-- ICON -->
+
+        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">
+
+          🔍
+
+        </div>
+
+        <input
+          id="searchInput"
+          type="text"
+          placeholder="Search leads, phone, notes..."
+          class="w-full bg-zinc-50 border border-zinc-200 rounded-2xl pl-12 pr-5 py-3.5 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-zinc-400 focus:ring-4 focus:ring-zinc-100 transition"
+        />
+
+      </div>
+
+      <!-- STATUS -->
+
+      <div class="relative min-w-[220px]">
+
+        <select
+          id="statusFilter"
+          class="appearance-none w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-5 py-3.5 pr-12 text-sm font-medium text-zinc-800 outline-none focus:border-zinc-400 focus:ring-4 focus:ring-zinc-100 transition"
+        >
+
+          <option value="">
+            All Statuses
+          </option>
+
+          {
+            leadStatuses.map((status: string) => (
+
+              <option value={status}>
+
+                {status}
+
+              </option>
+
+            ))
+          }
+
+        </select>
+
+        <!-- ARROW -->
+
+        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none">
+
+          ⌄
+
+        </div>
+
+      </div>
+
+      <!-- FROM -->
+
+      <div class="flex items-center gap-3 bg-zinc-50 border border-zinc-200 rounded-2xl px-4 py-3 min-w-[220px]">
+
+        <span class="text-xs font-semibold uppercase tracking-[0.12em] text-zinc-400 whitespace-nowrap">
+
+          From
+
+        </span>
+
+        <input
+          id="fromDate"
+          type="date"
+          class="bg-transparent text-sm font-medium text-zinc-800 outline-none w-full"
+        />
+
+      </div>
+
+      <!-- TO -->
+
+      <div class="flex items-center gap-3 bg-zinc-50 border border-zinc-200 rounded-2xl px-4 py-3 min-w-[220px]">
+
+        <span class="text-xs font-semibold uppercase tracking-[0.12em] text-zinc-400 whitespace-nowrap">
+
+          To
+
+        </span>
+
+        <input
+          id="toDate"
+          type="date"
+          class="bg-transparent text-sm font-medium text-zinc-800 outline-none w-full"
+        />
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

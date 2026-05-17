@@ -1,0 +1,354 @@
+---
+const {
+  lead
+} = Astro.props
+
+if (!lead) {
+
+  return null
+
+}
+---
+
+<section class="bg-white border border-zinc-200 rounded-[32px] shadow-sm overflow-hidden">
+
+  <!-- HEADER -->
+
+  <div class="px-8 py-7 border-b border-zinc-200 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6">
+
+    <!-- LEFT -->
+
+    <div class="flex items-center gap-5">
+
+      <!-- AVATAR -->
+
+      <div class="w-20 h-20 rounded-[28px] bg-zinc-100 flex items-center justify-center text-2xl font-bold text-zinc-700 shrink-0">
+
+        {
+          String(
+            lead.name || 'L'
+          )
+          .charAt(0)
+          .toUpperCase()
+        }
+
+      </div>
+
+      <!-- INFO -->
+
+      <div>
+
+        <p class="text-sm text-zinc-500 font-medium">
+          Lead Profile
+        </p>
+
+        <h1 class="text-4xl font-bold tracking-tight text-zinc-900 mt-1">
+
+          {String(lead.name || '-')}
+
+        </h1>
+
+        <a
+          href={`tel:${lead.phone}`}
+          class="text-green-600 hover:text-green-700 transition text-lg font-medium mt-3 inline-block"
+        >
+
+          {String(lead.phone || '-')}
+
+        </a>
+
+      </div>
+
+    </div>
+
+    <!-- RIGHT -->
+
+    <div class="flex flex-wrap items-center gap-3">
+
+      <!-- STATUS -->
+
+      <div class="px-4 py-2 rounded-2xl bg-zinc-100 border border-zinc-200 text-sm font-semibold text-zinc-700">
+
+        {
+          String(
+            lead.status || 'new'
+          )
+        }
+
+      </div>
+
+      <!-- CALL -->
+
+      <a
+        href={`tel:${lead.phone}`}
+        class="bg-zinc-900 hover:bg-black text-white px-5 py-3 rounded-2xl text-sm font-semibold transition shadow-sm"
+      >
+
+        📞 Call
+
+      </a>
+
+      <!-- WHATSAPP -->
+
+      <a
+        href={`https://wa.me/${String(lead.phone || '').replace(/\D/g, '')}`}
+        target="_blank"
+        class="bg-green-500 hover:bg-green-600 text-white px-5 py-3 rounded-2xl text-sm font-semibold transition shadow-sm"
+      >
+
+        WhatsApp
+
+      </a>
+
+      <!-- CLOSE -->
+
+      <button
+        onclick="closeLeadDetails()"
+        class="bg-zinc-100 hover:bg-zinc-200 text-zinc-700 px-5 py-3 rounded-2xl text-sm font-semibold transition"
+      >
+
+        Close
+
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- BODY -->
+
+  <div class="grid grid-cols-1 2xl:grid-cols-3 gap-8 p-8">
+
+    <!-- LEFT COLUMN -->
+
+    <div class="2xl:col-span-2 space-y-8">
+
+      <!-- MESSAGE -->
+
+      <div>
+
+        <div class="flex items-center justify-between mb-4">
+
+          <div>
+
+            <p class="text-sm text-zinc-500 font-medium">
+              Lead Message
+            </p>
+
+            <h2 class="text-2xl font-bold tracking-tight text-zinc-900 mt-1">
+              Customer Inquiry
+            </h2>
+
+          </div>
+
+        </div>
+
+        <div class="bg-zinc-50 border border-zinc-200 rounded-[28px] p-6 text-zinc-700 whitespace-pre-wrap leading-relaxed">
+
+          {
+            String(
+              lead.message ||
+              'No message'
+            )
+          }
+
+        </div>
+
+      </div>
+
+      <!-- NOTES -->
+
+      <div>
+
+        <div class="mb-4">
+
+          <p class="text-sm text-zinc-500 font-medium">
+            Internal CRM Notes
+          </p>
+
+          <h2 class="text-2xl font-bold tracking-tight text-zinc-900 mt-1">
+            Notes
+          </h2>
+
+        </div>
+
+        <textarea
+          id={`details-notes-${lead.id}`}
+          class="w-full min-h-[220px] bg-zinc-50 border border-zinc-200 rounded-[28px] p-6 text-zinc-800 outline-none focus:border-zinc-400 focus:ring-4 focus:ring-zinc-100 transition resize-none"
+          placeholder="Write notes about this lead..."
+        >{lead.notes || ''}</textarea>
+
+        <div class="flex items-center justify-between mt-4">
+
+          <p
+            id={`detailsSaved-${lead.id}`}
+            class="text-sm text-zinc-500"
+          ></p>
+
+          <button
+            class="saveDetailsNotesBtn bg-zinc-900 hover:bg-black text-white px-5 py-3 rounded-2xl text-sm font-semibold transition shadow-sm"
+            data-id={lead.id}
+          >
+
+            Save Notes
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN -->
+
+    <div class="space-y-6">
+
+      <!-- INFO CARD -->
+
+      <div class="bg-zinc-50 border border-zinc-200 rounded-[28px] p-6">
+
+        <p class="text-sm text-zinc-500 font-medium">
+          Lead Information
+        </p>
+
+        <div class="space-y-5 mt-6">
+
+          <!-- SOURCE -->
+
+          <div>
+
+            <p class="text-xs uppercase tracking-[0.15em] text-zinc-400 font-semibold mb-2">
+              Source
+            </p>
+
+            <p class="text-zinc-900 font-medium">
+
+              {
+                String(
+                  lead.utm_source ||
+                  lead.source ||
+                  '-'
+                )
+              }
+
+            </p>
+
+          </div>
+
+          <!-- CAMPAIGN -->
+
+          <div>
+
+            <p class="text-xs uppercase tracking-[0.15em] text-zinc-400 font-semibold mb-2">
+              Campaign
+            </p>
+
+            <p class="text-zinc-900 font-medium break-words">
+
+              {
+                String(
+                  lead.utm_campaign || '-'
+                )
+              }
+
+            </p>
+
+          </div>
+
+          <!-- CREATED -->
+
+          <div>
+
+            <p class="text-xs uppercase tracking-[0.15em] text-zinc-400 font-semibold mb-2">
+              Created
+            </p>
+
+            <p class="text-zinc-900 font-medium">
+
+              {
+                new Date(
+                  lead.created_at
+                ).toLocaleString()
+              }
+
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ACTIVITY -->
+
+      <div class="bg-zinc-50 border border-zinc-200 rounded-[28px] p-6">
+
+        <p class="text-sm text-zinc-500 font-medium">
+          Activity
+        </p>
+
+        <h3 class="text-xl font-bold tracking-tight text-zinc-900 mt-1">
+          Timeline
+        </h3>
+
+        <div class="space-y-4 mt-6">
+
+          <div class="flex gap-3">
+
+            <div class="w-3 h-3 rounded-full bg-emerald-500 mt-1.5"></div>
+
+            <div>
+
+              <p class="font-medium text-zinc-900">
+                Lead created
+              </p>
+
+              <p class="text-sm text-zinc-500 mt-1">
+
+                {
+                  new Date(
+                    lead.created_at
+                  ).toLocaleString()
+                }
+
+              </p>
+
+            </div>
+
+          </div>
+
+          <div class="flex gap-3">
+
+            <div class="w-3 h-3 rounded-full bg-blue-500 mt-1.5"></div>
+
+            <div>
+
+              <p class="font-medium text-zinc-900">
+                Status updated
+              </p>
+
+              <p class="text-sm text-zinc-500 mt-1">
+
+                Current:
+                {
+                  String(
+                    lead.status || 'new'
+                  )
+                }
+
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>

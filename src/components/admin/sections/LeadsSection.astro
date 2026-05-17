@@ -1,0 +1,76 @@
+---
+import FiltersBar
+from '../FiltersBar.astro'
+
+import LeadsTable
+from '../LeadsTable.astro'
+
+import PaginationControls
+from '../PaginationControls.astro'
+
+import KanbanBoard
+from '../KanbanBoard.astro'
+
+const {
+  leads,
+  totalPages,
+  leadStatuses
+} = Astro.props
+---
+
+<section
+  id="leadsSection"
+  class="dashboard-section hidden"
+>
+
+  <!-- FILTERS -->
+
+  <div class="mb-8">
+
+    <FiltersBar
+      leadStatuses={leadStatuses}
+    />
+
+  </div>
+
+  <!-- TABLE VIEW -->
+
+  <div
+    id="tableView"
+    class="bg-white border border-zinc-200 rounded-[28px] shadow-sm overflow-hidden"
+  >
+
+    <LeadsTable
+      leads={leads}
+      leadStatuses={leadStatuses}
+    />
+
+  </div>
+
+  <!-- KANBAN VIEW -->
+
+  <div
+    id="kanbanView"
+    class="hidden"
+  >
+
+    <KanbanBoard
+      leads={leads}
+    />
+
+  </div>
+
+  <!-- PAGINATION -->
+
+  <div
+    id="paginationWrapper"
+  >
+
+    <PaginationControls
+      totalPages={totalPages}
+      currentPage={1}
+    />
+
+  </div>
+
+</section>

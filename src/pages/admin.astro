@@ -1,112 +1,229 @@
 ---
-import Layout from '../layouts/Layout.astro'
-import { client } from '../config/client'
+import Layout
+from '../layouts/Layout.astro'
+
+import { client }
+from '../config/client'
+
+import Sidebar
+from '../components/admin/Sidebar.astro'
+
+import DashboardSection
+from '../components/admin/sections/DashboardSection.astro'
+
+import LeadsSection
+from '../components/admin/sections/LeadsSection.astro'
+
+import AnalyticsSection
+from '../components/admin/sections/AnalyticsSection.astro'
+
+import LeadDetails
+from '../components/admin/LeadDetails.astro'
+
+import {
+  getLeads,
+  getLeadAnalytics
+}
+from '../lib/client/leads.js'
+
+// =========================
+// CLIENT
+// =========================
+
+const clientId =
+  client.id
+
+// =========================
+// LOAD LEADS
+// =========================
+
+const allLeads =
+  await getLeads(
+    clientId
+  )
+
+const leads =
+  allLeads || []
+
+// =========================
+// ANALYTICS
+// =========================
+
+const analytics =
+  getLeadAnalytics(
+    leads
+  )
+
+// =========================
+// PAGINATION
+// =========================
+
+const totalPages =
+  Math.ceil(
+    leads.length / 10
+  )
+
+// =========================
+// LEAD DETAILS
+// =========================
+
+const selectedLeadId =
+  Astro.url.searchParams.get(
+    'lead'
+  )
+
+const selectedLead =
+  leads.find(
+    (lead: any) =>
+
+      String(lead.id) ===
+      String(selectedLeadId)
+
+  ) || leads[0]
+
 ---
 
 <Layout>
 
-  <!-- AUTH LOADER -->
+  <main class="min-h-screen bg-[#f5f7fb] text-zinc-900 flex">
 
-  <div
-    id="authLoader"
-    class="fixed inset-0 bg-black z-[9999] flex items-center justify-center text-white text-xl"
-  >
-    Loading dashboard...
-  </div>
+    <!-- SIDEBAR -->
 
-  <!-- ADMIN -->
+    <Sidebar
+      businessName={client.businessName}
+    />
 
-  <main
-    id="adminContent"
-    class="min-h-screen bg-black text-white p-4 md:p-6 hidden"
-  >
+    <!-- CONTENT -->
 
-    <div class="max-w-7xl mx-auto">
+    <div class="flex-1 min-w-0">
 
-      <!-- HEADER -->
+      <!-- TOPBAR -->
 
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+      <div class="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-zinc-200">
 
-        <div>
+        <div class="px-8 py-5 flex items-center justify-between">
 
-          <p class="uppercase tracking-[0.2em] text-xs text-zinc-500">
-            Lead Dashboard
-          </p>
+          <!-- LEFT -->
 
-          <h1
-            id="businessName"
-            class="text-3xl font-bold"
-          >
-            {client.businessName}
-          </h1>
+          <div>
 
-        </div>
-
-        <div class="flex items-center gap-3">
-
-          <div class="bg-zinc-900 border border-zinc-800 rounded-2xl px-4 py-3">
-
-            <p class="text-zinc-500 text-xs">
-              Total Leads
+            <p class="text-sm text-zinc-500">
+              Welcome back 👋
             </p>
 
-            <p
-              id="totalLeads"
-              class="text-2xl font-bold"
-            >
-              0
-            </p>
+            <h1 class="text-3xl font-bold tracking-tight text-zinc-900">
+              CRM Dashboard
+            </h1>
 
           </div>
 
-          <button
-            id="logoutBtn"
-            class="bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 px-4 py-3 rounded-2xl text-sm transition"
-          >
-            Logout
-          </button>
+          <!-- RIGHT -->
+
+          <div class="flex items-center gap-4">
+
+            <!-- USER -->
+
+            <div class="hidden md:flex items-center gap-3">
+
+              <div class="text-right">
+
+                <p class="text-sm font-semibold text-zinc-900">
+                  Admin
+                </p>
+
+                <p class="text-xs text-zinc-500">
+                  CRM Manager
+                </p>
+
+              </div>
+
+              <div class="w-11 h-11 rounded-2xl bg-zinc-100 flex items-center justify-center text-sm font-bold text-zinc-700">
+
+                A
+
+              </div>
+
+            </div>
+
+            <!-- LOGOUT -->
+
+            <button
+              id="logoutBtn"
+              class="bg-red-50 hover:bg-red-100 border border-red-200 text-red-500 px-4 py-2.5 rounded-2xl text-sm font-semibold transition"
+            >
+
+              Logout
+
+            </button>
+
+          </div>
 
         </div>
 
       </div>
 
-      <!-- TABLE -->
+      <!-- MAIN -->
 
-      <div class="border border-zinc-800 rounded-3xl bg-zinc-950 overflow-hidden overflow-x-auto">
+      <div class="p-8 space-y-10">
 
-        <table class="w-full text-sm min-w-[1000px]">
+        <!-- DASHBOARD -->
 
-          <thead class="bg-zinc-900 border-b border-zinc-800">
+        <DashboardSection
+          analytics={analytics}
+          leads={leads}
+        />
 
-            <tr class="text-zinc-400">
+        <!-- LEADS -->
 
-              <th class="p-4 text-left">
-                Lead
-              </th>
+        <LeadsSection
+          leads={leads}
+          totalPages={totalPages}
+          leadStatuses={client.leadStatuses}
+        />
 
-              <th class="p-4 text-left">
-                Source
-              </th>
+        <!-- ANALYTICS -->
 
-              <th class="p-4 text-left">
-                Campaign
-              </th>
+        <AnalyticsSection
+          allLeads={allLeads}
+        />
 
-              <th class="p-4 text-left">
-                Status
-              </th>
+        <!-- SETTINGS -->
 
-              <th class="p-4 text-left">
-                Message
-              </th>
+        <section
+          id="settingsSection"
+          class="dashboard-section hidden"
+        >
 
-            </tr>
+          <div class="bg-white border border-zinc-200 rounded-[32px] p-10 shadow-sm">
 
-          </thead>
+            <p class="text-sm text-zinc-500 font-medium">
+              Settings
+            </p>
 
-          <tbody id="leadsTable"></tbody>
+            <h2 class="text-4xl font-bold tracking-tight text-zinc-900 mt-2">
+              CRM Settings
+            </h2>
 
-        </table>
+            <p class="text-zinc-500 mt-4 leading-relaxed max-w-2xl">
+              Settings panel coming soon.
+            </p>
+
+          </div>
+
+        </section>
+
+        <!-- LEAD DETAILS -->
+
+        <section
+          id="leadDetailsSection"
+          class="dashboard-section hidden"
+        >
+
+          <LeadDetails
+            lead={selectedLead}
+          />
+
+        </section>
 
       </div>
 
@@ -117,432 +234,92 @@ import { client } from '../config/client'
 </Layout>
 
 <script
-  define:vars={{
-    supabaseUrl:
-      import.meta.env.PUBLIC_SUPABASE_URL,
-
-    supabaseKey:
-      import.meta.env.PUBLIC_SUPABASE_ANON_KEY,
-
-    leadStatuses:
-      client.leadStatuses
-  }}
   type="module"
 >
 
-  import { createClient }
-  from 'https://esm.sh/@supabase/supabase-js'
+  // =========================
+  // SCRIPT MODULES
+  // =========================
 
-  const supabase = createClient(
-    supabaseUrl,
-    supabaseKey
-  )
-
-  // AUTH
-
-  const {
-    data: { session }
-  } = await supabase.auth.getSession()
-
-  if (!session) {
-
-    window.location.href = '/login'
-
+  import {
+    initNavigation
   }
+  from '../src/scripts/admin/navigation.js'
 
-  // USER
-
-// USER
-
-const userEmail =
-  session.user.email
-
-console.log(
-  'RAW EMAIL:',
-  JSON.stringify(userEmail)
-)
-
-console.log(
-  'SESSION EMAIL:',
-  userEmail
-)
-
-const {
-  data: userData,
-  error: userError
-} = await supabase
-
-  .from('users')
-
-  .select('*')
-
-  .ilike(
-    'email',
-    userEmail.trim()
-  )
-
-  .maybeSingle()
-
-console.log(
-  'USER DATA:',
-  userData
-)
-
-console.log(
-  'USER ERROR:',
-  userError
-)
-
-if (userError) {
-
-  console.error(userError)
-
-  alert('Users table error')
-
-  throw userError
-
-}
-
-if (!userData) {
-
-  console.error(
-    'NO USER FOUND'
-  )
-
-  alert(
-    `No user found for: ${userEmail}`
-  )
-
-  throw new Error(
-    'No user found'
-  )
-
-}
-
-const clientId =
-  userData.client_id
-
-console.log(
-  'CLIENT ID:',
-  clientId
-)
-
-  // LEADS
-
-  const {
-    data: leads,
-    error: leadsError
-  } = await supabase
-
-    .from('leads')
-
-    .select('*')
-
-    .eq('client_id', clientId)
-
-    .order('created_at', {
-      ascending: false
-    })
-
-  if (leadsError) {
-
-    console.error(leadsError)
-
+  import {
+    initLeadsView
   }
+  from '../src/scripts/admin/leads-view.js'
 
-  // SHOW CONTENT
-
-  document
-    .getElementById('authLoader')
-    .classList
-    .add('hidden')
-
-  document
-    .getElementById('adminContent')
-    .classList
-    .remove('hidden')
-
-  // TOTAL
-
-  document
-    .getElementById('totalLeads')
-    .innerText = leads?.length || 0
-
-  // TABLE
-
-  const table =
-    document.getElementById('leadsTable')
-
-  table.innerHTML =
-    leads.map((lead, index) => `
-
-      <tr class="border-t border-zinc-800 hover:bg-zinc-900/40 transition">
-
-        <!-- LEAD -->
-
-        <td class="p-4">
-
-          <div class="space-y-1">
-
-            <p class="font-semibold text-white">
-              ${lead.name || '-'}
-            </p>
-
-            <a
-              href="tel:${lead.phone}"
-              class="text-green-400 hover:text-green-300 transition block"
-            >
-              ${lead.phone || '-'}
-            </a>
-
-            <p class="text-xs text-zinc-500">
-              ${new Date(lead.created_at).toLocaleString()}
-            </p>
-
-          </div>
-
-        </td>
-
-        <!-- SOURCE -->
-
-        <td class="p-4">
-
-          <span class="bg-zinc-800 border border-zinc-700 px-3 py-1 rounded-full text-xs text-zinc-300 inline-flex">
-
-            ${lead.utm_source || lead.source || '-'}
-
-          </span>
-
-        </td>
-
-        <!-- CAMPAIGN -->
-
-        <td class="p-4 text-zinc-400">
-
-          ${lead.utm_campaign || '-'}
-
-        </td>
-
-        <!-- STATUS -->
-
-        <td class="p-4">
-
-          <div class="flex items-center gap-2">
-
-            <select
-              id="status-${lead.id}"
-              class="bg-zinc-900 border border-zinc-700 hover:border-zinc-500 rounded-xl px-3 py-2 text-sm outline-none transition"
-            >
-
-              ${leadStatuses.map(status => `
-
-                <option
-                  value="${status}"
-                  ${lead.status === status ? 'selected' : ''}
-                >
-                  ${status}
-                </option>
-
-              `).join('')}
-
-            </select>
-
-            <button
-              class="saveBtn bg-green-600 hover:bg-green-700 px-3 py-2 rounded-xl text-xs font-semibold transition"
-              data-id="${lead.id}"
-            >
-              Save
-            </button>
-
-          </div>
-
-          <p
-            id="saved-${lead.id}"
-            class="text-xs text-zinc-500 mt-1"
-          ></p>
-
-        </td>
-
-        <!-- MESSAGE -->
-
-        <td class="p-4">
-
-          <button
-            onclick="openModal(${index})"
-            class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 px-3 py-2 rounded-xl text-xs transition"
-          >
-            View Message
-          </button>
-
-          <div
-            id="modal-${index}"
-            class="hidden fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-6"
-          >
-
-            <div class="bg-zinc-950 border border-zinc-800 rounded-3xl max-w-2xl w-full p-8 relative">
-
-              <button
-                onclick="closeModal(${index})"
-                class="absolute top-4 right-4 text-zinc-500 hover:text-white text-xl"
-              >
-                ×
-              </button>
-
-              <h2 class="text-2xl font-bold mb-6">
-                Lead Message
-              </h2>
-
-              <div class="space-y-4">
-
-                <div>
-
-                  <p class="text-zinc-500 text-sm mb-1">
-                    Name
-                  </p>
-
-                  <p class="text-white">
-                    ${lead.name || '-'}
-                  </p>
-
-                </div>
-
-                <div>
-
-                  <p class="text-zinc-500 text-sm mb-1">
-                    Phone
-                  </p>
-
-                  <p class="text-white">
-                    ${lead.phone || '-'}
-                  </p>
-
-                </div>
-
-                <div>
-
-                  <p class="text-zinc-500 text-sm mb-1">
-                    Message
-                  </p>
-
-                  <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 whitespace-pre-wrap text-zinc-300">
-
-                    ${lead.message || 'No message'}
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </td>
-
-      </tr>
-
-    `).join('')
-
-  // MODALS
-
-  window.openModal = (index) => {
-
-    document
-      .getElementById(`modal-${index}`)
-      .classList
-      .remove('hidden')
-
+  import {
+    initFilters
   }
+  from '../src/scripts/admin/filters.js'
 
-  window.closeModal = (index) => {
-
-    document
-      .getElementById(`modal-${index}`)
-      .classList
-      .add('hidden')
-
+  import {
+    initPagination
   }
+  from '../src/scripts/admin/pagination.js'
 
-  // LOGOUT
+  import {
+    initKanban
+  }
+  from '../src/scripts/admin/kanban.js'
 
-  const logoutBtn =
-    document.getElementById('logoutBtn')
+  import {
+    initLeadDetails
+  }
+  from '../src/scripts/admin/lead-details.js'
 
-  logoutBtn.addEventListener('click', async () => {
+  import {
+    initModals
+  }
+  from '../src/scripts/admin/modals.js'
+  
+  import {
+  initLeadActions
+  }
+  from '../src/scripts/admin/lead-actions.js'
 
-    await supabase.auth.signOut()
+  import {
+  initRealtime
+  }
+  from '../src/scripts/admin/realtime.js'
 
-    window.location.href = '/login'
+  import {
+  initAuth
+  }
+  from '../src/scripts/admin/auth.js'
 
-  })
+  import {
+  initExport
+  }
+  from '../src/scripts/admin/export.js'
 
-  // STATUS SAVE
+  // =========================
+  // INIT MODULES
+  // =========================
 
-  const saveButtons =
-    document.querySelectorAll('.saveBtn')
+  initLeadDetails()
 
-  saveButtons.forEach((button) => {
+  initNavigation()
 
-    button.addEventListener('click', async () => {
+  initLeadsView()
 
-      const id =
-        button.dataset.id
+  initFilters()
 
-      const statusSelect =
-        document.getElementById(`status-${id}`)
+  initPagination()
 
-      const status =
-        statusSelect.value
+  initKanban()
 
-      const savedText =
-        document.getElementById(`saved-${id}`)
+  initModals()
 
-      savedText.innerText =
-        'Saving...'
+  initLeadActions()
 
-      try {
+  initRealtime()
 
-        const response =
-          await fetch('/api/update-status', {
+  initAuth()
 
-            method: 'POST',
-
-            headers: {
-              'Content-Type': 'application/json'
-            },
-
-            body: JSON.stringify({
-              id,
-              status
-            })
-
-          })
-
-        if (!response.ok) {
-
-          savedText.innerText =
-            'Error'
-
-          return
-
-        }
-
-        savedText.innerText =
-          'Saved ✓'
-
-      } catch (err) {
-
-        console.error(err)
-
-        savedText.innerText =
-          'Error'
-
-      }
-
-    })
-
-  })
+  initExport()
 
 </script>
-

@@ -1,0 +1,399 @@
+---
+import LeadTrendsChart
+from '../LeadTrendsChart.astro'
+
+const {
+  allLeads
+} = Astro.props
+
+// =========================
+// PIPELINE COUNTS
+// =========================
+
+const totalLeads =
+  allLeads.length
+
+const newLeads =
+  allLeads.filter(
+    (lead: any) =>
+      lead.status === 'new'
+  ).length
+
+const contactedLeads =
+  allLeads.filter(
+    (lead: any) =>
+      lead.status === 'contacted'
+  ).length
+
+const wonLeads =
+  allLeads.filter(
+    (lead: any) =>
+      lead.status === 'won'
+  ).length
+
+// =========================
+// SOURCE ANALYTICS
+// =========================
+
+const sourceAnalytics =
+
+  Object.entries(
+
+    allLeads.reduce(
+      (acc: any, lead: any) => {
+
+        const source =
+
+          String(
+
+            lead.utm_source ||
+            lead.source ||
+            'unknown'
+
+          )
+
+          .trim()
+
+          .toLowerCase()
+
+        if (!acc[source]) {
+
+          acc[source] = {
+
+            total: 0,
+            won: 0
+
+          }
+
+        }
+
+        acc[source].total++
+
+        if (
+          lead.status === 'won'
+        ) {
+
+          acc[source].won++
+
+        }
+
+        return acc
+
+      },
+
+      {}
+
+    )
+
+  )
+---
+
+<section
+  id="analyticsSection"
+  class="dashboard-section hidden"
+>
+
+  <div class="space-y-8">
+
+    <!-- HEADER -->
+
+    <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
+
+      <!-- LEFT -->
+
+      <div>
+
+        <p class="text-sm font-medium text-zinc-500">
+          CRM Insights
+        </p>
+
+        <h2 class="text-4xl font-bold tracking-tight text-zinc-900 mt-1">
+          Analytics
+        </h2>
+
+      </div>
+
+      <!-- RIGHT -->
+
+      <div class="flex items-center gap-3">
+
+        <div class="bg-white border border-zinc-200 rounded-2xl px-5 py-3 shadow-sm">
+
+          <p class="text-xs uppercase tracking-[0.14em] text-zinc-400 font-semibold">
+
+            Total Leads
+
+          </p>
+
+          <p class="text-2xl font-bold text-zinc-900 mt-1">
+
+            {totalLeads}
+
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- CHART -->
+
+    <LeadTrendsChart
+      leads={allLeads}
+    />
+
+    <!-- FUNNEL -->
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+      <!-- NEW -->
+
+      <div class="bg-white border border-zinc-200 rounded-[30px] p-7 shadow-sm">
+
+        <div class="flex items-center justify-between">
+
+          <div>
+
+            <p class="text-xs uppercase tracking-[0.14em] text-zinc-400 font-semibold">
+
+              New
+
+            </p>
+
+            <h3 class="text-5xl font-bold tracking-tight text-zinc-900 mt-4">
+
+              {newLeads}
+
+            </h3>
+
+          </div>
+
+          <div class="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center text-2xl">
+
+            🆕
+
+          </div>
+
+        </div>
+
+        <!-- BAR -->
+
+        <div class="mt-8 h-2.5 bg-zinc-100 rounded-full overflow-hidden">
+
+          <div
+            class="h-full bg-blue-500 rounded-full"
+            style={`width:${(newLeads / totalLeads) * 100}%`}
+          ></div>
+
+        </div>
+
+      </div>
+
+      <!-- CONTACTED -->
+
+      <div class="bg-white border border-zinc-200 rounded-[30px] p-7 shadow-sm">
+
+        <div class="flex items-center justify-between">
+
+          <div>
+
+            <p class="text-xs uppercase tracking-[0.14em] text-zinc-400 font-semibold">
+
+              Contacted
+
+            </p>
+
+            <h3 class="text-5xl font-bold tracking-tight text-zinc-900 mt-4">
+
+              {contactedLeads}
+
+            </h3>
+
+          </div>
+
+          <div class="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center text-2xl">
+
+            📞
+
+          </div>
+
+        </div>
+
+        <!-- BAR -->
+
+        <div class="mt-8 h-2.5 bg-zinc-100 rounded-full overflow-hidden">
+
+          <div
+            class="h-full bg-amber-500 rounded-full"
+            style={`width:${(contactedLeads / totalLeads) * 100}%`}
+          ></div>
+
+        </div>
+
+      </div>
+
+      <!-- WON -->
+
+      <div class="bg-white border border-zinc-200 rounded-[30px] p-7 shadow-sm">
+
+        <div class="flex items-center justify-between">
+
+          <div>
+
+            <p class="text-xs uppercase tracking-[0.14em] text-zinc-400 font-semibold">
+
+              Won
+
+            </p>
+
+            <h3 class="text-5xl font-bold tracking-tight text-emerald-600 mt-4">
+
+              {wonLeads}
+
+            </h3>
+
+          </div>
+
+          <div class="w-14 h-14 rounded-2xl bg-emerald-100 flex items-center justify-center text-2xl">
+
+            💰
+
+          </div>
+
+        </div>
+
+        <!-- BAR -->
+
+        <div class="mt-8 h-2.5 bg-zinc-100 rounded-full overflow-hidden">
+
+          <div
+            class="h-full bg-emerald-500 rounded-full"
+            style={`width:${(wonLeads / totalLeads) * 100}%`}
+          ></div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- SOURCE ANALYTICS -->
+
+    <div>
+
+      <!-- HEADER -->
+
+      <div class="mb-6">
+
+        <p class="text-sm font-medium text-zinc-500">
+          Lead Sources
+        </p>
+
+        <h3 class="text-3xl font-bold tracking-tight text-zinc-900 mt-1">
+          Source Performance
+        </h3>
+
+      </div>
+
+      <!-- GRID -->
+
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+
+        {
+          sourceAnalytics.map(
+
+            ([source, data]: any) => {
+
+              const conversion =
+
+                data.total > 0
+
+                  ? Math.round(
+
+                      (data.won / data.total) * 100
+
+                    )
+
+                  : 0
+
+              return (
+
+                <div class="bg-white border border-zinc-200 rounded-[30px] p-6 shadow-sm">
+
+                  <!-- SOURCE -->
+
+                  <p class="text-sm font-medium text-zinc-500 capitalize">
+
+                    {source}
+
+                  </p>
+
+                  <!-- TOTAL -->
+
+                  <h3 class="text-5xl font-bold tracking-tight text-zinc-900 mt-5">
+
+                    {data.total}
+
+                  </h3>
+
+                  <p class="text-sm text-zinc-400 mt-2">
+
+                    Total Leads
+
+                  </p>
+
+                  <!-- FOOTER -->
+
+                  <div class="flex items-end justify-between mt-8">
+
+                    <div>
+
+                      <p class="text-xs uppercase tracking-[0.12em] text-zinc-400">
+
+                        Won
+
+                      </p>
+
+                      <p class="text-2xl font-bold text-emerald-600 mt-1">
+
+                        {data.won}
+
+                      </p>
+
+                    </div>
+
+                    <div class="text-right">
+
+                      <p class="text-xs uppercase tracking-[0.12em] text-zinc-400">
+
+                        Conversion
+
+                      </p>
+
+                      <p class="text-2xl font-bold text-zinc-900 mt-1">
+
+                        {conversion}%
+
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              )
+
+            }
+
+          )
+        }
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>

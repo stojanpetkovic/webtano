@@ -1,0 +1,409 @@
+---
+const {
+  leads
+} = Astro.props
+
+// =========================
+// GROUP LEADS BY DATE
+// =========================
+
+const groupedLeads =
+
+  leads.reduce(
+    (acc: any, lead: any) => {
+
+      const date =
+
+        new Date(
+          lead.created_at
+        )
+
+        .toISOString()
+
+        .split('T')[0]
+
+      if (!acc[date]) {
+
+        acc[date] = 0
+
+      }
+
+      acc[date]++
+
+      return acc
+
+    },
+
+    {}
+
+  )
+
+// =========================
+// CHART DATA
+// =========================
+
+const chartData =
+
+  Object.entries(
+    groupedLeads
+  )
+
+  .sort()
+
+  .map(
+
+    ([date, count]) => ({
+
+      date,
+      leads: count
+
+    })
+
+  )
+---
+
+<div class="bg-white border border-zinc-200 rounded-[32px] p-8 shadow-sm mt-12">
+
+  <!-- TOP -->
+
+  <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 mb-8">
+
+    <!-- LEFT -->
+
+    <div>
+
+      <p class="text-sm text-zinc-500 font-medium">
+        Lead Performance
+      </p>
+
+      <h3 class="text-3xl font-bold tracking-tight text-zinc-900 mt-1">
+        Leads Over Time
+      </h3>
+
+    </div>
+
+    <!-- FILTERS -->
+
+    <div class="flex items-center gap-3">
+
+      <!-- PERIOD -->
+
+      <select
+        id="chartPeriod"
+        class="bg-zinc-50 border border-zinc-200 rounded-2xl px-4 py-3 text-sm font-medium text-zinc-800 outline-none"
+      >
+
+        <option value="7">
+          Last 7 Days
+        </option>
+
+        <option value="30" selected>
+          Last 30 Days
+        </option>
+
+        <option value="90">
+          Last 90 Days
+        </option>
+
+        <option value="365">
+          Last Year
+        </option>
+
+      </select>
+
+    </div>
+
+  </div>
+
+  <!-- CHART -->
+
+  <div class="relative w-full h-[450px]">
+
+    <canvas
+      id="leadTrendsChart"
+      data-chart={JSON.stringify(chartData)}
+    ></canvas>
+
+  </div>
+
+</div>
+
+<!-- CHART JS -->
+
+<script
+  src="https://cdn.jsdelivr.net/npm/chart.js"
+></script>
+
+<!-- CHART -->
+
+<script is:inline>
+
+  const rawChartData =
+    JSON.parse(
+
+      document
+        .getElementById(
+          'leadTrendsChart'
+        )
+        ?.dataset.chart || '[]'
+
+    )
+
+  // =========================
+  // FILTER DATA BY PERIOD
+  // =========================
+
+  function getFilteredData(days) {
+
+    const now =
+      new Date()
+
+    const cutoff =
+      new Date()
+
+    cutoff.setDate(
+      now.getDate() - days
+    )
+
+    return rawChartData.filter(
+      item => {
+
+        const itemDate =
+          new Date(item.date)
+
+        return (
+          itemDate >= cutoff
+        )
+
+      }
+    )
+
+  }
+
+  // =========================
+  // RENDER CHART
+  // =========================
+
+  window.renderLeadChart =
+    (days = 30) => {
+
+      const chartEl =
+        document.getElementById(
+          'leadTrendsChart'
+        )
+
+      if (!chartEl) return
+
+      const data =
+        getFilteredData(days)
+
+      // DESTROY OLD
+
+      if (
+        window.leadsChart
+      ) {
+
+        window.leadsChart.destroy()
+
+      }
+
+      // CONTEXT
+
+      const ctx =
+        chartEl.getContext('2d')
+
+      // CREATE CHART
+
+      window.leadsChart =
+
+        new Chart(
+
+          ctx,
+
+          {
+
+            data: {
+
+              labels:
+                data.map(
+                  item => item.date
+                ),
+
+              datasets: [
+
+                // BARS
+
+                {
+
+                  type: 'bar',
+
+                  label: 'Daily Leads',
+
+                  data:
+                    data.map(
+                      item => item.leads
+                    ),
+
+                  backgroundColor:
+                    'rgba(24,24,27,0.08)',
+
+                  borderRadius: 12,
+
+                  borderSkipped: false
+
+                },
+
+                // LINE
+
+                {
+
+                  type: 'line',
+
+                  label: 'Trend',
+
+                  data:
+                    data.map(
+                      item => item.leads
+                    ),
+
+                  borderColor:
+                    '#18181b',
+
+                  backgroundColor:
+                    '#18181b',
+
+                  tension: 0.35,
+
+                  borderWidth: 3,
+
+                  pointRadius: 4,
+
+                  pointHoverRadius: 6,
+
+                  pointBackgroundColor:
+                    '#18181b',
+
+                  fill: false
+
+                }
+
+              ]
+
+            },
+
+            options: {
+
+              responsive: true,
+
+              maintainAspectRatio: false,
+
+              interaction: {
+
+                intersect: false,
+
+                mode: 'index'
+
+              },
+
+              plugins: {
+
+                legend: {
+
+                  display: false
+
+                }
+
+              },
+
+              scales: {
+
+                x: {
+
+                  grid: {
+
+                    display: false
+
+                  },
+
+                  ticks: {
+
+                    color:
+                      '#71717a'
+
+                  }
+
+                },
+
+                y: {
+
+                  beginAtZero: true,
+
+                  grid: {
+
+                    color:
+                      '#f4f4f5'
+
+                  },
+
+                  ticks: {
+
+                    color:
+                      '#71717a',
+
+                    stepSize: 1
+
+                  }
+
+                }
+
+              }
+
+            }
+
+          }
+
+        )
+
+    }
+
+  // =========================
+  // PERIOD FILTER
+  // =========================
+
+  const chartPeriod =
+    document.getElementById(
+      'chartPeriod'
+    )
+
+  chartPeriod?.addEventListener(
+    'change',
+    () => {
+
+      const days =
+        Number(
+          chartPeriod.value
+        )
+
+      window.renderLeadChart(
+        days
+      )
+
+    }
+  )
+
+  // INITIAL RENDER
+
+  window.addEventListener(
+    'load',
+    () => {
+
+      setTimeout(() => {
+
+        window.renderLeadChart(30)
+
+      }, 300)
+
+    }
+  )
+
+</script>

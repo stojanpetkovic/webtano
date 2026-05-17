@@ -6,7 +6,7 @@ export const client = {
 
   id: 'tree-jaws',
 
-  businessName: 'Tree Jaws',
+  businessName: 'WebTano',
 
   niche: 'Tree Removal',
 

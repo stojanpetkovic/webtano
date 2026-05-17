@@ -1,0 +1,54 @@
+---
+const {
+  lead,
+  leadStatuses
+} = Astro.props
+---
+
+<div class="flex items-center gap-3">
+
+  <!-- SELECT -->
+
+  <select
+    id={`status-${lead.id}`}
+    class="bg-white border border-zinc-200 hover:border-zinc-300 rounded-2xl px-4 py-3 text-sm font-medium text-zinc-800 outline-none transition shadow-sm min-w-[160px]"
+  >
+
+    {
+      leadStatuses.map((status: string) => (
+
+        <option
+          value={status}
+          selected={
+            lead.status === status
+          }
+        >
+
+          {status}
+
+        </option>
+
+      ))
+    }
+
+  </select>
+
+  <!-- SAVE BUTTON -->
+
+  <button
+    class="saveBtn bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-3 rounded-2xl text-sm font-semibold transition shadow-sm"
+    data-id={lead.id}
+  >
+
+    Save
+
+  </button>
+
+</div>
+
+<!-- STATUS MESSAGE -->
+
+<p
+  id={`saved-${lead.id}`}
+  class="text-xs text-zinc-500 mt-2"
+></p>

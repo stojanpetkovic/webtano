@@ -1,0 +1,200 @@
+---
+import LeadModal
+from './LeadModal.astro'
+
+import StatusSelect
+from './StatusSelect.astro'
+
+const {
+  leads,
+  leadStatuses
+} = Astro.props
+
+const typedLeads =
+  leads || []
+---
+
+<div class="overflow-hidden overflow-x-auto rounded-[28px] border border-zinc-200 bg-white shadow-sm">
+
+  <table class="w-full min-w-[1100px] text-sm">
+
+    <!-- HEAD -->
+
+    <thead class="bg-zinc-50 border-b border-zinc-200">
+
+      <tr>
+
+        <th class="px-6 py-5 text-left text-xs font-semibold uppercase tracking-[0.15em] text-zinc-500">
+          Lead
+        </th>
+
+        <th class="px-6 py-5 text-left text-xs font-semibold uppercase tracking-[0.15em] text-zinc-500">
+          Source
+        </th>
+
+        <th class="px-6 py-5 text-left text-xs font-semibold uppercase tracking-[0.15em] text-zinc-500">
+          Campaign
+        </th>
+
+        <th class="px-6 py-5 text-left text-xs font-semibold uppercase tracking-[0.15em] text-zinc-500">
+          Status
+        </th>
+
+        <th class="px-6 py-5 text-left text-xs font-semibold uppercase tracking-[0.15em] text-zinc-500">
+          Message
+        </th>
+
+      </tr>
+
+    </thead>
+
+    <!-- BODY -->
+
+    <tbody class="divide-y divide-zinc-100">
+
+      {
+        typedLeads.map((lead: any, index: number) => (
+
+          <tr class="hover:bg-zinc-50 transition">
+
+            <!-- LEAD -->
+
+            <td class="px-6 py-5">
+
+              <div class="flex items-start gap-4">
+
+                <!-- AVATAR -->
+
+                <div class="w-12 h-12 rounded-2xl bg-zinc-100 flex items-center justify-center text-sm font-bold text-zinc-700 shrink-0">
+
+                  {
+                    String(
+                      lead.name || 'L'
+                    )
+                    .charAt(0)
+                    .toUpperCase()
+                  }
+
+                </div>
+
+                <!-- INFO -->
+
+                <div class="min-w-0">
+
+                  <p class="font-semibold text-zinc-900 text-base truncate">
+
+                    {String(lead.name || '-')}
+
+                  </p>
+
+                  <a
+                    href={`tel:${lead.phone}`}
+                    class="text-green-600 hover:text-green-700 transition block mt-1 text-sm"
+                  >
+
+                    {String(lead.phone || '-')}
+
+                  </a>
+
+                  <p
+                    class="text-xs text-zinc-500 mt-2 lead-date"
+                    data-date={lead.created_at}
+                  >
+
+                    {
+                      new Date(
+                        lead.created_at
+                      ).toLocaleString()
+                    }
+
+                  </p>
+
+                </div>
+
+              </div>
+
+            </td>
+
+            <!-- SOURCE -->
+
+            <td class="px-6 py-5">
+
+              <span class="inline-flex items-center rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-700 border border-zinc-200">
+
+                {
+                  String(
+                    lead.utm_source ||
+                    lead.source ||
+                    '-'
+                  )
+                }
+
+              </span>
+
+            </td>
+
+            <!-- CAMPAIGN -->
+
+            <td class="px-6 py-5">
+
+              <div class="max-w-[220px] truncate text-zinc-600">
+
+                {
+                  String(
+                    lead.utm_campaign || '-'
+                  )
+                }
+
+              </div>
+
+            </td>
+
+            <!-- STATUS -->
+
+            <td class="px-6 py-5">
+
+              <StatusSelect
+                lead={lead}
+                leadStatuses={leadStatuses}
+              />
+
+            </td>
+
+            <!-- MESSAGE -->
+
+            <td class="px-6 py-5">
+
+              <div class="flex items-center gap-3">
+
+                <!-- QUICK VIEW -->
+
+                <LeadModal
+                  lead={lead}
+                  index={index}
+                />
+
+                <!-- DETAILS -->
+
+                <button
+                  onclick={`openLeadDetails('${lead.id}')`}
+                  class="bg-zinc-900 hover:bg-black text-white px-4 py-3 rounded-2xl text-sm font-semibold transition shadow-sm"
+                >
+
+                  Details
+
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+        ))
+      }
+
+    </tbody>
+
+  </table>
+
+</div>
