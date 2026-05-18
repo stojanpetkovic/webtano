@@ -1,125 +1,114 @@
 ---
-import NotesBox
-from './NotesBox.astro'
+// src/components/admin/LeadModal.astro
+import NotesBox from './NotesBox.astro'
 
 const {
   lead,
   index
 } = Astro.props
+
+// Mapa za stajling statusnog bedža
+const statusStyles: Record<string, string> = {
+  new: 'bg-blue-50 text-blue-700 border-blue-100',
+  contacted: 'bg-amber-50 text-amber-700 border-amber-200',
+  won: 'bg-emerald-50 text-emerald-700 border-emerald-100',
+  lost: 'bg-zinc-100 text-zinc-600 border-zinc-200'
+}
 ---
 
-<div>
-
-  <!-- BUTTON -->
+<div class="inline-block select-none">
 
   <button
     onclick={`openModal(${index})`}
-    class="bg-white hover:bg-zinc-100 border border-zinc-200 px-4 py-3 rounded-2xl text-sm font-medium transition shadow-sm"
+    class="bg-white hover:bg-zinc-50 border border-zinc-200/80 px-3 rounded-lg text-xs font-bold text-zinc-800 hover:text-zinc-950 transition shadow-sm h-8 whitespace-nowrap flex items-center justify-center cursor-pointer"
   >
-
     View Message
-
   </button>
-
-  <!-- MODAL -->
 
   <div
     id={`modal-${index}`}
-    class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-6"
+    class="hidden fixed inset-0 z-[9999] bg-zinc-950/60 backdrop-blur-xs flex items-center justify-center p-4"
   >
 
-    <div class="bg-white border border-zinc-200 rounded-[32px] max-w-2xl w-full p-8 relative overflow-y-auto max-h-[90vh] shadow-2xl">
-
-      <!-- CLOSE -->
+    <div class="bg-white border border-zinc-200/60 rounded-xl max-w-xl w-full p-5 relative overflow-y-auto max-h-[95vh] shadow-2xl z-[10000] animate-in fade-in zoom-in-95 duration-100">
 
       <button
         onclick={`closeModal(${index})`}
-        class="absolute top-5 right-5 w-10 h-10 rounded-2xl hover:bg-zinc-100 text-zinc-500 hover:text-zinc-900 text-xl transition"
+        class="absolute top-4 right-4 w-7 h-7 rounded-md hover:bg-zinc-50 text-zinc-400 hover:text-zinc-950 text-lg transition flex items-center justify-center font-bold border border-transparent hover:border-zinc-200/40 cursor-pointer"
       >
         ×
       </button>
 
-      <!-- TITLE -->
-
-      <div class="mb-8">
-
-        <p class="text-sm text-zinc-500 font-medium">
-          Lead Details
-        </p>
-
-        <h2 class="text-3xl font-bold tracking-tight text-zinc-900 mt-1">
+      <div class="mb-4 pb-2.5 border-b border-zinc-100">
+        <p class="text-[10px] uppercase tracking-[0.2em] text-zinc-400 font-bold leading-none">System Inspect</p>
+        <h2 class="text-sm font-bold tracking-tight text-zinc-900 mt-1.5 leading-none">
           Message Overview
         </h2>
+      </div>
+
+      <div class="space-y-4">
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <p class="text-[9px] uppercase tracking-wider text-zinc-400 font-bold mb-1">
+              Sender Name
+            </p>
+            <div class="bg-zinc-50 border border-zinc-200/80 rounded-lg px-3 py-1.5 text-xs text-zinc-900 font-bold h-8 flex items-center">
+              {String(lead.name || '-')}
+            </div>
+          </div>
+
+          <div>
+            <p class="text-[9px] uppercase tracking-wider text-zinc-400 font-bold mb-1">
+              Phone Number
+            </p>
+            <a
+              href={`tel:${lead.phone}`}
+              class="bg-zinc-50 border border-zinc-200/80 rounded-lg px-3 py-1.5 text-xs text-zinc-900 hover:text-zinc-950 font-bold h-8 flex items-center transition"
+            >
+              📞 <span class="ml-1.5 underline underline-offset-2">{String(lead.phone || '-')}</span>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <p class="text-[9px] uppercase tracking-wider text-zinc-400 font-bold mb-1">
+            Inquiry Message
+          </p>
+          <div class="bg-zinc-50 border border-zinc-200/80 rounded-lg p-3.5 whitespace-pre-wrap text-zinc-900 font-medium leading-relaxed text-xs">
+            {String(lead.message || 'No message left.')}
+          </div>
+        </div>
 
       </div>
 
-      <!-- CONTENT -->
+      <div class="my-4 border-t border-zinc-100"></div>
 
-      <div class="space-y-6">
+      <div>
+        <p class="text-[9px] uppercase tracking-wider text-zinc-400 font-bold mb-1">
+          Internal CRM Notes
+        </p>
+        
+        <textarea
+          id={`notes-${lead.id}`}
+          class="w-full min-h-[90px] bg-zinc-50 border border-zinc-200/80 rounded-lg p-3 text-xs font-semibold text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-zinc-400 transition resize-none"
+          placeholder="Write quick internal notes..."
+        >{lead.notes || ''}</textarea>
 
-        <!-- NAME -->
+        <div class="flex items-center justify-between mt-2">
+          <p
+            id={`notesSaved-${lead.id}`}
+            class="text-xs font-bold text-emerald-600"
+          ></p>
 
-        <div>
-
-          <p class="text-xs uppercase tracking-[0.15em] text-zinc-400 font-semibold mb-2">
-            Name
-          </p>
-
-          <div class="bg-zinc-50 border border-zinc-200 rounded-2xl px-5 py-4 text-zinc-900 font-medium">
-
-            {String(lead.name || '-')}
-
-          </div>
-
-        </div>
-
-        <!-- PHONE -->
-
-        <div>
-
-          <p class="text-xs uppercase tracking-[0.15em] text-zinc-400 font-semibold mb-2">
-            Phone
-          </p>
-
-          <a
-            href={`tel:${lead.phone}`}
-            class="bg-zinc-50 border border-zinc-200 rounded-2xl px-5 py-4 text-green-600 hover:text-green-700 font-medium block transition"
+          <button
+            class="saveNotesBtn bg-zinc-900 hover:bg-zinc-800 text-white px-3 h-8 rounded-lg text-xs font-bold transition shadow-sm cursor-pointer"
+            data-id={lead.id}
           >
-
-            {String(lead.phone || '-')}
-
-          </a>
-
+            Save Notes
+          </button>
         </div>
-
-        <!-- MESSAGE -->
-
-        <div>
-
-          <p class="text-xs uppercase tracking-[0.15em] text-zinc-400 font-semibold mb-2">
-            Message
-          </p>
-
-          <div class="bg-zinc-50 border border-zinc-200 rounded-3xl p-6 whitespace-pre-wrap text-zinc-700 leading-relaxed">
-
-            {
-              String(
-                lead.message ||
-                'No message'
-              )
-            }
-
-          </div>
-
-        </div>
-
       </div>
-
-      <!-- NOTES -->
-
-      <NotesBox
-        lead={lead}
-      />
 
     </div>
 

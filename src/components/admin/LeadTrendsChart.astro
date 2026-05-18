@@ -1,409 +1,201 @@
 ---
-const {
-  leads
-} = Astro.props
+// src/components/admin/LeadTrendsChart.astro
+const { leads } = Astro.props
+
+const safeLeads = leads || []
 
 // =========================
 // GROUP LEADS BY DATE
 // =========================
+const groupedLeads = safeLeads.reduce((acc: any, lead: any) => {
+  if (!lead.created_at) return acc;
+  
+  const date = new Date(lead.created_at).toISOString().split('T')[0]
 
-const groupedLeads =
-
-  leads.reduce(
-    (acc: any, lead: any) => {
-
-      const date =
-
-        new Date(
-          lead.created_at
-        )
-
-        .toISOString()
-
-        .split('T')[0]
-
-      if (!acc[date]) {
-
-        acc[date] = 0
-
-      }
-
-      acc[date]++
-
-      return acc
-
-    },
-
-    {}
-
-  )
+  if (!acc[date]) {
+    acc[date] = 0
+  }
+  acc[date]++
+  return acc
+}, {})
 
 // =========================
 // CHART DATA
 // =========================
-
-const chartData =
-
-  Object.entries(
-    groupedLeads
-  )
-
+const chartData = Object.entries(groupedLeads)
   .sort()
-
-  .map(
-
-    ([date, count]) => ({
-
-      date,
-      leads: count
-
-    })
-
-  )
+  .map(([date, count]) => ({
+    date,
+    leads: count
+  }))
 ---
 
-<div class="bg-white border border-zinc-200 rounded-[32px] p-8 shadow-sm mt-12">
+<div class="bg-white border border-zinc-200/60 p-4 rounded-xl shadow-sm flex flex-col h-full w-full select-none relative z-0">
 
-  <!-- TOP -->
-
-  <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 mb-8">
-
-    <!-- LEFT -->
-
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 pb-2.5 border-b border-zinc-100">
+    
     <div>
-
-      <p class="text-sm text-zinc-500 font-medium">
-        Lead Performance
-      </p>
-
-      <h3 class="text-3xl font-bold tracking-tight text-zinc-900 mt-1">
-        Leads Over Time
+      <p class="text-[10px] uppercase tracking-[0.2em] text-zinc-400 font-bold leading-none">Activity Analytics</p>
+      <h3 class="text-xs font-bold tracking-tight text-zinc-900 mt-1.5 leading-none">
+        Leads Trend
       </h3>
-
     </div>
 
-    <!-- FILTERS -->
-
-    <div class="flex items-center gap-3">
-
-      <!-- PERIOD -->
+    <div class="flex items-center gap-2 self-end sm:self-auto">
+      
+      <div id="chartCustomDates" class="hidden items-center gap-2">
+        <div class="flex items-center gap-1.5 bg-zinc-50 border border-zinc-200/60 rounded-lg px-2.5 text-[11px] font-bold text-zinc-800 h-8">
+          <span class="text-zinc-400 uppercase tracking-wider text-[9px] font-bold">Od:</span>
+          <input type="date" id="chartFromDate" class="bg-transparent outline-none cursor-pointer text-zinc-900" />
+        </div>
+        <div class="flex items-center gap-1.5 bg-zinc-50 border border-zinc-200/60 rounded-lg px-2.5 text-[11px] font-bold text-zinc-800 h-8">
+          <span class="text-zinc-400 uppercase tracking-wider text-[9px] font-bold">Do:</span>
+          <input type="date" id="chartToDate" class="bg-transparent outline-none cursor-pointer text-zinc-900" />
+        </div>
+      </div>
 
       <select
         id="chartPeriod"
-        class="bg-zinc-50 border border-zinc-200 rounded-2xl px-4 py-3 text-sm font-medium text-zinc-800 outline-none"
+        class="bg-zinc-50 border border-zinc-200/60 rounded-lg px-2.5 text-xs font-bold text-zinc-900 outline-none cursor-pointer focus:border-zinc-400 transition h-8"
       >
-
-        <option value="7">
-          Last 7 Days
-        </option>
-
-        <option value="30" selected>
-          Last 30 Days
-        </option>
-
-        <option value="90">
-          Last 90 Days
-        </option>
-
-        <option value="365">
-          Last Year
-        </option>
-
+        <option value="7">Last 7 Days</option>
+        <option value="30" selected>Last 30 Days</option>
+        <option value="90">Last 90 Days</option>
+        <option value="365">Last Year</option>
+        <option value="custom">Custom Period</option>
       </select>
-
     </div>
 
   </div>
 
-  <!-- CHART -->
-
-  <div class="relative w-full h-[450px]">
-
+  <div class="relative w-full flex-1 min-h-[260px]">
     <canvas
       id="leadTrendsChart"
       data-chart={JSON.stringify(chartData)}
     ></canvas>
-
   </div>
 
 </div>
 
-<!-- CHART JS -->
-
-<script
-  src="https://cdn.jsdelivr.net/npm/chart.js"
-></script>
-
-<!-- CHART -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js" is:inline></script>
 
 <script is:inline>
-
-  const rawChartData =
-    JSON.parse(
-
-      document
-        .getElementById(
-          'leadTrendsChart'
-        )
-        ?.dataset.chart || '[]'
-
-    )
-
-  // =========================
-  // FILTER DATA BY PERIOD
-  // =========================
-
-  function getFilteredData(days) {
-
-    const now =
-      new Date()
-
-    const cutoff =
-      new Date()
-
-    cutoff.setDate(
-      now.getDate() - days
-    )
-
-    return rawChartData.filter(
-      item => {
-
-        const itemDate =
-          new Date(item.date)
-
-        return (
-          itemDate >= cutoff
-        )
-
-      }
-    )
-
+  function formatChartDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('sr-RS', { day: 'numeric', month: 'short' });
   }
 
-  // =========================
-  // RENDER CHART
-  // =========================
+  const chartEl = document.getElementById('leadTrendsChart');
+  const rawChartData = JSON.parse(chartEl?.dataset.chart || '[]');
 
-  window.renderLeadChart =
-    (days = 30) => {
+  function getFilteredData(periodType) {
+    if (periodType === 'custom') {
+      const fromVal = document.getElementById('chartFromDate').value;
+      const toVal = document.getElementById('chartToDate').value;
 
-      const chartEl =
-        document.getElementById(
-          'leadTrendsChart'
-        )
+      const fromDate = fromVal ? new Date(fromVal) : new Date(0);
+      const toDate = toVal ? new Date(toVal) : new Date();
+      toDate.setHours(23, 59, 59, 999);
 
-      if (!chartEl) return
+      return rawChartData.filter(item => {
+        const itemDate = new Date(item.date);
+        return itemDate >= fromDate && itemDate <= toDate;
+      });
+    }
 
-      const data =
-        getFilteredData(days)
+    const days = Number(periodType) || 30;
+    const now = new Date();
+    const cutoff = new Date();
+    cutoff.setDate(now.getDate() - days);
 
-      // DESTROY OLD
+    return rawChartData.filter(item => {
+      const itemDate = new Date(item.date);
+      return itemDate >= cutoff;
+    });
+  }
 
-      if (
-        window.leadsChart
-      ) {
+  window.renderLeadChart = (periodType = '30') => {
+    const currentChartEl = document.getElementById('leadTrendsChart');
+    if (!currentChartEl) return;
 
-        window.leadsChart.destroy()
+    const data = getFilteredData(periodType);
 
-      }
+    if (window.leadsChart) {
+      window.leadsChart.destroy();
+    }
 
-      // CONTEXT
+    const ctx = currentChartEl.getContext('2d');
 
-      const ctx =
-        chartEl.getContext('2d')
-
-      // CREATE CHART
-
-      window.leadsChart =
-
-        new Chart(
-
-          ctx,
-
+    window.leadsChart = new Chart(ctx, {
+      data: {
+        labels: data.map(item => formatChartDate(item.date)),
+        datasets: [
           {
-
-            data: {
-
-              labels:
-                data.map(
-                  item => item.date
-                ),
-
-              datasets: [
-
-                // BARS
-
-                {
-
-                  type: 'bar',
-
-                  label: 'Daily Leads',
-
-                  data:
-                    data.map(
-                      item => item.leads
-                    ),
-
-                  backgroundColor:
-                    'rgba(24,24,27,0.08)',
-
-                  borderRadius: 12,
-
-                  borderSkipped: false
-
-                },
-
-                // LINE
-
-                {
-
-                  type: 'line',
-
-                  label: 'Trend',
-
-                  data:
-                    data.map(
-                      item => item.leads
-                    ),
-
-                  borderColor:
-                    '#18181b',
-
-                  backgroundColor:
-                    '#18181b',
-
-                  tension: 0.35,
-
-                  borderWidth: 3,
-
-                  pointRadius: 4,
-
-                  pointHoverRadius: 6,
-
-                  pointBackgroundColor:
-                    '#18181b',
-
-                  fill: false
-
-                }
-
-              ]
-
-            },
-
-            options: {
-
-              responsive: true,
-
-              maintainAspectRatio: false,
-
-              interaction: {
-
-                intersect: false,
-
-                mode: 'index'
-
-              },
-
-              plugins: {
-
-                legend: {
-
-                  display: false
-
-                }
-
-              },
-
-              scales: {
-
-                x: {
-
-                  grid: {
-
-                    display: false
-
-                  },
-
-                  ticks: {
-
-                    color:
-                      '#71717a'
-
-                  }
-
-                },
-
-                y: {
-
-                  beginAtZero: true,
-
-                  grid: {
-
-                    color:
-                      '#f4f4f5'
-
-                  },
-
-                  ticks: {
-
-                    color:
-                      '#71717a',
-
-                    stepSize: 1
-
-                  }
-
-                }
-
-              }
-
-            }
-
+            type: 'bar',
+            label: 'Daily Leads',
+            data: data.map(item => item.leads),
+            backgroundColor: 'rgba(24, 24, 27, 0.03)', 
+            borderRadius: 3, 
+            borderSkipped: false,
+            barPercentage: 0.4
+          },
+          {
+            type: 'line',
+            label: 'Trend',
+            data: data.map(item => item.leads),
+            borderColor: '#18181b', 
+            backgroundColor: '#18181b',
+            tension: 0.15, // Čiste, oštrije inženjerske linije
+            borderWidth: 2,
+            pointRadius: 1.5,
+            pointHoverRadius: 4,
+            pointBackgroundColor: '#18181b',
+            fill: false
           }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { intersect: false, mode: 'index' },
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: '#a1a1aa', font: { size: 9, weight: '600' } } },
+          y: { beginAtZero: true, grid: { color: '#f4f4f5' }, ticks: { color: '#a1a1aa', font: { size: 9, weight: '600' }, stepSize: 1, precision: 0 } }
+        }
+      }
+    });
+  };
 
-        )
+  const chartPeriod = document.getElementById('chartPeriod');
+  const customDatesWrapper = document.getElementById('chartCustomDates');
+  const fromInput = document.getElementById('chartFromDate');
+  const toInput = document.getElementById('chartToDate');
 
+  chartPeriod?.addEventListener('change', () => {
+    const value = chartPeriod.value;
+    if (value === 'custom') {
+      customDatesWrapper.style.display = 'flex';
+      window.renderLeadChart('custom');
+    } else {
+      customDatesWrapper.style.display = 'none';
+      window.renderLeadChart(value);
     }
+  });
 
-  // =========================
-  // PERIOD FILTER
-  // =========================
+  fromInput?.addEventListener('change', () => window.renderLeadChart('custom'));
+  toInput?.addEventListener('change', () => window.renderLeadChart('custom'));
 
-  const chartPeriod =
-    document.getElementById(
-      'chartPeriod'
-    )
+  function initChart() {
+    setTimeout(() => {
+      window.renderLeadChart('30');
+    }, 50);
+  }
 
-  chartPeriod?.addEventListener(
-    'change',
-    () => {
-
-      const days =
-        Number(
-          chartPeriod.value
-        )
-
-      window.renderLeadChart(
-        days
-      )
-
-    }
-  )
-
-  // INITIAL RENDER
-
-  window.addEventListener(
-    'load',
-    () => {
-
-      setTimeout(() => {
-
-        window.renderLeadChart(30)
-
-      }, 300)
-
-    }
-  )
-
+  // Restart / Re-init rešenje za Astro SPA prelaze
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    initChart();
+  } else {
+    document.addEventListener('DOMContentLoaded', initChart);
+  }
 </script>

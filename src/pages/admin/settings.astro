@@ -1,0 +1,22 @@
+---
+// src/pages/admin/settings.astro
+import Layout from '../../layouts/Layout.astro'
+import { client } from '../../config/client'
+import Sidebar from '../../components/admin/Sidebar.astro'
+---
+<Layout>
+  <main class="min-h-screen bg-[#f5f7fb] text-zinc-900 flex">
+    <Sidebar businessName={client.businessName} currentRoute="/admin/settings" />
+    <div class="flex-1 min-w-0">
+      <div class="p-8 space-y-10">
+        <section id="settingsSection">
+          <div class="bg-white border border-zinc-200 rounded-[32px] p-10 shadow-sm">
+            <p class="text-sm text-zinc-500 font-medium">Settings</p>
+            <h2 class="text-4xl font-bold tracking-tight text-zinc-900 mt-2">CRM Settings</h2>
+            <p class="text-zinc-500 mt-4 leading-relaxed max-w-2xl">Settings panel coming soon.</p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</Layout>

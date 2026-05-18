@@ -1,28 +1,46 @@
 ---
+// src/layouts/Layout.astro
 import '../styles/global.css'
+import Sidebar from '../components/admin/Sidebar.astro'
+import AdminHeader from '../components/admin/AdminHeader.astro'
+import { client } from '../config/client'
+
+// Izvlačimo currentRoute iz props-a kako bi prosledili Sidebar-u za aktivni link
+const { currentRoute, title = "CRM Sistem" } = Astro.props
 ---
 
 <!DOCTYPE html>
-
-<html lang="en">
-
+<html lang="en" class="h-full">
 <head>
-
   <meta charset="UTF-8" />
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
-
-  <title>WebTano</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title} | {client.businessName}</title>
 </head>
+<body class="bg-[#f5f7fb] text-zinc-900 h-full overflow-hidden antialiased">
 
-<body class="bg-black text-white">
+  <main class="w-full h-full flex flex-row overflow-hidden">
+    
+    <div class="shrink-0 h-full hidden md:block">
+      <Sidebar businessName={client.businessName} currentRoute={currentRoute} />
+    </div>
 
-  <slot />
+    <div class="flex-1 min-w-0 h-full flex flex-col overflow-hidden">
+      
+      <div class="flex-1 overflow-y-auto px-6 py-8 md:px-12 md:py-10">
+        
+        <div class="max-w-[1600px] mx-auto space-y-8">
+          
+          <AdminHeader businessName={client.businessName} />
+
+          <slot />
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
 
 </body>
-
 </html>

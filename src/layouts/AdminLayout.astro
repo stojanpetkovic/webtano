@@ -1,0 +1,243 @@
+---
+// src/layouts/AdminLayout.astro
+import AdminHeader from '../components/admin/AdminHeader.astro'
+
+const { title = "Admin Panel" } = Astro.props
+const currentPath = Astro.url.pathname
+
+const navItems = [
+  { href: '/admin', label: 'Business Analytics', icon: '📊' },
+  { href: '/admin/leads', label: 'Leads Pipeline', icon: '👥' },
+  { href: '/admin/settings', label: 'Configuration', icon: '⚙️' }
+]
+---
+
+<!DOCTYPE html>
+<html lang="sr" class="h-full scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <style>
+    /* Premium zaštitni sloj: Sprečava bilo kakav vizuelni trzaj (FOUC) pre provere tokena */
+    html { opacity: 0; transition: opacity 0.15s ease-in-out; }
+    html.auth-ready { opacity: 1; }
+    
+    /* Sakrivanje skrolbara za čistiji minimalistički izgled gde je to potrebno */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-zinc-50 text-zinc-900 h-full flex flex-col antialiased font-sans overflow-hidden selection:bg-zinc-900 selection:text-white">
+
+  <AdminHeader businessName="WebTano" />
+
+  <div class="flex flex-1 w-full relative overflow-hidden h-[calc(100vh-60px)]">
+    
+    <aside class="w-[240px] bg-white border-r border-zinc-200/60 flex flex-col justify-between shrink-0 hidden lg:flex select-none z-10">
+      
+      <div class="p-4 space-y-6">
+        <div>
+          <p class="px-3 text-[10px] uppercase tracking-[0.25em] text-zinc-400 font-bold leading-none">
+            Workspace
+          </p>
+          <nav class="mt-4 space-y-1">
+            {navItems.map((item) => {
+              const isActive = currentPath === item.href || (item.href === '/admin' && currentPath === '/admin/')
+              return (
+                <a 
+                  href={item.href} 
+                  class={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-bold transition-all duration-150 group relative ${
+                    isActive
+                      ? 'bg-zinc-900 text-white shadow-sm' 
+                      : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-950'
+                  }`}
+                >
+                  <span class={`text-sm transition-transform duration-150 ${isActive ? '' : 'group-hover:scale-105'}`}>
+                    {item.icon}
+                  </span>
+                  <span>{item.label}</span>
+                  
+                  {isActive && (
+                    <span class="absolute right-3 w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                  )}
+                </a>
+              )
+            })}
+          </nav>
+        </div>
+      </div>
+
+      <div class="p-3.5 border-t border-zinc-100 bg-zinc-50/50 flex items-center justify-between">
+        <div class="flex items-center gap-2 px-1">
+          <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 ring-4 ring-emerald-500/10"></div>
+          <span class="text-[9px] text-zinc-400 font-bold tracking-wider uppercase">Security Layer</span>
+        </div>
+        <span class="text-[9px] font-bold bg-zinc-200/60 text-zinc-600 px-1.5 py-0.5 rounded-md">v2.4</span>
+      </div>
+
+    </aside>
+
+    <div class="lg:hidden fixed bottom-5 left-1/2 -translate-x-1/2 bg-zinc-950/95 backdrop-blur-md border border-zinc-800 px-4 py-2 rounded-xl flex items-center gap-6 shadow-xl z-40 transition-all duration-300">
+      {navItems.map((item) => {
+        const isActive = currentPath === item.href || (item.href === '/admin' && currentPath === '/admin/')
+        return (
+          <a 
+            href={item.href} 
+            class={`flex flex-col items-center gap-1 p-0.5 transition-colors ${isActive ? 'text-emerald-400' : 'text-zinc-400 hover:text-white'}`}
+          >
+            <span class="text-base leading-none">{item.icon}</span>
+            <span class="text-[9px] font-bold tracking-tight">{item.label.split(' ')[0]}</span>
+          </a>
+        )
+      })}
+    </div>
+
+    <main class="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto bg-zinc-50/30 h-full relative z-0">
+      <div class="max-w-[1500px] mx-auto w-full">
+        <slot />
+      </div>
+    </main>
+
+  </div>
+
+  <script
+    define:vars={{
+      supabaseUrl: import.meta.env.PUBLIC_SUPABASE_URL,
+      supabaseKey: import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+    }}
+    type="module"
+  >
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js'
+    const supabase = createClient(supabaseUrl, supabaseKey)
+
+    // ========================================================
+    // A. HITNA MANIPULACIJA TOKENA I AUTORIZACIJE
+    // ========================================================
+    const { data: { session } } = await supabase.auth.getSession()
+
+    if (!session) {
+      localStorage.clear()
+      sessionStorage.clear()
+      window.location.href = '/login'
+    } else {
+      document.documentElement.classList.add('auth-ready')
+    }
+
+    supabase.auth.onAuthStateChange((event, currentSession) => {
+      if (event === 'SIGNED_OUT' || !currentSession) {
+        window.location.href = '/login'
+      }
+    })
+
+    // ========================================================
+    // B. CENTRALIZOVANI GLOBALNI EVENT LISTENER ZA CRM AKCIJE
+    // ========================================================
+    document.addEventListener('click', async (e) => {
+      
+      // 1. LOGIKA ZA ZELENO DUGME (PROMENA STATUS LIDA PREKO .saveStatusBtn)
+      const statusBtn = e.target.closest('.saveStatusBtn');
+      if (statusBtn) {
+        e.preventDefault();
+        
+        const leadId = statusBtn.getAttribute('data-id');
+        if (!leadId) return;
+
+        const selectElement = document.getElementById(`status-${leadId}`);
+        const statusText = document.getElementById(`saved-${leadId}`);
+
+        if (!selectElement) {
+          console.error(`Greška: Select element 'status-${leadId}' nedostaje.`);
+          return;
+        }
+
+        const newStatus = selectElement.value;
+        const originalText = statusBtn.innerHTML;
+        
+        statusBtn.disabled = true;
+        statusBtn.innerHTML = '...';
+
+        try {
+          const { error } = await supabase
+            .from('leads')
+            .update({ status: newStatus })
+            .eq('id', leadId);
+
+          if (error) throw error;
+
+          if (statusText) {
+            statusText.textContent = '✓ Status updated';
+            statusText.className = 'text-[10px] font-bold text-emerald-600 mt-1 absolute left-0';
+            
+            setTimeout(() => {
+              statusText.textContent = '';
+            }, 2500);
+          }
+
+        } catch (err) {
+          console.error('Greška pri snimanju statusa u Supabase:', err);
+          if (statusText) {
+            statusText.textContent = '✕ Error saving';
+            statusText.className = 'text-[10px] font-bold text-rose-600 mt-1 absolute left-0';
+            setTimeout(() => { statusText.textContent = ''; }, 2500);
+          }
+        } finally {
+          statusBtn.disabled = false;
+          statusBtn.innerHTML = originalText;
+        }
+        return;
+      }
+
+      // 2. LOGIKA ZA BELEŠKE (SAVE NOTES U MODALU / ZASEBNOJ STRANICI)
+      const notesBtn = e.target.closest('.saveNotesBtn');
+      if (notesBtn) {
+        e.preventDefault();
+        
+        const leadId = notesBtn.getAttribute('data-id');
+        if (!leadId) return;
+
+        const textarea = document.getElementById(`notes-${leadId}`);
+        const statusText = document.getElementById(`notesSaved-${leadId}`);
+
+        if (!textarea) {
+          console.error(`Greška: Textarea 'notes-${leadId}' nedostaje.`);
+          return;
+        }
+
+        const originalText = notesBtn.innerHTML;
+        notesBtn.disabled = true;
+        notesBtn.innerHTML = 'Saving...';
+
+        try {
+          const { error } = await supabase
+            .from('leads')
+            .update({ notes: textarea.value })
+            .eq('id', leadId);
+
+          if (error) throw error;
+
+          if (statusText) {
+            statusText.textContent = '✓ Saved';
+            statusText.className = 'text-xs font-bold text-emerald-600';
+            
+            setTimeout(() => {
+              statusText.textContent = '';
+            }, 2500);
+          }
+
+        } catch (err) {
+          console.error('Greška pri snimanju beleški u Supabase:', err);
+          if (statusText) {
+            statusText.textContent = '✕ Error';
+            statusText.className = 'text-xs font-bold text-rose-600';
+          }
+        } finally {
+          notesBtn.disabled = false;
+          notesBtn.innerHTML = originalText;
+        }
+      }
+    });
+  </script>
+</body>
+</html>

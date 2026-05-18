@@ -1,0 +1,42 @@
+---
+// src/pages/admin/leads/[id].astro
+import AdminLayout from '../../../layouts/AdminLayout.astro'
+import LeadDetails from '../../../components/admin/LeadDetails.astro'
+import { getLeads } from '../../../lib/client/leads.js'
+import { client } from '../../../config/client'
+
+// 1. Izvlačimo ID lida iz URL-a rute
+const { id } = Astro.params
+
+// 2. Povlačimo sve lidove i pronalazimo onog sa tim ID-em
+const allLeads = await getLeads(client.id)
+const leads = allLeads || []
+const lead = leads.find((l: any) => String(l.id) === String(id))
+---
+
+<AdminLayout currentRoute="/admin/leads" title={lead ? `Lead: ${lead.name}` : 'Lead Not Found'}>
+  
+  <div class="mb-4">
+    <a 
+      href="/admin/leads" 
+      class="inline-flex items-center gap-2 bg-white hover:bg-zinc-100 text-zinc-700 border border-zinc-200 px-4 py-2.5 rounded-xl text-xs font-semibold transition shadow-sm"
+    >
+      ← Back to Leads
+    </a>
+  </div>
+
+  {lead ? (
+    <LeadDetails lead={lead} />
+  ) : (
+    <div class="bg-white border border-zinc-200 rounded-[32px] p-12 text-center shadow-sm">
+      <p class="text-zinc-500 font-medium">Lead with ID {id} was not found.</p>
+    </div>
+  )}
+
+</AdminLayout>
+
+<script type="module">
+  import '/scripts/admin/auth.js'
+  import '/scripts/admin/lead-details.js'
+  import '/scripts/admin/lead-actions.js'
+</script>

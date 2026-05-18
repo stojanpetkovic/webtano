@@ -1,98 +1,62 @@
 ---
-const {
-  businessName
-} = Astro.props
+// src/components/admin/Sidebar.astro
+const { businessName, currentRoute } = Astro.props
 
 const menuItems = [
-
-  {
-    id: 'dashboard',
-    label: 'Dashboard',
-    icon: '🏠'
-  },
-
-  {
-    id: 'leads',
-    label: 'Leads',
-    icon: '📋'
-  },
-
-  {
-    id: 'analytics',
-    label: 'Analytics',
-    icon: '📊'
-  },
-
-  {
-    id: 'settings',
-    label: 'Settings',
-    icon: '⚙️'
-  }
-
+  { id: 'dashboard', label: 'Dashboard', icon: '📊', path: '/admin' },
+  { id: 'leads', label: 'Leads', icon: '📥', path: '/admin/leads' },
+  { id: 'analytics', label: 'Analytics', icon: '📈', path: '/admin/analytics' },
+  { id: 'settings', label: 'Settings', icon: '⚙️', path: '/admin/settings' }
 ]
 ---
 
-<aside class="w-[280px] min-h-screen bg-white border-r border-zinc-200 flex flex-col shadow-sm">
-
-  <!-- LOGO -->
+<aside class="w-[280px] h-full bg-white border-r border-zinc-200 flex flex-col shadow-[1px_0_2px_rgba(0,0,0,0.01)]">
 
   <div class="p-8 border-b border-zinc-200">
-
     <p class="text-xs uppercase tracking-[0.3em] text-zinc-400 mb-3 font-medium">
       CRM SYSTEM
     </p>
-
-    <h1 class="text-3xl font-bold tracking-tight text-zinc-900">
+    <h1 class="text-2xl font-bold tracking-tight text-zinc-900">
       {businessName}
     </h1>
-
-    <p class="text-sm text-zinc-500 mt-2">
+    <p class="text-xs text-zinc-500 mt-1">
       Professional Lead Management
     </p>
-
   </div>
 
-  <!-- MENU -->
-
-  <nav class="flex-1 p-4 space-y-2">
-
+  <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
     {
-      menuItems.map((item) => (
+      menuItems.map((item) => {
+        const isActive = currentRoute === item.path
 
-        <button
-          class="sidebar-link w-full flex items-center gap-4 px-5 py-4 rounded-2xl hover:bg-zinc-100 transition text-left group"
-          data-view={item.id}
-        >
+        return (
+          <a
+            href={item.path}
+            class={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition text-left group ${
+              isActive 
+                ? 'bg-zinc-900 text-white shadow-sm' 
+                : 'hover:bg-zinc-50 text-zinc-700 hover:text-zinc-900'
+            }`}
+          >
+            <div class={`w-10 h-10 rounded-xl flex items-center justify-center transition ${
+              isActive 
+                ? 'bg-zinc-800 text-white' 
+                : 'bg-zinc-100 group-hover:bg-white border border-zinc-200/40'
+            }`}>
+              <span class="text-base">
+                {item.icon}
+              </span>
+            </div>
 
-          <!-- ICON -->
-
-          <div class="w-11 h-11 rounded-2xl bg-zinc-100 group-hover:bg-white flex items-center justify-center transition shadow-sm">
-
-            <span class="text-lg">
-              {item.icon}
-            </span>
-
-          </div>
-
-          <!-- TEXT -->
-
-          <div>
-
-            <p class="text-sm font-semibold text-zinc-900">
-              {item.label}
-            </p>
-
-            <p class="text-xs text-zinc-500 mt-0.5">
-              Open section
-            </p>
-
-          </div>
-
-        </button>
-
-      ))
+            <div>
+              <p class={`text-sm font-semibold ${isActive ? 'text-white' : 'text-zinc-900'}`}>
+                {item.label}
+              </p>
+            </div>
+          </a>
+        )
+      })
     }
-
   </nav>
 
 </aside>

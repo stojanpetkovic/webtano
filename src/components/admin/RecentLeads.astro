@@ -1,154 +1,96 @@
 ---
-const {
-  leads
-} = Astro.props
+// src/components/admin/RecentLeads.astro
+const { leads } = Astro.props
 
-const recentLeads =
-  [...leads]
-    .sort(
-      (a: any, b: any) =>
-        new Date(
-          b.created_at
-        ).getTime() -
-        new Date(
-          a.created_at
-        ).getTime()
-    )
-    .slice(0, 5)
+// Defanzivna provera da se build ne sruši ako nema lidova
+const safeLeads = leads || []
+
+const recentLeads = [...safeLeads]
+  .sort(
+    (a: any, b: any) =>
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  )
+  .slice(0, 5)
 ---
 
-<div class="bg-white border border-zinc-200 rounded-[32px] shadow-sm overflow-hidden">
+<div class="bg-white border border-zinc-200/60 rounded-xl shadow-sm overflow-hidden select-none w-full flex flex-col h-full">
 
-  <!-- HEADER -->
-
-  <div class="px-6 py-5 border-b border-zinc-200 flex items-center justify-between">
-
+  <div class="px-4 py-3 border-b border-zinc-100 flex items-center justify-between gap-4 bg-zinc-50/30">
+    
     <div>
-
-      <p class="text-sm text-zinc-500 font-medium">
-        CRM Activity
-      </p>
-
-      <h2 class="text-2xl font-bold tracking-tight text-zinc-900 mt-1">
+      <p class="text-[10px] uppercase tracking-[0.2em] text-zinc-400 font-bold leading-none">CRM Activity</p>
+      <h2 class="text-xs font-bold tracking-tight text-zinc-900 mt-1.5 leading-none">
         Recent Leads
       </h2>
-
     </div>
 
-    <div class="flex items-center gap-3">
-
-    <!-- ICON -->
-
-    <div class="w-11 h-11 rounded-2xl bg-zinc-100 flex items-center justify-center text-xl">
-
+    <div class="flex items-center gap-2">
+      <div class="w-7 h-7 rounded-md bg-zinc-50 border border-zinc-200/60 flex items-center justify-center text-xs shrink-0">
         ⚡
+      </div>
 
-    </div>
-
-    <!-- BUTTON -->
-
-    <button
-        onclick="openSection('leads')"
-        class="bg-zinc-900 hover:bg-black text-white px-4 py-2 rounded-2xl text-sm font-semibold transition shadow-sm"
-    >
-
+      <a
+        href="/admin/leads"
+        class="bg-zinc-900 hover:bg-zinc-800 text-white px-3 rounded-lg text-xs font-bold transition shadow-sm h-8 inline-flex items-center justify-center whitespace-nowrap cursor-pointer"
+      >
         View Leads
-
-    </button>
-
+      </a>
     </div>
 
   </div>
 
-  <!-- LIST -->
-
-  <div class="divide-y divide-zinc-100">
-
+  <div class="divide-y divide-zinc-100 flex-1">
     {
-      recentLeads.map((lead: any) => (
+      recentLeads.length === 0 ? (
+        <div class="px-4 py-6 text-center text-xs font-semibold text-zinc-400">
+          No recent leads found.
+        </div>
+      ) : (
+        recentLeads.map((lead: any) => (
+          <div class="px-4 py-2.5 hover:bg-zinc-50/60 transition-colors duration-100 group">
+            <div class="flex items-center justify-between gap-4">
 
-        <div class="px-6 py-5 hover:bg-zinc-50 transition">
+              <div class="flex items-center gap-3 min-w-0">
+                
+                <div class="w-8 h-8 rounded-md bg-zinc-100 flex items-center justify-center text-[11px] font-bold text-zinc-600 shrink-0 uppercase">
+                  {
+                    String(lead.name || 'L')
+                    .charAt(0)
+                    .toUpperCase()
+                  }
+                </div>
 
-          <div class="flex items-center justify-between gap-4">
-
-            <!-- LEFT -->
-
-            <div class="flex items-center gap-4 min-w-0">
-
-              <!-- AVATAR -->
-
-              <div class="w-12 h-12 rounded-2xl bg-zinc-100 flex items-center justify-center text-sm font-bold text-zinc-700 shrink-0">
-
-                {
-                  String(
-                    lead.name || 'L'
-                  )
-                  .charAt(0)
-                  .toUpperCase()
-                }
+                <div class="min-w-0">
+                  <p class="font-bold text-zinc-900 text-xs truncate leading-tight">
+                    {String(lead.name || '-')}
+                  </p>
+                  <a
+                    href={`tel:${lead.phone}`}
+                    class="text-[10px] text-zinc-500 hover:text-zinc-900 underline underline-offset-2 transition mt-0.5 block font-semibold"
+                  >
+                    {String(lead.phone || '-')}
+                  </a>
+                </div>
 
               </div>
 
-              <!-- INFO -->
+              <div class="text-right shrink-0">
+                
+                <span class="inline-flex items-center rounded-md bg-zinc-50 border border-zinc-200/60 px-1.5 py-0.5 text-[9px] font-bold text-zinc-800 uppercase tracking-wide">
+                  {String(lead.status || 'new')}
+                </span>
 
-              <div class="min-w-0">
-
-                <p class="font-semibold text-zinc-900 truncate">
-
-                  {String(lead.name || '-')}
-
+                <p class="text-[9px] text-zinc-400 font-medium mt-1 leading-none">
+                  {new Date(lead.created_at).toLocaleDateString('sr-RS', { day: 'numeric', month: 'short' })}
                 </p>
 
-                <a
-                  href={`tel:${lead.phone}`}
-                  class="text-sm text-green-600 hover:text-green-700 transition mt-1 block"
-                >
-
-                  {String(lead.phone || '-')}
-
-                </a>
-
               </div>
 
             </div>
-
-            <!-- RIGHT -->
-
-            <div class="text-right shrink-0">
-
-              <!-- STATUS -->
-
-              <div class="inline-flex items-center rounded-full bg-zinc-100 border border-zinc-200 px-3 py-1 text-xs font-semibold text-zinc-700">
-
-                {
-                  String(
-                    lead.status || 'new'
-                  )
-                }
-
-              </div>
-
-              <!-- DATE -->
-
-              <p class="text-xs text-zinc-500 mt-2">
-
-                {
-                  new Date(
-                    lead.created_at
-                  ).toLocaleString()
-                }
-
-              </p>
-
-            </div>
-
           </div>
-
-        </div>
-
-      ))
+        ))
+      )
     }
-
   </div>
 
 </div>

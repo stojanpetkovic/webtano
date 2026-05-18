@@ -1,0 +1,86 @@
+---
+// src/pages/admin/analytics.astro
+import AdminLayout from '../../layouts/AdminLayout.astro'
+import AnalyticsGrid from '../../components/admin/AnalyticsGrid.astro'
+import LeadTrendsChart from '../../components/admin/LeadTrendsChart.astro'
+import RecentLeads from '../../components/admin/RecentLeads.astro'
+
+// ==========================================
+// SIMULACIJA PODATAKA (Ovde vučeš podatke iz baze)
+// ==========================================
+// U realnom projektu ovde ide npr: const leads = await db.select().from(Leads);
+const mockLeads = [
+  { id: '1', name: 'Marko Nikolić', phone: '+381641234567', status: 'new', message: 'Zainteresovan za izradu sajta i SEO optimizaciju.', created_at: '2026-05-18T14:32:00Z' },
+  { id: '2', name: 'Jovana Jovanović', phone: '+381639876543', status: 'contacted', message: 'Potrebna ponuda za redovno održavanje aplikacije.', created_at: '2026-05-17T09:15:00Z' },
+  { id: '3', name: 'Nenad Simić', phone: '+381655554433', status: 'won', message: 'Dogovorena saradnja, uplaćen avans za dizajn.', created_at: '2026-05-16T11:00:00Z' },
+  { id: '4', name: 'Milan Antić', phone: '+381612223344', status: 'lost', message: 'Previsoka cena, odustali od projekta.', created_at: '2026-05-15T16:45:00Z' },
+  { id: '5', name: 'Ana Marić', phone: '+381627778899', status: 'new', message: 'Upit za konsalting i analizu tržišta.', created_at: '2026-05-18T18:20:00Z' }
+]
+
+// Računanje metrika za AnalyticsGrid na osnovu stvarnog niza lidova
+const analyticsData = {
+  total: mockLeads.length,
+  newLeads: mockLeads.filter(l => l.status === 'new').length,
+  contacted: mockLeads.filter(l => l.status === 'contacted').length,
+  won: mockLeads.filter(l => l.status === 'won').length,
+  lost: mockLeads.filter(l => l.status === 'lost').length
+}
+---
+
+<AdminLayout title="Analytics & Insights — Dashboard">
+  
+  <div class="space-y-8 max-w-[1600px] mx-auto pb-12">
+    
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-zinc-100 pb-6 select-none">
+      <div>
+        <p class="text-xs uppercase tracking-[0.2em] text-zinc-400 font-bold">
+          Management & Stats
+        </p>
+        <h1 class="text-4xl font-extrabold tracking-tight text-zinc-900 mt-1">
+          Business Analytics
+        </h1>
+      </div>
+      
+      <div class="bg-zinc-50 border border-zinc-200 rounded-2xl px-4 py-2.5 text-xs text-zinc-600 font-medium flex items-center gap-2 self-start md:self-auto">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        Live CRM Data active
+      </div>
+    </div>
+
+    <section aria-label="Quick Stats">
+      <AnalyticsGrid analytics={analyticsData} />
+    </section>
+
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 items-start">
+      
+      <div class="xl:col-span-2">
+        <LeadTrendsChart leads={mockLeads} />
+      </div>
+
+      <div class="xl:col-span-1 xl:mt-12">
+        <RecentLeads leads={mockLeads} />
+      </div>
+
+    </div>
+
+  </div>
+
+</AdminLayout>
+
+<style is:global>
+  /* Fino poliranje scrollbara unutar celog dashboard-a */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #e4e4e7;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #d4d4d8;
+  }
+</style>

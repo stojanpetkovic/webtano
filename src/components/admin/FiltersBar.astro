@@ -1,181 +1,109 @@
 ---
-const {
-  leadStatuses
-} = Astro.props
+// src/components/admin/FiltersBar.astro
+const { leadStatuses } = Astro.props
 ---
 
-<div class="mb-8">
+<div class="mb-4 select-none w-full">
 
-  <!-- TOP -->
-
-  <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
-
-    <!-- LEFT -->
+  <div class="flex flex-row items-center justify-between gap-4 pb-3 border-b border-zinc-100">
 
     <div>
-
-      <p class="text-sm font-medium text-zinc-500">
-        Lead Management
-      </p>
-
-      <h2 class="text-4xl font-bold tracking-tight text-zinc-900 mt-1">
+      <p class="text-[10px] uppercase tracking-[0.2em] text-zinc-400 font-bold leading-none">Pipeline View</p>
+      <h2 class="text-lg font-bold tracking-tight text-zinc-900 mt-1.5 leading-none">
         Leads
       </h2>
-
     </div>
 
-    <!-- RIGHT -->
+<div class="flex items-center gap-2">
 
-    <div class="flex items-center gap-3">
-
-      <!-- VIEW TOGGLE -->
-
-      <div class="flex items-center bg-white border border-zinc-200 rounded-2xl p-1 shadow-sm">
-
-        <!-- TABLE -->
-
+      <div class="flex items-center bg-zinc-100 border border-zinc-200/80 p-0.5 rounded-lg h-8">
         <button
           id="tableViewBtn"
-          class="viewToggleBtn bg-zinc-900 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition"
+          class="viewToggleBtn bg-zinc-900 text-white px-3 h-full rounded-md text-xs font-bold shadow-sm transition cursor-pointer"
         >
-
           Table
-
         </button>
-
-        <!-- KANBAN -->
 
         <button
           id="kanbanViewBtn"
-          class="viewToggleBtn px-5 py-2.5 rounded-xl text-sm font-semibold text-zinc-600 hover:bg-zinc-100 transition"
+          class="viewToggleBtn px-3 h-full rounded-md text-xs font-bold text-zinc-600 hover:text-zinc-900 transition cursor-pointer"
         >
-
           Kanban
-
         </button>
-
       </div>
-
-      <!-- EXPORT -->
 
       <button
         id="exportExcelBtn"
-        class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-2xl text-sm font-semibold transition shadow-sm whitespace-nowrap"
+        class="bg-zinc-900 hover:bg-zinc-800 text-white px-3 rounded-lg text-xs font-bold transition shadow-sm whitespace-nowrap h-8 flex items-center gap-1.5 cursor-pointer"
       >
-
-        Export Excel
-
+        <span>📥</span>
+        Export
       </button>
 
     </div>
 
   </div>
 
-  <!-- FILTER BAR -->
-
   <div
     id="advancedFilters"
-    class="mt-6 bg-white border border-zinc-200 rounded-[28px] p-4 shadow-sm"
+    class="mt-3 bg-white border border-zinc-200/60 rounded-xl p-3 shadow-sm w-full"
   >
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-2.5">
 
-    <div class="flex flex-col 2xl:flex-row gap-4">
-
-      <!-- SEARCH -->
-
-      <div class="relative flex-1 min-w-[280px]">
-
-        <!-- ICON -->
-
-        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">
-
+      <div class="relative w-full">
+        <div class="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-xs pointer-events-none">
           🔍
-
         </div>
-
         <input
           id="searchInput"
           type="text"
-          placeholder="Search leads, phone, notes..."
-          class="w-full bg-zinc-50 border border-zinc-200 rounded-2xl pl-12 pr-5 py-3.5 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-zinc-400 focus:ring-4 focus:ring-zinc-100 transition"
+          placeholder="Search leads, phone..."
+          class="w-full bg-zinc-50 border border-zinc-200/80 rounded-lg pl-8 pr-3 py-1.5 text-xs text-zinc-900 font-semibold placeholder:text-zinc-400 outline-none focus:border-zinc-400 transition h-8"
         />
-
       </div>
 
-      <!-- STATUS -->
-
-      <div class="relative min-w-[220px]">
-
+      <div class="relative w-full">
         <select
           id="statusFilter"
-          class="appearance-none w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-5 py-3.5 pr-12 text-sm font-medium text-zinc-800 outline-none focus:border-zinc-400 focus:ring-4 focus:ring-zinc-100 transition"
+          class="appearance-none w-full bg-zinc-50 border border-zinc-200/80 rounded-lg px-3 py-1.5 pr-8 text-xs font-bold text-zinc-900 outline-none focus:border-zinc-400 transition cursor-pointer h-8"
         >
-
-          <option value="">
-            All Statuses
-          </option>
-
+          <option value="" class="text-zinc-500 font-medium">All Statuses</option>
           {
-            leadStatuses.map((status: string) => (
-
-              <option value={status}>
-
+            leadStatuses && leadStatuses.map((status: string) => (
+              <option value={status} class="text-zinc-900 font-semibold">
                 {status}
-
               </option>
-
             ))
           }
-
         </select>
-
-        <!-- ARROW -->
-
-        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none">
-
-          ⌄
-
+        <div class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none text-[9px]">
+          ▼
         </div>
-
       </div>
 
-      <!-- FROM -->
-
-      <div class="flex items-center gap-3 bg-zinc-50 border border-zinc-200 rounded-2xl px-4 py-3 min-w-[220px]">
-
-        <span class="text-xs font-semibold uppercase tracking-[0.12em] text-zinc-400 whitespace-nowrap">
-
+      <div class="flex items-center justify-between gap-2 bg-zinc-50 border border-zinc-200/80 rounded-lg px-3 h-8">
+        <span class="text-[9px] font-bold uppercase tracking-wider text-zinc-500 whitespace-nowrap">
           From
-
         </span>
-
         <input
           id="fromDate"
           type="date"
-          class="bg-transparent text-sm font-medium text-zinc-800 outline-none w-full"
+          class="bg-transparent text-xs font-bold text-zinc-900 outline-none cursor-pointer text-right w-full"
         />
-
       </div>
 
-      <!-- TO -->
-
-      <div class="flex items-center gap-3 bg-zinc-50 border border-zinc-200 rounded-2xl px-4 py-3 min-w-[220px]">
-
-        <span class="text-xs font-semibold uppercase tracking-[0.12em] text-zinc-400 whitespace-nowrap">
-
+      <div class="flex items-center justify-between gap-2 bg-zinc-50 border border-zinc-200/80 rounded-lg px-3 h-8">
+        <span class="text-[9px] font-bold uppercase tracking-wider text-zinc-500 whitespace-nowrap">
           To
-
         </span>
-
         <input
           id="toDate"
           type="date"
-          class="bg-transparent text-sm font-medium text-zinc-800 outline-none w-full"
+          class="bg-transparent text-xs font-bold text-zinc-900 outline-none cursor-pointer text-right w-full"
         />
-
       </div>
 
     </div>
-
   </div>
 
 </div>

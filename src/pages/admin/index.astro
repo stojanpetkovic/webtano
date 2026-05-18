@@ -1,0 +1,63 @@
+---
+// src/pages/admin/index.astro
+import AdminLayout from '../../layouts/AdminLayout.astro'
+import AnalyticsGrid from '../../components/admin/AnalyticsGrid.astro'
+import LeadTrendsChart from '../../components/admin/LeadTrendsChart.astro'
+import RecentLeads from '../../components/admin/RecentLeads.astro'
+
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL
+const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+const supabase = createClient(supabaseUrl, supabaseKey)
+
+const { data: realLeads, error } = await supabase
+  .from('leads')
+  .select('*')
+  .order('created_at', { ascending: false })
+
+if (error) {
+  console.error("Greška pri povlačenju podataka iz Supabase baze:", error.message)
+}
+
+const leads = realLeads || []
+
+const analyticsData = {
+  total: leads.length,
+  newLeads: leads.filter(l => l.status === 'new').length,
+  contacted: leads.filter(l => l.status === 'contacted').length,
+  won: leads.filter(l => l.status === 'won').length,
+  lost: leads.filter(l => l.status === 'lost').length
+}
+---
+
+<AdminLayout title="Analytics Terminal">
+  <div class="space-y-5 max-w-[1600px] w-full mx-auto pb-4 px-1">
+    
+    <div class="flex flex-row items-center justify-between gap-4 border-b border-zinc-100 pb-3 select-none">
+      <div>
+        <p class="text-[10px] uppercase tracking-[0.25em] text-zinc-400 font-bold leading-none">Workspace</p>
+        <h1 class="text-xl font-bold tracking-tight text-zinc-900 mt-1 leading-none">Control Panel</h1>
+      </div>
+      <div class="bg-zinc-50 border border-zinc-200/60 rounded-xl px-3 py-1.5 text-[11px] text-zinc-500 font-medium flex items-center gap-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        Terminal Live
+      </div>
+    </div>
+
+    <AnalyticsGrid analytics={analyticsData} />
+
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-5 items-stretch w-full">
+      
+      <div class="xl:col-span-2 flex flex-col h-full">
+        <LeadTrendsChart leads={leads} />
+      </div>
+      
+      <div class="xl:col-span-1 flex flex-col h-full">
+        <RecentLeads leads={leads} />
+      </div>
+
+    </div>
+
+  </div>
+</AdminLayout>

@@ -1,60 +1,50 @@
 ---
+// src/components/admin/Pagination.astro
 const {
   totalPages,
   currentPage
 } = Astro.props
+
+// Pomoćne provere za zaključavanje dugmadi
+const isFirstPage = currentPage <= 1
+const isLastPage = currentPage >= totalPages
 ---
 
-<div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
+<div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 select-none w-full">
 
-  <!-- INFO -->
-
-  <div class="text-sm text-zinc-500 font-medium">
-
-    Showing page
-
+  <div class="text-xs text-zinc-400 font-bold uppercase tracking-wider">
+    Showing page 
     <span
       id="currentPage"
-      class="text-zinc-900 font-semibold"
+      class="text-zinc-900 font-black px-1"
     >
       {currentPage}
     </span>
-
-    of
-
+    of 
     <span
       id="totalPages"
-      class="text-zinc-900 font-semibold"
+      class="text-zinc-900 font-black px-1"
     >
       {totalPages}
     </span>
-
   </div>
 
-  <!-- BUTTONS -->
-
-  <div class="flex items-center gap-3">
-
-    <!-- PREV -->
+  <div class="flex items-center gap-2">
 
     <button
       id="prevPageBtn"
-      class="bg-white hover:bg-zinc-100 border border-zinc-200 px-5 py-3 rounded-2xl text-sm font-medium text-zinc-700 transition shadow-sm"
+      disabled={isFirstPage}
+      class="bg-white hover:bg-zinc-50 disabled:hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed border border-zinc-200/80 px-3 rounded-lg text-xs font-bold text-zinc-800 hover:text-zinc-950 transition shadow-sm h-8 flex items-center justify-center cursor-pointer"
     >
-
       ← Prev
-
     </button>
-
-    <!-- NEXT -->
 
     <button
       id="nextPageBtn"
-      class="bg-zinc-900 hover:bg-black text-white px-5 py-3 rounded-2xl text-sm font-semibold transition shadow-sm"
+      disabled={isLastPage}
+      class="bg-zinc-900 hover:bg-zinc-800 disabled:hover:bg-zinc-900 disabled:opacity-30 disabled:cursor-not-allowed text-white px-3 rounded-lg text-xs font-bold transition shadow-sm h-8 flex items-center justify-center cursor-pointer"
     >
-
       Next →
-
     </button>
 
   </div>

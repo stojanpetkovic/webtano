@@ -1,88 +1,72 @@
 ---
-const {
-  analytics
-} = Astro.props
+// src/components/admin/AnalyticsGrid.astro
+const { analytics } = Astro.props
 
+// Defanzivna provera koja obezbeđuje da kod ne pukne ako podaci privremeno kasne
+const safeAnalytics = analytics || {
+  total: 0,
+  newLeads: 0,
+  contacted: 0,
+  won: 0,
+  lost: 0
+}
+
+// Konfigurišemo kartice po v2.0 standardu (čist kontrast i suptilni akcenti na brojevima)
 const cards = [
-
   {
-    label: 'Total',
-    value: analytics.total,
-    color: 'bg-blue-50 text-blue-600 border-blue-100',
+    label: 'Total Leads',
+    value: safeAnalytics.total ?? 0,
+    valueColor: 'text-zinc-900',
     icon: '📋'
   },
-
   {
-    label: 'New',
-    value: analytics.newLeads,
-    color: 'bg-indigo-50 text-indigo-600 border-indigo-100',
+    label: 'New Leads',
+    value: safeAnalytics.newLeads ?? 0,
+    valueColor: 'text-blue-600',
     icon: '✨'
   },
-
   {
     label: 'Contacted',
-    value: analytics.contacted,
-    color: 'bg-amber-50 text-amber-600 border-amber-100',
+    value: safeAnalytics.contacted ?? 0,
+    valueColor: 'text-amber-600',
     icon: '📞'
   },
-
   {
-    label: 'Won',
-    value: analytics.won,
-    color: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+    label: 'Won Pipeline',
+    value: safeAnalytics.won ?? 0,
+    valueColor: 'text-emerald-600',
     icon: '🏆'
   },
-
   {
-    label: 'Lost',
-    value: analytics.lost,
-    color: 'bg-rose-50 text-rose-600 border-rose-100',
-    icon: '❌'
+    label: 'Lost Archive',
+    value: safeAnalytics.lost ?? 0,
+    valueColor: 'text-zinc-400',
+    icon: '✕'
   }
-
 ]
 ---
 
-<div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
-
+<div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-3 select-none w-full">
   {
     cards.map((card) => (
-
-      <div class="bg-white border border-zinc-200 rounded-[24px] px-5 py-4 shadow-sm hover:shadow-md transition">
-
-        <!-- TOP -->
-
+      <div class="bg-white border border-zinc-200/60 rounded-xl p-3.5 shadow-sm hover:border-zinc-300 transition-all duration-150 flex flex-col justify-between min-h-[90px] group relative overflow-hidden">
+        
         <div class="flex items-center justify-between">
-
-          <!-- ICON -->
-
-          <div class={`w-11 h-11 rounded-2xl border flex items-center justify-center text-lg ${card.color}`}>
-
+          
+          <div class="w-7 h-7 rounded-md bg-zinc-50 border border-zinc-200/60 flex items-center justify-center text-xs text-zinc-600 shrink-0">
             {card.icon}
-
           </div>
 
-          <!-- VALUE -->
-
-          <p class="text-3xl font-bold tracking-tight text-zinc-900">
-
+          <p class={`text-xl font-black tracking-tight ${card.valueColor}`}>
             {card.value}
-
           </p>
-
         </div>
 
-        <!-- LABEL -->
-
-        <p class="text-sm text-zinc-500 font-medium mt-4">
-
+        <p class="text-[9px] uppercase tracking-wider text-zinc-400 font-bold mt-4 leading-none">
           {card.label}
-
         </p>
 
       </div>
-
     ))
   }
-
 </div>

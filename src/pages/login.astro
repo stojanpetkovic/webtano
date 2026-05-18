@@ -1,132 +1,105 @@
 ---
-import Layout from '../layouts/Layout.astro'
+// src/pages/login.astro
+// POTPUNO ČISTO: Ne uvozimo nikakav layout!
 ---
 
-<Layout>
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-black text-white min-h-screen flex items-center justify-center p-6 select-none antialiased">
 
-  <main class="min-h-screen bg-black text-white flex items-center justify-center p-6">
-
+  <main class="w-full max-w-md">
     <form
       id="loginForm"
-      class="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-3xl p-8 space-y-5"
+      class="w-full bg-zinc-900 border border-zinc-800 rounded-3xl p-8 space-y-5 shadow-2xl"
     >
-
       <div>
-
-        <p class="uppercase tracking-[0.2em] text-xs text-zinc-500">
+        <p class="uppercase tracking-[0.2em] text-xs text-zinc-500 font-bold">
           Secure Access
         </p>
-
-        <h1 class="text-3xl font-bold mt-2">
+        <h1 class="text-3xl font-extrabold mt-2 tracking-tight text-white">
           Admin Login
         </h1>
-
       </div>
 
-      <!-- EMAIL -->
+      <div class="space-y-1.5">
+        <label class="text-[11px] uppercase tracking-wider text-zinc-400 font-bold">Email Address</label>
+        <input
+          type="email"
+          name="email"
+          placeholder="name@company.com"
+          required
+          class="w-full p-4 rounded-2xl bg-zinc-800/50 border border-zinc-700 text-sm outline-none focus:border-zinc-500 focus:ring-4 focus:ring-zinc-800/30 transition text-white"
+        />
+      </div>
 
-      <input
-        type="email"
-        name="email"
-        placeholder="Email"
-        required
-        class="w-full p-4 rounded-2xl bg-zinc-800 border border-zinc-700"
-      />
-
-      <!-- PASSWORD -->
-
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        required
-        class="w-full p-4 rounded-2xl bg-zinc-800 border border-zinc-700"
-      />
-
-      <!-- BUTTON -->
+      <div class="space-y-1.5">
+        <label class="text-[11px] uppercase tracking-wider text-zinc-400 font-bold">Password</label>
+        <input
+          type="password"
+          name="password"
+          placeholder="••••••••"
+          required
+          class="w-full p-4 rounded-2xl bg-zinc-800/50 border border-zinc-700 text-sm outline-none focus:border-zinc-500 focus:ring-4 focus:ring-zinc-800/30 transition text-white"
+        />
+      </div>
 
       <button
         type="submit"
-        class="w-full bg-green-600 hover:bg-green-700 transition p-4 rounded-2xl font-bold"
+        class="w-full bg-green-600 hover:bg-green-700 active:scale-[0.99] text-white p-4 rounded-2xl font-bold text-sm transition shadow-lg mt-2 cursor-pointer"
       >
-        Login
+        Sign In to Dashboard
       </button>
 
-      <!-- STATUS -->
-
-      <p
-        id="status"
-        class="text-sm text-red-400"
-      ></p>
-
+      <p id="status" class="text-xs text-red-400 font-medium text-center min-h-[16px]"></p>
     </form>
-
   </main>
 
-</Layout>
+  <script
+    define:vars={{
+      supabaseUrl: import.meta.env.PUBLIC_SUPABASE_URL,
+      supabaseKey: import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+    }}
+    type="module"
+  >
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js'
+    const supabase = createClient(supabaseUrl, supabaseKey)
 
-<script
-  define:vars={{
-    supabaseUrl:
-      import.meta.env.PUBLIC_SUPABASE_URL,
-
-    supabaseKey:
-      import.meta.env.PUBLIC_SUPABASE_ANON_KEY
-  }}
-  type="module"
->
-
-  import { createClient }
-  from 'https://esm.sh/@supabase/supabase-js'
-
-  const supabase = createClient(
-    supabaseUrl,
-    supabaseKey
-  )
-
-  const form =
-    document.getElementById('loginForm')
-
-  const status =
-    document.getElementById('status')
-
-  form.addEventListener('submit', async (e) => {
-
-    e.preventDefault()
-
-    const formData = new FormData(form)
-
-    const email =
-      formData.get('email')
-
-    const password =
-      formData.get('password')
-
-    const {
-      data,
-      error
-    } = await supabase.auth.signInWithPassword({
-
-      email,
-      password
-
-    })
-
-    console.log(data)
-
-    if (error) {
-
-      console.error(error)
-
-      status.innerText =
-        error.message
-
-      return
-
+    // Ako ulogovan korisnik zaluta ovdje, odmah ga baci na /admin
+    const { data: { session } } = await supabase.auth.getSession()
+    if (session) {
+      window.location.href = '/admin'
     }
 
-    window.location.href = '/admin'
+    const form = document.getElementById('loginForm')
+    const status = document.getElementById('status')
 
-  })
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault()
+      status.innerText = ""
 
-</script>
+      const formData = new FormData(form)
+      const email = formData.get('email')
+      const password = formData.get('password')
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      })
+
+      if (error) {
+        status.innerText = error.message
+        return
+      }
+
+      // Nakon uspješne prijave idemo na zaštićeni dashboard
+      window.location.href = '/admin'
+    })
+  </script>
+</body>
+</html>

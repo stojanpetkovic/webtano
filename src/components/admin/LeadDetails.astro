@@ -1,354 +1,174 @@
 ---
-const {
-  lead
-} = Astro.props
+const { lead } = Astro.props
 
 if (!lead) {
-
   return null
+}
 
+// Mapa za stajling statusnog bedža
+const statusStyles: Record<string, string> = {
+  new: 'bg-blue-50 text-blue-700 border-blue-200',
+  contacted: 'bg-amber-50 text-amber-700 border-amber-200',
+  won: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  lost: 'bg-zinc-100 text-zinc-600 border-zinc-200'
 }
 ---
 
-<section class="bg-white border border-zinc-200 rounded-[32px] shadow-sm overflow-hidden">
+<section class="bg-white border border-zinc-200/60 rounded-xl shadow-sm overflow-hidden select-none w-full">
 
-  <!-- HEADER -->
+  <div class="px-5 py-4 border-b border-zinc-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 
-  <div class="px-8 py-7 border-b border-zinc-200 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6">
-
-    <!-- LEFT -->
-
-    <div class="flex items-center gap-5">
-
-      <!-- AVATAR -->
-
-      <div class="w-20 h-20 rounded-[28px] bg-zinc-100 flex items-center justify-center text-2xl font-bold text-zinc-700 shrink-0">
-
-        {
-          String(
-            lead.name || 'L'
-          )
-          .charAt(0)
-          .toUpperCase()
-        }
-
+    <div class="flex items-center gap-3.5">
+      <div class="w-12 h-12 rounded-lg bg-zinc-900 text-white flex items-center justify-center text-lg font-bold shrink-0 uppercase shadow-sm">
+        {String(lead.name || 'L').charAt(0).toUpperCase()}
       </div>
-
-      <!-- INFO -->
 
       <div>
-
-        <p class="text-sm text-zinc-500 font-medium">
-          Lead Profile
-        </p>
-
-        <h1 class="text-4xl font-bold tracking-tight text-zinc-900 mt-1">
-
+        <p class="text-[10px] uppercase tracking-[0.2em] text-zinc-400 font-bold leading-none">Lead Profile</p>
+        <h1 class="text-lg font-bold tracking-tight text-zinc-900 mt-1.5 leading-none">
           {String(lead.name || '-')}
-
         </h1>
-
         <a
           href={`tel:${lead.phone}`}
-          class="text-green-600 hover:text-green-700 transition text-lg font-medium mt-3 inline-block"
+          class="text-zinc-500 hover:text-zinc-950 transition text-xs font-semibold block mt-1 leading-none"
         >
-
           {String(lead.phone || '-')}
-
         </a>
-
       </div>
-
     </div>
 
-    <!-- RIGHT -->
+    <div class="flex flex-wrap items-center gap-2">
 
-    <div class="flex flex-wrap items-center gap-3">
-
-      <!-- STATUS -->
-
-      <div class="px-4 py-2 rounded-2xl bg-zinc-100 border border-zinc-200 text-sm font-semibold text-zinc-700">
-
-        {
-          String(
-            lead.status || 'new'
-          )
-        }
-
+      <div class={`px-2.5 h-8 flex items-center rounded-lg text-xs font-bold border uppercase tracking-wider ${statusStyles[lead.status] || 'bg-zinc-50 text-zinc-700 border-zinc-200'}`}>
+        {String(lead.status || 'new')}
       </div>
-
-      <!-- CALL -->
 
       <a
         href={`tel:${lead.phone}`}
-        class="bg-zinc-900 hover:bg-black text-white px-5 py-3 rounded-2xl text-sm font-semibold transition shadow-sm"
+        class="bg-zinc-900 hover:bg-zinc-800 text-white px-3 rounded-lg text-xs font-bold transition shadow-sm h-8 flex items-center gap-1 cursor-pointer"
       >
-
-        📞 Call
-
+        <span>📞</span> Call
       </a>
-
-      <!-- WHATSAPP -->
 
       <a
         href={`https://wa.me/${String(lead.phone || '').replace(/\D/g, '')}`}
         target="_blank"
-        class="bg-green-500 hover:bg-green-600 text-white px-5 py-3 rounded-2xl text-sm font-semibold transition shadow-sm"
+        class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 rounded-lg text-xs font-bold transition shadow-sm h-8 flex items-center gap-1 cursor-pointer"
       >
-
         WhatsApp
-
       </a>
 
-      <!-- CLOSE -->
-
-      <button
-        onclick="closeLeadDetails()"
-        class="bg-zinc-100 hover:bg-zinc-200 text-zinc-700 px-5 py-3 rounded-2xl text-sm font-semibold transition"
+      <a
+        href="/admin/leads"
+        class="bg-zinc-100 hover:bg-zinc-200 text-zinc-800 px-3 rounded-lg text-xs font-bold transition h-8 flex items-center justify-center cursor-pointer border border-zinc-200/40"
       >
-
         Close
-
-      </button>
+      </a>
 
     </div>
 
   </div>
 
-  <!-- BODY -->
+  <div class="grid grid-cols-1 xl:grid-cols-3 gap-5 p-5 items-start">
 
-  <div class="grid grid-cols-1 2xl:grid-cols-3 gap-8 p-8">
-
-    <!-- LEFT COLUMN -->
-
-    <div class="2xl:col-span-2 space-y-8">
-
-      <!-- MESSAGE -->
+    <div class="xl:col-span-2 space-y-5">
 
       <div>
-
-        <div class="flex items-center justify-between mb-4">
-
-          <div>
-
-            <p class="text-sm text-zinc-500 font-medium">
-              Lead Message
-            </p>
-
-            <h2 class="text-2xl font-bold tracking-tight text-zinc-900 mt-1">
-              Customer Inquiry
-            </h2>
-
-          </div>
-
+        <div class="mb-2">
+          <p class="text-[10px] uppercase tracking-[0.15em] text-zinc-400 font-bold leading-none">Inquiry Detail</p>
+          <h2 class="text-xs font-bold text-zinc-800 mt-1 leading-none">Customer Message</h2>
         </div>
-
-        <div class="bg-zinc-50 border border-zinc-200 rounded-[28px] p-6 text-zinc-700 whitespace-pre-wrap leading-relaxed">
-
-          {
-            String(
-              lead.message ||
-              'No message'
-            )
-          }
-
+        <div class="bg-zinc-50 border border-zinc-200/80 rounded-lg p-4 text-xs font-medium text-zinc-900 whitespace-pre-wrap leading-relaxed">
+          {String(lead.message || 'No message left.')}
         </div>
-
       </div>
 
-      <!-- NOTES -->
-
       <div>
-
-        <div class="mb-4">
-
-          <p class="text-sm text-zinc-500 font-medium">
-            Internal CRM Notes
-          </p>
-
-          <h2 class="text-2xl font-bold tracking-tight text-zinc-900 mt-1">
-            Notes
-          </h2>
-
+        <div class="mb-2">
+          <p class="text-[10px] uppercase tracking-[0.15em] text-zinc-400 font-bold leading-none">Internal System</p>
+          <h2 class="text-xs font-bold text-zinc-800 mt-1 leading-none">CRM Notes</h2>
         </div>
 
         <textarea
-          id={`details-notes-${lead.id}`}
-          class="w-full min-h-[220px] bg-zinc-50 border border-zinc-200 rounded-[28px] p-6 text-zinc-800 outline-none focus:border-zinc-400 focus:ring-4 focus:ring-zinc-100 transition resize-none"
-          placeholder="Write notes about this lead..."
+          id={`notes-${lead.id}`}
+          class="w-full min-h-[140px] bg-zinc-50 border border-zinc-200/80 rounded-lg p-4 text-xs font-semibold text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-zinc-400 transition resize-none"
+          placeholder="Write internal notes about this lead..."
         >{lead.notes || ''}</textarea>
 
-        <div class="flex items-center justify-between mt-4">
-
+        <div class="flex items-center justify-between mt-2">
           <p
-            id={`detailsSaved-${lead.id}`}
-            class="text-sm text-zinc-500"
+            id={`notesSaved-${lead.id}`}
+            class="text-xs font-bold text-emerald-600"
           ></p>
 
           <button
-            class="saveDetailsNotesBtn bg-zinc-900 hover:bg-black text-white px-5 py-3 rounded-2xl text-sm font-semibold transition shadow-sm"
+            class="saveNotesBtn bg-zinc-900 hover:bg-zinc-800 text-white px-4 h-8 rounded-lg text-xs font-bold transition shadow-sm cursor-pointer"
             data-id={lead.id}
           >
-
             Save Notes
-
           </button>
-
         </div>
 
       </div>
 
     </div>
 
-    <!-- RIGHT COLUMN -->
+    <div class="space-y-4">
 
-    <div class="space-y-6">
+      <div class="bg-zinc-50 border border-zinc-200/60 rounded-xl p-4">
+        <h4 class="text-xs font-bold text-zinc-800 border-b border-zinc-200/60 pb-2 mb-3">Lead Metadata</h4>
 
-      <!-- INFO CARD -->
-
-      <div class="bg-zinc-50 border border-zinc-200 rounded-[28px] p-6">
-
-        <p class="text-sm text-zinc-500 font-medium">
-          Lead Information
-        </p>
-
-        <div class="space-y-5 mt-6">
-
-          <!-- SOURCE -->
-
+        <div class="grid grid-cols-2 gap-3">
           <div>
-
-            <p class="text-xs uppercase tracking-[0.15em] text-zinc-400 font-semibold mb-2">
-              Source
+            <p class="text-[9px] uppercase tracking-wider text-zinc-400 font-bold">Source</p>
+            <p class="text-zinc-900 text-xs font-bold mt-0.5">
+              {String(lead.utm_source || lead.source || '-')}
             </p>
-
-            <p class="text-zinc-900 font-medium">
-
-              {
-                String(
-                  lead.utm_source ||
-                  lead.source ||
-                  '-'
-                )
-              }
-
-            </p>
-
           </div>
 
-          <!-- CAMPAIGN -->
-
           <div>
-
-            <p class="text-xs uppercase tracking-[0.15em] text-zinc-400 font-semibold mb-2">
-              Campaign
+            <p class="text-[9px] uppercase tracking-wider text-zinc-400 font-bold">Campaign</p>
+            <p class="text-zinc-900 text-xs font-bold mt-0.5 truncate">
+              {String(lead.utm_campaign || '-')}
             </p>
-
-            <p class="text-zinc-900 font-medium break-words">
-
-              {
-                String(
-                  lead.utm_campaign || '-'
-                )
-              }
-
-            </p>
-
           </div>
 
-          <!-- CREATED -->
-
-          <div>
-
-            <p class="text-xs uppercase tracking-[0.15em] text-zinc-400 font-semibold mb-2">
-              Created
+          <div class="col-span-2 pt-1.5 border-t border-zinc-200/40">
+            <p class="text-[9px] uppercase tracking-wider text-zinc-400 font-bold">Timestamp</p>
+            <p class="text-zinc-900 text-xs font-bold mt-0.5">
+              {new Date(lead.created_at).toLocaleString('sr-RS')}
             </p>
-
-            <p class="text-zinc-900 font-medium">
-
-              {
-                new Date(
-                  lead.created_at
-                ).toLocaleString()
-              }
-
-            </p>
-
           </div>
-
         </div>
-
       </div>
 
-      <!-- ACTIVITY -->
+      <div class="bg-zinc-50 border border-zinc-200/60 rounded-xl p-4">
+        <h4 class="text-xs font-bold text-zinc-800 border-b border-zinc-200/60 pb-2 mb-3">Audit Logs</h4>
 
-      <div class="bg-zinc-50 border border-zinc-200 rounded-[28px] p-6">
-
-        <p class="text-sm text-zinc-500 font-medium">
-          Activity
-        </p>
-
-        <h3 class="text-xl font-bold tracking-tight text-zinc-900 mt-1">
-          Timeline
-        </h3>
-
-        <div class="space-y-4 mt-6">
-
-          <div class="flex gap-3">
-
-            <div class="w-3 h-3 rounded-full bg-emerald-500 mt-1.5"></div>
-
+        <div class="space-y-3">
+          <div class="flex gap-2.5 items-start">
+            <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1 ring-4 ring-emerald-500/10 shrink-0"></div>
             <div>
-
-              <p class="font-medium text-zinc-900">
-                Lead created
+              <p class="text-xs font-bold text-zinc-800 leading-none">Lead created</p>
+              <p class="text-[10px] text-zinc-400 font-medium mt-1">
+                {new Date(lead.created_at).toLocaleString('sr-RS', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
               </p>
-
-              <p class="text-sm text-zinc-500 mt-1">
-
-                {
-                  new Date(
-                    lead.created_at
-                  ).toLocaleString()
-                }
-
-              </p>
-
             </div>
-
           </div>
 
-          <div class="flex gap-3">
-
-            <div class="w-3 h-3 rounded-full bg-blue-500 mt-1.5"></div>
-
+          <div class="flex gap-2.5 items-start pt-2 border-t border-zinc-200/40">
+            <div class="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1 ring-4 ring-blue-500/10 shrink-0"></div>
             <div>
-
-              <p class="font-medium text-zinc-900">
-                Status updated
+              <p class="text-xs font-bold text-zinc-800 leading-none">State initialized</p>
+              <p class="text-[10px] text-zinc-500 font-semibold mt-1">
+                Current stage: <span class="text-zinc-900">{String(lead.status || 'new').toUpperCase()}</span>
               </p>
-
-              <p class="text-sm text-zinc-500 mt-1">
-
-                Current:
-                {
-                  String(
-                    lead.status || 'new'
-                  )
-                }
-
-              </p>
-
             </div>
-
           </div>
-
         </div>
-
       </div>
 
     </div>
 
   </div>
-
 </section>

@@ -1,0 +1,43 @@
+---
+// src/pages/admin/leads.astro
+import AdminLayout from '../../layouts/AdminLayout.astro'
+import FiltersBar from '../../components/admin/FiltersBar.astro'
+import LeadsTable from '../../components/admin/LeadsTable.astro'
+import KanbanBoard from '../../components/admin/KanbanBoard.astro'
+import PaginationControls from '../../components/admin/PaginationControls.astro'
+import { getLeads } from '../../lib/client/leads.js'
+import { client } from '../../config/client'
+
+const allLeads = await getLeads(client.id)
+const leads = allLeads || []
+const totalPages = Math.ceil(leads.length / 10)
+---
+
+<AdminLayout currentRoute="/admin/leads" title="Leads">
+
+  <FiltersBar leadStatuses={client.leadStatuses} />
+
+  <div id="leadsViewsContainer" class="relative w-full">
+    
+    <div id="tableView" class="dashboard-view space-y-6">
+      <LeadsTable leads={leads} leadStatuses={client.leadStatuses} />
+      <PaginationControls totalPages={totalPages} currentPage={1} />
+    </div>
+
+    <div id="kanbanView" class="dashboard-view hidden">
+      <KanbanBoard leads={leads} />
+    </div>
+
+  </div>
+
+</AdminLayout>
+
+<script type="module">
+  import '/scripts/admin/auth.js'
+  import '/scripts/admin/leads-view.js'
+  import '/scripts/admin/filters.js'
+  import '/scripts/admin/pagination.js'
+  import '/scripts/admin/kanban.js'
+  import '/scripts/admin/modals.js'
+  import '/scripts/admin/lead-actions.js'
+</script>
