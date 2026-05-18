@@ -32,18 +32,21 @@ const statusStyles: Record<string, string> = {
 
     <div class="bg-white border border-zinc-200/60 rounded-xl max-w-xl w-full p-5 relative overflow-y-auto max-h-[95vh] shadow-2xl z-[10000] animate-in fade-in zoom-in-95 duration-100">
 
-      <button
-        onclick={`closeModal(${index})`}
-        class="absolute top-4 right-4 w-7 h-7 rounded-md hover:bg-zinc-50 text-zinc-400 hover:text-zinc-950 text-lg transition flex items-center justify-center font-bold border border-transparent hover:border-zinc-200/40 cursor-pointer"
-      >
-        ×
-      </button>
+      <div class="flex items-start justify-between gap-4 mb-4 pb-2.5 border-b border-zinc-100">
+        <div class="min-w-0">
+          <p class="text-[10px] uppercase tracking-[0.2em] text-zinc-400 font-bold leading-none">System Inspect</p>
+          <h2 class="text-sm font-bold tracking-tight text-zinc-900 mt-1.5 leading-none truncate">
+            Message Overview
+          </h2>
+        </div>
 
-      <div class="mb-4 pb-2.5 border-b border-zinc-100">
-        <p class="text-[10px] uppercase tracking-[0.2em] text-zinc-400 font-bold leading-none">System Inspect</p>
-        <h2 class="text-sm font-bold tracking-tight text-zinc-900 mt-1.5 leading-none">
-          Message Overview
-        </h2>
+        <button
+          onclick={`closeModal(${index})`}
+          class="w-7 h-7 rounded-md hover:bg-zinc-50 text-zinc-400 hover:text-zinc-950 text-lg transition flex items-center justify-center font-bold border border-transparent hover:border-zinc-200/40 cursor-pointer shrink-0 -mt-1"
+          title="Close modal"
+        >
+          ×
+        </button>
       </div>
 
       <div class="space-y-4">
@@ -53,7 +56,7 @@ const statusStyles: Record<string, string> = {
             <p class="text-[9px] uppercase tracking-wider text-zinc-400 font-bold mb-1">
               Sender Name
             </p>
-            <div class="bg-zinc-50 border border-zinc-200/80 rounded-lg px-3 py-1.5 text-xs text-zinc-900 font-bold h-8 flex items-center">
+            <div class="bg-zinc-50 border border-zinc-200/80 rounded-lg px-3 py-1.5 text-xs text-zinc-900 font-bold h-8 flex items-center truncate">
               {String(lead.name || '-')}
             </div>
           </div>
@@ -64,7 +67,7 @@ const statusStyles: Record<string, string> = {
             </p>
             <a
               href={`tel:${lead.phone}`}
-              class="bg-zinc-50 border border-zinc-200/80 rounded-lg px-3 py-1.5 text-xs text-zinc-900 hover:text-zinc-950 font-bold h-8 flex items-center transition"
+              class="bg-zinc-50 border border-zinc-200/80 rounded-lg px-3 py-1.5 text-xs text-zinc-900 hover:text-zinc-950 font-bold h-8 flex items-center transition truncate"
             >
               📞 <span class="ml-1.5 underline underline-offset-2">{String(lead.phone || '-')}</span>
             </a>

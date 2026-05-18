@@ -1,33 +1,37 @@
 ---
-import Layout from '../layouts/Layout.astro'
 import { client } from '../config/client'
 ---
 
-<Layout>
+<!DOCTYPE html>
+<html lang="sr" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{client.businessName} | Free Estimate</title>
+  
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-black text-white h-full antialiased font-sans">
 
-  <main class="min-h-screen bg-black text-white flex items-center justify-center p-10">
+  <main class="min-h-screen flex items-center justify-center p-4 sm:p-10">
 
     <form
       id="leadForm"
-      class="w-full max-w-xl bg-zinc-900 border border-zinc-800 p-8 rounded-3xl space-y-5 shadow-2xl"
+      class="w-full max-w-xl bg-zinc-900 border border-zinc-800 p-6 sm:p-8 rounded-3xl space-y-5 shadow-2xl"
     >
 
       <div class="space-y-2">
-
-        <p
-          class="uppercase tracking-[0.2em] text-sm text-zinc-400"
-        >
+        <p class="uppercase tracking-[0.2em] text-xs sm:text-sm text-zinc-400">
           {client.niche}
         </p>
 
-        <h1 class="text-4xl font-bold leading-tight">
+        <h1 class="text-3xl sm:text-4xl font-bold leading-tight">
           {client.businessName}
         </h1>
 
-        <p class="text-zinc-400">
+        <p class="text-zinc-400 text-sm sm:text-base">
           Get a fast quote from our team in {client.city}.
         </p>
-
       </div>
 
       <input
@@ -35,7 +39,7 @@ import { client } from '../config/client'
         name="name"
         placeholder="Your Name"
         required
-        class="w-full p-4 rounded-2xl bg-zinc-800 border border-zinc-700 outline-none focus:border-green-600"
+        class="w-full p-4 rounded-2xl bg-zinc-800 border border-zinc-700 outline-none focus:border-zinc-500 transition text-white"
       />
 
       <input
@@ -43,28 +47,27 @@ import { client } from '../config/client'
         name="phone"
         placeholder="Phone Number"
         required
-        class="w-full p-4 rounded-2xl bg-zinc-800 border border-zinc-700 outline-none focus:border-green-600"
+        class="w-full p-4 rounded-2xl bg-zinc-800 border border-zinc-700 outline-none focus:border-zinc-500 transition text-white"
       />
 
       <textarea
         name="message"
         placeholder="Tell us what you need..."
-        class="w-full p-4 rounded-2xl bg-zinc-800 border border-zinc-700 h-32 outline-none focus:border-green-600"
+        class="w-full p-4 rounded-2xl bg-zinc-800 border border-zinc-700 h-32 outline-none focus:border-zinc-500 transition text-white resize-none"
       ></textarea>
 
       <button
         type="submit"
-        class="w-full text-white transition p-4 rounded-2xl font-bold text-lg hover:scale-[1.02]"
+        class="w-full text-white transition p-4 rounded-2xl font-bold text-lg hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
         style={`background:${client.primaryColor}`}
       >
         Request Free Estimate
       </button>
 
-      <div class="flex items-center justify-between text-sm text-zinc-500">
-
+      <div class="flex items-center justify-between text-xs sm:text-sm text-zinc-500 pt-2">
         <a
           href={`tel:${client.phone}`}
-          class="hover:text-white transition"
+          class="hover:text-white transition font-medium"
         >
           {client.phone}
         </a>
@@ -72,99 +75,73 @@ import { client } from '../config/client'
         <span>
           Source: {client.formSource}
         </span>
-
       </div>
 
       <p
         id="status"
-        class="text-center text-sm font-medium"
+        class="text-center text-sm font-bold pt-2 transition-all"
       ></p>
 
     </form>
 
   </main>
 
-</Layout>
+</body>
+</html>
 
 <script define:vars={{ client }} type="module">
-
   const form = document.getElementById('leadForm')
   const status = document.getElementById('status')
 
   form.addEventListener('submit', async (e) => {
-
     e.preventDefault()
 
+    status.className = 'text-center text-sm font-bold pt-2 text-zinc-400'
     status.innerText = 'Sending...'
 
     const formData = new FormData(form)
-
     const params = new URLSearchParams(window.location.search)
 
     const payload = {
-
-      // Lead data
       name: formData.get('name'),
       phone: formData.get('phone'),
       message: formData.get('message'),
-
-      // Client system
       client_id: client.id,
-
       source: client.formSource,
-
       status: 'new',
-
-      // Page tracking
       page_url: window.location.href,
-
-      // UTM tracking
       utm_source: params.get('utm_source'),
       utm_campaign: params.get('utm_campaign'),
       utm_medium: params.get('utm_medium'),
-
-      // Ads tracking
       gclid: params.get('gclid')
-
     }
 
     try {
-
       const response = await fetch('/api/lead', {
-
         method: 'POST',
-
         headers: {
           'Content-Type': 'application/json'
         },
-
         body: JSON.stringify(payload)
-
       })
 
       const result = await response.json()
 
       if (!response.ok) {
-
         console.error(result)
-
+        status.className = 'text-center text-sm font-bold pt-2 text-rose-500'
         status.innerText = 'Something went wrong.'
-
         return
       }
 
+      status.className = 'text-center text-sm font-bold pt-2 text-emerald-500'
       status.innerText = 'Request sent successfully!'
-
       form.reset()
 
     } catch (err) {
-
       console.error(err)
-
+      status.className = 'text-center text-sm font-bold pt-2 text-rose-500'
       status.innerText = 'Server error.'
-
     }
-
   })
-
 </script>

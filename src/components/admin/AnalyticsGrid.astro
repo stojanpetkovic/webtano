@@ -3,11 +3,36 @@
 const { analytics } = Astro.props
 ---
 
-<div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-4 w-full select-none">
+<style>
+  /* Fin SaaS animirani pulse efekat za brojke kada se promene */
+  @keyframes number-pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.18); color: #10b981; } /* Privremeno skače i zeleni se */
+    100% { transform: scale(1); }
+  }
+  .animate-pop {
+    display: inline-block;
+    animation: number-pop 0.5s ease-in-out;
+  }
+</style>
+
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 w-full select-none">
 
   <div class="bg-white border border-zinc-200/60 p-4 rounded-xl shadow-sm flex flex-col justify-between min-h-[90px]">
     <p class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 leading-none">Total Leads</p>
-    <h3 class="text-2xl font-bold tracking-tight text-zinc-900 mt-2 leading-none">{analytics.total}</h3>
+    <h3 id="grid-total" class="text-2xl font-bold tracking-tight text-zinc-900 mt-2 leading-none transition-all duration-300">
+      {analytics.total}
+    </h3>
+  </div>
+
+  <div class="bg-white border border-zinc-200/60 p-4 rounded-xl shadow-sm flex flex-col justify-between min-h-[90px]">
+    <div class="flex items-center justify-between w-full">
+      <p class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 leading-none">Total Calls</p>
+      <span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span>
+    </div>
+    <h3 id="grid-totalCalls" class="text-2xl font-bold tracking-tight text-zinc-900 mt-2 leading-none transition-all duration-300">
+      {analytics.totalCalls || '0'}
+    </h3>
   </div>
 
   <div class="bg-white border border-zinc-200/60 p-4 rounded-xl shadow-sm flex flex-col justify-between min-h-[90px]">
@@ -15,7 +40,9 @@ const { analytics } = Astro.props
       <p class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 leading-none">New</p>
       <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
     </div>
-    <h3 class="text-2xl font-bold tracking-tight text-zinc-900 mt-2 leading-none">{analytics.newLeads}</h3>
+    <h3 id="grid-newLeads" class="text-2xl font-bold tracking-tight text-zinc-900 mt-2 leading-none transition-all duration-300">
+      {analytics.newLeads}
+    </h3>
   </div>
 
   <div class="bg-white border border-zinc-200/60 p-4 rounded-xl shadow-sm flex flex-col justify-between min-h-[90px]">
@@ -23,7 +50,9 @@ const { analytics } = Astro.props
       <p class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 leading-none">Contacted</p>
       <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
     </div>
-    <h3 class="text-2xl font-bold tracking-tight text-zinc-900 mt-2 leading-none">{analytics.contacted}</h3>
+    <h3 id="grid-contacted" class="text-2xl font-bold tracking-tight text-zinc-900 mt-2 leading-none transition-all duration-300">
+      {analytics.contacted}
+    </h3>
   </div>
 
   <div class="bg-white border border-zinc-200/60 p-4 rounded-xl shadow-sm flex flex-col justify-between min-h-[90px]">
@@ -31,7 +60,9 @@ const { analytics } = Astro.props
       <p class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 leading-none">Won</p>
       <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
     </div>
-    <h3 class="text-2xl font-bold tracking-tight text-zinc-900 mt-2 leading-none">{analytics.won}</h3>
+    <h3 id="grid-won" class="text-2xl font-bold tracking-tight text-zinc-900 mt-2 leading-none transition-all duration-300">
+      {analytics.won}
+    </h3>
   </div>
 
   <div class="bg-white border border-zinc-200/60 p-4 rounded-xl shadow-sm flex flex-col justify-between min-h-[90px]">
@@ -39,7 +70,81 @@ const { analytics } = Astro.props
       <p class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 leading-none">Lost</p>
       <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
     </div>
-    <h3 class="text-2xl font-bold tracking-tight text-zinc-900 mt-2 leading-none">{analytics.lost}</h3>
+    <h3 id="grid-lost" class="text-2xl font-bold tracking-tight text-zinc-900 mt-2 leading-none transition-all duration-300">
+      {analytics.lost}
+    </h3>
   </div>
 
 </div>
+
+<script
+  define:vars={{
+    supabaseUrl: import.meta.env.PUBLIC_SUPABASE_URL,
+    supabaseKey: import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+  }}
+  type="module"
+>
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js'
+  const supabase = createClient(supabaseUrl, supabaseKey)
+
+  // Selektujemo elemente iz DOM-a preko ID-jeva
+  const elTotal = document.getElementById('grid-total');
+  const elTotalCalls = document.getElementById('grid-totalCalls');
+  const elNew = document.getElementById('grid-newLeads');
+  const elContacted = document.getElementById('grid-contacted');
+  const elWon = document.getElementById('grid-won');
+  const elLost = document.getElementById('grid-lost');
+
+  // Funkcija koja dodaje CSS klasu za animaciju, menja broj i čisti klasu nakon završetka animacije
+  function animateValue(element, newValue) {
+    if (!element) return;
+    if (parseInt(element.textContent.trim(), 10) === parseInt(newValue, 10)) return; // Ako je broj isti, ne animiraj
+    
+    element.textContent = newValue;
+    element.classList.add('animate-pop');
+    
+    setTimeout(() => {
+      element.classList.remove('animate-pop');
+    }, 500);
+  }
+
+  // Funkcija koja povlači svež agregat direktno iz baze kako bismo imali 100% tačne brojke u realnom vremenu
+  async function refreshGridData() {
+    try {
+      const { data: leads, error } = await supabase
+        .from('leads')
+        .select('status, message'); // povlačimo statuse i poruke radi detekcije poziva
+
+      if (error) throw error;
+
+      if (leads) {
+        const total = leads.length;
+        const newLeads = leads.filter(l => l.status === 'new').length;
+        const contacted = leads.filter(l => l.status === 'contacted').length;
+        const won = leads.filter(l => l.status === 'won').length;
+        const lost = leads.filter(l => l.status === 'lost').length;
+        
+        // Pretpostavka za totalCalls: ako u poruci stoji da je u pitanju call ili poseban flag
+        const totalCalls = leads.filter(l => l.message && l.message.toLowerCase().includes('call')).length;
+
+        // Propagiraj promene sa animacijom
+        animateValue(elTotal, total);
+        animateValue(elNew, newLeads);
+        animateValue(elContacted, contacted);
+        animateValue(elWon, won);
+        animateValue(elLost, lost);
+        animateValue(elTotalCalls, totalCalls);
+      }
+    } catch (err) {
+      console.error('Greška pri osvežavanju grida:', err);
+    }
+  }
+
+  // Pretplati se na bilo kakve izmene u tabeli (Novi lid, promenjen status, obrisan lid)
+  supabase
+    .channel('grid-realtime-channel')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'leads' }, () => {
+      refreshGridData();
+    })
+    .subscribe();
+</script>

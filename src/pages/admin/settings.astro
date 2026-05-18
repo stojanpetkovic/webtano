@@ -1,22 +1,150 @@
 ---
 // src/pages/admin/settings.astro
-import Layout from '../../layouts/Layout.astro'
-import { client } from '../../config/client'
-import Sidebar from '../../components/admin/Sidebar.astro'
+import AdminLayout from '../../layouts/AdminLayout.astro';
 ---
-<Layout>
-  <main class="min-h-screen bg-[#f5f7fb] text-zinc-900 flex">
-    <Sidebar businessName={client.businessName} currentRoute="/admin/settings" />
-    <div class="flex-1 min-w-0">
-      <div class="p-8 space-y-10">
-        <section id="settingsSection">
-          <div class="bg-white border border-zinc-200 rounded-[32px] p-10 shadow-sm">
-            <p class="text-sm text-zinc-500 font-medium">Settings</p>
-            <h2 class="text-4xl font-bold tracking-tight text-zinc-900 mt-2">CRM Settings</h2>
-            <p class="text-zinc-500 mt-4 leading-relaxed max-w-2xl">Settings panel coming soon.</p>
+
+<AdminLayout title="Configuration & Settings | WebTano CRM">
+  <div class="space-y-6 max-w-4xl">
+    
+    <div class="pb-5 border-b border-zinc-200/60">
+      <h1 class="text-xl font-bold tracking-tight text-zinc-900">System Configuration</h1>
+      <p class="text-xs text-zinc-500 mt-1">Manage your administrator profile, CRM core settings, and third-party API integrations.</p>
+    </div>
+
+    <div class="bg-white border border-zinc-200/60 rounded-xl shadow-sm overflow-hidden">
+      <div class="p-5 border-b border-zinc-100 bg-zinc-50/50">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-800">1. Admin Profile</h3>
+        <p class="text-[11px] text-zinc-400 font-medium mt-0.5">Your personal account identity inside this workspace.</p>
+      </div>
+      
+      <div class="p-5 space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1.5">Display Name</label>
+            <input 
+              type="text" 
+              value="Administrator" 
+              class="w-full bg-zinc-50 border border-zinc-200 rounded-lg px-3 h-9 text-xs font-semibold text-zinc-900 focus:border-zinc-400 focus:bg-white outline-none transition"
+            />
           </div>
-        </section>
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1.5">Email Address</label>
+            <input 
+              type="email" 
+              value="admin@webtano.com" 
+              disabled
+              class="w-full bg-zinc-100 border border-zinc-200 rounded-lg px-3 h-9 text-xs font-semibold text-zinc-400 cursor-not-allowed outline-none"
+            />
+          </div>
+        </div>
       </div>
     </div>
-  </main>
-</Layout>
+
+    <div class="bg-white border border-zinc-200/60 rounded-xl shadow-sm overflow-hidden">
+      <div class="p-5 border-b border-zinc-100 bg-zinc-50/50">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-800">2. CRM Notifications & Rules</h3>
+        <p class="text-[11px] text-zinc-400 font-medium mt-0.5">Define automate thresholds and notifications for incoming leads.</p>
+      </div>
+      
+      <div class="p-5 space-y-4">
+        <div class="flex items-start justify-between gap-4">
+          <div class="space-y-0.5">
+            <label class="text-xs font-bold text-zinc-900">Email Alerts</label>
+            <p class="text-[11px] text-zinc-400 font-medium">Send real-time internal email notification whenever a new lead drops in.</p>
+          </div>
+          <input type="checkbox" checked class="w-4 h-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900 cursor-pointer mt-0.5" />
+        </div>
+
+        <div class="border-t border-zinc-100 my-2"></div>
+
+        <div class="flex items-start justify-between gap-4">
+          <div class="space-y-0.5">
+            <label class="text-xs font-bold text-zinc-900">Auto-Archive Lost Deals</label>
+            <p class="text-[11px] text-zinc-400 font-medium">Automatically move leads marked as "Lost" away from the active pipeline view after 30 days.</p>
+          </div>
+          <input type="checkbox" class="w-4 h-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900 cursor-pointer mt-0.5" />
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white border border-zinc-200/60 rounded-xl shadow-sm overflow-hidden">
+      <div class="p-5 border-b border-zinc-100 bg-zinc-50/50">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-800">3. Marketing API Integrations</h3>
+        <p class="text-[11px] text-zinc-400 font-medium mt-0.5">Connect external platforms to feed your advanced conversion and ads data graphics.</p>
+      </div>
+      
+      <div class="p-5 space-y-4">
+        <div>
+          <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1.5">Google Ads Developer Token</label>
+          <input 
+            type="password" 
+            placeholder="gads_live_••••••••••••••••" 
+            class="w-full bg-zinc-50 border border-zinc-200 rounded-lg px-3 h-9 text-xs font-mono font-bold text-zinc-900 focus:border-zinc-400 focus:bg-white outline-none transition"
+          />
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1.5">Meta Conversion API Key</label>
+          <input 
+            type="password" 
+            placeholder="meta_eaai_••••••••••••••••" 
+            class="w-full bg-zinc-50 border border-zinc-200 rounded-lg px-3 h-9 text-xs font-mono font-bold text-zinc-900 focus:border-zinc-400 focus:bg-white outline-none transition"
+          />
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1.5">Universal Webhook Endpoint (For External Platforms / Elementor forms)</label>
+          <div class="flex gap-2">
+            <input 
+              type="text" 
+              value="https://api.webtano.com/v1/webhooks/leads" 
+              readonly
+              class="flex-1 bg-zinc-100 border border-zinc-200 rounded-lg px-3 h-9 text-xs font-mono text-zinc-500 outline-none select-all"
+            />
+            <button 
+              onclick="navigator.clipboard.writeText('https://api.webtano.com/v1/webhooks/leads')"
+              class="px-3 bg-white border border-zinc-200 hover:bg-zinc-50 text-xs font-bold rounded-lg text-zinc-800 active:scale-98 transition cursor-pointer"
+            >
+              Copy
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-end gap-3 pt-2">
+      <p id="settingsFeedback" class="text-xs font-bold text-emerald-600 hidden">✓ All configurations securely applied</p>
+      <button 
+        id="saveSettingsBtn"
+        class="bg-zinc-900 hover:bg-zinc-800 text-white px-5 h-9 rounded-lg text-xs font-bold transition shadow-sm cursor-pointer"
+      >
+        Save Changes
+      </button>
+    </div>
+
+  </div>
+</AdminLayout>
+
+<script>
+  // Brza klijentska simulacija čuvanja podataka
+  const saveBtn = document.getElementById('saveSettingsBtn');
+  const feedback = document.getElementById('settingsFeedback');
+
+  saveBtn?.addEventListener('click', () => {
+    if (!saveBtn || !feedback) return;
+    
+    const originalText = saveBtn.innerHTML;
+    saveBtn.setAttribute('disabled', 'true');
+    saveBtn.innerHTML = 'Saving...';
+
+    setTimeout(() => {
+      saveBtn.removeAttribute('disabled');
+      saveBtn.innerHTML = originalText;
+      
+      feedback.classList.remove('hidden');
+      setTimeout(() => {
+        feedback.classList.add('hidden');
+      }, 3000);
+    }, 800);
+  });
+</script>

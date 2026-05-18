@@ -1,14 +1,13 @@
 ---
 // src/layouts/AdminLayout.astro
-import AdminHeader from '../components/admin/AdminHeader.astro'
-
 const { title = "Admin Panel" } = Astro.props
 const currentPath = Astro.url.pathname
 
 const navItems = [
-  { href: '/admin', label: 'Business Analytics', icon: '📊' },
-  { href: '/admin/leads', label: 'Leads Pipeline', icon: '👥' },
-  { href: '/admin/settings', label: 'Configuration', icon: '⚙️' }
+  { href: '/admin', label: 'Overview', icon: '📊' },
+  { href: '/admin/analytics', label: 'Analytics', icon: '📈' },
+  { href: '/admin/leads', label: 'Leads', icon: '👥' },
+  { href: '/admin/settings', label: 'Settings', icon: '⚙️' }
 ]
 ---
 
@@ -19,86 +18,149 @@ const navItems = [
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{title}</title>
   <style>
-    /* Premium zaštitni sloj: Sprečava bilo kakav vizuelni trzaj (FOUC) pre provere tokena */
     html { opacity: 0; transition: opacity 0.15s ease-in-out; }
     html.auth-ready { opacity: 1; }
     
-    /* Sakrivanje skrolbara za čistiji minimalistički izgled gde je to potrebno */
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* ANIMACIJA VIBRIRANJA ZVONCA (Za desktop i mobilni podjednako) */
+    @keyframes bell-shake {
+      0%, 100% { transform: rotate(0); }
+      15% { transform: rotate(15deg); }
+      30% { transform: rotate(-10deg); }
+      45% { transform: rotate(8deg); }
+      60% { transform: rotate(-6deg); }
+      75% { transform: rotate(4deg); }
+      85% { transform: rotate(-2deg); }
+    }
+    .animate-bell-ring {
+      animation: bell-shake 0.6s ease-in-out;
+      transform-origin: top center;
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
-<body class="bg-zinc-50 text-zinc-900 h-full flex flex-col antialiased font-sans overflow-hidden selection:bg-zinc-900 selection:text-white">
+<body class="bg-zinc-50 text-zinc-900 h-full flex flex-row antialiased font-sans overflow-hidden selection:bg-zinc-900 selection:text-white relative">
 
-  <AdminHeader businessName="WebTano" />
-
-  <div class="flex flex-1 w-full relative overflow-hidden h-[calc(100vh-60px)]">
-    
-    <aside class="w-[240px] bg-white border-r border-zinc-200/60 flex flex-col justify-between shrink-0 hidden lg:flex select-none z-10">
-      
-      <div class="p-4 space-y-6">
-        <div>
-          <p class="px-3 text-[10px] uppercase tracking-[0.25em] text-zinc-400 font-bold leading-none">
-            Workspace
-          </p>
-          <nav class="mt-4 space-y-1">
-            {navItems.map((item) => {
-              const isActive = currentPath === item.href || (item.href === '/admin' && currentPath === '/admin/')
-              return (
-                <a 
-                  href={item.href} 
-                  class={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-bold transition-all duration-150 group relative ${
-                    isActive
-                      ? 'bg-zinc-900 text-white shadow-sm' 
-                      : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-950'
-                  }`}
-                >
-                  <span class={`text-sm transition-transform duration-150 ${isActive ? '' : 'group-hover:scale-105'}`}>
-                    {item.icon}
-                  </span>
-                  <span>{item.label}</span>
-                  
-                  {isActive && (
-                    <span class="absolute right-3 w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                  )}
-                </a>
-              )
-            })}
-          </nav>
+  <aside 
+    id="adminSidebar"
+    class="w-[240px] bg-white border-r border-zinc-200/60 flex flex-col justify-between shrink-0 select-none h-screen hidden lg:flex"
+  >
+    <div class="p-4 flex-1 overflow-y-auto no-scrollbar">
+      <div class="flex items-center justify-between pb-5 border-b border-zinc-100 mb-5">
+        <div class="flex items-center gap-2">
+          <span class="text-base">🚀</span>
+          <span class="text-xs font-black tracking-tight text-zinc-900">
+            WebTano <span class="text-zinc-400 font-bold">CRM</span>
+          </span>
         </div>
       </div>
 
-      <div class="p-3.5 border-t border-zinc-100 bg-zinc-50/50 flex items-center justify-between">
-        <div class="flex items-center gap-2 px-1">
-          <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 ring-4 ring-emerald-500/10"></div>
-          <span class="text-[9px] text-zinc-400 font-bold tracking-wider uppercase">Security Layer</span>
-        </div>
-        <span class="text-[9px] font-bold bg-zinc-200/60 text-zinc-600 px-1.5 py-0.5 rounded-md">v2.4</span>
+      <div>
+        <p class="px-3 text-[10px] uppercase tracking-[0.25em] text-zinc-400 font-bold leading-none">Workspace</p>
+        <nav class="mt-4 space-y-1">
+          {navItems.map((item) => {
+            const isActive = currentPath === item.href || (item.href === '/admin' && currentPath === '/admin/')
+            return (
+              <a 
+                href={item.href} 
+                class={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-bold transition-all duration-150 group relative ${
+                  isActive ? 'bg-zinc-900 text-white shadow-sm' : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-950'
+                }`}
+              >
+                <span class={`text-sm transition-transform duration-150 ${isActive ? '' : 'group-hover:scale-105'}`}>{item.icon}</span>
+                <span>{item.label}</span>
+                {isActive && <span class="absolute right-3 w-1.5 h-1.5 rounded-full bg-emerald-400"></span>}
+              </a>
+            )
+          })}
+        </nav>
       </div>
-
-    </aside>
-
-    <div class="lg:hidden fixed bottom-5 left-1/2 -translate-x-1/2 bg-zinc-950/95 backdrop-blur-md border border-zinc-800 px-4 py-2 rounded-xl flex items-center gap-6 shadow-xl z-40 transition-all duration-300">
-      {navItems.map((item) => {
-        const isActive = currentPath === item.href || (item.href === '/admin' && currentPath === '/admin/')
-        return (
-          <a 
-            href={item.href} 
-            class={`flex flex-col items-center gap-1 p-0.5 transition-colors ${isActive ? 'text-emerald-400' : 'text-zinc-400 hover:text-white'}`}
-          >
-            <span class="text-base leading-none">{item.icon}</span>
-            <span class="text-[9px] font-bold tracking-tight">{item.label.split(' ')[0]}</span>
-          </a>
-        )
-      })}
     </div>
 
-    <main class="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto bg-zinc-50/30 h-full relative z-0">
+    <div class="p-3 border-t border-zinc-100 bg-zinc-50/50 space-y-2 shrink-0">
+      <div class="flex items-center gap-2.5 px-1.5 py-1">
+        <div class="w-7 h-7 rounded-md bg-zinc-900 text-white flex items-center justify-center text-[11px] font-bold uppercase shrink-0">AD</div>
+        <div class="min-w-0 leading-none">
+          <p class="text-xs font-bold text-zinc-900 truncate">Administrator</p>
+          <p class="text-[9px] text-zinc-400 font-semibold tracking-wide uppercase mt-0.5">Active Session</p>
+        </div>
+      </div>
+      <button id="sidebarLogoutBtn" class="w-full flex items-center gap-2.5 px-3 h-8 rounded-lg text-xs font-bold text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition cursor-pointer text-left">
+        <span>🚪</span> <span>Sign Out</span>
+      </button>
+    </div>
+  </aside>
+
+  <div class="flex-1 flex flex-col h-screen overflow-hidden relative z-10">
+    
+    <header class="h-[60px] bg-white border-b border-zinc-200/60 px-4 hidden lg:flex items-center justify-between shrink-0 select-none">
+      <div class="flex items-center gap-2 text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
+        <span>Console</span> <span class="text-zinc-300">/</span> <span class="text-zinc-800">Pipeline Management</span>
+      </div>
+      
+      <div class="flex items-center gap-4">
+        <a 
+          href="/admin/leads" 
+          id="desktopBellWrapper"
+          class="relative p-2 text-zinc-500 hover:text-zinc-950 rounded-lg hover:bg-zinc-50 transition flex items-center justify-center cursor-pointer"
+        >
+          <svg id="desktopBellSvg" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          <span id="desktopBellBadge" class="absolute top-1 right-1 bg-rose-600 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-white scale-0 transition-transform duration-200">0</span>
+        </a>
+        <span class="text-[9px] font-bold bg-zinc-100 text-zinc-500 px-2 py-0.5 rounded-md uppercase tracking-wider">Live System</span>
+      </div>
+    </header>
+
+    <main class="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto bg-zinc-50/30 relative pb-20 lg:pb-8">
       <div class="max-w-[1500px] mx-auto w-full">
         <slot />
       </div>
     </main>
+
+    <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-zinc-200/80 px-2 pb-safe shadow-[0_-4px_24px_rgba(0,0,0,0.04)] z-50">
+      <nav class="flex items-center justify-around h-16">
+        {navItems.map((item) => {
+          const isActive = currentPath === item.href || (item.href === '/admin' && currentPath === '/admin/')
+          
+          // Specijalni slučaj: Ako rendamo stavku za Leads, ubacujemo i mobilnu verziju zvonca u nju
+          const isLeads = item.href === '/admin/leads';
+          
+          return (
+            <a 
+              href={item.href} 
+              id={isLeads ? 'mobileBellWrapper' : undefined}
+              class={`flex flex-col items-center justify-center flex-1 h-full relative transition-colors ${
+                isActive ? 'text-zinc-950 font-bold' : 'text-zinc-400 font-medium'
+              }`}
+            >
+              <div class="relative flex items-center justify-center">
+                <span id={isLeads ? 'mobileBellSvg' : undefined} class={`text-xl transition-transform ${isActive ? 'scale-110' : ''}`}>
+                  {isLeads ? (
+                    /* Zamenjeno klasično👥 zvonce-ikoncom koja vibrira ukoliko je u pitanju Leads tab na telefonu */
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class={isActive ? 'text-zinc-950' : 'text-zinc-400'}><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                  ) : item.icon}
+                </span>
+
+                {isLeads && (
+                  <span 
+                    id="mobileBellBadge" 
+                    class="absolute -top-1.5 -right-2.5 bg-rose-600 text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-white scale-0 transition-transform duration-200"
+                  >
+                    0
+                  </span>
+                )}
+              </div>
+              
+              <span class="text-[10px] tracking-tight mt-1">{item.label}</span>
+              
+              {isActive && <span class="absolute bottom-1 w-1 h-1 rounded-full bg-zinc-950"></span>}
+            </a>
+          )
+        })}
+      </nav>
+    </div>
 
   </div>
 
@@ -113,7 +175,7 @@ const navItems = [
     const supabase = createClient(supabaseUrl, supabaseKey)
 
     // ========================================================
-    // A. HITNA MANIPULACIJA TOKENA I AUTORIZACIJE
+    // A. AUTH PROVERA
     // ========================================================
     const { data: { session } } = await supabase.auth.getSession()
 
@@ -131,110 +193,173 @@ const navItems = [
       }
     })
 
+    document.getElementById('sidebarLogoutBtn')?.addEventListener('click', async (e) => {
+      e.preventDefault();
+      await supabase.auth.signOut()
+      window.location.href = '/login'
+    });
+
     // ========================================================
-    // B. CENTRALIZOVANI GLOBALNI EVENT LISTENER ZA CRM AKCIJE
+    // B. REALTIME NOTIFIKACIJE (DUPLO ZVONCE - DESKTOP + MOBILNI)
+    // ========================================================
+    const dBellWrapper = document.getElementById('desktopBellWrapper');
+    const dBellSvg = document.getElementById('desktopBellSvg');
+    const dBellBadge = document.getElementById('desktopBellBadge');
+
+    const mBellWrapper = document.getElementById('mobileBellWrapper');
+    const mBellSvg = document.getElementById('mobileBellSvg');
+    const mBellBadge = document.getElementById('mobileBellBadge');
+
+    function playNotificationSound() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc1 = audioCtx.createOscillator();
+        const gain1 = audioCtx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(587.33, audioCtx.currentTime); 
+        gain1.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain1.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+        osc1.connect(gain1);
+        gain1.connect(audioCtx.destination);
+        osc1.start();
+        osc1.stop(audioCtx.currentTime + 0.4);
+
+        setTimeout(() => {
+          const osc2 = audioCtx.createOscillator();
+          const gain2 = audioCtx.createGain();
+          osc2.type = 'sine';
+          osc2.frequency.setValueAtTime(880, audioCtx.currentTime); 
+          gain2.gain.setValueAtTime(0.1, audioCtx.currentTime);
+          gain2.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+          osc2.connect(gain2);
+          gain2.connect(audioCtx.destination);
+          osc2.start();
+          osc2.stop(audioCtx.currentTime + 0.5);
+        }, 80); 
+      } catch (e) {
+        console.log("Audio sprečen dok korisnik ne ostvari interakciju.");
+      }
+    }
+
+    let unreadCount = parseInt(localStorage.getItem('crm_unread_leads') || '0', 10);
+    
+    function updateBellUi() {
+      // Sinhronizacija desktop bedža
+      if (dBellBadge) {
+        if (unreadCount > 0) {
+          dBellBadge.textContent = unreadCount;
+          dBellBadge.classList.remove('scale-0');
+          dBellBadge.classList.add('scale-100');
+          dBellSvg?.classList.add('text-rose-600');
+        } else {
+          dBellBadge.classList.remove('scale-100');
+          dBellBadge.classList.add('scale-0');
+          dBellSvg?.classList.remove('text-rose-600');
+        }
+      }
+
+      // Sinhronizacija mobilnog bedža
+      if (mBellBadge) {
+        if (unreadCount > 0) {
+          mBellBadge.textContent = unreadCount;
+          mBellBadge.classList.remove('scale-0');
+          mBellBadge.classList.add('scale-100');
+          mBellSvg?.classList.add('text-rose-600');
+        } else {
+          mBellBadge.classList.remove('scale-100');
+          mBellBadge.classList.add('scale-0');
+          mBellSvg?.classList.remove('text-rose-600');
+        }
+      }
+    }
+    
+    updateBellUi();
+
+    // Slušanje izmena uživo preko baze
+    supabase
+      .channel('public:leads')
+      .on('postgres_changes', { event: 'INSERT', scheme: 'public', table: 'leads' }, (payload) => {
+        unreadCount += 1;
+        localStorage.setItem('crm_unread_leads', unreadCount);
+        updateBellUi();
+
+        // Okidanje animacije vibracije na oba elementa
+        if (dBellSvg) dBellSvg.classList.add('animate-bell-ring');
+        if (mBellSvg) mBellSvg.classList.add('animate-bell-ring');
+        
+        setTimeout(() => {
+          if (dBellSvg) dBellSvg.classList.remove('animate-bell-ring');
+          if (mBellSvg) mBellSvg.classList.remove('animate-bell-ring');
+        }, 600);
+
+        playNotificationSound();
+      })
+      .subscribe();
+
+    // Resetovanje klikom na bilo koji od ova dva wrapper-a
+    const clearBadges = () => {
+      unreadCount = 0;
+      localStorage.setItem('crm_unread_leads', '0');
+      updateBellUi();
+    };
+
+    dBellWrapper?.addEventListener('click', clearBadges);
+    mBellWrapper?.addEventListener('click', clearBadges);
+
+    // ========================================================
+    // C. CENTRALIZOVANI GLOBALNI KLIK ZA AKCIJE (STATUS I BELEŠKE)
     // ========================================================
     document.addEventListener('click', async (e) => {
-      
-      // 1. LOGIKA ZA ZELENO DUGME (PROMENA STATUS LIDA PREKO .saveStatusBtn)
       const statusBtn = e.target.closest('.saveStatusBtn');
       if (statusBtn) {
         e.preventDefault();
-        
         const leadId = statusBtn.getAttribute('data-id');
         if (!leadId) return;
-
         const selectElement = document.getElementById(`status-${leadId}`);
         const statusText = document.getElementById(`saved-${leadId}`);
-
-        if (!selectElement) {
-          console.error(`Greška: Select element 'status-${leadId}' nedostaje.`);
-          return;
-        }
+        if (!selectElement) return;
 
         const newStatus = selectElement.value;
-        const originalText = statusBtn.innerHTML;
-        
         statusBtn.disabled = true;
-        statusBtn.innerHTML = '...';
 
         try {
-          const { error } = await supabase
-            .from('leads')
-            .update({ status: newStatus })
-            .eq('id', leadId);
-
+          const { error } = await supabase.from('leads').update({ status: newStatus }).eq('id', leadId);
           if (error) throw error;
-
           if (statusText) {
-            statusText.textContent = '✓ Status updated';
+            statusText.textContent = '✓ Updated';
             statusText.className = 'text-[10px] font-bold text-emerald-600 mt-1 absolute left-0';
-            
-            setTimeout(() => {
-              statusText.textContent = '';
-            }, 2500);
-          }
-
-        } catch (err) {
-          console.error('Greška pri snimanju statusa u Supabase:', err);
-          if (statusText) {
-            statusText.textContent = '✕ Error saving';
-            statusText.className = 'text-[10px] font-bold text-rose-600 mt-1 absolute left-0';
             setTimeout(() => { statusText.textContent = ''; }, 2500);
           }
+        } catch (err) {
+          console.error(err);
         } finally {
           statusBtn.disabled = false;
-          statusBtn.innerHTML = originalText;
         }
         return;
       }
 
-      // 2. LOGIKA ZA BELEŠKE (SAVE NOTES U MODALU / ZASEBNOJ STRANICI)
       const notesBtn = e.target.closest('.saveNotesBtn');
       if (notesBtn) {
         e.preventDefault();
-        
         const leadId = notesBtn.getAttribute('data-id');
         if (!leadId) return;
-
         const textarea = document.getElementById(`notes-${leadId}`);
         const statusText = document.getElementById(`notesSaved-${leadId}`);
+        if (!textarea) return;
 
-        if (!textarea) {
-          console.error(`Greška: Textarea 'notes-${leadId}' nedostaje.`);
-          return;
-        }
-
-        const originalText = notesBtn.innerHTML;
         notesBtn.disabled = true;
-        notesBtn.innerHTML = 'Saving...';
-
         try {
-          const { error } = await supabase
-            .from('leads')
-            .update({ notes: textarea.value })
-            .eq('id', leadId);
-
+          const { error } = await supabase.from('leads').update({ notes: textarea.value }).eq('id', leadId);
           if (error) throw error;
-
           if (statusText) {
             statusText.textContent = '✓ Saved';
             statusText.className = 'text-xs font-bold text-emerald-600';
-            
-            setTimeout(() => {
-              statusText.textContent = '';
-            }, 2500);
+            setTimeout(() => { statusText.textContent = ''; }, 2500);
           }
-
         } catch (err) {
-          console.error('Greška pri snimanju beleški u Supabase:', err);
-          if (statusText) {
-            statusText.textContent = '✕ Error';
-            statusText.className = 'text-xs font-bold text-rose-600';
-          }
+          console.error(err);
         } finally {
           notesBtn.disabled = false;
-          notesBtn.innerHTML = originalText;
         }
       }
     });
