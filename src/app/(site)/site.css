@@ -161,6 +161,104 @@ body {
   color: transparent;
 }
 
+/* Hero backdrop: slow aurora, signals on the grid, pointer spotlight. */
+.hero-aurora {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(70px);
+  will-change: transform;
+}
+.hero-aurora-a {
+  top: -18rem;
+  left: 10%;
+  width: 44rem;
+  height: 30rem;
+  background: radial-gradient(closest-side, rgb(31 117 82 / 0.55), transparent);
+  animation: aurora-a 22s ease-in-out infinite alternate;
+}
+.hero-aurora-b {
+  top: 4rem;
+  right: -10rem;
+  width: 34rem;
+  height: 26rem;
+  background: radial-gradient(closest-side, rgb(197 242 74 / 0.12), transparent);
+  animation: aurora-b 28s ease-in-out infinite alternate;
+}
+@keyframes aurora-a {
+  to {
+    transform: translate(18rem, 6rem) scale(1.15);
+  }
+}
+@keyframes aurora-b {
+  to {
+    transform: translate(-22rem, 10rem) scale(0.9);
+  }
+}
+.hero-beam-x,
+.hero-beam-y {
+  position: absolute;
+  opacity: 0;
+}
+.hero-beam-x {
+  left: 0;
+  width: 160px;
+  height: 1px;
+  margin-top: -0.5px;
+  background: linear-gradient(90deg, transparent, rgb(197 242 74 / 0.95), transparent);
+  box-shadow: 0 0 14px 1px rgb(197 242 74 / 0.45);
+  animation: beam-x 9s linear infinite;
+}
+.hero-beam-y {
+  top: 0;
+  width: 1px;
+  height: 140px;
+  margin-left: -0.5px;
+  background: linear-gradient(180deg, transparent, rgb(197 242 74 / 0.9), transparent);
+  box-shadow: 0 0 14px 1px rgb(197 242 74 / 0.4);
+  animation: beam-y 10s linear infinite;
+}
+@keyframes beam-x {
+  0% {
+    transform: translateX(-200px);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  45% {
+    opacity: 1;
+  }
+  55%,
+  100% {
+    transform: translateX(min(100vw, 1600px));
+    opacity: 0;
+  }
+}
+@keyframes beam-y {
+  0% {
+    transform: translateY(-160px);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    transform: translateY(900px);
+    opacity: 0;
+  }
+}
+.hero-pointer {
+  position: absolute;
+  inset: 0;
+  opacity: var(--spot, 0);
+  transition: opacity 0.4s ease;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgb(197 242 74 / 0.07), transparent 70%);
+}
+
 /* Scroll reveal. Content is hidden only once JavaScript has marked the page,
    so without it (and for crawlers) everything stays visible. */
 .js [data-reveal] {
@@ -209,5 +307,9 @@ details[open] .faq-body {
   .js [data-reveal] {
     opacity: 1;
     transform: none;
+  }
+  .hero-beam-x,
+  .hero-beam-y {
+    display: none;
   }
 }

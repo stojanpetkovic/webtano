@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { CheckForm } from '@/components/site/CheckForm';
 import { CountUp } from '@/components/site/CountUp';
+import { HeroBackdrop } from '@/components/site/HeroBackdrop';
 import { Reveal } from '@/components/site/Reveal';
 import { SectionHeading } from '@/components/site/Section';
 import { caseStudies } from '@/content/work';
@@ -158,7 +159,7 @@ export default function HomePage() {
     <>
       {/* Hero */}
       <section className="bg-spotlight relative overflow-hidden pt-14 pb-24 text-white sm:pt-20 lg:pb-32">
-        <div className="grid-lines pointer-events-none absolute inset-0" aria-hidden />
+        <HeroBackdrop />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" aria-hidden />
         <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-[1.08fr_0.92fr]">
           <div className="text-center lg:text-left">
