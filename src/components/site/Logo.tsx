@@ -1,10 +1,16 @@
-export function Logo({ light = false }: { light?: boolean }) {
+import Image from 'next/image';
+
+/** The WebTano mark and wordmark, drawn as one SVG so it looks the same everywhere. */
+export function Logo({ light = false, className = 'h-8 w-auto' }: { light?: boolean; className?: string }) {
   return (
-    <span className="flex items-center gap-2">
-      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-lime font-display text-lg font-extrabold text-forest-950">
-        W
-      </span>
-      <span className={`font-display text-xl font-bold tracking-tight ${light ? 'text-white' : 'text-forest-950'}`}>WebTano</span>
-    </span>
+    <Image
+      src={light ? '/brand/webtano-logo-light.svg' : '/brand/webtano-logo-dark.svg'}
+      alt="WebTano"
+      width={184}
+      height={48}
+      unoptimized
+      priority
+      className={className}
+    />
   );
 }
