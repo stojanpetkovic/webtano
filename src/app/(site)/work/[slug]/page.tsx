@@ -155,7 +155,7 @@ export default async function CasePage({ params }: PageProps<'/work/[slug]'>) {
             <h2 className="font-display text-lg font-bold">Want numbers like these?</h2>
             <p className="mt-2 text-sm text-white/75">Start with a free check of your current website.</p>
             <Link
-              href="/#check"
+              href="/#hero-form"
               className="relative mt-4 inline-flex items-center gap-2 rounded-full bg-lime px-5 py-2.5 text-sm font-semibold text-forest-950 shadow-glow transition hover:-translate-y-px hover:bg-lime-dark"
             >
               Free website check

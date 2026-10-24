@@ -818,71 +818,80 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Free check */}
-      <section id="check" className="relative scroll-mt-16 overflow-hidden bg-white py-24 sm:py-32">
-        <div className="pointer-events-none absolute top-0 left-1/2 h-[30rem] w-[60rem] -translate-x-1/2 rounded-full bg-forest-100/50 blur-3xl" aria-hidden />
-        <div className="relative mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-          <Reveal>
-            <p className="font-mono text-[11px] font-medium tracking-[0.14em] text-forest-700 uppercase">Zero risk to start</p>
-            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-balance text-forest-950 md:text-[2.6rem] md:leading-[1.1]">
-              Find out what your website is costing you
-            </h2>
-            <p className="mt-5 text-lg leading-relaxed text-zinc-600">
-              No obligation and no sales pitch. Just an honest look at where visitors and enquiries slip away today.
+      {/* FAQ */}
+      <section id="faq" className="bg-faq hairline-top relative scroll-mt-16 overflow-hidden py-24 sm:py-32">
+        <div className="dot-grid pointer-events-none absolute inset-0 opacity-60 [mask-image:radial-gradient(ellipse_50%_60%_at_15%_40%,#000,transparent)]" aria-hidden />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'FAQPage',
+              mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+            }).replace(/</g, '\\u003c'),
+          }}
+        />
+        <div className="relative mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+          <Reveal className="lg:sticky lg:top-28 lg:self-start">
+            <p className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 font-mono text-[11px] font-medium tracking-[0.14em] text-forest-700 uppercase shadow-soft ring-1 ring-zinc-200">
+              <span className="h-1.5 w-1.5 rounded-full bg-forest-600" aria-hidden />
+              Questions
             </p>
-            <ul className="mt-7 space-y-3.5">
-              {[
-                'A review of your site’s speed, SEO and AI-search visibility',
-                'A comparison with your top local competitors',
-                'Concrete next steps, whether you work with us or not',
-                'One fixed price if you decide to go ahead',
-              ].map((item) => (
-                <li key={item} className="flex gap-3 text-zinc-800">
-                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-forest-700 text-lime">
-                    <Check className="h-3.5 w-3.5" aria-hidden />
-                  </span>
-                  {item}
-                </li>
-              ))}
-            </ul>
-            <div className="mt-9 flex items-center gap-4 rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-soft">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-forest-950 text-lime shadow-soft">
-                <Zap className="h-5 w-5" aria-hidden />
-              </span>
-              <div>
-                <p className="font-semibold text-forest-950">Reply within one business day</p>
-                <p className="text-sm text-zinc-600">From a real person who has looked at your site.</p>
+            <h2 className="mt-4 font-display text-3xl text-balance text-forest-950 md:text-[2.75rem] md:leading-[1.08]">Before you ask</h2>
+            <p className="mt-4 text-lg text-pretty text-zinc-600">The things owners ask us most, answered straight. No fine print.</p>
+
+            <div className="mt-8 overflow-hidden rounded-3xl bg-forest-975 text-white ring-1 ring-forest-900">
+              <div className="relative p-6">
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_90%_at_100%_0%,rgb(197_242_74/0.16),transparent_60%)]" aria-hidden />
+                <p className="relative flex items-center gap-2 font-mono text-[10px] tracking-[0.14em] text-lime uppercase">
+                  <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-lime" aria-hidden />
+                  Reply within one business day
+                </p>
+                <p className="relative mt-3 font-display text-2xl">Still have a question?</p>
+                <p className="relative mt-2 text-sm leading-relaxed text-white/65">
+                  Ask it in the free check form. A real person who has looked at your site writes back.
+                </p>
+                <Link
+                  href="#hero-form"
+                  className="group relative mt-5 inline-flex items-center gap-2 rounded-full bg-lime px-5 py-3 text-sm font-semibold text-forest-950 shadow-glow transition hover:bg-lime-dark"
+                >
+                  Ask in the free check
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
+                </Link>
               </div>
+              <ul className="grid grid-cols-3 divide-x divide-white/10 border-t border-white/10 text-center">
+                {[
+                  ['1', 'fixed price'],
+                  ['0', 'lock-in'],
+                  ['1', 'client per area'],
+                ].map(([v, k]) => (
+                  <li key={k} className="px-2 py-4">
+                    <p className="font-display text-2xl text-lime">{v}</p>
+                    <p className="font-mono text-[9px] tracking-wide text-white/50 uppercase">{k}</p>
+                  </li>
+                ))}
+              </ul>
             </div>
           </Reveal>
-          <Reveal variant="scale" delay={120}>
-            <CheckForm />
-          </Reveal>
-        </div>
-      </section>
 
-      {/* FAQ */}
-      <section id="faq" className="bg-paper hairline-top scroll-mt-16 py-24 sm:py-32">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6">
-          <Reveal>
-            <SectionHeading eyebrow="Questions" title="Before you ask" />
-          </Reveal>
-          <div className="mt-12 space-y-3">
+          <div className="divide-y divide-zinc-200 rounded-3xl bg-white px-5 shadow-[0_1px_2px_rgb(6_35_26/0.04),0_8px_24px_-12px_rgb(6_35_26/0.10)] ring-1 ring-zinc-200/80 sm:px-8">
             {faqs.map((f, i) => (
               <Reveal key={f.q} delay={i * 60}>
-                <details className="group rounded-2xl border border-zinc-200/80 bg-white shadow-soft transition duration-300 open:shadow-lift hover:border-zinc-300">
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 font-display text-[1.05rem] text-forest-950 sm:px-6 [&::-webkit-details-marker]:hidden">
-                    {f.q}
+                <details name="faq" open={i === 0} className="group py-1">
+                  <summary className="flex cursor-pointer list-none items-center gap-4 py-5 [&::-webkit-details-marker]:hidden">
+                    <span className="font-mono text-xs text-zinc-400 transition group-open:text-forest-600">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="flex-1 font-display text-[1.08rem] text-forest-950 sm:text-lg">{f.q}</span>
                     <span
-                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-forest-50 text-xl leading-none text-forest-700 transition duration-300 group-open:rotate-45 group-open:bg-forest-700 group-open:text-lime"
+                      className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-forest-700 ring-1 ring-zinc-200 transition duration-300 group-open:bg-forest-950 group-open:text-lime group-open:ring-forest-950 group-hover:ring-zinc-300"
                       aria-hidden
                     >
-                      +
+                      <span className="absolute h-0.5 w-3.5 rounded-full bg-current" />
+                      <span className="absolute h-3.5 w-0.5 rounded-full bg-current transition duration-300 group-open:rotate-90 group-open:opacity-0" />
                     </span>
                   </summary>
                   <div className="faq-body">
                     <div>
-                      <p className="px-5 pb-5 leading-relaxed text-zinc-600 sm:px-6">{f.a}</p>
+                      <p className="pr-2 pb-6 pl-9 leading-relaxed text-zinc-600 sm:pr-12">{f.a}</p>
                     </div>
                   </div>
                 </details>
@@ -906,7 +915,7 @@ export default function HomePage() {
                 The check is free. The worst case: you learn exactly what loses you customers and what to fix first.
               </p>
               <div className="relative mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <Link href="#check" className={primaryButton}>
+                <Link href="#hero-form" className={primaryButton}>
                   Get my free website check
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
                 </Link>

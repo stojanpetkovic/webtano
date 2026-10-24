@@ -15,7 +15,7 @@ export function Footer() {
           <Logo light />
           <p className="mt-4 max-w-xs text-sm leading-relaxed">{site.tagline}</p>
           <Link
-            href="/#check"
+            href="/#hero-form"
             className="group mt-6 inline-flex items-center gap-1.5 rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/15 transition hover:bg-white/10"
           >
             Free website check

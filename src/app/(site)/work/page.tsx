@@ -42,7 +42,7 @@ export default function WorkPage() {
         </div>
         <div className="mt-12 text-center">
           <Link
-            href="/#check"
+            href="/#hero-form"
             className="group inline-flex items-center gap-2 rounded-full bg-forest-700 px-6 py-3.5 font-semibold text-white shadow-[0_10px_24px_-10px_rgb(31_117_82/0.7)] transition hover:-translate-y-px hover:bg-forest-800"
           >
             Get a free website check
