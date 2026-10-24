@@ -37,8 +37,9 @@ export function findPost(slug: string) {
 }
 
 export function postImage(post: Post): PostImage {
-  const meta = (images as Record<string, Omit<PostImage, 'src' | 'width' | 'height'>>)[post.slug];
-  return { src: `/blog/${post.slug}.webp`, width: 1600, height: 900, ...meta };
+  // A photo can name its own file; a new name is how a replaced photo gets past image caches.
+  const { file, ...meta } = (images as Record<string, Omit<PostImage, 'src' | 'width' | 'height'> & { file?: string }>)[post.slug];
+  return { src: `/blog/${file ?? `${post.slug}.webp`}`, width: 1600, height: 900, ...meta };
 }
 
 const strip = (s: string) => s.replace(/\*\*/g, '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
