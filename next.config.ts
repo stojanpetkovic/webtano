@@ -2,6 +2,11 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  experimental: {
+    // Railway keeps .next/cache between builds, and a cached build shipped the
+    // site's old stylesheet with new pages. Always compile CSS from source.
+    turbopackFileSystemCacheForBuild: false,
+  },
   turbopack: {
     rules: {
       "*.css": {

@@ -3,7 +3,7 @@ import { Bricolage_Grotesque, Inter } from 'next/font/google';
 import { Header } from '@/components/site/Header';
 import { Footer } from '@/components/site/Footer';
 import { site } from '@/content/site';
-import './globals.css';
+import './site.css';
 
 const inter = Inter({ variable: '--font-inter', subsets: ['latin', 'latin-ext'] });
 const display = Bricolage_Grotesque({ variable: '--font-bricolage', subsets: ['latin', 'latin-ext'] });
