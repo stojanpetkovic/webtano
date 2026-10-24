@@ -336,6 +336,46 @@ body {
     linear-gradient(160deg, #0a2a1d, var(--color-forest-975));
 }
 
+/* How we work: light pooling behind the statement on the left. */
+.bg-promises {
+  background:
+    radial-gradient(45% 50% at 18% 35%, rgb(31 117 82 / 0.42), transparent 72%),
+    radial-gradient(35% 40% at 90% 85%, rgb(197 242 74 / 0.06), transparent 70%),
+    var(--color-forest-975);
+}
+.ring-wave {
+  animation: ring-wave 2.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+@keyframes ring-wave {
+  0% {
+    transform: scale(0.55);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.25);
+    opacity: 0;
+  }
+}
+.phone-ring {
+  animation: phone-ring 2.4s ease-in-out infinite;
+}
+@keyframes phone-ring {
+  0%,
+  30%,
+  100% {
+    transform: rotate(0);
+  }
+  5%,
+  15%,
+  25% {
+    transform: rotate(-14deg);
+  }
+  10%,
+  20% {
+    transform: rotate(14deg);
+  }
+}
+
 /* Service card illustrations: they play once their card is revealed. */
 .svc-gauge {
   stroke-dashoffset: var(--gauge-to);

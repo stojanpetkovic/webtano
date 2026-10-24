@@ -25,6 +25,7 @@ import { SectionHeading } from '@/components/site/Section';
 import { AdsVisual, LeadsVisual, SearchVisual, SpeedVisual } from '@/components/site/ServiceVisuals';
 import { caseStudies } from '@/content/work';
 import { LighthouseCard, RatingChip } from '@/components/site/CaseVisuals';
+import { AreaVisual, NumbersVisual, OwnershipVisual, RingingPhone } from '@/components/site/PromiseVisuals';
 
 const heroStats = [
   { value: '1,010', label: 'tracked leads for one tree service' },
@@ -104,16 +105,19 @@ const promises = [
   {
     icon: MapPin,
     title: 'One company per area',
+    visual: AreaVisual,
     text: 'We never work for two competitors in the same service area. The pages and ads we build for you are yours alone.',
   },
   {
     icon: KeyRound,
     title: 'Everything in your name',
+    visual: OwnershipVisual,
     text: 'Domain, code, hosting and ad account belong to you from day one. No lock-in, nothing held hostage.',
   },
   {
     icon: FileText,
     title: 'Numbers, not excuses',
+    visual: NumbersVisual,
     text: 'You see every lead as it arrives and one plain-language report a month. If something does not pay, we say so first.',
   },
 ];
@@ -580,25 +584,64 @@ export default function HomePage() {
       </section>
 
       {/* Promises */}
-      <section className="bg-spotlight-center relative overflow-hidden py-24 text-white sm:py-32">
-        <div className="grid-lines pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_60%_70%_at_50%_50%,#000,transparent)]" aria-hidden />
-        <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
-          <Reveal>
-            <SectionHeading light eyebrow="How we work" title="We only win when the phone rings" lead="Three rules we keep with every client." />
+      <section className="bg-promises relative overflow-hidden py-24 text-white sm:py-32">
+        <div className="grid-lines pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_70%_70%_at_30%_40%,#000,transparent)]" aria-hidden />
+        <div className="relative mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-[0.92fr_1.08fr] lg:gap-16">
+          <Reveal className="lg:sticky lg:top-28 lg:self-start">
+            <p className="inline-flex items-center gap-2 rounded-full bg-white/[0.04] px-3 py-1 font-mono text-[11px] font-medium tracking-[0.14em] text-lime uppercase ring-1 ring-white/12">
+              <span className="h-1.5 w-1.5 rounded-full bg-lime" aria-hidden />
+              How we work
+            </p>
+            <h2 className="mt-4 font-display text-3xl text-balance md:text-[2.75rem] md:leading-[1.08]">
+              We only win when <span className="text-gradient">the phone rings</span>
+            </h2>
+            <p className="mt-4 text-lg text-pretty text-white/70">
+              Most agencies get paid for activity. We judge our work by one number, the leads you can count, and these three rules are part of
+              every agreement.
+            </p>
+            <div className="ring-gradient mt-8 flex items-center gap-5 rounded-3xl bg-white/[0.03] p-5 sm:p-6">
+              <RingingPhone />
+              <div>
+                <p className="font-mono text-[10px] tracking-[0.14em] text-white/45 uppercase">What we answer to</p>
+                <p className="mt-1 font-display text-xl sm:text-2xl">Calls and forms, counted</p>
+                <p className="mt-1 text-sm text-white/60">Not clicks, impressions or rankings on their own.</p>
+              </div>
+            </div>
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <Link
+                href="/#hero-form"
+                className="group inline-flex items-center gap-2 rounded-full bg-lime px-5 py-3 text-sm font-semibold text-forest-950 shadow-glow transition hover:-translate-y-0.5 hover:bg-lime-dark"
+              >
+                Get a free website check
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
+              </Link>
+              <Link href="#work" className="rounded-full px-4 py-3 text-sm font-semibold text-white/75 transition hover:text-white">
+                See the results
+              </Link>
+            </div>
           </Reveal>
-          <div className="mt-14 grid gap-5 md:grid-cols-3">
+
+          <ol className="space-y-4">
             {promises.map((p, i) => (
-              <Reveal key={p.title} delay={i * 110}>
-                <div className="ring-gradient group h-full rounded-3xl bg-white/[0.03] p-7 shadow-[inset_0_1px_0_rgb(255_255_255/0.06)] backdrop-blur transition duration-300 hover:-translate-y-1 hover:bg-white/[0.06]">
-                  <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-lime/10 text-lime ring-1 ring-lime/25 transition group-hover:bg-lime/15">
-                    <p.icon className="h-5 w-5" aria-hidden />
-                  </span>
-                  <h3 className="mt-5 font-display text-xl font-bold">{p.title}</h3>
-                  <p className="mt-2 leading-relaxed text-white/65">{p.text}</p>
+              <Reveal key={p.title} as="li" delay={i * 110}>
+                <div className="ring-gradient group grid items-center gap-6 rounded-3xl bg-white/[0.03] p-6 transition duration-300 hover:bg-white/[0.05] sm:grid-cols-[1fr_13.5rem] sm:p-7">
+                  <div>
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-lime/10 text-lime ring-1 ring-lime/25 transition group-hover:bg-lime/15">
+                        <p.icon className="h-[18px] w-[18px]" aria-hidden />
+                      </span>
+                      <span className="font-mono text-[10px] tracking-[0.14em] text-white/45 uppercase">Rule {String(i + 1).padStart(2, '0')}</span>
+                    </div>
+                    <h3 className="mt-4 font-display text-2xl">{p.title}</h3>
+                    <p className="mt-2 leading-relaxed text-white/65">{p.text}</p>
+                  </div>
+                  <div className="rounded-2xl bg-forest-975/70 p-3.5 ring-1 ring-white/[0.08]">
+                    <p.visual />
+                  </div>
                 </div>
               </Reveal>
             ))}
-          </div>
+          </ol>
         </div>
       </section>
 
