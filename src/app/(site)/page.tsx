@@ -30,26 +30,35 @@ const heroStats = [
   { value: '< 1 day', label: 'to reply to every enquiry' },
 ];
 
+// The customer's path from a search to a booked job, and where each step leaks.
 const problems = [
   {
-    icon: Hourglass,
-    title: 'Visitors leave before the page loads',
-    text: 'Every extra second on a phone loses people before they see your number, and the ones you paid for with ads are the first to go.',
-  },
-  {
+    stage: 'Search',
     icon: SearchX,
-    title: 'Customers can’t find you',
+    title: 'They can’t find you',
     text: 'Thin pages and no local content keep you off page one, and ChatGPT or Google’s AI answers name someone else.',
+    fix: 'A page for every service and town, written the way people search.',
   },
   {
+    stage: 'Visit',
+    icon: Hourglass,
+    title: 'They leave before it loads',
+    text: 'Every extra second on a phone loses people before they see your number, and the ones you paid for with ads go first.',
+    fix: 'Pages that open in under two seconds, number on the first screen.',
+  },
+  {
+    stage: 'Enquiry',
     icon: MailX,
-    title: 'Enquiries go cold',
+    title: 'The enquiry goes cold',
     text: 'Forms land in an inbox nobody checks. By the time you reply, the customer has booked the next company.',
+    fix: 'Every call and form reaches your phone the second it happens.',
   },
   {
+    stage: 'Budget',
     icon: Wallet,
     title: 'You can’t tell what pays',
-    text: 'Clicks, impressions and agency reports, but no clear answer to the only question that matters: which dollars brought jobs?',
+    text: 'Clicks, impressions and agency reports, but no answer to the only question that matters: which dollars brought jobs?',
+    fix: 'One monthly report: leads, calls and cost per lead, by source.',
   },
 ];
 
@@ -303,31 +312,80 @@ export default function HomePage() {
       </section>
 
       {/* Problem */}
-      <section className="relative bg-white py-24 sm:py-32">
+      <section className="relative overflow-hidden bg-white py-24 sm:py-32">
         <div className="dot-grid pointer-events-none absolute inset-x-0 top-0 h-72 [mask-image:radial-gradient(ellipse_60%_100%_at_50%_0%,#000,transparent)]" aria-hidden />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
-          <Reveal>
-            <SectionHeading
-              eyebrow="What it costs you"
-              title="Your website may be sending customers to the company down the road"
-              lead="Nothing warns you. No error and no alert, just calls that never come."
-            />
-          </Reveal>
-          <div className="mt-14 grid gap-5 sm:grid-cols-2">
+          <div className="grid items-end gap-8 lg:grid-cols-[1.15fr_0.85fr]">
+            <Reveal>
+              <p className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 font-mono text-[11px] font-medium tracking-[0.14em] text-red-700 uppercase shadow-soft ring-1 ring-red-100">
+                <span className="h-1.5 w-1.5 rounded-full bg-red-500" aria-hidden />
+                What it costs you
+              </p>
+              <h2 className="mt-4 font-display text-3xl text-balance text-forest-950 md:text-[2.75rem] md:leading-[1.08]">
+                Your website may be sending customers to the company down the road
+              </h2>
+            </Reveal>
+            <Reveal delay={100}>
+              <p className="text-lg leading-relaxed text-pretty text-zinc-600">
+                Nothing warns you. No error and no alert, just calls that never come. Here is where a customer slips away on the way from
+                a search to a booked job.
+              </p>
+            </Reveal>
+          </div>
+
+          <ol className="relative mt-16 grid gap-6 lg:grid-cols-4 lg:gap-5">
+            {/* The path itself: a line that runs through all four stages. */}
+            <span className="pipeline pointer-events-none absolute top-[1.15rem] right-[12.5%] left-[12.5%] hidden h-0.5 rounded-full lg:block" aria-hidden />
+            <span className="pipeline-v pointer-events-none absolute top-4 bottom-4 left-[1.15rem] w-0.5 rounded-full lg:hidden" aria-hidden />
             {problems.map((p, i) => (
-              <Reveal key={p.title} delay={i * 90}>
-                <div className="group flex h-full gap-5 rounded-3xl border border-zinc-200/80 bg-white p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-lift sm:p-7">
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-red-50 text-red-600 ring-1 ring-red-100 transition group-hover:scale-105">
-                    <p.icon className="h-5 w-5" aria-hidden />
+              <Reveal as="li" key={p.title} delay={i * 120} className="relative flex flex-col pl-14 lg:pl-0">
+                <div className="absolute top-0 left-0 lg:static lg:flex lg:justify-center">
+                  <span className="relative z-10 flex h-[2.3rem] w-[2.3rem] items-center justify-center rounded-full bg-forest-950 font-mono text-xs font-medium text-lime shadow-lift ring-4 ring-white">
+                    {String(i + 1).padStart(2, '0')}
                   </span>
-                  <div>
-                    <h3 className="font-display text-lg font-bold text-forest-950">{p.title}</h3>
-                    <p className="mt-2 leading-relaxed text-zinc-600">{p.text}</p>
-                  </div>
                 </div>
+                <p className="mt-2.5 mb-3 font-mono text-[11px] font-medium tracking-[0.16em] text-zinc-500 uppercase lg:mt-3 lg:mb-4 lg:text-center">
+                  {p.stage}
+                </p>
+                <article className="group flex flex-1 flex-col overflow-hidden rounded-3xl border border-zinc-200/80 bg-white shadow-soft transition duration-300 hover:-translate-y-1.5 hover:shadow-lift">
+                  <div className="flex-1 p-5 sm:p-6">
+                    <div className="flex items-center justify-between">
+                      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-50 text-red-600 ring-1 ring-red-100 transition duration-300 group-hover:scale-105">
+                        <p.icon className="h-5 w-5" aria-hidden />
+                      </span>
+                      <span className="rounded-full bg-red-50 px-2.5 py-1 font-mono text-[10px] font-medium tracking-wide text-red-700 uppercase ring-1 ring-red-100">
+                        Leak
+                      </span>
+                    </div>
+                    <h3 className="mt-5 font-display text-lg text-forest-950">{p.title}</h3>
+                    <p className="mt-2 text-[15px] leading-relaxed text-zinc-600">{p.text}</p>
+                  </div>
+                  <div className="flex gap-3 border-t border-forest-100 bg-forest-50/70 px-5 py-4 sm:px-6">
+                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-forest-700 text-lime">
+                      <Check className="h-3 w-3" aria-hidden />
+                    </span>
+                    <p className="text-sm leading-snug text-forest-900">
+                      <span className="font-semibold">We fix it: </span>
+                      {p.fix}
+                    </p>
+                  </div>
+                </article>
               </Reveal>
             ))}
-          </div>
+          </ol>
+
+          <Reveal delay={150}>
+            <div className="mt-14 flex flex-col items-center justify-between gap-5 rounded-3xl bg-forest-975 px-6 py-6 text-center text-white shadow-float ring-1 ring-white/10 sm:px-8 md:flex-row md:text-left">
+              <p className="max-w-2xl text-lg text-white/80">
+                <span className="font-semibold text-white">Close all four leaks</span> and the same ad budget brings in more booked jobs. The
+                free check shows you which ones are open on your site.
+              </p>
+              <Link href="#hero-form" className={`${primaryButton} shrink-0`}>
+                Find my leaks
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
+              </Link>
+            </div>
+          </Reveal>
         </div>
       </section>
 
