@@ -320,6 +320,41 @@ body {
   }
 }
 
+/* Service card illustrations: they play once their card is revealed. */
+.svc-gauge {
+  stroke-dashoffset: var(--gauge-to);
+  transition: stroke-dashoffset 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.25s;
+}
+.svc-bar {
+  width: var(--bar);
+  transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--bar-delay, 0ms) + 250ms);
+}
+.svc-spark {
+  height: var(--spark);
+  transition: height 1s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--bar-delay, 0ms) + 500ms);
+}
+.js [data-reveal]:not([data-visible]) .svc-spark {
+  height: 4%;
+}
+.svc-row {
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--row-delay, 0ms);
+}
+.js [data-reveal]:not([data-visible]) .svc-gauge {
+  stroke-dashoffset: var(--gauge-full);
+}
+.js [data-reveal]:not([data-visible]) .svc-bar {
+  width: 0;
+}
+.js [data-reveal]:not([data-visible]) .svc-row {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
 /* Scroll reveal. Content is hidden only once JavaScript has marked the page,
    so without it (and for crawlers) everything stays visible. */
 .js [data-reveal] {

@@ -22,6 +22,7 @@ import { CountUp } from '@/components/site/CountUp';
 import { HeroBackdrop } from '@/components/site/HeroBackdrop';
 import { Reveal } from '@/components/site/Reveal';
 import { SectionHeading } from '@/components/site/Section';
+import { AdsVisual, LeadsVisual, SearchVisual, SpeedVisual } from '@/components/site/ServiceVisuals';
 import { caseStudies } from '@/content/work';
 
 const heroStats = [
@@ -62,27 +63,36 @@ const problems = [
   },
 ];
 
+// Bento layout on desktop: the lead feed runs down the right, Google Ads spans two columns.
 const services = [
   {
     icon: LayoutTemplate,
+    visual: SpeedVisual,
+    area: 'lg:col-start-1 lg:row-start-1',
     title: 'Fast websites',
     text: 'Custom pages that open instantly on any phone, with your phone number and reviews on the first screen.',
     points: ['Built for phones first', 'Lighthouse scores in the 90s'],
   },
   {
     icon: MapPin,
+    visual: SearchVisual,
+    area: 'lg:col-start-2 lg:row-start-1',
     title: 'Local SEO and AI search',
     text: 'A page for every service and every area you cover, written the way your customers search on Google and in ChatGPT.',
     points: ['Service and area pages', 'Structured data built in'],
   },
   {
     icon: Target,
+    visual: AdsVisual,
+    area: 'lg:col-span-2 lg:col-start-1 lg:row-start-2',
     title: 'Google Ads',
     text: 'Campaigns for the jobs you want, in the areas you serve, with every call and form tied back to the keyword that brought it.',
     points: ['Call and form tracking', 'Budget moved to what pays'],
   },
   {
     icon: BellRing,
+    visual: LeadsVisual,
+    area: 'lg:col-start-3 lg:row-span-2 lg:row-start-1',
     title: 'Lead tracking and reports',
     text: 'Every form and call reaches you the second it happens, and a monthly report shows visitors, leads and cost per lead.',
     points: ['Instant lead emails', 'One plain-language report'],
@@ -390,36 +400,51 @@ export default function HomePage() {
       </section>
 
       {/* Services */}
-      <section id="services" className="bg-paper hairline-top hairline-bottom relative scroll-mt-16 overflow-hidden py-24 sm:py-32">
+      <section id="services" className="bg-spotlight relative scroll-mt-16 overflow-hidden py-24 text-white sm:py-32">
+        <div className="grid-lines pointer-events-none absolute inset-0" aria-hidden />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal>
             <SectionHeading
+              light
               eyebrow="What we do"
               title="Everything between a search and a phone call"
               lead="One team for the website, the search rankings, the ads and the tracking, so nothing falls between two agencies."
             />
           </Reveal>
-          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-14 grid gap-5 lg:grid-cols-3 lg:grid-rows-[auto_auto]">
             {services.map((s, i) => (
-              <Reveal key={s.title} delay={i * 90}>
-                <div className="group flex h-full flex-col rounded-3xl border border-zinc-200/80 bg-white p-6 shadow-soft transition duration-300 hover:-translate-y-1.5 hover:border-forest-200 hover:shadow-lift">
-                  <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-forest-700 to-forest-950 text-lime shadow-soft transition duration-300 group-hover:rotate-[-6deg] group-hover:scale-105">
-                    <s.icon className="h-5 w-5" aria-hidden />
-                  </span>
-                  <h3 className="mt-5 font-display text-lg font-bold text-forest-950">{s.title}</h3>
-                  <p className="mt-2 flex-1 leading-relaxed text-zinc-600">{s.text}</p>
-                  <ul className="mt-5 space-y-2 border-t border-zinc-100 pt-4">
-                    {s.points.map((point) => (
-                      <li key={point} className="flex items-center gap-2 text-sm font-medium text-forest-800">
-                        <Check className="h-4 w-4 text-forest-600" aria-hidden />
-                        {point}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+              <Reveal key={s.title} delay={i * 100} className={s.area}>
+                <article className="group ring-gradient flex h-full flex-col overflow-hidden rounded-3xl bg-white/[0.03] shadow-[inset_0_1px_0_rgb(255_255_255/0.06)] backdrop-blur transition duration-300 hover:-translate-y-1 hover:bg-white/[0.05]">
+                  <div className="relative border-b border-white/10 bg-gradient-to-b from-white/[0.04] to-transparent p-5 sm:p-6">
+                    <s.visual />
+                  </div>
+                  <div className="flex flex-1 flex-col p-6">
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-lime/10 text-lime ring-1 ring-lime/25 transition duration-300 group-hover:bg-lime group-hover:text-forest-950">
+                        <s.icon className="h-[18px] w-[18px]" aria-hidden />
+                      </span>
+                      <h3 className="font-display text-xl">{s.title}</h3>
+                    </div>
+                    <p className="mt-3 flex-1 leading-relaxed text-white/65">{s.text}</p>
+                    <ul className="mt-5 flex flex-wrap gap-2">
+                      {s.points.map((point) => (
+                        <li
+                          key={point}
+                          className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.05] px-3 py-1 text-xs font-medium text-white/80 ring-1 ring-white/10"
+                        >
+                          <Check className="h-3.5 w-3.5 text-lime" aria-hidden />
+                          {point}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </article>
               </Reveal>
             ))}
           </div>
+          <p className="mt-6 text-center font-mono text-[10px] tracking-wide text-white/35 uppercase">
+            Illustrations use example data. Real figures are in the case studies below.
+          </p>
         </div>
       </section>
 
