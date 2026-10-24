@@ -44,7 +44,11 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
 
   if (state.ok) {
     return (
-      <div className="rounded-3xl border border-azure-100 bg-white p-8 text-center text-zinc-700 shadow-float sm:p-10" role="status">
+      <div
+        id={compact ? 'hero-form' : undefined}
+        className="scroll-mt-24 rounded-3xl border border-azure-100 bg-white p-8 text-center text-zinc-700 shadow-float sm:p-10"
+        role="status"
+      >
         <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-azure-50 ring-8 ring-azure-50/50">
           <CheckCircle2 className="h-9 w-9 text-azure-700" aria-hidden />
         </span>
