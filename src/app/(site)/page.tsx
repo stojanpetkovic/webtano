@@ -903,7 +903,7 @@ export default function HomePage() {
       </section>
 
       {/* Final CTA: the dark band runs straight into the footer. */}
-      <section className="bg-final relative overflow-hidden text-white">
+      <section className="bg-final relative overflow-hidden bg-forest-975 text-white">
         <div className="grid-lines pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_70%_80%_at_50%_30%,#000,transparent)]" aria-hidden />
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-lime/50 to-transparent" aria-hidden />
         <div className="final-orb pointer-events-none absolute -top-40 left-1/2 h-[34rem] w-[34rem] -translate-x-1/2 rounded-full" aria-hidden />

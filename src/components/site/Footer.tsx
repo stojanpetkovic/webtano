@@ -76,7 +76,7 @@ export function Footer() {
 
       {/* A large faded wordmark to close the page. */}
       <div className="pointer-events-none relative mx-auto max-w-6xl px-4 select-none sm:px-6" aria-hidden>
-        <p className="footer-wordmark font-display text-[19vw] leading-[0.8] tracking-[-0.06em] lg:text-[15.5rem]">WebTano</p>
+        <p className="bg-gradient-to-b from-white/[0.09] to-white/[0.015] bg-clip-text text-transparent font-display text-[19vw] leading-[0.8] tracking-[-0.06em] lg:text-[15.5rem] mb-[-0.12em]">WebTano</p>
       </div>
 
       <div className="relative border-t border-white/10">
