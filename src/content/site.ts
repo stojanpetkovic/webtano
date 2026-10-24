@@ -8,6 +8,7 @@ export const site = {
     { href: '/#services', label: 'Services' },
     { href: '/work', label: 'Work' },
     { href: '/#process', label: 'How it works' },
+    { href: '/blog', label: 'Blog' },
     { href: '/#faq', label: 'FAQ' },
   ],
 };
