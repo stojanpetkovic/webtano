@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState, useRef } from 'react';
-import { CheckCircle2, Loader2, Lock } from 'lucide-react';
+import { BadgeCheck, CheckCircle2, Gauge, KeyRound, Loader2, Lock, Star } from 'lucide-react';
 import { submitCheck, type CheckState } from '@/app/(site)/actions';
 
 const SERVICES = [
@@ -65,10 +65,43 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
         data-lead-ignore
         className="scroll-mt-24 rounded-3xl border border-white/10 bg-white p-6 text-zinc-700 shadow-float shadow-black/40 sm:p-7"
       >
-        <p className="font-mono text-[11px] font-medium tracking-[0.14em] text-forest-700 uppercase">Free website check</p>
-        <p className="mt-2 font-display text-2xl text-forest-950">See what your site is costing you</p>
+        <div className="flex items-center justify-between gap-3">
+          <p className="font-mono text-[11px] font-medium tracking-[0.14em] text-forest-700 uppercase">Free website check</p>
+          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-forest-50 px-2.5 py-1 text-[11px] font-semibold whitespace-nowrap text-forest-800 ring-1 ring-forest-100">
+            <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-forest-600" aria-hidden />
+            Reply in 1 day
+          </span>
+        </div>
+        <p className="mt-3 font-display text-2xl text-forest-950 sm:text-[1.7rem] sm:leading-tight">See what your site is costing you</p>
         <p className="mt-1.5 text-sm text-zinc-500">A real review of your site and your top competitors, within one business day.</p>
-        <div className="mt-5 grid gap-3.5 sm:grid-cols-2">
+
+        <div className="mt-5 flex items-center gap-3 rounded-2xl bg-zinc-50 px-4 py-3 ring-1 ring-zinc-200/70">
+          <span className="flex shrink-0 gap-0.5 text-amber-400" aria-hidden>
+            {[0, 1, 2, 3, 4].map((i) => (
+              <Star key={i} className="h-4 w-4 fill-current" />
+            ))}
+          </span>
+          <p className="text-xs leading-snug text-zinc-600">
+            Our clients on Google: <span className="font-semibold text-zinc-900">Tree Jaws 4.9</span> from 427 reviews,{' '}
+            <span className="font-semibold text-zinc-900">Mahalo 5.0</span>
+          </p>
+        </div>
+
+        <fieldset className="mt-5">
+          <legend className={label}>What do you need?</legend>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {SERVICES.slice(0, 4).map((s, i) => (
+              <label key={s.value} className="cursor-pointer">
+                <input type="radio" name="service" value={s.value} defaultChecked={i === 0} className="peer sr-only" />
+                <span className="inline-block rounded-full border border-zinc-300 px-3 py-1.5 text-sm text-zinc-700 transition hover:border-forest-600 peer-checked:border-forest-700 peer-checked:bg-forest-700 peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-forest-700/40">
+                  {s.label}
+                </span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <div className="mt-4 grid gap-3.5 sm:grid-cols-2">
           <div>
             <label htmlFor={id('name')} className={label}>
               Your name
@@ -119,6 +152,19 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
           <Lock className="h-3.5 w-3.5" aria-hidden />
           No obligation. We use your details only to reply.
         </p>
+        <ul className="mt-5 grid grid-cols-3 gap-2 border-t border-zinc-100 pt-5 text-center">
+          {[
+            { icon: BadgeCheck, title: 'Google Ads', text: 'managed in-house' },
+            { icon: Gauge, title: '90+ speed', text: 'Lighthouse score' },
+            { icon: KeyRound, title: 'No lock-in', text: 'you own it all' },
+          ].map((b) => (
+            <li key={b.title} className="flex flex-col items-center gap-1 rounded-xl px-1 py-1">
+              <b.icon className="h-5 w-5 text-forest-700" aria-hidden />
+              <span className="text-xs font-semibold text-zinc-900">{b.title}</span>
+              <span className="text-[11px] leading-tight text-zinc-500">{b.text}</span>
+            </li>
+          ))}
+        </ul>
       </form>
     );
   }

@@ -216,18 +216,6 @@ export default function HomePage() {
             <div className="relative">
               <CheckForm compact />
             </div>
-            <div
-              className="absolute -top-5 -right-2 hidden animate-float rounded-2xl border border-white/10 bg-forest-900/90 px-4 py-3 text-white shadow-lift backdrop-blur [animation-delay:-3s] sm:block lg:-right-8"
-              aria-hidden
-            >
-              <p className="flex items-center gap-2 text-sm font-semibold">
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-lime text-forest-950">
-                  <Phone className="h-3.5 w-3.5" />
-                </span>
-                New call from Google Ads
-              </p>
-              <p className="mt-1 pl-9 font-mono text-[10px] tracking-wide text-white/55 uppercase">Tracked the second it happens</p>
-            </div>
           </Reveal>
         </div>
       </section>
