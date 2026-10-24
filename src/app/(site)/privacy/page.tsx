@@ -25,11 +25,11 @@ export default function PrivacyPage() {
   return (
     <section className="bg-white py-16 sm:py-20">
       <div className="mx-auto max-w-3xl px-4 sm:px-6">
-        <h1 className="font-display text-4xl font-bold tracking-tight text-forest-950">Privacy notice</h1>
+        <h1 className="font-display text-4xl font-bold tracking-tight text-ink-950">Privacy notice</h1>
         <dl className="mt-10 space-y-8">
           {items.map((i) => (
             <div key={i.title}>
-              <dt className="font-display text-xl font-bold text-forest-950">{i.title}</dt>
+              <dt className="font-display text-xl font-bold text-ink-950">{i.title}</dt>
               <dd className="mt-2 text-lg leading-relaxed text-zinc-700">{i.text}</dd>
             </div>
           ))}

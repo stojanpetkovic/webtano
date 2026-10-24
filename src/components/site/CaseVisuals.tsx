@@ -26,7 +26,7 @@ export function LighthouseCard({ scores }: { scores: CaseStudy['lighthouse'] }) 
             <li key={key} className="flex flex-col items-center">
               <span className="relative h-11 w-11">
                 <svg viewBox="0 0 36 36" className="h-full w-full -rotate-90" aria-hidden>
-                  <circle cx="18" cy="18" r={r} fill="none" stroke="rgb(6 35 26 / 0.08)" strokeWidth="3.5" />
+                  <circle cx="18" cy="18" r={r} fill="none" stroke="rgb(10 14 30 / 0.08)" strokeWidth="3.5" />
                   <circle
                     cx="18"
                     cy="18"
@@ -40,7 +40,7 @@ export function LighthouseCard({ scores }: { scores: CaseStudy['lighthouse'] }) 
                     style={{ '--gauge-full': c, '--gauge-to': c * (1 - score / 100) } as React.CSSProperties}
                   />
                 </svg>
-                <span className="absolute inset-0 flex items-center justify-center font-mono text-[11px] font-semibold text-forest-950">
+                <span className="absolute inset-0 flex items-center justify-center font-mono text-[11px] font-semibold text-ink-950">
                   {score}
                 </span>
               </span>
@@ -63,7 +63,7 @@ export function RatingChip({ stats }: { stats: CaseStudy['stats'] }) {
         <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" aria-hidden />
       </span>
       <span className="text-xs leading-tight text-zinc-500">
-        <span className="block font-display text-base text-forest-950">{rating.value.replace('★', '')} out of 5</span>
+        <span className="block font-display text-base text-ink-950">{rating.value.replace('★', '')} out of 5</span>
         {rating.label}
       </span>
     </div>

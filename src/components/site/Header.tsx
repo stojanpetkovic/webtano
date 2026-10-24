@@ -48,7 +48,7 @@ export function Header() {
     <>
       <header
         className={`sticky top-0 z-50 border-b transition-all duration-300 ${
-          scrolled ? 'border-white/10 bg-forest-975/80 shadow-[0_10px_30px_-12px_rgb(0_0_0/0.5)] backdrop-blur-xl' : 'border-transparent bg-forest-975'
+          scrolled ? 'border-white/10 bg-ink-975/80 shadow-[0_10px_30px_-12px_rgb(0_0_0/0.5)] backdrop-blur-xl' : 'border-transparent bg-ink-975'
         }`}
       >
         <div className={`mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 transition-all duration-300 sm:px-6 ${scrolled ? 'h-16' : 'h-[4.5rem]'}`}>
@@ -80,7 +80,7 @@ export function Header() {
           <div className="flex items-center gap-2">
             <Link
               href="/#hero-form"
-              className="group inline-flex items-center gap-1.5 rounded-full bg-lime px-3.5 py-2 text-sm font-semibold whitespace-nowrap text-forest-950 shadow-glow transition hover:-translate-y-px hover:bg-lime-dark sm:px-4"
+              className="group inline-flex items-center gap-1.5 rounded-full bg-accent px-3.5 py-2 text-sm font-semibold whitespace-nowrap text-ink-950 shadow-glow transition hover:-translate-y-px hover:bg-accent-dark sm:px-4"
             >
               <span className="sm:hidden">Free check</span>
               <span className="hidden sm:inline">Free website check</span>
@@ -141,10 +141,10 @@ export function Header() {
                   onClick={() => setOpen(false)}
                   className="group flex items-center gap-4 rounded-2xl px-3 py-4 transition hover:bg-white/[0.06]"
                 >
-                  <span className="font-mono text-xs text-lime/80">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="font-mono text-xs text-accent/80">{String(i + 1).padStart(2, '0')}</span>
                   <span className="flex-1 font-display text-2xl">{item.label}</span>
                   <ArrowUpRight
-                    className="h-5 w-5 text-white/40 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-lime"
+                    className="h-5 w-5 text-white/40 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-accent"
                     aria-hidden
                   />
                 </Link>
@@ -169,7 +169,7 @@ export function Header() {
             <Link
               href="/#hero-form"
               onClick={() => setOpen(false)}
-              className="group flex w-full items-center justify-center gap-2 rounded-full bg-lime px-6 py-3.5 font-semibold text-forest-950 shadow-glow transition hover:bg-lime-dark"
+              className="group flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 font-semibold text-ink-950 shadow-glow transition hover:bg-accent-dark"
             >
               Get a free website check
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />

@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { CheckForm } from '@/components/site/CheckForm';
 import { CountUp } from '@/components/site/CountUp';
+import { FaqList } from '@/components/site/FaqList';
 import { HeroBackdrop } from '@/components/site/HeroBackdrop';
 import { Reveal } from '@/components/site/Reveal';
 import { SectionHeading } from '@/components/site/Section';
@@ -200,7 +201,7 @@ const clientProof = [
 ];
 
 const primaryButton =
-  'group inline-flex items-center justify-center gap-2 rounded-full bg-lime px-6 py-3.5 font-semibold text-forest-950 shadow-glow transition duration-300 hover:-translate-y-0.5 hover:bg-lime-dark';
+  'group inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 font-semibold text-ink-950 shadow-glow transition duration-300 hover:-translate-y-0.5 hover:bg-accent-dark';
 
 export default function HomePage() {
   return (
@@ -213,7 +214,7 @@ export default function HomePage() {
           <div className="text-center lg:text-left">
             <Reveal>
               <p className="inline-flex items-center gap-2.5 rounded-full border border-white/12 bg-white/[0.04] px-3.5 py-1.5 font-mono text-xs tracking-wide text-white/75 shadow-[inset_0_1px_0_rgb(255_255_255/0.06)] backdrop-blur">
-                <span className="h-2 w-2 animate-pulse-dot rounded-full bg-lime" aria-hidden />
+                <span className="h-2 w-2 animate-pulse-dot rounded-full bg-accent" aria-hidden />
                 Taking on one company per service area
               </p>
             </Reveal>
@@ -242,7 +243,7 @@ export default function HomePage() {
                 </Link>
               </div>
               <p className="mt-5 flex items-center justify-center gap-2 text-sm text-white/55 lg:justify-start">
-                <Check className="h-4 w-4 text-lime" aria-hidden />
+                <Check className="h-4 w-4 text-accent" aria-hidden />
                 Free, no obligation, reply within one business day
               </p>
             </Reveal>
@@ -261,7 +262,7 @@ export default function HomePage() {
           </div>
 
           <Reveal variant="scale" delay={200} className="relative mx-auto w-full max-w-lg lg:max-w-none">
-            <div className="pointer-events-none absolute -inset-12 rounded-full bg-forest-600/30 blur-3xl" aria-hidden />
+            <div className="pointer-events-none absolute -inset-12 rounded-full bg-azure-600/30 blur-3xl" aria-hidden />
             <div className="relative">
               <CheckForm compact />
             </div>
@@ -270,17 +271,17 @@ export default function HomePage() {
       </section>
 
       {/* Clients */}
-      <section className="bg-clients hairline-bottom relative overflow-hidden py-16 sm:py-20">
+      <section className="bg-clients relative overflow-hidden py-16 sm:py-20">
         <div className="grid-lines-light pointer-events-none absolute inset-0" aria-hidden />
         {/* The hero's dark edge melts into this section instead of stopping at a hard line. */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-forest-975/[0.07] to-transparent" aria-hidden />
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-lime/60 to-transparent" aria-hidden />
-        <div className="hero-aurora pointer-events-none top-1/2 left-1/2 h-72 w-[46rem] -translate-x-1/2 bg-[radial-gradient(closest-side,rgb(197_242_74/0.3),transparent)]" aria-hidden />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-ink-975/[0.07] to-transparent" aria-hidden />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent" aria-hidden />
+        <div className="hero-aurora pointer-events-none top-1/2 left-1/2 h-72 w-[46rem] -translate-x-1/2 bg-[radial-gradient(closest-side,rgb(1_175_233/0.3),transparent)]" aria-hidden />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <div className="flex flex-col items-center justify-between gap-6 text-center lg:flex-row lg:items-end lg:text-left">
             <Reveal>
-              <p className="font-mono text-[11px] font-medium tracking-[0.16em] text-forest-700 uppercase">Growing with local companies like</p>
-              <h2 className="mt-3 max-w-xl font-display text-2xl text-balance text-forest-950 sm:text-3xl">
+              <p className="font-mono text-[11px] font-medium tracking-[0.16em] text-azure-700 uppercase">Growing with local companies like</p>
+              <h2 className="mt-3 max-w-xl font-display text-2xl text-balance text-ink-950 sm:text-3xl">
                 Real businesses, real numbers, measured by our own tracking
               </h2>
             </Reveal>
@@ -289,7 +290,7 @@ export default function HomePage() {
                 {clientProof.map((p) => (
                   <div key={p.label} className="flex flex-col-reverse px-4 py-3 sm:px-6">
                     <dt className="font-mono text-[10px] tracking-wide text-zinc-500 uppercase">{p.label}</dt>
-                    <dd className="font-display text-xl text-forest-950 sm:text-2xl">{p.value}</dd>
+                    <dd className="font-display text-xl text-ink-950 sm:text-2xl">{p.value}</dd>
                   </div>
                 ))}
               </dl>
@@ -301,10 +302,10 @@ export default function HomePage() {
               <Reveal as="li" key={c.slug} delay={i * 90}>
                 <Link
                   href={`/work/${c.slug}`}
-                  className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-zinc-200/80 bg-white shadow-soft transition duration-300 hover:-translate-y-1.5 hover:border-forest-200 hover:shadow-lift"
+                  className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-zinc-200/80 bg-white shadow-soft transition duration-300 hover:-translate-y-1.5 hover:border-azure-200 hover:shadow-lift"
                 >
                   <span
-                    className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-lime to-transparent opacity-0 transition duration-500 group-hover:opacity-100"
+                    className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent to-transparent opacity-0 transition duration-500 group-hover:opacity-100"
                     aria-hidden
                   />
                   <div className="relative flex h-28 items-center justify-center bg-gradient-to-b from-zinc-50 to-white px-5 sm:h-36">
@@ -320,11 +321,11 @@ export default function HomePage() {
                     <p className="font-mono text-[10px] tracking-wide text-zinc-500 uppercase">
                       {c.sector} · {c.location.split(',')[0]}
                     </p>
-                    <p className="mt-2 font-display text-2xl text-forest-700 sm:text-3xl">
+                    <p className="mt-2 font-display text-2xl text-azure-700 sm:text-3xl">
                       <CountUp value={clientHighlight[c.slug].value} />
                     </p>
                     <p className="mt-0.5 text-xs leading-snug text-zinc-600 sm:text-sm">{clientHighlight[c.slug].label}</p>
-                    <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-forest-800 sm:text-sm">
+                    <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-ink-800 sm:text-sm">
                       Case study
                       <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" aria-hidden />
                     </span>
@@ -346,7 +347,7 @@ export default function HomePage() {
                 <span className="h-1.5 w-1.5 rounded-full bg-red-500" aria-hidden />
                 What it costs you
               </p>
-              <h2 className="mt-4 font-display text-3xl text-balance text-forest-950 md:text-[2.75rem] md:leading-[1.08]">
+              <h2 className="mt-4 font-display text-3xl text-balance text-ink-950 md:text-[2.75rem] md:leading-[1.08]">
                 Your website may be sending customers to the company down the road
               </h2>
             </Reveal>
@@ -365,7 +366,7 @@ export default function HomePage() {
             {problems.map((p, i) => (
               <Reveal as="li" key={p.title} delay={i * 120} className="relative flex flex-col pl-14 lg:pl-0">
                 <div className="absolute top-0 left-0 lg:static lg:flex lg:justify-center">
-                  <span className="relative z-10 flex h-[2.3rem] w-[2.3rem] items-center justify-center rounded-full bg-forest-950 font-mono text-xs font-medium text-lime shadow-lift ring-4 ring-white">
+                  <span className="relative z-10 flex h-[2.3rem] w-[2.3rem] items-center justify-center rounded-full bg-ink-950 font-mono text-xs font-medium text-accent shadow-lift ring-4 ring-white">
                     {String(i + 1).padStart(2, '0')}
                   </span>
                 </div>
@@ -382,14 +383,14 @@ export default function HomePage() {
                         Leak
                       </span>
                     </div>
-                    <h3 className="mt-5 font-display text-lg text-forest-950">{p.title}</h3>
+                    <h3 className="mt-5 font-display text-lg text-ink-950">{p.title}</h3>
                     <p className="mt-2 text-[15px] leading-relaxed text-zinc-600">{p.text}</p>
                   </div>
-                  <div className="flex gap-3 border-t border-forest-100 bg-forest-50/70 px-5 py-4 sm:px-6">
-                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-forest-700 text-lime">
+                  <div className="flex gap-3 border-t border-azure-100 bg-azure-50/70 px-5 py-4 sm:px-6">
+                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-azure-700 text-accent">
                       <Check className="h-3 w-3" aria-hidden />
                     </span>
-                    <p className="text-sm leading-snug text-forest-900">
+                    <p className="text-sm leading-snug text-ink-900">
                       <span className="font-semibold">We fix it: </span>
                       {p.fix}
                     </p>
@@ -400,7 +401,7 @@ export default function HomePage() {
           </ol>
 
           <Reveal delay={150}>
-            <div className="mt-14 flex flex-col items-center justify-between gap-5 rounded-3xl bg-forest-975 px-6 py-6 text-center text-white shadow-float ring-1 ring-white/10 sm:px-8 md:flex-row md:text-left">
+            <div className="mt-14 flex flex-col items-center justify-between gap-5 rounded-3xl bg-ink-975 px-6 py-6 text-center text-white shadow-float ring-1 ring-white/10 sm:px-8 md:flex-row md:text-left">
               <p className="max-w-2xl text-lg text-white/80">
                 <span className="font-semibold text-white">Close all four leaks</span> and the same ad budget brings in more booked jobs. The
                 free check shows you which ones are open on your site.
@@ -415,7 +416,7 @@ export default function HomePage() {
       </section>
 
       {/* Services */}
-      <section id="services" className="bg-spotlight relative scroll-mt-16 overflow-hidden py-24 text-white sm:py-32">
+      <section id="services" className="bg-spotlight edge-glow relative scroll-mt-16 overflow-hidden py-24 text-white sm:py-32">
         <div className="grid-lines pointer-events-none absolute inset-0" aria-hidden />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal>
@@ -435,7 +436,7 @@ export default function HomePage() {
                   </div>
                   <div className="flex flex-1 flex-col p-6">
                     <div className="flex items-center gap-3">
-                      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-lime/10 text-lime ring-1 ring-lime/25 transition duration-300 group-hover:bg-lime group-hover:text-forest-950">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent ring-1 ring-accent/25 transition duration-300 group-hover:bg-accent group-hover:text-ink-950">
                         <s.icon className="h-[18px] w-[18px]" aria-hidden />
                       </span>
                       <h3 className="font-display text-xl">{s.title}</h3>
@@ -447,7 +448,7 @@ export default function HomePage() {
                           key={point}
                           className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.05] px-3 py-1 text-xs font-medium text-white/80 ring-1 ring-white/10"
                         >
-                          <Check className="h-3.5 w-3.5 text-lime" aria-hidden />
+                          <Check className="h-3.5 w-3.5 text-accent" aria-hidden />
                           {point}
                         </li>
                       ))}
@@ -481,7 +482,7 @@ export default function HomePage() {
               const flip = i % 2 === 1;
               return (
                 <Reveal key={c.slug} as="article" className="group/case">
-                  <div className="grid overflow-hidden rounded-[2rem] bg-white shadow-[0_1px_2px_rgb(6_35_26/0.04),0_8px_24px_-12px_rgb(6_35_26/0.10)] ring-1 ring-zinc-200/80 lg:grid-cols-[1.08fr_1fr]">
+                  <div className="grid overflow-hidden rounded-[2rem] bg-white shadow-[0_1px_2px_rgb(10_14_30/0.04),0_8px_24px_-12px_rgb(10_14_30/0.10)] ring-1 ring-zinc-200/80 lg:grid-cols-[1.08fr_1fr]">
                     {/* The site itself, framed on a dark stage with its live scores. */}
                     <div className={`case-stage relative flex items-center overflow-hidden px-5 pt-8 pb-6 sm:px-10 sm:pt-12 sm:pb-10 ${flip ? 'lg:order-2' : ''}`}>
                       <div className="grid-lines pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_70%_70%_at_50%_40%,#000,transparent)]" aria-hidden />
@@ -496,7 +497,7 @@ export default function HomePage() {
                             <span className="h-2 w-2 rounded-full bg-[#febc2e]" />
                             <span className="h-2 w-2 rounded-full bg-[#28c840]" />
                             <span className="ml-2 flex min-w-0 items-center gap-1 truncate rounded-md bg-white px-2.5 py-0.5 text-[10px] text-zinc-500 ring-1 ring-zinc-200">
-                              <ShieldCheck className="h-3 w-3 shrink-0 text-forest-600" />
+                              <ShieldCheck className="h-3 w-3 shrink-0 text-azure-600" />
                               {c.url.replace(/^https?:\/\//, '').replace(/\/$/, '')}
                             </span>
                           </div>
@@ -524,7 +525,7 @@ export default function HomePage() {
                         {String(i + 1).padStart(2, '0')}
                       </span>
                       <div className="relative flex flex-wrap items-center gap-2">
-                        <span className="rounded-full bg-forest-50 px-3 py-1 font-mono text-[10px] font-medium tracking-[0.12em] text-forest-700 uppercase ring-1 ring-forest-100">
+                        <span className="rounded-full bg-azure-50 px-3 py-1 font-mono text-[10px] font-medium tracking-[0.12em] text-azure-700 uppercase ring-1 ring-azure-100">
                           {c.sector}
                         </span>
                         <span className="inline-flex items-center gap-1 font-mono text-[10px] tracking-[0.12em] text-zinc-500 uppercase">
@@ -532,13 +533,13 @@ export default function HomePage() {
                           {c.location}
                         </span>
                       </div>
-                      <h3 className="relative mt-4 font-display text-3xl text-forest-950 sm:text-4xl">{c.client}</h3>
+                      <h3 className="relative mt-4 font-display text-3xl text-ink-950 sm:text-4xl">{c.client}</h3>
                       <p className="relative mt-3 leading-relaxed text-zinc-600 sm:text-lg">{c.summary}</p>
 
-                      <div className="relative mt-7 rounded-2xl bg-forest-975 p-5 text-white sm:p-6">
-                        <div className="pointer-events-none absolute inset-0 rounded-2xl bg-[radial-gradient(80%_120%_at_100%_0%,rgb(197_242_74/0.18),transparent_60%)]" aria-hidden />
-                        <p className="relative flex items-center gap-1.5 font-mono text-[10px] tracking-[0.14em] text-lime uppercase">
-                          <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-lime" aria-hidden />
+                      <div className="relative mt-7 rounded-2xl bg-ink-975 p-5 text-white sm:p-6">
+                        <div className="pointer-events-none absolute inset-0 rounded-2xl bg-[radial-gradient(80%_120%_at_100%_0%,rgb(1_175_233/0.18),transparent_60%)]" aria-hidden />
+                        <p className="relative flex items-center gap-1.5 font-mono text-[10px] tracking-[0.14em] text-accent uppercase">
+                          <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-accent" aria-hidden />
                           Headline result
                         </p>
                         <p className="relative mt-2 font-display text-5xl leading-none text-gradient sm:text-6xl">
@@ -550,7 +551,7 @@ export default function HomePage() {
                         {[first, second].filter(Boolean).map((m) => (
                           <div key={m.label} className="flex flex-col-reverse rounded-2xl bg-zinc-50 p-4 ring-1 ring-zinc-200/70">
                             <dt className="mt-1 text-xs leading-snug text-zinc-500">{m.label}</dt>
-                            <dd className="font-display text-2xl text-forest-800 sm:text-3xl">
+                            <dd className="font-display text-2xl text-ink-800 sm:text-3xl">
                               <CountUp value={m.value} />
                             </dd>
                           </div>
@@ -561,17 +562,17 @@ export default function HomePage() {
                         <ul className="flex flex-wrap gap-x-4 gap-y-1.5">
                           {c.services.slice(0, 4).map((sv) => (
                             <li key={sv} className="inline-flex items-center gap-1 text-xs font-medium text-zinc-600">
-                              <Check className="h-3.5 w-3.5 text-forest-600" aria-hidden />
+                              <Check className="h-3.5 w-3.5 text-azure-600" aria-hidden />
                               {sv}
                             </li>
                           ))}
                         </ul>
                         <Link
                           href={`/work/${c.slug}`}
-                          className="group inline-flex items-center gap-2 rounded-full bg-forest-950 px-5 py-3 text-sm font-semibold text-white shadow-soft transition duration-300 hover:-translate-y-0.5 hover:bg-forest-800 hover:shadow-lift"
+                          className="group inline-flex items-center gap-2 rounded-full bg-ink-950 px-5 py-3 text-sm font-semibold text-white shadow-soft transition duration-300 hover:-translate-y-0.5 hover:bg-ink-800 hover:shadow-lift"
                         >
                           View case study
-                          <ArrowRight className="h-4 w-4 text-lime transition-transform group-hover:translate-x-1" aria-hidden />
+                          <ArrowRight className="h-4 w-4 text-accent transition-transform group-hover:translate-x-1" aria-hidden />
                         </Link>
                       </div>
                     </div>
@@ -583,7 +584,7 @@ export default function HomePage() {
           <Reveal className="mt-14 flex flex-col items-center gap-3 text-center">
             <Link
               href="/work"
-              className="group inline-flex items-center gap-2 rounded-full border border-forest-200 bg-white px-5 py-3 font-semibold text-forest-800 shadow-soft transition duration-300 hover:-translate-y-0.5 hover:border-forest-700 hover:shadow-lift"
+              className="group inline-flex items-center gap-2 rounded-full border border-azure-200 bg-white px-5 py-3 font-semibold text-ink-800 shadow-soft transition duration-300 hover:-translate-y-0.5 hover:border-azure-700 hover:shadow-lift"
             >
               All case studies
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
@@ -594,12 +595,12 @@ export default function HomePage() {
       </section>
 
       {/* Promises */}
-      <section className="bg-promises relative overflow-hidden py-24 text-white sm:py-32">
+      <section className="bg-promises edge-glow relative overflow-hidden py-24 text-white sm:py-32">
         <div className="grid-lines pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_70%_70%_at_30%_40%,#000,transparent)]" aria-hidden />
         <div className="relative mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-[0.92fr_1.08fr] lg:gap-16">
           <Reveal className="lg:sticky lg:top-28 lg:self-start">
-            <p className="inline-flex items-center gap-2 rounded-full bg-white/[0.04] px-3 py-1 font-mono text-[11px] font-medium tracking-[0.14em] text-lime uppercase ring-1 ring-white/12">
-              <span className="h-1.5 w-1.5 rounded-full bg-lime" aria-hidden />
+            <p className="inline-flex items-center gap-2 rounded-full bg-white/[0.04] px-3 py-1 font-mono text-[11px] font-medium tracking-[0.14em] text-accent uppercase ring-1 ring-white/12">
+              <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden />
               How we work
             </p>
             <h2 className="mt-4 font-display text-3xl text-balance md:text-[2.75rem] md:leading-[1.08]">
@@ -620,7 +621,7 @@ export default function HomePage() {
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link
                 href="/#hero-form"
-                className="group inline-flex items-center gap-2 rounded-full bg-lime px-5 py-3 text-sm font-semibold text-forest-950 shadow-glow transition hover:-translate-y-0.5 hover:bg-lime-dark"
+                className="group inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-ink-950 shadow-glow transition hover:-translate-y-0.5 hover:bg-accent-dark"
               >
                 Get a free website check
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
@@ -637,7 +638,7 @@ export default function HomePage() {
                 <div className="ring-gradient group grid items-center gap-6 rounded-3xl bg-white/[0.03] p-6 transition duration-300 hover:bg-white/[0.05] sm:grid-cols-[1fr_13.5rem] sm:p-7">
                   <div>
                     <div className="flex items-center gap-3">
-                      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-lime/10 text-lime ring-1 ring-lime/25 transition group-hover:bg-lime/15">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent ring-1 ring-accent/25 transition group-hover:bg-accent/15">
                         <p.icon className="h-[18px] w-[18px]" aria-hidden />
                       </span>
                       <span className="font-mono text-[10px] tracking-[0.14em] text-white/45 uppercase">Rule {String(i + 1).padStart(2, '0')}</span>
@@ -645,7 +646,7 @@ export default function HomePage() {
                     <h3 className="mt-4 font-display text-2xl">{p.title}</h3>
                     <p className="mt-2 leading-relaxed text-white/65">{p.text}</p>
                   </div>
-                  <div className="rounded-2xl bg-forest-975/70 p-3.5 ring-1 ring-white/[0.08]">
+                  <div className="rounded-2xl bg-ink-975/70 p-3.5 ring-1 ring-white/[0.08]">
                     <p.visual />
                   </div>
                 </div>
@@ -661,11 +662,11 @@ export default function HomePage() {
         <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
           <div>
             <Reveal>
-              <p className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 font-mono text-[11px] font-medium tracking-[0.14em] text-forest-700 uppercase shadow-soft ring-1 ring-zinc-200">
-                <span className="h-1.5 w-1.5 rounded-full bg-forest-600" aria-hidden />
+              <p className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 font-mono text-[11px] font-medium tracking-[0.14em] text-azure-700 uppercase shadow-soft ring-1 ring-zinc-200">
+                <span className="h-1.5 w-1.5 rounded-full bg-azure-600" aria-hidden />
                 Tracking and monthly report
               </p>
-              <h2 className="mt-4 font-display text-3xl text-balance text-forest-950 md:text-[2.75rem] md:leading-[1.08]">
+              <h2 className="mt-4 font-display text-3xl text-balance text-ink-950 md:text-[2.75rem] md:leading-[1.08]">
                 Without numbers you are guessing, and that is how budgets disappear
               </h2>
               <p className="mt-4 text-lg text-pretty text-zinc-600">
@@ -676,11 +677,11 @@ export default function HomePage() {
             <ul className="mt-9 grid gap-x-8 gap-y-6 sm:grid-cols-2">
               {reportPoints.map((p, i) => (
                 <Reveal as="li" key={p.title} delay={i * 80} className="flex gap-3.5">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-forest-950 text-lime">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ink-950 text-accent">
                     <p.icon className="h-[18px] w-[18px]" aria-hidden />
                   </span>
                   <div>
-                    <h3 className="font-display text-[17px] text-forest-950">{p.title}</h3>
+                    <h3 className="font-display text-[17px] text-ink-950">{p.title}</h3>
                     <p className="mt-1 text-sm leading-relaxed text-zinc-600">{p.text}</p>
                   </div>
                 </Reveal>
@@ -689,28 +690,28 @@ export default function HomePage() {
             <Reveal delay={200} className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-3">
               <Link
                 href="/demo/report"
-                className="group inline-flex items-center gap-2 rounded-full bg-forest-950 px-5 py-3 text-sm font-semibold text-white shadow-soft transition duration-300 hover:-translate-y-0.5 hover:bg-forest-800"
+                className="group inline-flex items-center gap-2 rounded-full bg-ink-950 px-5 py-3 text-sm font-semibold text-white shadow-soft transition duration-300 hover:-translate-y-0.5 hover:bg-ink-800"
               >
                 Open the live demo report
-                <ArrowUpRight className="h-4 w-4 text-lime transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
+                <ArrowUpRight className="h-4 w-4 text-accent transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
               </Link>
               <span className="text-sm text-zinc-500">Example data, every button works.</span>
             </Reveal>
           </div>
 
           <Reveal variant="scale" delay={150} className="relative">
-            <div className="pointer-events-none absolute -inset-4 rounded-full bg-[radial-gradient(closest-side,rgb(197_242_74/0.22),transparent)] blur-2xl sm:-inset-10" aria-hidden />
+            <div className="pointer-events-none absolute -inset-4 rounded-full bg-[radial-gradient(closest-side,rgb(1_175_233/0.22),transparent)] blur-2xl sm:-inset-10" aria-hidden />
             <Link
               href="/demo/report"
               aria-label="Open the demo report"
-              className="group relative block overflow-hidden rounded-2xl bg-white shadow-[0_1px_2px_rgb(6_35_26/0.05),0_24px_48px_-24px_rgb(6_35_26/0.28)] ring-1 ring-zinc-200/80"
+              className="group relative block overflow-hidden rounded-2xl bg-white shadow-[0_1px_2px_rgb(10_14_30/0.05),0_24px_48px_-24px_rgb(10_14_30/0.28)] ring-1 ring-zinc-200/80"
             >
               <div className="flex items-center gap-1.5 border-b border-zinc-200 bg-zinc-50 px-3.5 py-2" aria-hidden>
                 <span className="h-2 w-2 rounded-full bg-[#ff5f57]" />
                 <span className="h-2 w-2 rounded-full bg-[#febc2e]" />
                 <span className="h-2 w-2 rounded-full bg-[#28c840]" />
                 <span className="ml-2 flex items-center gap-1 rounded-md bg-white px-2.5 py-0.5 text-[10px] text-zinc-500 ring-1 ring-zinc-200">
-                  <ShieldCheck className="h-3 w-3 text-forest-600" />
+                  <ShieldCheck className="h-3 w-3 text-azure-600" />
                   webtano.com/demo/report
                 </span>
               </div>
@@ -725,9 +726,9 @@ export default function HomePage() {
                 />
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-white to-transparent" aria-hidden />
                 <span className="absolute inset-x-0 bottom-5 flex justify-center">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-forest-950 px-4 py-2 text-xs font-semibold text-white opacity-0 shadow-lift transition duration-300 group-hover:opacity-100">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-ink-950 px-4 py-2 text-xs font-semibold text-white opacity-0 shadow-lift transition duration-300 group-hover:opacity-100">
                     Try it yourself
-                    <ArrowUpRight className="h-3.5 w-3.5 text-lime" aria-hidden />
+                    <ArrowUpRight className="h-3.5 w-3.5 text-accent" aria-hidden />
                   </span>
                 </span>
               </div>
@@ -735,22 +736,22 @@ export default function HomePage() {
 
             <div className="absolute top-14 -left-3 hidden w-60 rounded-2xl bg-white p-3.5 shadow-soft ring-1 ring-zinc-200/80 sm:block lg:-left-10">
               <div className="flex items-center gap-2.5">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-forest-700 text-lime">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-azure-700 text-accent">
                   <BellRing className="h-4 w-4" aria-hidden />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-semibold text-forest-950">New enquiry: Free estimate</p>
+                  <p className="text-xs font-semibold text-ink-950">New enquiry: Free estimate</p>
                   <p className="text-[11px] text-zinc-500">From Google Ads · just now</p>
                 </div>
-                <span className="h-2 w-2 animate-pulse-dot rounded-full bg-lime" aria-hidden />
+                <span className="h-2 w-2 animate-pulse-dot rounded-full bg-accent" aria-hidden />
               </div>
             </div>
-            <div className="absolute -right-3 bottom-16 hidden rounded-2xl bg-forest-950 px-4 py-3 text-white shadow-soft sm:block lg:-right-8">
+            <div className="absolute -right-3 bottom-16 hidden rounded-2xl bg-ink-950 px-4 py-3 text-white shadow-soft sm:block lg:-right-8">
               <p className="font-mono text-[10px] tracking-[0.14em] text-white/50 uppercase">Cost per contact</p>
-              <p className="mt-0.5 font-display text-2xl text-lime">$12.50</p>
+              <p className="mt-0.5 font-display text-2xl text-accent">$12.50</p>
               <p className="text-[11px] text-white/60">Return on ad spend 5.3×</p>
             </div>
-            <span className="absolute -bottom-3 left-6 inline-flex items-center gap-1.5 rounded-full bg-lime px-3 py-1 text-xs font-semibold text-forest-950 shadow-glow">
+            <span className="absolute -bottom-3 left-6 inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1 text-xs font-semibold text-ink-950 shadow-glow">
               <Zap className="h-3.5 w-3.5" aria-hidden />
               Included with every site
             </span>
@@ -759,7 +760,7 @@ export default function HomePage() {
       </section>
 
       {/* Process */}
-      <section id="process" className="bg-process relative scroll-mt-16 overflow-hidden py-24 text-white sm:py-32">
+      <section id="process" className="bg-process edge-glow relative scroll-mt-16 overflow-hidden py-24 text-white sm:py-32">
         <div className="grid-lines pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_70%_60%_at_50%_45%,#000,transparent)]" aria-hidden />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal>
@@ -774,18 +775,18 @@ export default function HomePage() {
           <Reveal as="ol" className="relative mt-16 grid gap-5 lg:grid-cols-4 lg:gap-6">
             {/* The progress line fills from step one to step four as the section comes into view. */}
             <span className="pointer-events-none absolute top-6 right-[12.5%] left-[12.5%] hidden h-px bg-white/10 lg:block" aria-hidden>
-              <span className="proc-fill-x absolute inset-y-0 left-0 bg-gradient-to-r from-lime via-lime to-forest-600" />
+              <span className="proc-fill-x absolute inset-y-0 left-0 bg-gradient-to-r from-accent via-accent to-azure-600" />
             </span>
             <span className="pointer-events-none absolute top-6 bottom-6 left-6 w-px bg-white/10 lg:hidden" aria-hidden>
-              <span className="proc-fill-y absolute inset-x-0 top-0 bg-gradient-to-b from-lime to-forest-600" />
+              <span className="proc-fill-y absolute inset-x-0 top-0 bg-gradient-to-b from-accent to-azure-600" />
             </span>
             {steps.map((s, i) => (
               <li key={s.title} className="relative flex flex-col pl-16 lg:pl-0" style={{ '--step': i } as React.CSSProperties}>
-                <span className="proc-node absolute top-0 left-0 flex h-12 w-12 items-center justify-center rounded-full bg-forest-975 font-mono text-sm font-medium lg:relative lg:mx-auto">
+                <span className="proc-node absolute top-0 left-0 flex h-12 w-12 items-center justify-center rounded-full bg-ink-975 font-mono text-sm font-medium lg:relative lg:mx-auto">
                   {String(i + 1).padStart(2, '0')}
                 </span>
                 <div className="proc-card group flex-1 rounded-3xl bg-white/[0.03] p-6 ring-1 ring-white/10 transition duration-300 hover:bg-white/[0.06] lg:mt-6">
-                  <p className="inline-flex items-center gap-1.5 rounded-full bg-lime/10 px-2.5 py-0.5 font-mono text-[10px] tracking-wide text-lime uppercase ring-1 ring-lime/20">
+                  <p className="inline-flex items-center gap-1.5 rounded-full bg-accent/10 px-2.5 py-0.5 font-mono text-[10px] tracking-wide text-accent uppercase ring-1 ring-accent/20">
                     {s.when}
                   </p>
                   <h3 className="mt-4 font-display text-xl">{s.title}</h3>
@@ -793,7 +794,7 @@ export default function HomePage() {
                   <div className="mt-5 border-t border-white/10 pt-4">
                     <p className="font-mono text-[10px] tracking-[0.14em] text-white/40 uppercase">You get</p>
                     <p className="mt-1.5 flex gap-2 text-sm text-white/85">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-lime" aria-hidden />
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-accent" aria-hidden />
                       {s.get}
                     </p>
                   </div>
@@ -809,7 +810,7 @@ export default function HomePage() {
               </p>
               <Link
                 href="/#hero-form"
-                className="group inline-flex items-center gap-2 rounded-full bg-lime px-5 py-3 text-sm font-semibold whitespace-nowrap text-forest-950 shadow-glow transition hover:bg-lime-dark"
+                className="group inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold whitespace-nowrap text-ink-950 shadow-glow transition hover:bg-accent-dark"
               >
                 Start with the free check
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
@@ -820,7 +821,7 @@ export default function HomePage() {
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="bg-faq hairline-top relative scroll-mt-16 overflow-hidden py-24 sm:py-32">
+      <section id="faq" className="bg-faq relative scroll-mt-16 overflow-hidden py-24 sm:py-32">
         <div className="dot-grid pointer-events-none absolute inset-0 opacity-60 [mask-image:radial-gradient(ellipse_50%_60%_at_15%_40%,#000,transparent)]" aria-hidden />
         <script
           type="application/ld+json"
@@ -834,18 +835,18 @@ export default function HomePage() {
         />
         <div className="relative mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
           <Reveal className="lg:sticky lg:top-28 lg:self-start">
-            <p className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 font-mono text-[11px] font-medium tracking-[0.14em] text-forest-700 uppercase shadow-soft ring-1 ring-zinc-200">
-              <span className="h-1.5 w-1.5 rounded-full bg-forest-600" aria-hidden />
+            <p className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 font-mono text-[11px] font-medium tracking-[0.14em] text-azure-700 uppercase shadow-soft ring-1 ring-zinc-200">
+              <span className="h-1.5 w-1.5 rounded-full bg-azure-600" aria-hidden />
               Questions
             </p>
-            <h2 className="mt-4 font-display text-3xl text-balance text-forest-950 md:text-[2.75rem] md:leading-[1.08]">Before you ask</h2>
+            <h2 className="mt-4 font-display text-3xl text-balance text-ink-950 md:text-[2.75rem] md:leading-[1.08]">Before you ask</h2>
             <p className="mt-4 text-lg text-pretty text-zinc-600">The things owners ask us most, answered straight. No fine print.</p>
 
-            <div className="mt-8 overflow-hidden rounded-3xl bg-forest-975 text-white ring-1 ring-forest-900">
+            <div className="mt-8 overflow-hidden rounded-3xl bg-ink-975 text-white ring-1 ring-ink-900">
               <div className="relative p-6">
-                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_90%_at_100%_0%,rgb(197_242_74/0.16),transparent_60%)]" aria-hidden />
-                <p className="relative flex items-center gap-2 font-mono text-[10px] tracking-[0.14em] text-lime uppercase">
-                  <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-lime" aria-hidden />
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_90%_at_100%_0%,rgb(1_175_233/0.16),transparent_60%)]" aria-hidden />
+                <p className="relative flex items-center gap-2 font-mono text-[10px] tracking-[0.14em] text-accent uppercase">
+                  <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-accent" aria-hidden />
                   Reply within one business day
                 </p>
                 <p className="relative mt-3 font-display text-2xl">Still have a question?</p>
@@ -854,7 +855,7 @@ export default function HomePage() {
                 </p>
                 <Link
                   href="#hero-form"
-                  className="group relative mt-5 inline-flex items-center gap-2 rounded-full bg-lime px-5 py-3 text-sm font-semibold text-forest-950 shadow-glow transition hover:bg-lime-dark"
+                  className="group relative mt-5 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-ink-950 shadow-glow transition hover:bg-accent-dark"
                 >
                   Ask in the free check
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
@@ -867,7 +868,7 @@ export default function HomePage() {
                   ['1', 'client per area'],
                 ].map(([v, k]) => (
                   <li key={k} className="px-2 py-4">
-                    <p className="font-display text-2xl text-lime">{v}</p>
+                    <p className="font-display text-2xl text-accent">{v}</p>
                     <p className="font-mono text-[9px] tracking-wide text-white/50 uppercase">{k}</p>
                   </li>
                 ))}
@@ -875,42 +876,21 @@ export default function HomePage() {
             </div>
           </Reveal>
 
-          <div className="divide-y divide-zinc-200 rounded-3xl bg-white px-5 shadow-[0_1px_2px_rgb(6_35_26/0.04),0_8px_24px_-12px_rgb(6_35_26/0.10)] ring-1 ring-zinc-200/80 sm:px-8">
-            {faqs.map((f, i) => (
-              <Reveal key={f.q} delay={i * 60}>
-                <details name="faq" open={i === 0} className="group py-1">
-                  <summary className="flex cursor-pointer list-none items-center gap-4 py-5 [&::-webkit-details-marker]:hidden">
-                    <span className="font-mono text-xs text-zinc-400 transition group-open:text-forest-600">{String(i + 1).padStart(2, '0')}</span>
-                    <span className="flex-1 font-display text-[1.08rem] text-forest-950 sm:text-lg">{f.q}</span>
-                    <span
-                      className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-forest-700 ring-1 ring-zinc-200 transition duration-300 group-open:bg-forest-950 group-open:text-lime group-open:ring-forest-950 group-hover:ring-zinc-300"
-                      aria-hidden
-                    >
-                      <span className="absolute h-0.5 w-3.5 rounded-full bg-current" />
-                      <span className="absolute h-3.5 w-0.5 rounded-full bg-current transition duration-300 group-open:rotate-90 group-open:opacity-0" />
-                    </span>
-                  </summary>
-                  <div className="faq-body">
-                    <div>
-                      <p className="pr-2 pb-6 pl-9 leading-relaxed text-zinc-600 sm:pr-12">{f.a}</p>
-                    </div>
-                  </div>
-                </details>
-              </Reveal>
-            ))}
-          </div>
+          <Reveal className="rounded-3xl bg-white px-5 shadow-[0_1px_2px_rgb(10_14_30/0.04),0_8px_24px_-12px_rgb(10_14_30/0.10)] ring-1 ring-zinc-200/80 sm:px-8">
+            <FaqList items={faqs} />
+          </Reveal>
         </div>
       </section>
 
       {/* Final CTA: the dark band runs straight into the footer. */}
-      <section className="bg-final relative overflow-hidden bg-forest-975 text-white">
+      <section className="bg-final relative overflow-hidden bg-ink-975 text-white">
         <div className="grid-lines pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_70%_80%_at_50%_30%,#000,transparent)]" aria-hidden />
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-lime/50 to-transparent" aria-hidden />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent" aria-hidden />
         <div className="final-orb pointer-events-none absolute -top-40 left-1/2 h-[34rem] w-[34rem] -translate-x-1/2 rounded-full" aria-hidden />
         <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 py-24 sm:px-6 sm:py-32 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
           <Reveal>
-            <p className="inline-flex items-center gap-2 rounded-full bg-white/[0.04] px-3 py-1 font-mono text-[11px] font-medium tracking-[0.14em] text-lime uppercase ring-1 ring-white/12">
-              <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-lime" aria-hidden />
+            <p className="inline-flex items-center gap-2 rounded-full bg-white/[0.04] px-3 py-1 font-mono text-[11px] font-medium tracking-[0.14em] text-accent uppercase ring-1 ring-white/12">
+              <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-accent" aria-hidden />
               Taking new clients, one per area
             </p>
             <h2 className="mt-5 font-display text-4xl text-balance md:text-[3.5rem] md:leading-[1.02]">
@@ -934,7 +914,7 @@ export default function HomePage() {
             <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/60">
               {['No obligation', 'One fixed price', 'You own everything'].map((t) => (
                 <li key={t} className="flex items-center gap-1.5">
-                  <Check className="h-4 w-4 text-lime" aria-hidden />
+                  <Check className="h-4 w-4 text-accent" aria-hidden />
                   {t}
                 </li>
               ))}
@@ -952,11 +932,11 @@ export default function HomePage() {
                 ].map(([when, title, text], i) => (
                   <li key={title} className="relative flex gap-4">
                     {i < 2 && <span className="absolute top-9 bottom-[-1.25rem] left-[0.9rem] w-px bg-white/10" aria-hidden />}
-                    <span className="relative flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-lime font-mono text-[11px] font-semibold text-forest-950">
+                    <span className="relative flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent font-mono text-[11px] font-semibold text-ink-950">
                       {i + 1}
                     </span>
                     <div>
-                      <p className="font-mono text-[10px] tracking-wide text-lime/80 uppercase">{when}</p>
+                      <p className="font-mono text-[10px] tracking-wide text-accent/80 uppercase">{when}</p>
                       <p className="mt-0.5 font-semibold text-white">{title}</p>
                       <p className="mt-1 text-sm leading-relaxed text-white/60">{text}</p>
                     </div>

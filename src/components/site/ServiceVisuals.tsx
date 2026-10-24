@@ -17,7 +17,7 @@ export function SpeedVisual() {
             cy="40"
             r={r}
             fill="none"
-            stroke="var(--color-lime)"
+            stroke="var(--color-accent)"
             strokeWidth="7"
             strokeLinecap="round"
             strokeDasharray={c}
@@ -28,8 +28,8 @@ export function SpeedVisual() {
         <div>
           <p className="font-display text-4xl text-white">96</p>
           <p className="font-mono text-[10px] tracking-wide text-white/50 uppercase">Mobile speed score</p>
-          <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-lime/10 px-2 py-0.5 font-mono text-[10px] text-lime ring-1 ring-lime/20">
-            <span className="h-1.5 w-1.5 rounded-full bg-lime" aria-hidden />
+          <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-accent/10 px-2 py-0.5 font-mono text-[10px] text-accent ring-1 ring-accent/20">
+            <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden />
             Loads in 1.2 s
           </p>
         </div>
@@ -45,7 +45,7 @@ export function SpeedVisual() {
             className="svc-row rounded-xl bg-white/[0.04] px-2 py-2.5 text-center ring-1 ring-white/10"
             style={{ '--row-delay': `${500 + i * 120}ms` } as React.CSSProperties}
           >
-            <p className="font-display text-lg text-lime">{v}</p>
+            <p className="font-display text-lg text-accent">{v}</p>
             <p className="font-mono text-[9px] tracking-wide text-white/45 uppercase">{k}</p>
           </li>
         ))}
@@ -67,12 +67,12 @@ export function SearchVisual() {
         <li
           key={row.name}
           className={`svc-row flex items-center gap-3 rounded-xl px-3 py-2.5 ring-1 ${
-            row.top ? 'bg-white text-forest-950 shadow-lift ring-white' : 'bg-white/[0.04] text-white/55 ring-white/10'
+            row.top ? 'bg-white text-ink-950 shadow-lift ring-white' : 'bg-white/[0.04] text-white/55 ring-white/10'
           }`}
           style={{ '--row-delay': `${200 + i * 120}ms` } as React.CSSProperties}
         >
           <span
-            className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${row.top ? 'bg-forest-700 text-lime' : 'bg-white/10'}`}
+            className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${row.top ? 'bg-azure-700 text-accent' : 'bg-white/10'}`}
           >
             <MapPin className="h-3.5 w-3.5" aria-hidden />
           </span>
@@ -84,7 +84,7 @@ export function SearchVisual() {
             </span>
           </span>
           {row.top && (
-            <span className="rounded-full bg-forest-50 px-2 py-0.5 font-mono text-[10px] text-forest-700 ring-1 ring-forest-100">#1</span>
+            <span className="rounded-full bg-azure-50 px-2 py-0.5 font-mono text-[10px] text-azure-700 ring-1 ring-azure-100">#1</span>
           )}
         </li>
       ))}
@@ -112,11 +112,11 @@ export function AdsVisual() {
             <span className="truncate text-white/70">{b.label}</span>
             <span className="h-2.5 overflow-hidden rounded-full bg-white/[0.06]">
               <span
-                className={`svc-bar block h-full rounded-full ${b.cpl === 'paused' ? 'bg-white/20' : 'bg-gradient-to-r from-forest-600 to-lime'}`}
+                className={`svc-bar block h-full rounded-full ${b.cpl === 'paused' ? 'bg-white/20' : 'bg-gradient-to-r from-azure-600 to-accent'}`}
                 style={{ '--bar': `${b.value}%`, '--bar-delay': `${i * 110}ms` } as React.CSSProperties}
               />
             </span>
-            <span className={`text-right font-mono ${b.cpl === 'paused' ? 'text-white/35' : 'text-lime'}`}>{b.cpl}</span>
+            <span className={`text-right font-mono ${b.cpl === 'paused' ? 'text-white/35' : 'text-accent'}`}>{b.cpl}</span>
           </li>
         ))}
       </ul>
@@ -136,8 +136,8 @@ export function LeadsVisual() {
     <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
       <div className="flex items-center justify-between px-1 pb-2">
         <span className="font-mono text-[10px] tracking-wide text-white/45 uppercase">New leads</span>
-        <span className="inline-flex items-center gap-1.5 font-mono text-[10px] text-lime uppercase">
-          <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-lime" aria-hidden />
+        <span className="inline-flex items-center gap-1.5 font-mono text-[10px] text-accent uppercase">
+          <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-accent" aria-hidden />
           Live
         </span>
       </div>
@@ -148,7 +148,7 @@ export function LeadsVisual() {
             className="svc-row flex items-center gap-3 rounded-xl bg-white/[0.04] px-3 py-2.5 ring-1 ring-white/10"
             style={{ '--row-delay': `${150 + i * 140}ms` } as React.CSSProperties}
           >
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-lime text-forest-950">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-ink-950">
               <l.icon className="h-3.5 w-3.5" aria-hidden />
             </span>
             <span className="min-w-0">
@@ -170,7 +170,7 @@ export function LeadsVisual() {
           </div>
         ))}
       </div>
-      <div className="mt-3 rounded-xl bg-white p-3 text-forest-950">
+      <div className="mt-3 rounded-xl bg-white p-3 text-ink-950">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold">Monthly report</span>
           <span className="font-mono text-[10px] text-zinc-500">Leads per day</span>
@@ -179,7 +179,7 @@ export function LeadsVisual() {
           {[30, 45, 38, 60, 52, 70, 48, 66, 80, 58, 74, 90, 68, 84].map((h, i) => (
             <span
               key={i}
-              className="svc-spark flex-1 rounded-t-sm bg-gradient-to-t from-forest-700 to-forest-600"
+              className="svc-spark flex-1 rounded-t-sm bg-gradient-to-t from-azure-700 to-azure-600"
               style={{ '--spark': `${h}%`, '--bar-delay': `${i * 45}ms` } as React.CSSProperties}
             />
           ))}

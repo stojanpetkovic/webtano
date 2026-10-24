@@ -49,7 +49,7 @@ export default async function CasePage({ params }: PageProps<'/work/[slug]'>) {
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" aria-hidden />
             All case studies
           </Link>
-          <p className="mt-8 text-sm font-semibold tracking-widest text-lime uppercase">
+          <p className="mt-8 text-sm font-semibold tracking-widest text-accent uppercase">
             {item.sector} · {item.location}
           </p>
           <Reveal>
@@ -85,7 +85,7 @@ export default async function CasePage({ params }: PageProps<'/work/[slug]'>) {
           {[item.headline, ...item.stats].map((s, i) => (
             <Reveal key={s.label} delay={i * 80} className="flex flex-col-reverse rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-soft transition hover:-translate-y-0.5 hover:shadow-lift">
               <dt className="mt-1 text-sm text-zinc-600">{s.label}</dt>
-              <dd className="font-display text-3xl font-bold text-forest-700">
+              <dd className="font-display text-3xl font-bold text-azure-700">
                 <CountUp value={s.value} />
               </dd>
             </Reveal>
@@ -96,7 +96,7 @@ export default async function CasePage({ params }: PageProps<'/work/[slug]'>) {
       <div className="mx-auto grid max-w-6xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.3fr_0.7fr]">
         <div className="space-y-12">
           <Reveal as="section">
-            <h2 className="font-display text-2xl font-bold text-forest-950">The challenge</h2>
+            <h2 className="font-display text-2xl font-bold text-ink-950">The challenge</h2>
             <div className="mt-4 space-y-4 text-lg leading-relaxed text-zinc-700">
               {item.challenge.map((p) => (
                 <p key={p}>{p}</p>
@@ -104,15 +104,15 @@ export default async function CasePage({ params }: PageProps<'/work/[slug]'>) {
             </div>
           </Reveal>
           <Reveal as="section">
-            <h2 className="font-display text-2xl font-bold text-forest-950">What we did</h2>
+            <h2 className="font-display text-2xl font-bold text-ink-950">What we did</h2>
             <ul className="mt-5 -mx-3 space-y-2">
               {item.work.map((w) => (
                 <li key={w.title} className="flex gap-4 rounded-2xl border border-transparent p-3 transition hover:border-zinc-200 hover:bg-white hover:shadow-soft">
-                  <span className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-forest-700 text-lime shadow-soft">
+                  <span className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-azure-700 text-accent shadow-soft">
                     <Check className="h-4 w-4" aria-hidden />
                   </span>
                   <div>
-                    <h3 className="font-semibold text-forest-950">{w.title}</h3>
+                    <h3 className="font-semibold text-ink-950">{w.title}</h3>
                     <p className="mt-1 text-zinc-600">{w.text}</p>
                   </div>
                 </li>
@@ -120,7 +120,7 @@ export default async function CasePage({ params }: PageProps<'/work/[slug]'>) {
             </ul>
           </Reveal>
           <Reveal as="section">
-            <h2 className="font-display text-2xl font-bold text-forest-950">The result</h2>
+            <h2 className="font-display text-2xl font-bold text-ink-950">The result</h2>
             <div className="mt-4 space-y-4 text-lg leading-relaxed text-zinc-700">
               {item.outcome.map((p) => (
                 <p key={p}>{p}</p>
@@ -131,11 +131,11 @@ export default async function CasePage({ params }: PageProps<'/work/[slug]'>) {
 
         <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
           <div className="rounded-2xl border border-zinc-200/80 bg-white p-6 shadow-soft">
-            <h2 className="font-display text-lg font-bold text-forest-950">Lighthouse, live site</h2>
+            <h2 className="font-display text-lg font-bold text-ink-950">Lighthouse, live site</h2>
             <ul className="mt-4 grid grid-cols-2 gap-3">
               {lighthouse.map((l) => (
-                <li key={l.label} className="rounded-xl bg-forest-50 p-3 text-center">
-                  <span className="block font-display text-2xl font-bold text-forest-700">{l.value}</span>
+                <li key={l.label} className="rounded-xl bg-azure-50 p-3 text-center">
+                  <span className="block font-display text-2xl font-bold text-azure-700">{l.value}</span>
                   <span className="text-xs text-zinc-600">{l.label}</span>
                 </li>
               ))}
@@ -145,18 +145,18 @@ export default async function CasePage({ params }: PageProps<'/work/[slug]'>) {
             href={item.url}
             target="_blank"
             rel="noopener"
-            className="flex items-center justify-between rounded-2xl border border-zinc-200/80 bg-white p-5 font-semibold text-forest-950 shadow-soft transition hover:-translate-y-0.5 hover:border-forest-200 hover:shadow-lift"
+            className="flex items-center justify-between rounded-2xl border border-zinc-200/80 bg-white p-5 font-semibold text-ink-950 shadow-soft transition hover:-translate-y-0.5 hover:border-azure-200 hover:shadow-lift"
           >
             Visit the live site
-            <ExternalLink className="h-4 w-4 text-forest-700" aria-hidden />
+            <ExternalLink className="h-4 w-4 text-azure-700" aria-hidden />
           </a>
-          <div className="relative overflow-hidden rounded-2xl bg-forest-950 p-6 text-white shadow-lift">
-            <div className="pointer-events-none absolute -right-10 -bottom-10 h-40 w-40 rounded-full bg-lime/20 blur-2xl" aria-hidden />
+          <div className="relative overflow-hidden rounded-2xl bg-ink-950 p-6 text-white shadow-lift">
+            <div className="pointer-events-none absolute -right-10 -bottom-10 h-40 w-40 rounded-full bg-accent/20 blur-2xl" aria-hidden />
             <h2 className="font-display text-lg font-bold">Want numbers like these?</h2>
             <p className="mt-2 text-sm text-white/75">Start with a free check of your current website.</p>
             <Link
               href="/#hero-form"
-              className="relative mt-4 inline-flex items-center gap-2 rounded-full bg-lime px-5 py-2.5 text-sm font-semibold text-forest-950 shadow-glow transition hover:-translate-y-px hover:bg-lime-dark"
+              className="relative mt-4 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-ink-950 shadow-glow transition hover:-translate-y-px hover:bg-accent-dark"
             >
               Free website check
               <ArrowRight className="h-4 w-4" aria-hidden />
@@ -166,10 +166,10 @@ export default async function CasePage({ params }: PageProps<'/work/[slug]'>) {
       </div>
 
       {gallery.length > 0 && (
-        <section className="bg-forest-50 py-16">
+        <section className="bg-azure-50 py-16">
           <div className="mx-auto grid max-w-6xl gap-6 px-4 sm:px-6 md:grid-cols-2">
             {gallery.map((shot, i) => (
-              <Reveal as="figure" key={shot.src} delay={(i % 2) * 100} className="group overflow-hidden rounded-2xl border border-forest-100 bg-white shadow-soft transition hover:shadow-lift">
+              <Reveal as="figure" key={shot.src} delay={(i % 2) * 100} className="group overflow-hidden rounded-2xl border border-azure-100 bg-white shadow-soft transition hover:shadow-lift">
                 <Image src={shot.src} alt={shot.alt} width={shot.width} height={shot.height} sizes="(min-width: 768px) 34rem, 100vw" className="h-auto w-full" />
                 <figcaption className="p-4 text-sm text-zinc-600">{shot.alt}</figcaption>
               </Reveal>
@@ -180,12 +180,12 @@ export default async function CasePage({ params }: PageProps<'/work/[slug]'>) {
 
       <nav aria-label="Next case study" className="bg-white py-14">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <Link href={`/work/${next.slug}`} className="group flex items-center justify-between rounded-3xl border border-zinc-200/80 bg-white p-6 shadow-soft transition duration-300 hover:-translate-y-0.5 hover:border-forest-200 hover:shadow-lift sm:p-8">
+          <Link href={`/work/${next.slug}`} className="group flex items-center justify-between rounded-3xl border border-zinc-200/80 bg-white p-6 shadow-soft transition duration-300 hover:-translate-y-0.5 hover:border-azure-200 hover:shadow-lift sm:p-8">
             <span>
               <span className="text-sm text-zinc-500">Next case study</span>
-              <span className="mt-1 block font-display text-2xl font-bold text-forest-950">{next.client}</span>
+              <span className="mt-1 block font-display text-2xl font-bold text-ink-950">{next.client}</span>
             </span>
-            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-forest-50 text-forest-700 ring-1 ring-forest-100 transition group-hover:bg-forest-700 group-hover:text-lime">
+            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-azure-50 text-azure-700 ring-1 ring-azure-100 transition group-hover:bg-azure-700 group-hover:text-accent">
               <ArrowRight className="h-5 w-5 transition group-hover:translate-x-0.5" aria-hidden />
             </span>
           </Link>

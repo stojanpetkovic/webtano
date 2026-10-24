@@ -38,7 +38,7 @@ export function BackToTop() {
       onClick={() => window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })}
       aria-label="Back to top"
       tabIndex={visible ? 0 : -1}
-      className={`group fixed right-4 bottom-4 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-forest-975/90 text-white shadow-[0_10px_30px_-10px_rgb(0_0_0/0.6)] ring-1 ring-white/10 backdrop-blur transition duration-300 hover:bg-forest-950 sm:right-6 sm:bottom-6 ${
+      className={`group fixed right-4 bottom-4 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-ink-975/90 text-white shadow-[0_10px_30px_-10px_rgb(0_0_0/0.6)] ring-1 ring-white/10 backdrop-blur transition duration-300 hover:bg-ink-950 sm:right-6 sm:bottom-6 ${
         visible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-3 opacity-0'
       }`}
     >
@@ -49,7 +49,7 @@ export function BackToTop() {
           cy="24"
           r={R}
           fill="none"
-          stroke="var(--color-lime)"
+          stroke="var(--color-accent)"
           strokeWidth="2"
           strokeLinecap="round"
           strokeDasharray={C}

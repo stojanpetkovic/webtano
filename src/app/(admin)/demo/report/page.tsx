@@ -42,9 +42,9 @@ export default async function DemoReportPage({ searchParams }: Props) {
       customRejected={customRejected}
       back={{ href: '/', label: 'webtano.com' }}
       banner={
-        <div className="bg-[#05170f] text-white print:hidden">
+        <div className="bg-[#0b0d14] text-white print:hidden">
           <div className="mx-auto flex max-w-[210mm] flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2.5 text-sm">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#c5f24a]/15 px-2.5 py-0.5 text-xs font-semibold text-[#c5f24a] ring-1 ring-[#c5f24a]/30">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#01afe9]/15 px-2.5 py-0.5 text-xs font-semibold text-[#01afe9] ring-1 ring-[#01afe9]/30">
               <FlaskConical className="size-3.5" />
               Demo
             </span>
@@ -53,7 +53,7 @@ export default async function DemoReportPage({ searchParams }: Props) {
                 ? 'Primer izveštaja sa izmišljenim podacima. Promeni period, jezik ili budžet za oglase.'
                 : 'An example report with made-up data. Change the period, the language or the ad spend.'}
             </p>
-            <Link href="/#hero-form" className="inline-flex items-center gap-1 font-semibold text-[#c5f24a] hover:underline">
+            <Link href="/#hero-form" className="inline-flex items-center gap-1 font-semibold text-[#01afe9] hover:underline">
               {sr ? 'Želim ovo za svoj sajt' : 'Get this for your site'}
               <ArrowRight className="size-4" />
             </Link>

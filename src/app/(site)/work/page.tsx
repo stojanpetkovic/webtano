@@ -18,7 +18,7 @@ export default function WorkPage() {
         <div className="grid-lines pointer-events-none absolute inset-0 opacity-60" aria-hidden />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal>
-            <p className="text-sm font-semibold tracking-widest text-lime uppercase">Case studies</p>
+            <p className="text-sm font-semibold tracking-widest text-accent uppercase">Case studies</p>
           </Reveal>
           <Reveal delay={80}>
             <h1 className="mt-3 max-w-3xl font-display text-4xl font-bold tracking-tight text-balance sm:text-6xl">
@@ -43,7 +43,7 @@ export default function WorkPage() {
         <div className="mt-12 text-center">
           <Link
             href="/#hero-form"
-            className="group inline-flex items-center gap-2 rounded-full bg-forest-700 px-6 py-3.5 font-semibold text-white shadow-[0_10px_24px_-10px_rgb(31_117_82/0.7)] transition hover:-translate-y-px hover:bg-forest-800"
+            className="group inline-flex items-center gap-2 rounded-full bg-azure-700 px-6 py-3.5 font-semibold text-white shadow-[0_10px_24px_-10px_rgb(37_99_235/0.7)] transition hover:-translate-y-px hover:bg-ink-800"
           >
             Get a free website check
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
