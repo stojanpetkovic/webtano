@@ -467,7 +467,7 @@ export default function HomePage() {
               const flip = i % 2 === 1;
               return (
                 <Reveal key={c.slug} as="article" className="group/case">
-                  <div className="grid overflow-hidden rounded-[2rem] bg-white shadow-float ring-1 ring-zinc-200/80 lg:grid-cols-[1.08fr_1fr]">
+                  <div className="grid overflow-hidden rounded-[2rem] bg-white shadow-[0_1px_2px_rgb(6_35_26/0.04),0_8px_24px_-12px_rgb(6_35_26/0.10)] ring-1 ring-zinc-200/80 lg:grid-cols-[1.08fr_1fr]">
                     {/* The site itself, framed on a dark stage with its live scores. */}
                     <div className={`case-stage relative flex items-center overflow-hidden px-5 pt-8 pb-6 sm:px-10 sm:pt-12 sm:pb-10 ${flip ? 'lg:order-2' : ''}`}>
                       <div className="grid-lines pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_70%_70%_at_50%_40%,#000,transparent)]" aria-hidden />
@@ -475,7 +475,7 @@ export default function HomePage() {
                         <Link
                           href={`/work/${c.slug}`}
                           aria-label={`${c.client} case study`}
-                          className="block overflow-hidden rounded-xl bg-white shadow-[0_30px_60px_-20px_rgb(0_0_0/0.6)] ring-1 ring-white/15 transition duration-500 group-hover/case:-translate-y-1"
+                          className="block overflow-hidden rounded-xl bg-white shadow-[0_16px_32px_-16px_rgb(0_0_0/0.5)] ring-1 ring-white/15 transition duration-500 group-hover/case:-translate-y-1"
                         >
                           <div className="flex items-center gap-1.5 border-b border-zinc-200 bg-zinc-50 px-3.5 py-2" aria-hidden>
                             <span className="h-2 w-2 rounded-full bg-[#ff5f57]" />
@@ -521,7 +521,7 @@ export default function HomePage() {
                       <h3 className="relative mt-4 font-display text-3xl text-forest-950 sm:text-4xl">{c.client}</h3>
                       <p className="relative mt-3 leading-relaxed text-zinc-600 sm:text-lg">{c.summary}</p>
 
-                      <div className="relative mt-7 rounded-2xl bg-forest-975 p-5 text-white shadow-lift sm:p-6">
+                      <div className="relative mt-7 rounded-2xl bg-forest-975 p-5 text-white sm:p-6">
                         <div className="pointer-events-none absolute inset-0 rounded-2xl bg-[radial-gradient(80%_120%_at_100%_0%,rgb(197_242_74/0.18),transparent_60%)]" aria-hidden />
                         <p className="relative flex items-center gap-1.5 font-mono text-[10px] tracking-[0.14em] text-lime uppercase">
                           <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-lime" aria-hidden />

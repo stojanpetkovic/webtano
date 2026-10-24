@@ -16,7 +16,7 @@ export function LighthouseCard({ scores }: { scores: CaseStudy['lighthouse'] }) 
   const r = 15;
   const c = 2 * Math.PI * r;
   return (
-    <div className="rounded-2xl bg-white/95 p-4 shadow-float ring-1 ring-zinc-200/70 backdrop-blur">
+    <div className="rounded-2xl bg-white/95 p-4 shadow-soft ring-1 ring-zinc-200/70 backdrop-blur">
       <p className="font-mono text-[10px] tracking-[0.14em] text-zinc-500 uppercase">Lighthouse · live site</p>
       <ul className="mt-3 grid grid-cols-4 gap-3">
         {LABELS.map(([key, label]) => {
@@ -58,7 +58,7 @@ export function RatingChip({ stats }: { stats: CaseStudy['stats'] }) {
   const rating = stats.find((s) => s.value.endsWith('★'));
   if (!rating) return null;
   return (
-    <div className="flex items-center gap-2.5 rounded-full bg-white/95 py-2 pr-4 pl-2.5 shadow-float ring-1 ring-zinc-200/70 backdrop-blur">
+    <div className="flex items-center gap-2.5 rounded-full bg-white/95 py-2 pr-4 pl-2.5 shadow-soft ring-1 ring-zinc-200/70 backdrop-blur">
       <span className="flex h-7 w-7 items-center justify-center rounded-full bg-amber-50 ring-1 ring-amber-200">
         <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" aria-hidden />
       </span>
