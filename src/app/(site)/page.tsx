@@ -133,18 +133,26 @@ const reportPoints = [
 const steps = [
   {
     title: 'Free website check',
+    when: 'Within 1 business day',
+    get: 'An honest review of your site and your top local competitors',
     text: 'Send the form. Within one business day we review your site and your top local competitors and tell you honestly what holds you back.',
   },
   {
     title: 'One clear proposal',
+    when: 'One short call',
+    get: 'Scope, timeline and one fixed price in writing',
     text: 'A short call, then one document: what we build or run, when it is ready, and one fixed price.',
   },
   {
     title: 'Build and launch',
+    when: 'Your old site stays live',
+    get: 'A preview link to follow every step',
     text: 'You follow progress on a preview link. Your current site stays live until the new one is ready, and old pages are redirected.',
   },
   {
     title: 'Measure and grow',
+    when: 'Every month',
+    get: 'Every lead as it arrives and one plain report',
     text: 'Tracking is on from day one. Each month you see what came in, and we put the budget where the jobs come from.',
   },
 ];
@@ -750,33 +758,63 @@ export default function HomePage() {
       </section>
 
       {/* Process */}
-      <section id="process" className="bg-paper hairline-top hairline-bottom relative scroll-mt-16 overflow-hidden py-24 sm:py-32">
-        <div className="dot-grid pointer-events-none absolute inset-0 opacity-70 [mask-image:radial-gradient(ellipse_at_center,#000,transparent_70%)]" aria-hidden />
+      <section id="process" className="bg-process relative scroll-mt-16 overflow-hidden py-24 text-white sm:py-32">
+        <div className="grid-lines pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_70%_60%_at_50%_45%,#000,transparent)]" aria-hidden />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal>
             <SectionHeading
+              light
               eyebrow="How it works"
               title="Four steps from a site that loses customers to one that wins them"
               lead="No long meetings and no surprises. You always know what happens next."
             />
           </Reveal>
-          <ol className="relative mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-            <span
-              className="pointer-events-none absolute top-11 right-[12%] left-[12%] hidden h-px bg-gradient-to-r from-forest-200 via-forest-600/40 to-forest-200 lg:block"
-              aria-hidden
-            />
+
+          <Reveal as="ol" className="relative mt-16 grid gap-5 lg:grid-cols-4 lg:gap-6">
+            {/* The progress line fills from step one to step four as the section comes into view. */}
+            <span className="pointer-events-none absolute top-6 right-[12.5%] left-[12.5%] hidden h-px bg-white/10 lg:block" aria-hidden>
+              <span className="proc-fill-x absolute inset-y-0 left-0 bg-gradient-to-r from-lime via-lime to-forest-600" />
+            </span>
+            <span className="pointer-events-none absolute top-6 bottom-6 left-6 w-px bg-white/10 lg:hidden" aria-hidden>
+              <span className="proc-fill-y absolute inset-x-0 top-0 bg-gradient-to-b from-lime to-forest-600" />
+            </span>
             {steps.map((s, i) => (
-              <Reveal as="li" key={s.title} delay={i * 110} className="relative">
-                <div className="group h-full rounded-3xl border border-zinc-200/80 bg-white p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-lift">
-                  <span className="relative flex h-11 w-11 items-center justify-center rounded-full bg-forest-700 font-mono text-sm font-medium text-lime ring-4 ring-white transition group-hover:scale-110">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  <h3 className="mt-5 font-display text-lg font-bold text-forest-950">{s.title}</h3>
-                  <p className="mt-2 leading-relaxed text-zinc-600">{s.text}</p>
+              <li key={s.title} className="relative flex flex-col pl-16 lg:pl-0" style={{ '--step': i } as React.CSSProperties}>
+                <span className="proc-node absolute top-0 left-0 flex h-12 w-12 items-center justify-center rounded-full bg-forest-975 font-mono text-sm font-medium lg:relative lg:mx-auto">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <div className="proc-card group flex-1 rounded-3xl bg-white/[0.03] p-6 ring-1 ring-white/10 transition duration-300 hover:bg-white/[0.06] lg:mt-6">
+                  <p className="inline-flex items-center gap-1.5 rounded-full bg-lime/10 px-2.5 py-0.5 font-mono text-[10px] tracking-wide text-lime uppercase ring-1 ring-lime/20">
+                    {s.when}
+                  </p>
+                  <h3 className="mt-4 font-display text-xl">{s.title}</h3>
+                  <p className="mt-2 text-[15px] leading-relaxed text-white/65">{s.text}</p>
+                  <div className="mt-5 border-t border-white/10 pt-4">
+                    <p className="font-mono text-[10px] tracking-[0.14em] text-white/40 uppercase">You get</p>
+                    <p className="mt-1.5 flex gap-2 text-sm text-white/85">
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-lime" aria-hidden />
+                      {s.get}
+                    </p>
+                  </div>
                 </div>
-              </Reveal>
+              </li>
             ))}
-          </ol>
+          </Reveal>
+
+          <Reveal delay={150}>
+            <div className="mx-auto mt-12 flex max-w-3xl flex-col items-center justify-between gap-4 rounded-full bg-white/[0.04] p-2 pl-6 ring-1 ring-white/10 sm:flex-row max-sm:rounded-3xl max-sm:p-5 max-sm:text-center">
+              <p className="text-sm text-white/75">
+                <span className="font-semibold text-white">Step one is free</span> and you are under no obligation after it.
+              </p>
+              <Link
+                href="/#hero-form"
+                className="group inline-flex items-center gap-2 rounded-full bg-lime px-5 py-3 text-sm font-semibold whitespace-nowrap text-forest-950 shadow-glow transition hover:bg-lime-dark"
+              >
+                Start with the free check
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
+              </Link>
+            </div>
+          </Reveal>
         </div>
       </section>
 
