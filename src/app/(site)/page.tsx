@@ -159,20 +159,19 @@ export default function HomePage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative overflow-hidden bg-forest-950 pt-14 pb-24 text-white sm:pt-20 lg:pb-32">
+      <section className="bg-spotlight relative overflow-hidden pt-14 pb-24 text-white sm:pt-20 lg:pb-32">
         <div className="grid-lines pointer-events-none absolute inset-0" aria-hidden />
-        <div className="pointer-events-none absolute -top-40 -left-40 h-[32rem] w-[32rem] rounded-full bg-forest-600/40 blur-3xl" aria-hidden />
-        <div className="pointer-events-none absolute top-20 -right-32 h-[28rem] w-[28rem] rounded-full bg-lime/10 blur-3xl" aria-hidden />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" aria-hidden />
         <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-[1.08fr_0.92fr]">
           <div className="text-center lg:text-left">
             <Reveal>
-              <p className="inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-sm text-white/80 shadow-[inset_0_1px_0_rgb(255_255_255/0.06)] backdrop-blur">
+              <p className="inline-flex items-center gap-2.5 rounded-full border border-white/12 bg-white/[0.04] px-3.5 py-1.5 font-mono text-xs tracking-wide text-white/75 shadow-[inset_0_1px_0_rgb(255_255_255/0.06)] backdrop-blur">
                 <span className="h-2 w-2 animate-pulse-dot rounded-full bg-lime" aria-hidden />
                 Taking on one company per service area
               </p>
             </Reveal>
             <Reveal delay={80}>
-              <h1 className="mt-6 font-display text-4xl leading-[1.04] font-bold tracking-tight text-balance sm:text-5xl lg:text-[4.1rem]">
+              <h1 className="mt-6 font-display text-[2.6rem] leading-[1.02] text-balance sm:text-6xl lg:text-[4.4rem]">
                 Websites and ads that turn searches into <span className="text-gradient">booked jobs</span>
               </h1>
             </Reveal>
@@ -203,11 +202,11 @@ export default function HomePage() {
             <dl className="mt-12 grid grid-cols-3 gap-3 sm:gap-4">
               {heroStats.map((s, i) => (
                 <Reveal key={s.label} delay={320 + i * 90}>
-                  <div className="ring-gradient h-full rounded-2xl bg-white/[0.04] p-3 text-center backdrop-blur transition duration-300 hover:bg-white/[0.07] sm:p-4 lg:text-left">
-                    <dd className="font-display text-2xl font-bold text-lime sm:text-3xl">
+                  <div className="h-full rounded-2xl border border-white/10 bg-white/[0.03] p-3 text-center shadow-[inset_0_1px_0_rgb(255_255_255/0.06)] backdrop-blur transition duration-300 hover:border-white/20 hover:bg-white/[0.06] sm:p-4 lg:text-left">
+                    <dd className="font-display text-2xl text-white sm:text-3xl">
                       <CountUp value={s.value} />
                     </dd>
-                    <dt className="mt-1 text-xs leading-snug text-white/60 sm:text-sm">{s.label}</dt>
+                    <dt className="mt-1.5 font-mono text-[10px] leading-snug tracking-wide text-white/50 uppercase sm:text-[11px]">{s.label}</dt>
                   </div>
                 </Reveal>
               ))}
@@ -215,7 +214,7 @@ export default function HomePage() {
           </div>
 
           <Reveal variant="scale" delay={200} className="relative mx-auto w-full max-w-md lg:max-w-none">
-            <div className="pointer-events-none absolute -inset-10 rounded-full bg-lime/15 blur-3xl" aria-hidden />
+            <div className="pointer-events-none absolute -inset-12 rounded-full bg-forest-600/30 blur-3xl" aria-hidden />
             <div className="relative animate-float-slow">
               <div className="overflow-hidden rounded-2xl border border-white/15 bg-white shadow-float shadow-black/50">
                 <div className="flex items-center gap-1.5 border-b border-zinc-200 bg-zinc-50 px-4 py-2.5" aria-hidden>
@@ -261,40 +260,55 @@ export default function HomePage() {
       </section>
 
       {/* Clients */}
-      <section className="relative border-b border-zinc-200/70 bg-white py-9">
+      <section className="hairline-bottom relative bg-white py-14 sm:py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <p className="text-center text-xs font-semibold tracking-[0.2em] text-zinc-400 uppercase">Growing with local companies like</p>
+          <Reveal>
+            <div className="flex items-center gap-4">
+              <span className="h-px flex-1 bg-gradient-to-r from-transparent to-zinc-200" aria-hidden />
+              <p className="text-center font-mono text-[11px] font-medium tracking-[0.16em] text-zinc-500 uppercase">
+                Growing with local companies like
+              </p>
+              <span className="h-px flex-1 bg-gradient-to-l from-transparent to-zinc-200" aria-hidden />
+            </div>
+          </Reveal>
+          <Reveal
+            variant="fade"
+            delay={120}
+            className="group/marquee relative mt-8 overflow-hidden rounded-2xl border border-zinc-200/80 bg-white shadow-soft [mask-image:linear-gradient(to_right,transparent,#000_10%,#000_90%,transparent)]"
+          >
+            {/* Two identical halves, so sliding by -50% loops without a seam. */}
+            <ul className="flex w-max animate-marquee items-stretch group-hover/marquee:[animation-play-state:paused]">
+              {[0, 1, 2, 3].map((copy) =>
+                caseStudies.map((c) => (
+                  <li key={`${copy}-${c.slug}`} aria-hidden={copy > 0 || undefined} className="border-r border-zinc-100">
+                    <Link
+                      href={`/work/${c.slug}`}
+                      tabIndex={copy > 0 ? -1 : undefined}
+                      aria-label={`${c.client} case study`}
+                      className="group flex h-24 w-32 items-center justify-center px-3 transition duration-300 hover:bg-zinc-50/80 sm:h-32 sm:w-64 sm:px-6"
+                    >
+                      <Image
+                        src={`/clients/${c.slug}.webp`}
+                        alt={copy > 0 ? '' : c.client}
+                        width={332}
+                        height={160}
+                        className="h-14 w-auto max-w-full object-contain transition duration-500 ease-out group-hover:scale-110 sm:h-20"
+                      />
+                    </Link>
+                  </li>
+                )),
+              )}
+            </ul>
+          </Reveal>
+          <p className="mt-5 text-center font-mono text-[11px] tracking-wide text-zinc-400 uppercase">
+            Tree services · Medical transport · Dental care · USA and Serbia
+          </p>
         </div>
-        <Reveal variant="fade" className="group/marquee relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,#000_12%,#000_88%,transparent)] mt-3">
-          {/* Two identical halves, so sliding by -50% loops without a seam. */}
-          <ul className="flex w-max animate-marquee items-center py-3 group-hover/marquee:[animation-play-state:paused]">
-            {[0, 1, 2, 3].map((copy) =>
-              caseStudies.map((c) => (
-                <li key={`${copy}-${c.slug}`} aria-hidden={copy > 0 || undefined} className="px-1 sm:px-5">
-                  <Link
-                    href={`/work/${c.slug}`}
-                    tabIndex={copy > 0 ? -1 : undefined}
-                    aria-label={`${c.client} case study`}
-                    className="group flex h-24 w-36 items-center justify-center rounded-2xl border border-transparent px-4 transition duration-300 hover:-translate-y-1 hover:border-zinc-200 hover:bg-white hover:shadow-lift sm:h-28 sm:w-56"
-                  >
-                    <Image
-                      src={`/clients/${c.slug}.webp`}
-                      alt={copy > 0 ? '' : c.client}
-                      width={332}
-                      height={160}
-                      className="h-12 w-auto max-w-full object-contain transition duration-300 group-hover:scale-110 sm:h-20"
-                    />
-                  </Link>
-                </li>
-              )),
-            )}
-          </ul>
-        </Reveal>
       </section>
 
       {/* Problem */}
-      <section className="relative bg-white py-24 sm:py-28">
-        <div className="dot-grid pointer-events-none absolute inset-x-0 top-0 h-64 [mask-image:linear-gradient(to_bottom,#000,transparent)]" aria-hidden />
+      <section className="relative bg-white py-24 sm:py-32">
+        <div className="dot-grid pointer-events-none absolute inset-x-0 top-0 h-72 [mask-image:radial-gradient(ellipse_60%_100%_at_50%_0%,#000,transparent)]" aria-hidden />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal>
             <SectionHeading
@@ -306,8 +320,8 @@ export default function HomePage() {
           <div className="mt-14 grid gap-5 sm:grid-cols-2">
             {problems.map((p, i) => (
               <Reveal key={p.title} delay={i * 90}>
-                <div className="group flex h-full gap-5 rounded-3xl border border-zinc-200/80 bg-white p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-lift sm:p-7">
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-red-50 to-red-100 text-red-600 ring-1 ring-red-100 transition group-hover:scale-105">
+                <div className="group flex h-full gap-5 rounded-3xl border border-zinc-200/80 bg-white p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-lift sm:p-7">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-red-50 text-red-600 ring-1 ring-red-100 transition group-hover:scale-105">
                     <p.icon className="h-5 w-5" aria-hidden />
                   </span>
                   <div>
@@ -322,8 +336,7 @@ export default function HomePage() {
       </section>
 
       {/* Services */}
-      <section id="services" className="relative scroll-mt-16 overflow-hidden bg-forest-50 py-24 sm:py-28">
-        <div className="pointer-events-none absolute -right-40 -bottom-40 h-[30rem] w-[30rem] rounded-full bg-lime/20 blur-3xl" aria-hidden />
+      <section id="services" className="bg-paper hairline-top hairline-bottom relative scroll-mt-16 overflow-hidden py-24 sm:py-32">
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal>
             <SectionHeading
@@ -335,13 +348,13 @@ export default function HomePage() {
           <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {services.map((s, i) => (
               <Reveal key={s.title} delay={i * 90}>
-                <div className="group flex h-full flex-col rounded-3xl border border-forest-100 bg-white p-6 shadow-soft transition duration-300 hover:-translate-y-1.5 hover:border-forest-200 hover:shadow-lift">
+                <div className="group flex h-full flex-col rounded-3xl border border-zinc-200/80 bg-white p-6 shadow-soft transition duration-300 hover:-translate-y-1.5 hover:border-forest-200 hover:shadow-lift">
                   <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-forest-700 to-forest-950 text-lime shadow-soft transition duration-300 group-hover:rotate-[-6deg] group-hover:scale-105">
                     <s.icon className="h-5 w-5" aria-hidden />
                   </span>
                   <h3 className="mt-5 font-display text-lg font-bold text-forest-950">{s.title}</h3>
                   <p className="mt-2 flex-1 leading-relaxed text-zinc-600">{s.text}</p>
-                  <ul className="mt-5 space-y-2 border-t border-forest-100 pt-4">
+                  <ul className="mt-5 space-y-2 border-t border-zinc-100 pt-4">
                     {s.points.map((point) => (
                       <li key={point} className="flex items-center gap-2 text-sm font-medium text-forest-800">
                         <Check className="h-4 w-4 text-forest-600" aria-hidden />
@@ -357,7 +370,7 @@ export default function HomePage() {
       </section>
 
       {/* Results */}
-      <section id="work" className="scroll-mt-16 bg-white py-24 sm:py-28">
+      <section id="work" className="scroll-mt-16 bg-white py-24 sm:py-32">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal>
             <SectionHeading
@@ -386,9 +399,8 @@ export default function HomePage() {
       </section>
 
       {/* Promises */}
-      <section className="relative overflow-hidden bg-forest-950 py-24 text-white sm:py-28">
-        <div className="grid-lines pointer-events-none absolute inset-0 opacity-70" aria-hidden />
-        <div className="pointer-events-none absolute top-1/2 left-1/2 h-[26rem] w-[50rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-forest-700/40 blur-3xl" aria-hidden />
+      <section className="bg-spotlight-center relative overflow-hidden py-24 text-white sm:py-32">
+        <div className="grid-lines pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_60%_70%_at_50%_50%,#000,transparent)]" aria-hidden />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal>
             <SectionHeading light eyebrow="How we work" title="We only win when the phone rings" lead="Three rules we keep with every client." />
@@ -396,7 +408,7 @@ export default function HomePage() {
           <div className="mt-14 grid gap-5 md:grid-cols-3">
             {promises.map((p, i) => (
               <Reveal key={p.title} delay={i * 110}>
-                <div className="ring-gradient group h-full rounded-3xl bg-white/[0.04] p-7 backdrop-blur transition duration-300 hover:-translate-y-1 hover:bg-white/[0.07]">
+                <div className="ring-gradient group h-full rounded-3xl bg-white/[0.03] p-7 shadow-[inset_0_1px_0_rgb(255_255_255/0.06)] backdrop-blur transition duration-300 hover:-translate-y-1 hover:bg-white/[0.06]">
                   <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-lime/10 text-lime ring-1 ring-lime/25 transition group-hover:bg-lime/15">
                     <p.icon className="h-5 w-5" aria-hidden />
                   </span>
@@ -410,7 +422,7 @@ export default function HomePage() {
       </section>
 
       {/* Report */}
-      <section id="report" className="scroll-mt-16 overflow-hidden bg-white py-24 sm:py-28">
+      <section id="report" className="scroll-mt-16 overflow-hidden bg-white py-24 sm:py-32">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal>
             <SectionHeading
@@ -435,7 +447,7 @@ export default function HomePage() {
             </ul>
             <Reveal variant="scale" delay={150}>
               <figure className="relative mx-auto w-full max-w-md lg:max-w-none">
-                <div className="pointer-events-none absolute -inset-8 rounded-full bg-forest-100 blur-3xl" aria-hidden />
+                <div className="pointer-events-none absolute -inset-8 rounded-full bg-forest-100/70 blur-3xl" aria-hidden />
                 <div className="relative -rotate-1 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-float transition duration-500 hover:rotate-0">
                   <Image
                     src="/work/report-example.webp"
@@ -458,8 +470,8 @@ export default function HomePage() {
       </section>
 
       {/* Process */}
-      <section id="process" className="relative scroll-mt-16 overflow-hidden bg-forest-50 py-24 sm:py-28">
-        <div className="dot-grid pointer-events-none absolute inset-0 opacity-60 [mask-image:radial-gradient(ellipse_at_center,#000,transparent_70%)]" aria-hidden />
+      <section id="process" className="bg-paper hairline-top hairline-bottom relative scroll-mt-16 overflow-hidden py-24 sm:py-32">
+        <div className="dot-grid pointer-events-none absolute inset-0 opacity-70 [mask-image:radial-gradient(ellipse_at_center,#000,transparent_70%)]" aria-hidden />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal>
             <SectionHeading
@@ -475,9 +487,9 @@ export default function HomePage() {
             />
             {steps.map((s, i) => (
               <Reveal as="li" key={s.title} delay={i * 110} className="relative">
-                <div className="group h-full rounded-3xl border border-forest-100 bg-white p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-lift">
-                  <span className="relative flex h-11 w-11 items-center justify-center rounded-full bg-forest-700 font-display text-lg font-bold text-lime ring-4 ring-forest-50 transition group-hover:scale-110">
-                    {i + 1}
+                <div className="group h-full rounded-3xl border border-zinc-200/80 bg-white p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-lift">
+                  <span className="relative flex h-11 w-11 items-center justify-center rounded-full bg-forest-700 font-mono text-sm font-medium text-lime ring-4 ring-white transition group-hover:scale-110">
+                    {String(i + 1).padStart(2, '0')}
                   </span>
                   <h3 className="mt-5 font-display text-lg font-bold text-forest-950">{s.title}</h3>
                   <p className="mt-2 leading-relaxed text-zinc-600">{s.text}</p>
@@ -489,11 +501,11 @@ export default function HomePage() {
       </section>
 
       {/* Free check */}
-      <section id="check" className="relative scroll-mt-16 overflow-hidden bg-white py-24 sm:py-28">
-        <div className="pointer-events-none absolute top-20 -left-40 h-[28rem] w-[28rem] rounded-full bg-lime/15 blur-3xl" aria-hidden />
+      <section id="check" className="relative scroll-mt-16 overflow-hidden bg-white py-24 sm:py-32">
+        <div className="pointer-events-none absolute top-0 left-1/2 h-[30rem] w-[60rem] -translate-x-1/2 rounded-full bg-forest-100/50 blur-3xl" aria-hidden />
         <div className="relative mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
           <Reveal>
-            <p className="text-sm font-semibold tracking-[0.18em] text-forest-700 uppercase">Zero risk to start</p>
+            <p className="font-mono text-[11px] font-medium tracking-[0.14em] text-forest-700 uppercase">Zero risk to start</p>
             <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-balance text-forest-950 md:text-[2.6rem] md:leading-[1.1]">
               Find out what your website is costing you
             </h2>
@@ -515,8 +527,8 @@ export default function HomePage() {
                 </li>
               ))}
             </ul>
-            <div className="mt-9 flex items-center gap-4 rounded-2xl border border-forest-100 bg-forest-50/70 p-4 shadow-soft">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-forest-700 shadow-soft">
+            <div className="mt-9 flex items-center gap-4 rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-soft">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-forest-950 text-lime shadow-soft">
                 <Zap className="h-5 w-5" aria-hidden />
               </span>
               <div>
@@ -532,7 +544,7 @@ export default function HomePage() {
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="scroll-mt-16 bg-forest-50 py-24 sm:py-28">
+      <section id="faq" className="bg-paper hairline-top scroll-mt-16 py-24 sm:py-32">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
           <Reveal>
             <SectionHeading eyebrow="Questions" title="Before you ask" />
@@ -540,8 +552,8 @@ export default function HomePage() {
           <div className="mt-12 space-y-3">
             {faqs.map((f, i) => (
               <Reveal key={f.q} delay={i * 60}>
-                <details className="group rounded-2xl border border-forest-100 bg-white shadow-soft transition duration-300 open:shadow-lift hover:border-forest-200">
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 font-display text-lg font-bold text-forest-950 sm:px-6 [&::-webkit-details-marker]:hidden">
+                <details className="group rounded-2xl border border-zinc-200/80 bg-white shadow-soft transition duration-300 open:shadow-lift hover:border-zinc-300">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 font-display text-[1.05rem] text-forest-950 sm:px-6 [&::-webkit-details-marker]:hidden">
                     {f.q}
                     <span
                       className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-forest-50 text-xl leading-none text-forest-700 transition duration-300 group-open:rotate-45 group-open:bg-forest-700 group-open:text-lime"
@@ -563,13 +575,13 @@ export default function HomePage() {
       </section>
 
       {/* Final CTA */}
-      <section className="bg-white py-24 sm:py-28">
+      <section className="bg-white py-24 sm:py-32">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal variant="scale">
-            <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-forest-800 via-forest-900 to-forest-950 px-6 py-16 text-center text-white shadow-float sm:py-24">
+            <div className="bg-spotlight relative overflow-hidden rounded-[2rem] px-6 py-16 text-center text-white shadow-float ring-1 ring-white/10 sm:py-24">
               <div className="grid-lines pointer-events-none absolute inset-0" aria-hidden />
-              <div className="pointer-events-none absolute -top-24 left-1/2 h-72 w-[40rem] -translate-x-1/2 rounded-full bg-lime/20 blur-3xl" aria-hidden />
-              <h2 className="relative mx-auto max-w-2xl font-display text-3xl font-bold text-balance md:text-5xl md:leading-[1.08]">
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-lime/50 to-transparent" aria-hidden />
+              <h2 className="relative mx-auto max-w-2xl font-display text-3xl text-balance md:text-5xl md:leading-[1.05]">
                 The company that shows up first gets the call. Let’s make that <span className="text-gradient">you</span>.
               </h2>
               <p className="relative mx-auto mt-5 max-w-xl text-lg text-white/70">

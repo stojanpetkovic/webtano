@@ -14,9 +14,8 @@ export const metadata: Metadata = {
 export default function WorkPage() {
   return (
     <>
-      <section className="relative overflow-hidden bg-forest-950 py-16 text-white sm:py-24">
+      <section className="bg-spotlight relative overflow-hidden py-16 text-white sm:py-24">
         <div className="grid-lines pointer-events-none absolute inset-0 opacity-60" aria-hidden />
-        <div className="pointer-events-none absolute -top-32 right-0 h-80 w-80 rounded-full bg-lime/15 blur-3xl" aria-hidden />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal>
             <p className="text-sm font-semibold tracking-widest text-lime uppercase">Case studies</p>

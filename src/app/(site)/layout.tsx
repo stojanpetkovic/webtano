@@ -1,13 +1,13 @@
 import type { Metadata } from 'next';
-import { Bricolage_Grotesque, Inter } from 'next/font/google';
+import { Geist, Geist_Mono } from 'next/font/google';
 import { Header } from '@/components/site/Header';
 import { Footer } from '@/components/site/Footer';
 import { RevealObserver } from '@/components/site/RevealObserver';
 import { site } from '@/content/site';
 import './site.css';
 
-const inter = Inter({ variable: '--font-inter', subsets: ['latin', 'latin-ext'] });
-const display = Bricolage_Grotesque({ variable: '--font-bricolage', subsets: ['latin', 'latin-ext'] });
+const sans = Geist({ variable: '--font-geist', subsets: ['latin', 'latin-ext'] });
+const mono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin', 'latin-ext'] });
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${display.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${sans.variable} ${mono.variable}`} suppressHydrationWarning>
       <head>
         {/* Lets the scroll animations hide content only when they can also show it. */}
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />

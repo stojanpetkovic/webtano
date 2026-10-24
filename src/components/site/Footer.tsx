@@ -7,7 +7,7 @@ import { Logo } from './Logo';
 export function Footer() {
   const year = new Date().getFullYear();
   return (
-    <footer className="relative overflow-hidden bg-forest-950 text-white/70">
+    <footer className="relative overflow-hidden bg-forest-975 text-white/70">
       <div className="h-px bg-gradient-to-r from-transparent via-lime/40 to-transparent" aria-hidden />
       <div className="pointer-events-none absolute -bottom-40 left-1/2 h-80 w-[40rem] -translate-x-1/2 rounded-full bg-forest-700/30 blur-3xl" aria-hidden />
       <div className="relative mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr]">

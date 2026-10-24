@@ -42,9 +42,8 @@ export default async function CasePage({ params }: PageProps<'/work/[slug]'>) {
 
   return (
     <article>
-      <header className="relative overflow-hidden bg-forest-950 pt-12 pb-28 text-white sm:pt-16">
+      <header className="bg-spotlight relative overflow-hidden pt-12 pb-28 text-white sm:pt-16">
         <div className="grid-lines pointer-events-none absolute inset-0 opacity-60" aria-hidden />
-        <div className="pointer-events-none absolute -top-32 right-0 h-96 w-96 rounded-full bg-lime/15 blur-3xl" aria-hidden />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <Link href="/work" className="group inline-flex items-center gap-1.5 rounded-full bg-white/5 px-3 py-1.5 text-sm text-white/75 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white">
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" aria-hidden />
