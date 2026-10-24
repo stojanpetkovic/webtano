@@ -269,10 +269,16 @@ export default function HomePage() {
               <Reveal as="li" key={c.slug} delay={i * 70}>
                 <Link
                   href={`/work/${c.slug}`}
-                  className="group flex h-full flex-col items-center justify-center rounded-2xl border border-transparent px-3 py-3 text-center transition duration-300 hover:border-zinc-200 hover:bg-zinc-50 hover:shadow-soft"
+                  aria-label={`${c.client} case study`}
+                  className="group flex h-28 items-center justify-center rounded-2xl border border-transparent px-4 transition duration-300 hover:-translate-y-0.5 hover:border-zinc-200 hover:bg-white hover:shadow-soft"
                 >
-                  <span className="font-display text-lg font-bold text-zinc-400 transition group-hover:text-forest-800">{c.client}</span>
-                  <span className="text-xs text-zinc-400">{c.sector}</span>
+                  <Image
+                    src={`/clients/${c.slug}.webp`}
+                    alt={c.client}
+                    width={332}
+                    height={160}
+                    className="h-16 w-auto max-w-full object-contain sm:h-20 transition duration-300 group-hover:scale-105"
+                  />
                 </Link>
               </Reveal>
             ))}
