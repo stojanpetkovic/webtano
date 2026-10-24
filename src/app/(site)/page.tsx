@@ -28,6 +28,7 @@ import { Reveal } from '@/components/site/Reveal';
 import { SectionHeading } from '@/components/site/Section';
 import { AdsVisual, LeadsVisual, SearchVisual, SpeedVisual } from '@/components/site/ServiceVisuals';
 import { caseStudies } from '@/content/work';
+import { monthlyPlans, websitePlans } from '@/content/pricing';
 import { AreaVisual, NumbersVisual, OwnershipVisual, RingingPhone } from '@/components/site/PromiseVisuals';
 
 const heroStats = [
@@ -159,10 +160,13 @@ const steps = [
   },
 ];
 
+const usd = (n: number) => `$${n.toLocaleString('en-US')}`;
+const planPrice = (id: string) => monthlyPlans.find((p) => p.id === id)?.price ?? 0;
+
 const faqs = [
   {
     q: 'How much does it cost?',
-    a: 'Every project gets one fixed price, agreed before work starts. Google Ads and SEO run on a monthly fee that we agree up front. No hourly billing and no surprises.',
+    a: `Websites start at ${usd(websitePlans[0].price)} as one fixed price. Google Ads management starts at ${usd(planPrice('google-ads'))} a month and local SEO at ${usd(planPrice('local-seo'))}, with no setup fee and no long contract. All plans are on the pricing page.`,
   },
   {
     q: 'Do you work with my competitors?',
