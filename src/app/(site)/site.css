@@ -320,6 +320,22 @@ body {
   }
 }
 
+/* Results: a quiet light canvas with soft light behind the case cards, and
+   the dark stage each site's screenshot sits on. */
+.bg-results {
+  background:
+    radial-gradient(45% 35% at 0% 30%, rgb(197 242 74 / 0.12), transparent 70%),
+    radial-gradient(45% 35% at 100% 65%, rgb(31 117 82 / 0.1), transparent 70%),
+    radial-gradient(60% 30% at 50% 100%, rgb(197 242 74 / 0.08), transparent 70%),
+    linear-gradient(180deg, #ffffff 0%, #f6f9f7 50%, #ffffff 100%);
+}
+.case-stage {
+  background:
+    radial-gradient(70% 60% at 50% 0%, rgb(197 242 74 / 0.16), transparent 70%),
+    radial-gradient(60% 60% at 0% 100%, rgb(31 117 82 / 0.45), transparent 70%),
+    linear-gradient(160deg, #0a2a1d, var(--color-forest-975));
+}
+
 /* Service card illustrations: they play once their card is revealed. */
 .svc-gauge {
   stroke-dashoffset: var(--gauge-to);

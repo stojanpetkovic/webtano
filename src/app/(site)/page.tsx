@@ -24,6 +24,7 @@ import { Reveal } from '@/components/site/Reveal';
 import { SectionHeading } from '@/components/site/Section';
 import { AdsVisual, LeadsVisual, SearchVisual, SpeedVisual } from '@/components/site/ServiceVisuals';
 import { caseStudies } from '@/content/work';
+import { LighthouseCard, RatingChip } from '@/components/site/CaseVisuals';
 
 const heroStats = [
   { value: '1,010', label: 'tracked leads for one tree service' },
@@ -449,66 +450,108 @@ export default function HomePage() {
       </section>
 
       {/* Results */}
-      <section id="work" className="scroll-mt-16 bg-white py-24 sm:py-32">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+      <section id="work" className="bg-results relative scroll-mt-16 overflow-hidden py-24 sm:py-32">
+        <div className="grid-lines-light pointer-events-none absolute inset-x-0 top-0 h-[36rem] [mask-image:linear-gradient(#000,transparent)]" aria-hidden />
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal>
             <SectionHeading
               eyebrow="Results"
               title="Real numbers from real client sites"
-              lead="Every figure below comes from the client’s own lead tracking or ad account, not from a mock-up."
+              lead="Every figure below comes from the client’s own lead tracking, ad account or a Lighthouse run on the live site, not from a mock-up."
             />
           </Reveal>
-          <div className="mt-16 space-y-20 sm:space-y-28">
+          <div className="mt-16 space-y-10 sm:space-y-14">
             {caseStudies.map((c, i) => {
-              const metrics = [c.headline, ...c.stats.slice(0, 2)];
+              const [first, second] = c.stats.filter((s) => !s.value.endsWith('★'));
               const shot = c.shots[0];
+              const flip = i % 2 === 1;
               return (
-                <article key={c.slug} className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-                  <Reveal variant="scale" className={i % 2 ? 'lg:order-2' : undefined}>
-                    <Link
-                      href={`/work/${c.slug}`}
-                      className="group relative block overflow-hidden rounded-3xl border border-zinc-200/80 bg-white shadow-float transition duration-500 hover:-translate-y-1"
-                      aria-label={`${c.client} case study`}
-                    >
-                      <div className="flex items-center gap-1.5 border-b border-zinc-200 bg-zinc-50 px-4 py-2.5" aria-hidden>
-                        <span className="h-2.5 w-2.5 rounded-full bg-zinc-300" />
-                        <span className="h-2.5 w-2.5 rounded-full bg-zinc-300" />
-                        <span className="h-2.5 w-2.5 rounded-full bg-zinc-300" />
-                        <span className="ml-3 truncate rounded-md bg-white px-3 py-0.5 text-[11px] text-zinc-500 ring-1 ring-zinc-200">
-                          {c.url.replace(/^https?:\/\//, '')}
+                <Reveal key={c.slug} as="article" className="group/case">
+                  <div className="grid overflow-hidden rounded-[2rem] bg-white shadow-float ring-1 ring-zinc-200/80 lg:grid-cols-[1.08fr_1fr]">
+                    {/* The site itself, framed on a dark stage with its live scores. */}
+                    <div className={`case-stage relative flex items-center overflow-hidden px-5 pt-8 pb-6 sm:px-10 sm:pt-12 sm:pb-10 ${flip ? 'lg:order-2' : ''}`}>
+                      <div className="grid-lines pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_70%_70%_at_50%_40%,#000,transparent)]" aria-hidden />
+                      <div className="relative w-full">
+                        <Link
+                          href={`/work/${c.slug}`}
+                          aria-label={`${c.client} case study`}
+                          className="block overflow-hidden rounded-xl bg-white shadow-[0_30px_60px_-20px_rgb(0_0_0/0.6)] ring-1 ring-white/15 transition duration-500 group-hover/case:-translate-y-1"
+                        >
+                          <div className="flex items-center gap-1.5 border-b border-zinc-200 bg-zinc-50 px-3.5 py-2" aria-hidden>
+                            <span className="h-2 w-2 rounded-full bg-[#ff5f57]" />
+                            <span className="h-2 w-2 rounded-full bg-[#febc2e]" />
+                            <span className="h-2 w-2 rounded-full bg-[#28c840]" />
+                            <span className="ml-2 flex min-w-0 items-center gap-1 truncate rounded-md bg-white px-2.5 py-0.5 text-[10px] text-zinc-500 ring-1 ring-zinc-200">
+                              <ShieldCheck className="h-3 w-3 shrink-0 text-forest-600" />
+                              {c.url.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+                            </span>
+                          </div>
+                          <div className="relative aspect-[16/10] overflow-hidden">
+                            <Image
+                              src={shot.src}
+                              alt={shot.alt}
+                              fill
+                              sizes="(min-width: 1024px) 32rem, 100vw"
+                              className="object-cover object-top transition duration-[1.2s] ease-out group-hover/case:scale-[1.04]"
+                            />
+                          </div>
+                        </Link>
+                        <div className="absolute -top-4 right-3 sm:-top-5 sm:-right-4">
+                          <RatingChip stats={c.stats} />
+                        </div>
+                        <div className="relative -mt-10 ml-3 w-fit sm:-mt-12 sm:-ml-4">
+                          <LighthouseCard scores={c.lighthouse} />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="relative flex flex-col p-7 sm:p-10 lg:p-12">
+                      <span className="pointer-events-none absolute top-5 right-7 font-display text-7xl leading-none text-zinc-100 select-none sm:text-8xl" aria-hidden>
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      <div className="relative flex flex-wrap items-center gap-2">
+                        <span className="rounded-full bg-forest-50 px-3 py-1 font-mono text-[10px] font-medium tracking-[0.12em] text-forest-700 uppercase ring-1 ring-forest-100">
+                          {c.sector}
+                        </span>
+                        <span className="inline-flex items-center gap-1 font-mono text-[10px] tracking-[0.12em] text-zinc-500 uppercase">
+                          <MapPin className="h-3 w-3" aria-hidden />
+                          {c.location}
                         </span>
                       </div>
-                      <div className="relative aspect-[16/10] overflow-hidden">
-                        <Image
-                          src={shot.src}
-                          alt={shot.alt}
-                          fill
-                          sizes="(min-width: 1024px) 34rem, 100vw"
-                          className="object-cover object-top transition duration-[1.2s] ease-out group-hover:scale-[1.04]"
-                        />
+                      <h3 className="relative mt-4 font-display text-3xl text-forest-950 sm:text-4xl">{c.client}</h3>
+                      <p className="relative mt-3 leading-relaxed text-zinc-600 sm:text-lg">{c.summary}</p>
+
+                      <div className="relative mt-7 rounded-2xl bg-forest-975 p-5 text-white shadow-lift sm:p-6">
+                        <div className="pointer-events-none absolute inset-0 rounded-2xl bg-[radial-gradient(80%_120%_at_100%_0%,rgb(197_242_74/0.18),transparent_60%)]" aria-hidden />
+                        <p className="relative flex items-center gap-1.5 font-mono text-[10px] tracking-[0.14em] text-lime uppercase">
+                          <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-lime" aria-hidden />
+                          Headline result
+                        </p>
+                        <p className="relative mt-2 font-display text-5xl leading-none text-gradient sm:text-6xl">
+                          <CountUp value={c.headline.value} />
+                        </p>
+                        <p className="relative mt-2 text-sm text-white/70">{c.headline.label}</p>
                       </div>
-                    </Link>
-                  </Reveal>
-                  <div>
-                    <Reveal>
-                      <p className="font-mono text-[11px] font-medium tracking-[0.14em] text-forest-700 uppercase">
-                        {String(i + 1).padStart(2, '0')} · {c.sector} · {c.location}
-                      </p>
-                      <h3 className="mt-3 font-display text-3xl text-forest-950 sm:text-4xl">{c.client}</h3>
-                      <p className="mt-3 text-lg leading-relaxed text-zinc-600">{c.summary}</p>
-                    </Reveal>
-                    <dl className="mt-8 grid grid-cols-3 divide-x divide-zinc-200 border-y border-zinc-200">
-                      {metrics.map((m, j) => (
-                        <Reveal key={m.label} delay={j * 100} className="flex flex-col-reverse px-3 py-5 first:pl-0 sm:px-5">
-                          <dt className="mt-1.5 text-xs leading-snug text-zinc-500 sm:text-sm">{m.label}</dt>
-                          <dd className="font-display text-3xl text-forest-700 sm:text-[2.6rem] sm:leading-none">
-                            <CountUp value={m.value} />
-                          </dd>
-                        </Reveal>
-                      ))}
-                    </dl>
-                    <Reveal delay={200}>
-                      <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3">
+                      <dl className="relative mt-3 grid grid-cols-2 gap-3">
+                        {[first, second].filter(Boolean).map((m) => (
+                          <div key={m.label} className="flex flex-col-reverse rounded-2xl bg-zinc-50 p-4 ring-1 ring-zinc-200/70">
+                            <dt className="mt-1 text-xs leading-snug text-zinc-500">{m.label}</dt>
+                            <dd className="font-display text-2xl text-forest-800 sm:text-3xl">
+                              <CountUp value={m.value} />
+                            </dd>
+                          </div>
+                        ))}
+                      </dl>
+
+                      <div className="relative mt-auto flex flex-wrap items-center justify-between gap-4 pt-7">
+                        <ul className="flex flex-wrap gap-x-4 gap-y-1.5">
+                          {c.services.slice(0, 4).map((sv) => (
+                            <li key={sv} className="inline-flex items-center gap-1 text-xs font-medium text-zinc-600">
+                              <Check className="h-3.5 w-3.5 text-forest-600" aria-hidden />
+                              {sv}
+                            </li>
+                          ))}
+                        </ul>
                         <Link
                           href={`/work/${c.slug}`}
                           className="group inline-flex items-center gap-2 rounded-full bg-forest-950 px-5 py-3 text-sm font-semibold text-white shadow-soft transition duration-300 hover:-translate-y-0.5 hover:bg-forest-800 hover:shadow-lift"
@@ -516,21 +559,14 @@ export default function HomePage() {
                           View case study
                           <ArrowRight className="h-4 w-4 text-lime transition-transform group-hover:translate-x-1" aria-hidden />
                         </Link>
-                        <ul className="flex flex-wrap gap-2">
-                          {c.services.slice(0, 3).map((sv) => (
-                            <li key={sv} className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-600">
-                              {sv}
-                            </li>
-                          ))}
-                        </ul>
                       </div>
-                    </Reveal>
+                    </div>
                   </div>
-                </article>
+                </Reveal>
               );
             })}
           </div>
-          <Reveal className="mt-20 text-center">
+          <Reveal className="mt-14 flex flex-col items-center gap-3 text-center">
             <Link
               href="/work"
               className="group inline-flex items-center gap-2 rounded-full border border-forest-200 bg-white px-5 py-3 font-semibold text-forest-800 shadow-soft transition duration-300 hover:-translate-y-0.5 hover:border-forest-700 hover:shadow-lift"
@@ -538,6 +574,7 @@ export default function HomePage() {
               All case studies
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
             </Link>
+            <p className="font-mono text-[10px] tracking-wide text-zinc-500 uppercase">Lighthouse scores measured on mobile</p>
           </Reveal>
         </div>
       </section>
