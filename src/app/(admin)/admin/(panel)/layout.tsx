@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Bell, ExternalLink, LogOut, Menu, Search } from 'lucide-react';
-import { db } from '@/lib/admin/supabase';
+import { unseenLeadCount } from '@/lib/admin/seen';
 import { adminEmail } from '@/lib/admin/session';
 import { Logo } from '@/components/admin/Logo';
 import { NavLinks } from '@/components/admin/NavLinks';
@@ -10,13 +10,8 @@ export default async function PanelLayout({ children }: { children: React.ReactN
   const email = await adminEmail();
   const initial = email.charAt(0).toUpperCase() || 'W';
 
-  // Unhandled leads, shown as a count beside "Lidovi" in the menu.
-  const { count } = await db()
-    .from('leads')
-    .select('id', { count: 'exact', head: true })
-    .eq('status', 'new')
-    .eq('is_spam', false);
-  const newLeads = count ?? 0;
+  // Leads that came in since the lead list was last opened, on the bell and beside "Lidovi".
+  const newLeads = await unseenLeadCount();
 
   return (
     <>
@@ -105,10 +100,10 @@ export default async function PanelLayout({ children }: { children: React.ReactN
                 webtano.com <ExternalLink className="size-3.5 text-zinc-400" />
               </a>
               <Link
-                href="/admin/leads?status=new"
+                href="/admin/leads"
                 className="btn btn-outline relative size-9 p-0"
-                aria-label={`Novi lidovi: ${newLeads}`}
-                title={`Novi lidovi: ${newLeads}`}
+                aria-label={`Novi lidovi od poslednjeg pregleda: ${newLeads}`}
+                title={`Novi lidovi od poslednjeg pregleda: ${newLeads}`}
               >
                 <Bell className="size-[18px]" />
                 {newLeads > 0 && (

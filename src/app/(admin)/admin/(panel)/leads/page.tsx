@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Download, RotateCcw, Search, SlidersHorizontal } from 'lucide-react';
 import { PageHeading } from '@/components/admin/PageHeading';
+import { MarkLeadsSeen } from '@/components/admin/MarkLeadsSeen';
+import { unseenLeadCount } from '@/lib/admin/seen';
 import { LeadTable } from '@/components/admin/LeadTable';
 import { Pagination } from '@/components/admin/Pagination';
 import { db } from '@/lib/admin/supabase';
@@ -54,6 +56,7 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
 
   return (
     <>
+      {(await unseenLeadCount()) > 0 && <MarkLeadsSeen />}
       <PageHeading title="Lidovi" description="Svi upiti sa svih sajtova, najnoviji prvi.">
         <a href={exportHref} className="btn btn-outline">
           <Download className="size-4" /> Izvezi CSV

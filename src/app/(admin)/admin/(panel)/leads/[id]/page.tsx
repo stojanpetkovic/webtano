@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { PageHeading } from '@/components/admin/PageHeading';
+import { MarkLeadsSeen } from '@/components/admin/MarkLeadsSeen';
+import { unseenLeadCount } from '@/lib/admin/seen';
 import { ConfirmSubmit } from '@/components/admin/ConfirmSubmit';
 import { db } from '@/lib/admin/supabase';
 import { leadSource } from '@/lib/admin/leads';
@@ -56,6 +58,7 @@ export default async function LeadPage({
 
   return (
     <>
+      {(await unseenLeadCount()) > 0 && <MarkLeadsSeen />}
       <PageHeading title={title} crumbs={[{ label: 'Lidovi', href: '/admin/leads' }]} />
       {notice && (
         <div className="alert alert-success" role="status">
