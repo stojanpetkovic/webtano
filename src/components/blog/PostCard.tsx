@@ -9,7 +9,7 @@ export function PostCard({ post, featured = false }: { post: Post; featured?: bo
   const img = postImage(post);
   return (
     <article
-      className={`group relative flex h-full overflow-hidden rounded-3xl bg-white ring-1 ring-zinc-200/80 shadow-[0_1px_2px_rgb(10_14_30/0.04),0_8px_24px_-14px_rgb(10_14_30/0.10)] transition duration-300 hover:-translate-y-0.5 hover:ring-zinc-300 hover:shadow-[0_1px_2px_rgb(10_14_30/0.05),0_16px_32px_-16px_rgb(10_14_30/0.18)] ${
+      className={`press group relative flex h-full overflow-hidden rounded-3xl bg-white ring-1 ring-zinc-200/80 shadow-[0_1px_2px_rgb(10_14_30/0.04),0_8px_24px_-14px_rgb(10_14_30/0.10)] transition duration-300 hover:-translate-y-0.5 hover:ring-zinc-300 hover:shadow-[0_1px_2px_rgb(10_14_30/0.05),0_16px_32px_-16px_rgb(10_14_30/0.18)] ${
         featured ? 'flex-col lg:grid lg:grid-cols-[1.15fr_1fr]' : 'flex-col'
       }`}
     >

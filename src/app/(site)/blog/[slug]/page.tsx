@@ -10,6 +10,7 @@ import { ReadingProgress } from '@/components/blog/ReadingProgress';
 import { TableOfContents } from '@/components/blog/TableOfContents';
 import { FaqList } from '@/components/site/FaqList';
 import { Reveal } from '@/components/site/Reveal';
+import { SwipeRow } from '@/components/site/SwipeRow';
 import { findPost, plainText, postImage, posts, readingTime, relatedPosts, toc } from '@/content/blog';
 import { site } from '@/content/site';
 
@@ -264,13 +265,13 @@ export default async function PostPage({ params }: PageProps<'/blog/[slug]'>) {
               <ArrowRight className="h-4 w-4 text-accent transition-transform group-hover:translate-x-0.5" aria-hidden />
             </Link>
           </div>
-          <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <SwipeRow as="ul" label="Related guides" className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((p) => (
               <li key={p.slug}>
                 <PostCard post={p} />
               </li>
             ))}
-          </ul>
+          </SwipeRow>
           <div className="mt-14 flex flex-col items-start gap-6 rounded-3xl bg-white/[0.04] p-7 ring-1 ring-white/10 sm:flex-row sm:items-center sm:justify-between sm:p-9">
             <div>
               <p className="font-display text-2xl font-bold">Rather have it done for you?</p>

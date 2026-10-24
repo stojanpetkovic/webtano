@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { ArrowRight, Check, Minus, Plus, Sparkles } from 'lucide-react';
 import { FaqList } from '@/components/site/FaqList';
 import { Reveal } from '@/components/site/Reveal';
+import { SwipeRow } from '@/components/site/SwipeRow';
 import { addOns, comparison, included, monthlyPlans, pricingFaqs, websitePlans, type Plan } from '@/content/pricing';
 import { site } from '@/content/site';
 
@@ -200,15 +201,15 @@ export default function PricingPage() {
             <p className="mx-auto mt-3 max-w-xl text-zinc-600">Flat fees, month to month. Ad budgets are paid directly to Google from your own account.</p>
           </div>
 
-          <ul className="mt-14 grid items-stretch gap-6 lg:grid-cols-3 lg:gap-5">
+          <SwipeRow as="ul" label="Monthly plans" className="mt-14 grid items-stretch gap-6 max-md:pt-4 lg:grid-cols-3 lg:gap-5">
             {monthlyPlans.map((p, i) => (
-              <Reveal as="li" key={p.id} delay={i * 80} className={p.featured ? 'order-first lg:order-none' : ''}>
+              <Reveal as="li" key={p.id} delay={i * 80}>
                 <div id={p.id} className="h-full scroll-mt-24">
                   <PlanCard plan={p} />
                 </div>
               </Reveal>
             ))}
-          </ul>
+          </SwipeRow>
 
           {/* Side-by-side comparison */}
           <Reveal className="mt-16">
@@ -258,7 +259,7 @@ export default function PricingPage() {
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-white/70">Fast sites written to sell, with tracking built in. Domain, code and hosting in your name from day one.</p>
           </div>
-          <ul className="mt-14 grid items-stretch gap-6 lg:grid-cols-3 lg:gap-5">
+          <SwipeRow as="ul" label="Website plans" className="mt-14 grid items-stretch gap-6 max-md:pt-4 lg:grid-cols-3 lg:gap-5">
             {websitePlans.map((p, i) => (
               <Reveal as="li" key={p.id} delay={i * 80}>
                 <div id={p.id} className="h-full scroll-mt-24">
@@ -266,7 +267,7 @@ export default function PricingPage() {
                 </div>
               </Reveal>
             ))}
-          </ul>
+          </SwipeRow>
           <p className="mt-10 text-center text-sm text-white/55">
             Want to see the result first? Look at{' '}
             <Link href="/work" className="font-medium text-accent hover:underline">

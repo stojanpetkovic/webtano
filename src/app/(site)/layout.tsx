@@ -1,8 +1,9 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { Header } from '@/components/site/Header';
 import { BackToTop } from '@/components/site/BackToTop';
 import { Footer } from '@/components/site/Footer';
+import { MobileTabBar } from '@/components/site/MobileTabBar';
 import { RevealObserver } from '@/components/site/RevealObserver';
 import { site } from '@/content/site';
 import './site.css';
@@ -21,6 +22,12 @@ export const metadata: Metadata = {
   openGraph: { siteName: 'WebTano', type: 'website' },
 };
 
+// Dark browser chrome on phones, and room for the notch and home bar.
+export const viewport: Viewport = {
+  themeColor: '#05060a',
+  viewportFit: 'cover',
+};
+
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${sans.variable} ${mono.variable}`} suppressHydrationWarning>
@@ -33,6 +40,9 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
         <Header />
         <main>{children}</main>
         <Footer />
+        {/* Keeps the end of the footer clear of the phone tab bar. */}
+        <div className="h-[calc(5.5rem+env(safe-area-inset-bottom))] bg-ink-975 md:hidden" aria-hidden />
+        <MobileTabBar />
         <BackToTop />
         {/* Our own collector: page views and call clicks on webtano.com land in the admin like any client site. */}
         <script src="/leads.js" data-site-key={site.leadsSiteKey} defer />

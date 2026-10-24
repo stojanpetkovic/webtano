@@ -25,6 +25,7 @@ import { CountUp } from '@/components/site/CountUp';
 import { FaqList } from '@/components/site/FaqList';
 import { HeroBackdrop } from '@/components/site/HeroBackdrop';
 import { Reveal } from '@/components/site/Reveal';
+import { SwipeRow } from '@/components/site/SwipeRow';
 import { SectionHeading } from '@/components/site/Section';
 import { AdsVisual, LeadsVisual, SearchVisual, SpeedVisual } from '@/components/site/ServiceVisuals';
 import { caseStudies } from '@/content/work';
@@ -431,7 +432,7 @@ export default function HomePage() {
               lead="One team for the website, the search rankings, the ads and the tracking, so nothing falls between two agencies."
             />
           </Reveal>
-          <div className="mt-14 grid gap-5 lg:grid-cols-3 lg:grid-rows-[auto_auto]">
+          <SwipeRow label="Services" className="mt-14 grid gap-5 lg:grid-cols-3 lg:grid-rows-[auto_auto]">
             {services.map((s, i) => (
               <Reveal key={s.title} delay={i * 100} className={s.area}>
                 <article className="group ring-gradient flex h-full flex-col overflow-hidden rounded-3xl bg-white/[0.03] shadow-[inset_0_1px_0_rgb(255_255_255/0.06)] backdrop-blur transition duration-300 hover:-translate-y-1 hover:bg-white/[0.05]">
@@ -461,7 +462,7 @@ export default function HomePage() {
                 </article>
               </Reveal>
             ))}
-          </div>
+          </SwipeRow>
           <p className="mt-6 text-center font-mono text-[10px] tracking-wide text-white/35 uppercase">
             Illustrations use example data. Real figures are in the case studies below.
           </p>
@@ -532,7 +533,7 @@ export default function HomePage() {
             </div>
           </Reveal>
 
-          <ol className="space-y-4">
+          <SwipeRow as="ol" label="Our rules" className="space-y-4">
             {promises.map((p, i) => (
               <Reveal key={p.title} as="li" delay={i * 110}>
                 <div className="ring-gradient group grid items-center gap-6 rounded-3xl bg-white/[0.03] p-6 transition duration-300 hover:bg-white/[0.05] sm:grid-cols-[1fr_13.5rem] sm:p-7">
@@ -552,7 +553,7 @@ export default function HomePage() {
                 </div>
               </Reveal>
             ))}
-          </ol>
+          </SwipeRow>
         </div>
       </section>
 

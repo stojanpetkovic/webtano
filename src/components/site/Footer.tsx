@@ -58,10 +58,10 @@ export function Footer() {
             {columns.map((col) => (
               <div key={col.title}>
                 <p className="font-mono text-[10px] tracking-[0.14em] text-white/40 uppercase">{col.title}</p>
-                <ul className="mt-4 space-y-2.5 text-sm">
+                <ul className="mt-3 space-y-0.5 text-sm sm:mt-4 sm:space-y-1">
                   {col.links.map((l) => (
                     <li key={l.label}>
-                      <Link href={l.href} className="group inline-flex items-center gap-1 transition hover:text-white">
+                      <Link href={l.href} className="group inline-flex items-center gap-1 py-1.5 transition hover:text-white sm:py-0.5">
                         {l.label}
                         {l.href === '/demo/report' && (
                           <ArrowUpRight className="h-3.5 w-3.5 text-accent/70 transition group-hover:text-accent" aria-hidden />
