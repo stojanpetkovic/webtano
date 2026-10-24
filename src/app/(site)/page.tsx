@@ -264,26 +264,32 @@ export default function HomePage() {
       <section className="relative border-b border-zinc-200/70 bg-white py-9">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <p className="text-center text-xs font-semibold tracking-[0.2em] text-zinc-400 uppercase">Growing with local companies like</p>
-          <ul className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {caseStudies.map((c, i) => (
-              <Reveal as="li" key={c.slug} delay={i * 70}>
-                <Link
-                  href={`/work/${c.slug}`}
-                  aria-label={`${c.client} case study`}
-                  className="group flex h-28 items-center justify-center rounded-2xl border border-transparent px-4 transition duration-300 hover:-translate-y-0.5 hover:border-zinc-200 hover:bg-white hover:shadow-soft"
-                >
-                  <Image
-                    src={`/clients/${c.slug}.webp`}
-                    alt={c.client}
-                    width={332}
-                    height={160}
-                    className="h-16 w-auto max-w-full object-contain sm:h-20 transition duration-300 group-hover:scale-105"
-                  />
-                </Link>
-              </Reveal>
-            ))}
-          </ul>
         </div>
+        <Reveal variant="fade" className="group/marquee relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,#000_12%,#000_88%,transparent)] mt-3">
+          {/* Two identical halves, so sliding by -50% loops without a seam. */}
+          <ul className="flex w-max animate-marquee items-center py-3 group-hover/marquee:[animation-play-state:paused]">
+            {[0, 1, 2, 3].map((copy) =>
+              caseStudies.map((c) => (
+                <li key={`${copy}-${c.slug}`} aria-hidden={copy > 0 || undefined} className="px-1 sm:px-5">
+                  <Link
+                    href={`/work/${c.slug}`}
+                    tabIndex={copy > 0 ? -1 : undefined}
+                    aria-label={`${c.client} case study`}
+                    className="group flex h-24 w-36 items-center justify-center rounded-2xl border border-transparent px-4 transition duration-300 hover:-translate-y-1 hover:border-zinc-200 hover:bg-white hover:shadow-lift sm:h-28 sm:w-56"
+                  >
+                    <Image
+                      src={`/clients/${c.slug}.webp`}
+                      alt={copy > 0 ? '' : c.client}
+                      width={332}
+                      height={160}
+                      className="h-12 w-auto max-w-full object-contain transition duration-300 group-hover:scale-110 sm:h-20"
+                    />
+                  </Link>
+                </li>
+              )),
+            )}
+          </ul>
+        </Reveal>
       </section>
 
       {/* Problem */}
