@@ -1,14 +1,16 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { CalendarCheck, CalendarDays, Inbox, MoveRight, Users } from 'lucide-react';
+import { CalendarCheck, CalendarDays, FileText, Inbox, MoveRight, Users } from 'lucide-react';
 import { PageHeading } from '@/components/admin/PageHeading';
 import { StatCard } from '@/components/admin/StatCard';
 import { DailyChart } from '@/components/admin/DailyChart';
-import { BarList } from '@/components/admin/BarList';
+import { DonutChart } from '@/components/admin/DonutChart';
+import { SERIES } from '@/components/admin/chartColors';
 import { LeadTable } from '@/components/admin/LeadTable';
 import { db } from '@/lib/admin/supabase';
 import { dailySeries, summarize, daysAgo } from '@/lib/admin/stats';
 import { sitesOverview, rate } from '@/lib/admin/analytics';
+import { STATUS_LABELS } from '@/lib/admin/format';
 import type { Lead, Site } from '@/lib/admin/types';
 
 export const dynamic = 'force-dynamic';
@@ -29,21 +31,57 @@ export default async function DashboardPage() {
   const stats = summarize(leads);
 
   const labels = dailySeries([], DAYS, 'Europe/Belgrade').map((d) => d.day);
+  // Each site keeps its colour slot (its place in the alphabetical list), even when another site has no leads.
   const series = sites
-    .map((site) => ({
+    .map((site, slot) => ({
       label: site.name,
+      slot,
       data: dailySeries(leads.filter((l) => l.site_id === site.id), DAYS, 'Europe/Belgrade').map((d) => d.count),
     }))
     .filter((s) => s.data.some((n) => n > 0));
+  const allDaily = dailySeries(leads, DAYS, 'Europe/Belgrade').map((d) => d.count);
+  const cutoff = daysAgo(DAYS);
+  const last30 = leads.filter((l) => l.created_at >= cutoff);
+  const statusColors = { new: '#2a78d6', contacted: '#eda100', won: '#1baf7a', lost: '#a1a1aa' } as const;
+  const byStatus = (Object.keys(STATUS_LABELS) as (keyof typeof STATUS_LABELS)[]).map((status) => ({
+    label: STATUS_LABELS[status],
+    count: last30.filter((l) => l.status === status).length,
+    color: statusColors[status],
+  }));
+  const bySource = summarize(last30).bySource;
+  const newCount = leads.filter((l) => l.status === 'new').length;
 
   const overview = (await sitesOverview(sites, 30)).sort((a, b) => b.visitors - a.visitors || b.contacts - a.contacts);
   const visitors30 = overview.reduce((n, o) => n + o.visitors, 0);
   const changeNote =
     stats.change === null ? 'nema podataka za prethodni period' : `${stats.change >= 0 ? '+' : ''}${stats.change}% u odnosu na prethodnih 30 dana`;
+  const today = new Intl.DateTimeFormat('sr-Latn-RS', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Belgrade' }).format(new Date());
 
   return (
     <>
-      <PageHeading title="Kontrolna tabla" />
+      <PageHeading
+        title="Kontrolna tabla"
+        description={
+          <>
+            <span className="inline-block first-letter:uppercase">{today}</span>
+            {newCount > 0 && (
+              <>
+                {' · '}
+                <Link href="/admin/leads?status=new" className="font-medium text-primary hover:underline">
+                  {newCount} {newCount === 1 ? 'novi lid čeka' : 'novih lidova čeka'} odgovor
+                </Link>
+              </>
+            )}
+          </>
+        }
+      >
+        <Link href="/admin/sites" className="btn btn-outline">
+          <FileText className="size-4" /> Izveštaji
+        </Link>
+        <Link href="/admin/leads" className="btn btn-primary">
+          <Inbox className="size-4" /> Svi lidovi
+        </Link>
+      </PageHeading>
       {sites.length === 0 && (
         <div className="card card-body flex flex-wrap items-center justify-between gap-5">
           <div>
@@ -56,9 +94,9 @@ export default async function DashboardPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-5">
-        <StatCard icon={CalendarCheck} color="success" label="Upiti danas" value={stats.today} />
-        <StatCard icon={CalendarDays} color="warning" label="Upiti, 7 dana" value={stats.last7} />
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
+        <StatCard icon={CalendarCheck} color="success" label="Upiti danas" value={stats.today} trend={allDaily.slice(-14)} />
+        <StatCard icon={CalendarDays} color="warning" label="Upiti, 7 dana" value={stats.last7} trend={allDaily.slice(-7)} />
         <StatCard
           icon={Inbox}
           color="secondary"
@@ -66,6 +104,7 @@ export default async function DashboardPage() {
           value={stats.last30}
           note={changeNote}
           tone={stats.change === null ? 'neutral' : stats.change >= 0 ? 'up' : 'down'}
+          trend={allDaily}
         />
         <StatCard
           icon={Users}
@@ -76,16 +115,29 @@ export default async function DashboardPage() {
         />
       </div>
 
-      <DailyChart
-        title="Lidovi po danu (30 dana)"
-        labels={labels}
-        series={series.length ? series : [{ label: 'Lidovi', data: labels.map(() => 0) }]}
-      />
+      <div className="grid gap-4 xl:grid-cols-3">
+        <div className="min-w-0 xl:col-span-2">
+          <DailyChart
+            title="Lidovi po danu"
+            total={`${stats.last30} lidova`}
+            note="30 dana, po sajtu"
+            labels={labels}
+            series={series.length ? series : [{ label: 'Lidovi', data: labels.map(() => 0) }]}
+          />
+        </div>
+        <DonutChart title="Status lidova" sub="Poslednjih 30 dana" items={byStatus} />
+      </div>
 
-      <div className="grid lg:grid-cols-2 gap-5">
-        <div className="card">
+      <div className="grid gap-4 xl:grid-cols-3">
+        <div className="card xl:col-span-2">
           <div className="card-header">
-            <h2 className="card-title">Sajtovi, 30 dana</h2>
+            <div>
+              <h2 className="card-title">Sajtovi</h2>
+              <p className="card-sub">Posete i kontakti, poslednjih 30 dana</p>
+            </div>
+            <Link href="/admin/sites" className="btn btn-sm btn-light">
+              Svi sajtovi <MoveRight className="size-4" />
+            </Link>
           </div>
           <div className="overflow-x-auto">
             <table className="table">
@@ -107,11 +159,14 @@ export default async function DashboardPage() {
                   </tr>
                 )}
                 {overview.map((o) => (
-                  <tr key={o.site.id}>
+                  <tr key={o.site.id} className="relative">
                     <td>
-                      <Link href={`/admin/sites/${o.site.id}`} className="font-medium text-ink hover:text-primary">
-                        {o.site.name}
-                      </Link>
+                      <span className="flex items-center gap-2.5">
+                        <span className="size-2 shrink-0 rounded-full" style={{ background: SERIES[sites.indexOf(o.site) % SERIES.length] }} />
+                        <Link href={`/admin/sites/${o.site.id}`} className="font-medium text-ink after:absolute after:inset-0 hover:text-primary">
+                          {o.site.name}
+                        </Link>
+                      </span>
                     </td>
                     <td className="text-right tabular-nums">{o.visitors.toLocaleString('sr-Latn-RS')}</td>
                     <td className="text-right tabular-nums font-semibold text-ink">{o.leads}</td>
@@ -123,13 +178,16 @@ export default async function DashboardPage() {
             </table>
           </div>
         </div>
-        <BarList title="Po izvoru (60 dana)" items={stats.bySource} />
+        <DonutChart title="Odakle dolaze lidovi" sub="Izvor, poslednjih 30 dana" items={bySource} />
       </div>
 
       <div className="card">
         <div className="card-header">
-          <h2 className="card-title">Poslednji lidovi</h2>
-          <Link href="/admin/leads" className="btn btn-sm btn-soft">
+          <div>
+            <h2 className="card-title">Poslednji lidovi</h2>
+            <p className="card-sub">Deset najnovijih upita sa svih sajtova</p>
+          </div>
+          <Link href="/admin/leads" className="btn btn-sm btn-light">
             Svi lidovi <MoveRight className="size-4" />
           </Link>
         </div>

@@ -17,7 +17,7 @@ export function dayKey(date: Date, timeZone: string): string {
 }
 
 /** One entry per calendar day for the last `days` days, oldest first, with zero-filled gaps. */
-export function dailySeries(leads: StatLead[], days: number, timeZone: string) {
+export function dailySeries(leads: Pick<StatLead, 'created_at'>[], days: number, timeZone: string) {
   const counts = new Map<string, number>();
   for (const lead of leads) {
     const key = dayKey(new Date(lead.created_at), timeZone);

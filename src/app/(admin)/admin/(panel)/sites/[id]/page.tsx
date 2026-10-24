@@ -7,6 +7,7 @@ import { SiteHeader } from '@/components/admin/SiteHeader';
 import { StatCard } from '@/components/admin/StatCard';
 import { DailyChart } from '@/components/admin/DailyChart';
 import { BarList } from '@/components/admin/BarList';
+import { DonutChart } from '@/components/admin/DonutChart';
 import { LeadTable } from '@/components/admin/LeadTable';
 import { ConversionTable } from '@/components/admin/ConversionTable';
 import { RangeTabs } from '@/components/admin/RangeTabs';
@@ -47,6 +48,7 @@ export default async function SitePage({
   const leads = (leadsData ?? []) as Lead[];
   const stats = summarize(leads);
   const t = analytics.totals;
+  const daily = analytics.daily;
   const p = analytics.previous;
   const visitorsChange = change(t.visitors, p.visitors);
   const leadsChange = change(t.leads, p.leads);
@@ -54,13 +56,10 @@ export default async function SitePage({
 
   return (
     <>
-      <PageHeading title={site.name} crumbs={[{ label: 'Sajtovi', href: '/admin/sites' }]} />
-      <SiteHeader site={site} current="overview" />
-
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-[15px] font-semibold">Posete, upiti i pozivi</h2>
+      <PageHeading title={site.name} crumbs={[{ label: 'Sajtovi', href: '/admin/sites' }]}>
         <RangeTabs current={range} path={`/admin/sites/${site.id}`} params={query} />
-      </div>
+      </PageHeading>
+      <SiteHeader site={site} current="overview" />
 
       {!analytics.hasData && (
         <div className="alert alert-info">
@@ -72,25 +71,40 @@ export default async function SitePage({
         </div>
       )}
 
-      <div className="grid grid-cols-2 xl:grid-cols-5 gap-5">
-        <StatCard icon={Users} color="success" label="Posetioci" value={t.visitors.toLocaleString('sr-Latn-RS')} note={visitorsChange.text} tone={visitorsChange.tone} />
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-5">
+        <StatCard icon={Users} color="success" label="Posetioci" value={t.visitors.toLocaleString('sr-Latn-RS')} note={visitorsChange.text} tone={visitorsChange.tone} trend={daily.map((d) => d.visitors)} />
         <StatCard icon={MousePointerClick} color="warning" label="Posete" value={t.visits.toLocaleString('sr-Latn-RS')} />
-        <StatCard icon={Inbox} color="info" label="Upiti" value={t.leads} note={leadsChange.text} tone={leadsChange.tone} />
-        <StatCard icon={Phone} color="secondary" label="Pozivi" value={t.calls} note={callsChange.text} tone={callsChange.tone} />
-        <StatCard icon={Percent} color="primary" label="Stopa konverzije" value={rate(t.contacts, t.visits)} note="upiti i pozivi na 100 poseta" />
+        <StatCard icon={Inbox} color="info" label="Upiti" value={t.leads} note={leadsChange.text} tone={leadsChange.tone} trend={daily.map((d) => d.leads)} />
+        <StatCard icon={Phone} color="secondary" label="Pozivi" value={t.calls} note={callsChange.text} tone={callsChange.tone} trend={daily.map((d) => d.calls)} />
+        <StatCard className="col-span-2 xl:col-span-1" icon={Percent} color="primary" label="Stopa konverzije" value={rate(t.contacts, t.visits)} note="upiti i pozivi na 100 poseta" />
       </div>
 
-      <DailyChart
-        title="Posetioci, upiti i pozivi po danu"
-        note="osvežava se na 15 min"
-        labels={analytics.daily.map((d) => d.day)}
-        series={[
-          { label: 'Posetioci', data: analytics.daily.map((d) => d.visitors) },
-          { label: 'Upiti i pozivi', data: analytics.daily.map((d) => d.leads + d.calls), line: true },
-        ]}
-      />
+      {/* Two charts rather than one with two scales: visitors run in hundreds, contacts in units. */}
+      <div className="grid gap-4 xl:grid-cols-5">
+        <div className="min-w-0 xl:col-span-3">
+          <DailyChart
+            title="Posetioci po danu"
+            total={t.visitors.toLocaleString('sr-Latn-RS')}
+            note="osvežava se na 15 min"
+            variant="area"
+            labels={daily.map((d) => d.day)}
+            series={[{ label: 'Posetioci', data: daily.map((d) => d.visitors) }]}
+          />
+        </div>
+        <div className="min-w-0 xl:col-span-2">
+          <DailyChart
+            title="Upiti i pozivi po danu"
+            total={`${t.leads + t.calls} kontakata`}
+            labels={daily.map((d) => d.day)}
+            series={[
+              { label: 'Upiti', data: daily.map((d) => d.leads) },
+              { label: 'Pozivi', data: daily.map((d) => d.calls), slot: 2 },
+            ]}
+          />
+        </div>
+      </div>
 
-      <div className="grid lg:grid-cols-2 gap-5">
+      <div className="grid gap-4 lg:grid-cols-2">
         <ConversionTable
           title="Odakle dolaze"
           columnLabel="Izvor"
@@ -105,14 +119,14 @@ export default async function SitePage({
         />
       </div>
 
-      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-        <BarList title="Uređaji" items={analytics.devices} />
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <DonutChart title="Uređaji" items={analytics.devices} />
         <BarList title="Zemlje" items={analytics.countries} />
         <BarList title="Klikovi za kontakt" items={analytics.clicks} empty="Još nema klikova na telefon, WhatsApp ili email." />
         <BarList title="Upiti po formi" items={countBy(leads, (l) => l.form_name)} />
       </div>
 
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-5">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         <StatCard icon={CalendarCheck} color="success" label="Upiti danas" value={stats.today} />
         <StatCard icon={CalendarDays} color="warning" label="Upiti, 7 dana" value={stats.last7} />
         <StatCard
@@ -127,7 +141,13 @@ export default async function SitePage({
 
       <div className="card">
         <div className="card-header">
-          <h2 className="card-title">Poslednji lidovi</h2>
+          <div>
+            <h2 className="card-title">Poslednji lidovi</h2>
+            <p className="card-sub">Deset najnovijih upita sa ovog sajta</p>
+          </div>
+          <Link href={`/admin/leads?site=${site.id}`} className="btn btn-sm btn-light">
+            Svi lidovi
+          </Link>
         </div>
         <LeadTable leads={leads.slice(0, 10)} sites={new Map([[site.id, site]])} showSite={false} />
       </div>
