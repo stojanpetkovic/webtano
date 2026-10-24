@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import {
   ArrowRight,
+  ArrowUpRight,
   BellRing,
   Check,
   FileText,
@@ -646,50 +647,105 @@ export default function HomePage() {
       </section>
 
       {/* Report */}
-      <section id="report" className="scroll-mt-16 overflow-hidden bg-white py-24 sm:py-32">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <Reveal>
-            <SectionHeading
-              eyebrow="Tracking and monthly report"
-              title="Without numbers you are guessing, and that is how budgets disappear"
-              lead="Every site we build or run comes with our own lead tracking: every enquiry, every call and every dollar, in one report written in plain language."
-            />
-          </Reveal>
-          <div className="mt-14 grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-            <ul className="grid gap-4 sm:grid-cols-2">
+      <section id="report" className="bg-report relative scroll-mt-16 overflow-hidden py-24 sm:py-32">
+        <div className="grid-lines-light pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_60%_60%_at_75%_45%,#000,transparent)]" aria-hidden />
+        <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
+          <div>
+            <Reveal>
+              <p className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 font-mono text-[11px] font-medium tracking-[0.14em] text-forest-700 uppercase shadow-soft ring-1 ring-zinc-200">
+                <span className="h-1.5 w-1.5 rounded-full bg-forest-600" aria-hidden />
+                Tracking and monthly report
+              </p>
+              <h2 className="mt-4 font-display text-3xl text-balance text-forest-950 md:text-[2.75rem] md:leading-[1.08]">
+                Without numbers you are guessing, and that is how budgets disappear
+              </h2>
+              <p className="mt-4 text-lg text-pretty text-zinc-600">
+                Every site we build or run comes with our own lead tracking: every enquiry, every call and every dollar, in one report written in
+                plain language.
+              </p>
+            </Reveal>
+            <ul className="mt-9 grid gap-x-8 gap-y-6 sm:grid-cols-2">
               {reportPoints.map((p, i) => (
-                <Reveal as="li" key={p.title} delay={i * 80}>
-                  <div className="group h-full rounded-3xl border border-zinc-200/80 bg-white p-5 shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-lift">
-                    <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-forest-50 text-forest-700 ring-1 ring-forest-100 transition group-hover:bg-forest-700 group-hover:text-lime">
-                      <p.icon className="h-5 w-5" aria-hidden />
-                    </span>
-                    <h3 className="mt-4 font-display font-bold text-forest-950">{p.title}</h3>
-                    <p className="mt-1.5 text-sm leading-relaxed text-zinc-600">{p.text}</p>
+                <Reveal as="li" key={p.title} delay={i * 80} className="flex gap-3.5">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-forest-950 text-lime">
+                    <p.icon className="h-[18px] w-[18px]" aria-hidden />
+                  </span>
+                  <div>
+                    <h3 className="font-display text-[17px] text-forest-950">{p.title}</h3>
+                    <p className="mt-1 text-sm leading-relaxed text-zinc-600">{p.text}</p>
                   </div>
                 </Reveal>
               ))}
             </ul>
-            <Reveal variant="scale" delay={150}>
-              <figure className="relative mx-auto w-full max-w-md lg:max-w-none">
-                <div className="pointer-events-none absolute -inset-8 rounded-full bg-forest-100/70 blur-3xl" aria-hidden />
-                <div className="relative -rotate-1 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-float transition duration-500 hover:rotate-0">
-                  <Image
-                    src="/work/report-example.webp"
-                    alt="An example monthly report page with demo data."
-                    width={1323}
-                    height={1568}
-                    sizes="(min-width: 1024px) 32rem, 90vw"
-                    className="h-auto w-full"
-                  />
-                </div>
-                <span className="absolute -top-3 left-5 inline-flex items-center gap-1.5 rounded-full bg-forest-700 px-3 py-1 text-xs font-semibold text-lime shadow-lift">
-                  <Zap className="h-3.5 w-3.5" aria-hidden />
-                  Included with every site
-                </span>
-                <figcaption className="relative mt-5 text-center text-sm text-zinc-500">An example monthly report with demo data.</figcaption>
-              </figure>
+            <Reveal delay={200} className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-3">
+              <Link
+                href="/demo/report"
+                className="group inline-flex items-center gap-2 rounded-full bg-forest-950 px-5 py-3 text-sm font-semibold text-white shadow-soft transition duration-300 hover:-translate-y-0.5 hover:bg-forest-800"
+              >
+                Open the live demo report
+                <ArrowUpRight className="h-4 w-4 text-lime transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
+              </Link>
+              <span className="text-sm text-zinc-500">Example data, every button works.</span>
             </Reveal>
           </div>
+
+          <Reveal variant="scale" delay={150} className="relative">
+            <div className="pointer-events-none absolute -inset-4 rounded-full bg-[radial-gradient(closest-side,rgb(197_242_74/0.22),transparent)] blur-2xl sm:-inset-10" aria-hidden />
+            <Link
+              href="/demo/report"
+              aria-label="Open the demo report"
+              className="group relative block overflow-hidden rounded-2xl bg-white shadow-[0_1px_2px_rgb(6_35_26/0.05),0_24px_48px_-24px_rgb(6_35_26/0.28)] ring-1 ring-zinc-200/80"
+            >
+              <div className="flex items-center gap-1.5 border-b border-zinc-200 bg-zinc-50 px-3.5 py-2" aria-hidden>
+                <span className="h-2 w-2 rounded-full bg-[#ff5f57]" />
+                <span className="h-2 w-2 rounded-full bg-[#febc2e]" />
+                <span className="h-2 w-2 rounded-full bg-[#28c840]" />
+                <span className="ml-2 flex items-center gap-1 rounded-md bg-white px-2.5 py-0.5 text-[10px] text-zinc-500 ring-1 ring-zinc-200">
+                  <ShieldCheck className="h-3 w-3 text-forest-600" />
+                  webtano.com/demo/report
+                </span>
+              </div>
+              <div className="relative aspect-[5/5.2] overflow-hidden">
+                <Image
+                  src="/work/report-example.webp"
+                  alt="The demo monthly report: visitors, inquiries, calls, cost per lead and a daily chart, with example data."
+                  width={1586}
+                  height={2226}
+                  sizes="(min-width: 1024px) 34rem, 92vw"
+                  className="h-auto w-full transition duration-[1.4s] ease-out group-hover:-translate-y-[6%]"
+                />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-white to-transparent" aria-hidden />
+                <span className="absolute inset-x-0 bottom-5 flex justify-center">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-forest-950 px-4 py-2 text-xs font-semibold text-white opacity-0 shadow-lift transition duration-300 group-hover:opacity-100">
+                    Try it yourself
+                    <ArrowUpRight className="h-3.5 w-3.5 text-lime" aria-hidden />
+                  </span>
+                </span>
+              </div>
+            </Link>
+
+            <div className="absolute top-14 -left-3 hidden w-60 rounded-2xl bg-white p-3.5 shadow-soft ring-1 ring-zinc-200/80 sm:block lg:-left-10">
+              <div className="flex items-center gap-2.5">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-forest-700 text-lime">
+                  <BellRing className="h-4 w-4" aria-hidden />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-semibold text-forest-950">New enquiry: Free estimate</p>
+                  <p className="text-[11px] text-zinc-500">From Google Ads · just now</p>
+                </div>
+                <span className="h-2 w-2 animate-pulse-dot rounded-full bg-lime" aria-hidden />
+              </div>
+            </div>
+            <div className="absolute -right-3 bottom-16 hidden rounded-2xl bg-forest-950 px-4 py-3 text-white shadow-soft sm:block lg:-right-8">
+              <p className="font-mono text-[10px] tracking-[0.14em] text-white/50 uppercase">Cost per contact</p>
+              <p className="mt-0.5 font-display text-2xl text-lime">$12.50</p>
+              <p className="text-[11px] text-white/60">Return on ad spend 5.3×</p>
+            </div>
+            <span className="absolute -bottom-3 left-6 inline-flex items-center gap-1.5 rounded-full bg-lime px-3 py-1 text-xs font-semibold text-forest-950 shadow-glow">
+              <Zap className="h-3.5 w-3.5" aria-hidden />
+              Included with every site
+            </span>
+          </Reveal>
         </div>
       </section>
 
