@@ -236,8 +236,12 @@ export default function HomePage() {
       </section>
 
       {/* Clients */}
-      <section className="hairline-bottom relative overflow-hidden bg-white py-16 sm:py-20">
-        <div className="dot-grid pointer-events-none absolute inset-0 opacity-60 [mask-image:radial-gradient(ellipse_60%_80%_at_50%_0%,#000,transparent)]" aria-hidden />
+      <section className="bg-clients hairline-bottom relative overflow-hidden py-16 sm:py-20">
+        <div className="grid-lines-light pointer-events-none absolute inset-0" aria-hidden />
+        {/* The hero's dark edge melts into this section instead of stopping at a hard line. */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-forest-975/[0.07] to-transparent" aria-hidden />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-lime/60 to-transparent" aria-hidden />
+        <div className="hero-aurora pointer-events-none top-1/2 left-1/2 h-72 w-[46rem] -translate-x-1/2 bg-[radial-gradient(closest-side,rgb(197_242_74/0.3),transparent)]" aria-hidden />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <div className="flex flex-col items-center justify-between gap-6 text-center lg:flex-row lg:items-end lg:text-left">
             <Reveal>
