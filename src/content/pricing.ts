@@ -47,7 +47,7 @@ export const monthlyPlans: Plan[] = [
       'Local Services Ads management',
       'Landing pages built for your ads',
       'Cost per lead by channel',
-      'Priority support, reply the same day',
+      'Priority support, reply within one business day',
     ],
     note: 'Ad spend is paid directly to Google.',
     featured: true,
@@ -62,7 +62,7 @@ export const monthlyPlans: Plan[] = [
     features: [
       'Account setup or full audit',
       'Keywords, negatives and ads per service',
-      'Bids and budgets managed weekly',
+      'Bids and budgets reviewed twice a month',
       'Call and conversion tracking',
       'Storm-season budget plan',
       'Monthly report and a call',
@@ -153,7 +153,7 @@ export const comparison: { label: string; values: [boolean | string, boolean | s
   { label: 'Landing pages for ads', values: [false, true, '1 to start'] },
   { label: 'Call and form tracking', values: [true, true, true] },
   { label: 'Monthly report and call', values: [true, true, true] },
-  { label: 'Support reply time', values: ['1 business day', 'Same day', '1 business day'] },
+  { label: 'Support reply time', values: ['1 business day', 'Priority, 1 business day', '1 business day'] },
 ];
 
 export const pricingFaqs = [
