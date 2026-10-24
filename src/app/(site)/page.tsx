@@ -151,6 +151,20 @@ const faqs = [
   },
 ];
 
+// Short proof lines for the client cards under the hero.
+const clientHighlight: Record<string, { value: string; label: string }> = {
+  'tree-jaws': { value: '1,010', label: 'tracked leads from Google Ads' },
+  'mahalo-tree-service': { value: '100', label: 'Lighthouse SEO, $0 on ads' },
+  'care-trans': { value: '11.2%', label: 'of visitors picked up the phone' },
+  'eric-dental-centar': { value: '60', label: 'pages in three languages' },
+};
+
+const clientProof = [
+  { value: '1,000+', label: 'Tracked leads' },
+  { value: '4.9–5.0★', label: 'Client Google ratings' },
+  { value: '2', label: 'Countries' },
+];
+
 const primaryButton =
   'group inline-flex items-center justify-center gap-2 rounded-full bg-lime px-6 py-3.5 font-semibold text-forest-950 shadow-glow transition duration-300 hover:-translate-y-0.5 hover:bg-lime-dark';
 
@@ -222,49 +236,65 @@ export default function HomePage() {
       </section>
 
       {/* Clients */}
-      <section className="hairline-bottom relative bg-white py-14 sm:py-16">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <Reveal>
-            <div className="flex items-center gap-4">
-              <span className="h-px flex-1 bg-gradient-to-r from-transparent to-zinc-200" aria-hidden />
-              <p className="text-center font-mono text-[11px] font-medium tracking-[0.16em] text-zinc-500 uppercase">
-                Growing with local companies like
-              </p>
-              <span className="h-px flex-1 bg-gradient-to-l from-transparent to-zinc-200" aria-hidden />
-            </div>
-          </Reveal>
-          <Reveal
-            variant="fade"
-            delay={120}
-            className="group/marquee relative mt-8 overflow-hidden rounded-2xl border border-zinc-200/80 bg-white shadow-soft [mask-image:linear-gradient(to_right,transparent,#000_10%,#000_90%,transparent)]"
-          >
-            {/* Two identical halves, so sliding by -50% loops without a seam. */}
-            <ul className="flex w-max animate-marquee items-stretch group-hover/marquee:[animation-play-state:paused]">
-              {[0, 1, 2, 3].map((copy) =>
-                caseStudies.map((c) => (
-                  <li key={`${copy}-${c.slug}`} aria-hidden={copy > 0 || undefined} className="border-r border-zinc-100">
-                    <Link
-                      href={`/work/${c.slug}`}
-                      tabIndex={copy > 0 ? -1 : undefined}
-                      aria-label={`${c.client} case study`}
-                      className="group flex h-24 w-32 items-center justify-center px-3 transition duration-300 hover:bg-zinc-50/80 sm:h-32 sm:w-64 sm:px-6"
-                    >
-                      <Image
-                        src={`/clients/${c.slug}.webp`}
-                        alt={copy > 0 ? '' : c.client}
-                        width={332}
-                        height={160}
-                        className="h-14 w-auto max-w-full object-contain transition duration-500 ease-out group-hover:scale-110 sm:h-20"
-                      />
-                    </Link>
-                  </li>
-                )),
-              )}
-            </ul>
-          </Reveal>
-          <p className="mt-5 text-center font-mono text-[11px] tracking-wide text-zinc-400 uppercase">
-            Tree services · Medical transport · Dental care · USA and Serbia
-          </p>
+      <section className="hairline-bottom relative overflow-hidden bg-white py-16 sm:py-20">
+        <div className="dot-grid pointer-events-none absolute inset-0 opacity-60 [mask-image:radial-gradient(ellipse_60%_80%_at_50%_0%,#000,transparent)]" aria-hidden />
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="flex flex-col items-center justify-between gap-6 text-center lg:flex-row lg:items-end lg:text-left">
+            <Reveal>
+              <p className="font-mono text-[11px] font-medium tracking-[0.16em] text-forest-700 uppercase">Growing with local companies like</p>
+              <h2 className="mt-3 max-w-xl font-display text-2xl text-balance text-forest-950 sm:text-3xl">
+                Real businesses, real numbers, measured by our own tracking
+              </h2>
+            </Reveal>
+            <Reveal delay={100}>
+              <dl className="flex divide-x divide-zinc-200 rounded-2xl border border-zinc-200/80 bg-white/80 shadow-soft backdrop-blur">
+                {clientProof.map((p) => (
+                  <div key={p.label} className="flex flex-col-reverse px-4 py-3 sm:px-6">
+                    <dt className="font-mono text-[10px] tracking-wide text-zinc-500 uppercase">{p.label}</dt>
+                    <dd className="font-display text-xl text-forest-950 sm:text-2xl">{p.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </Reveal>
+          </div>
+
+          <ul className="mt-10 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
+            {caseStudies.map((c, i) => (
+              <Reveal as="li" key={c.slug} delay={i * 90}>
+                <Link
+                  href={`/work/${c.slug}`}
+                  className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-zinc-200/80 bg-white shadow-soft transition duration-300 hover:-translate-y-1.5 hover:border-forest-200 hover:shadow-lift"
+                >
+                  <span
+                    className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-lime to-transparent opacity-0 transition duration-500 group-hover:opacity-100"
+                    aria-hidden
+                  />
+                  <div className="relative flex h-28 items-center justify-center bg-gradient-to-b from-zinc-50 to-white px-5 sm:h-36">
+                    <Image
+                      src={`/clients/${c.slug}.webp`}
+                      alt={c.client}
+                      width={332}
+                      height={160}
+                      className="h-14 w-auto max-w-full object-contain transition duration-500 ease-out group-hover:scale-110 sm:h-20"
+                    />
+                  </div>
+                  <div className="flex flex-1 flex-col border-t border-zinc-100 p-4 sm:p-5">
+                    <p className="font-mono text-[10px] tracking-wide text-zinc-500 uppercase">
+                      {c.sector} · {c.location.split(',')[0]}
+                    </p>
+                    <p className="mt-2 font-display text-2xl text-forest-700 sm:text-3xl">
+                      <CountUp value={clientHighlight[c.slug].value} />
+                    </p>
+                    <p className="mt-0.5 text-xs leading-snug text-zinc-600 sm:text-sm">{clientHighlight[c.slug].label}</p>
+                    <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-forest-800 sm:text-sm">
+                      Case study
+                      <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" aria-hidden />
+                    </span>
+                  </div>
+                </Link>
+              </Reveal>
+            ))}
+          </ul>
         </div>
       </section>
 
