@@ -9,25 +9,62 @@
   --color-forest-900: #0b3326;
   --color-forest-800: #114632;
   --color-forest-700: #175c41;
+  --color-forest-600: #1f7552;
+  --color-forest-200: #c9dfd2;
   --color-forest-100: #e3efe8;
   --color-forest-50: #f3f8f4;
   --color-lime: #c5f24a;
   --color-lime-dark: #a8d82c;
   --color-brand: var(--color-forest-700);
+
+  /* Layered, green-tinted shadows: soft at rest, a little deeper on hover. */
+  --shadow-soft: 0 1px 2px rgb(6 35 26 / 0.04), 0 4px 16px -6px rgb(6 35 26 / 0.08);
+  --shadow-lift: 0 2px 4px rgb(6 35 26 / 0.04), 0 18px 40px -16px rgb(6 35 26 / 0.22);
+  --shadow-float: 0 4px 8px rgb(6 35 26 / 0.06), 0 30px 60px -20px rgb(6 35 26 / 0.35);
+  --shadow-glow: 0 0 0 1px rgb(197 242 74 / 0.4), 0 10px 30px -10px rgb(197 242 74 / 0.55);
+
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-float-slow: float 9s ease-in-out infinite;
+  --animate-pulse-dot: pulse-dot 2s ease-out infinite;
+  --animate-marquee: marquee 40s linear infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-dot {
+  0% {
+    box-shadow: 0 0 0 0 rgb(197 242 74 / 0.6);
+  }
+  100% {
+    box-shadow: 0 0 0 10px rgb(197 242 74 / 0);
+  }
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 html {
   scroll-behavior: smooth;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-}
-
 body {
   @apply bg-white text-zinc-800 antialiased;
+}
+
+::selection {
+  background: var(--color-lime);
+  color: var(--color-forest-950);
 }
 
 .grid-lines {
@@ -36,4 +73,85 @@ body {
     linear-gradient(to bottom, rgb(255 255 255 / 0.06) 1px, transparent 1px);
   background-size: 56px 56px;
   mask-image: radial-gradient(ellipse at 30% 30%, #000 25%, transparent 75%);
+}
+
+.dot-grid {
+  background-image: radial-gradient(rgb(23 92 65 / 0.12) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* A thin gradient frame that brightens on hover. */
+.ring-gradient {
+  position: relative;
+}
+.ring-gradient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(140deg, rgb(197 242 74 / 0.55), rgb(255 255 255 / 0.06) 40%, rgb(255 255 255 / 0.06) 60%, rgb(197 242 74 / 0.25));
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.text-gradient {
+  background: linear-gradient(100deg, #d9fb6e, var(--color-lime) 45%, #8fd14f);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Scroll reveal. Content is hidden only once JavaScript has marked the page,
+   so without it (and for crawlers) everything stays visible. */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.js [data-reveal="fade"] {
+  transform: none;
+}
+.js [data-reveal="scale"] {
+  transform: scale(0.96);
+}
+.js [data-reveal][data-visible] {
+  opacity: 1;
+  transform: none;
+}
+
+/* FAQ: animate the answer open. */
+.faq-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s ease;
+}
+details[open] .faq-body {
+  grid-template-rows: 1fr;
+}
+.faq-body > div {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .js [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
 }

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Bricolage_Grotesque, Inter } from 'next/font/google';
 import { Header } from '@/components/site/Header';
 import { Footer } from '@/components/site/Footer';
+import { RevealObserver } from '@/components/site/RevealObserver';
 import { site } from '@/content/site';
 import './site.css';
 
@@ -21,8 +22,13 @@ export const metadata: Metadata = {
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${display.variable}`}>
+    <html lang="en" className={`${inter.variable} ${display.variable}`} suppressHydrationWarning>
+      <head>
+        {/* Lets the scroll animations hide content only when they can also show it. */}
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+      </head>
       <body className="min-h-screen">
+        <RevealObserver />
         <Header />
         <main>{children}</main>
         <Footer />
