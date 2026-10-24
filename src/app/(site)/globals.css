@@ -2,9 +2,38 @@
 
 @theme inline {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --color-brand: var(--color-green-600);
+  --font-display: var(--font-bricolage), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  /* Forest green for surfaces and text, lime for the one action on screen. */
+  --color-forest-950: #06231a;
+  --color-forest-900: #0b3326;
+  --color-forest-800: #114632;
+  --color-forest-700: #175c41;
+  --color-forest-100: #e3efe8;
+  --color-forest-50: #f3f8f4;
+  --color-lime: #c5f24a;
+  --color-lime-dark: #a8d82c;
+  --color-brand: var(--color-forest-700);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 body {
   @apply bg-white text-zinc-800 antialiased;
+}
+
+.grid-lines {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.06) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse at 30% 30%, #000 25%, transparent 75%);
 }
