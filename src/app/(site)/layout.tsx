@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { Header } from '@/components/site/Header';
+import { BackToTop } from '@/components/site/BackToTop';
 import { Footer } from '@/components/site/Footer';
 import { RevealObserver } from '@/components/site/RevealObserver';
 import { site } from '@/content/site';
@@ -32,6 +33,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
         <Header />
         <main>{children}</main>
         <Footer />
+        <BackToTop />
         {/* Our own collector: page views and call clicks on webtano.com land in the admin like any client site. */}
         <script src="/leads.js" data-site-key={site.leadsSiteKey} defer />
       </body>

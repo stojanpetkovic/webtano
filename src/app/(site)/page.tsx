@@ -14,6 +14,7 @@ import {
   Phone,
   SearchX,
   ShieldCheck,
+  Star,
   Target,
   Wallet,
   Zap,
@@ -901,30 +902,77 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Final CTA */}
-      <section className="bg-white py-24 sm:py-32">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <Reveal variant="scale">
-            <div className="bg-spotlight relative overflow-hidden rounded-[2rem] px-6 py-16 text-center text-white shadow-float ring-1 ring-white/10 sm:py-24">
-              <div className="grid-lines pointer-events-none absolute inset-0" aria-hidden />
-              <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-lime/50 to-transparent" aria-hidden />
-              <h2 className="relative mx-auto max-w-2xl font-display text-3xl text-balance md:text-5xl md:leading-[1.05]">
-                The company that shows up first gets the call. Let’s make that <span className="text-gradient">you</span>.
-              </h2>
-              <p className="relative mx-auto mt-5 max-w-xl text-lg text-white/70">
-                The check is free. The worst case: you learn exactly what loses you customers and what to fix first.
-              </p>
-              <div className="relative mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <Link href="#hero-form" className={primaryButton}>
-                  Get my free website check
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
-                </Link>
-                <Link
-                  href="/work"
-                  className="inline-flex items-center justify-center rounded-full border border-white/20 px-6 py-3.5 font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-white/10"
-                >
-                  See our work
-                </Link>
+      {/* Final CTA: the dark band runs straight into the footer. */}
+      <section className="bg-final relative overflow-hidden text-white">
+        <div className="grid-lines pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_70%_80%_at_50%_30%,#000,transparent)]" aria-hidden />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-lime/50 to-transparent" aria-hidden />
+        <div className="final-orb pointer-events-none absolute -top-40 left-1/2 h-[34rem] w-[34rem] -translate-x-1/2 rounded-full" aria-hidden />
+        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 py-24 sm:px-6 sm:py-32 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
+          <Reveal>
+            <p className="inline-flex items-center gap-2 rounded-full bg-white/[0.04] px-3 py-1 font-mono text-[11px] font-medium tracking-[0.14em] text-lime uppercase ring-1 ring-white/12">
+              <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-lime" aria-hidden />
+              Taking new clients, one per area
+            </p>
+            <h2 className="mt-5 font-display text-4xl text-balance md:text-[3.5rem] md:leading-[1.02]">
+              The company that shows up first gets the call. Let’s make that <span className="text-gradient">you</span>.
+            </h2>
+            <p className="mt-5 max-w-xl text-lg text-white/70">
+              The check is free. The worst case: you learn exactly what loses you customers and what to fix first.
+            </p>
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+              <Link href="#hero-form" className={primaryButton}>
+                Get my free website check
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
+              </Link>
+              <Link
+                href="/work"
+                className="inline-flex items-center justify-center rounded-full border border-white/20 px-6 py-3.5 font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-white/10"
+              >
+                See our work
+              </Link>
+            </div>
+            <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/60">
+              {['No obligation', 'One fixed price', 'You own everything'].map((t) => (
+                <li key={t} className="flex items-center gap-1.5">
+                  <Check className="h-4 w-4 text-lime" aria-hidden />
+                  {t}
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+
+          <Reveal variant="scale" delay={120}>
+            <div className="ring-gradient rounded-3xl bg-white/[0.04] p-6 backdrop-blur sm:p-7">
+              <p className="font-mono text-[10px] tracking-[0.14em] text-white/45 uppercase">What happens after you send the form</p>
+              <ol className="mt-5 space-y-5">
+                {[
+                  ['Today', 'You send the form', 'Name, email and your website. It takes a minute.'],
+                  ['Within 1 business day', 'We review your site', 'Speed, search and your top local competitors, checked by a person.'],
+                  ['Then', 'You get a clear answer', 'What holds you back, what to fix first, and one fixed price if you want our help.'],
+                ].map(([when, title, text], i) => (
+                  <li key={title} className="relative flex gap-4">
+                    {i < 2 && <span className="absolute top-9 bottom-[-1.25rem] left-[0.9rem] w-px bg-white/10" aria-hidden />}
+                    <span className="relative flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-lime font-mono text-[11px] font-semibold text-forest-950">
+                      {i + 1}
+                    </span>
+                    <div>
+                      <p className="font-mono text-[10px] tracking-wide text-lime/80 uppercase">{when}</p>
+                      <p className="mt-0.5 font-semibold text-white">{title}</p>
+                      <p className="mt-1 text-sm leading-relaxed text-white/60">{text}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+              <div className="mt-6 flex items-center gap-3 rounded-2xl bg-white/[0.04] p-3.5 ring-1 ring-white/10">
+                <span className="flex gap-0.5 text-amber-400" aria-hidden>
+                  {[0, 1, 2, 3, 4].map((k) => (
+                    <Star key={k} className="h-3.5 w-3.5 fill-current" />
+                  ))}
+                </span>
+                <p className="text-xs text-white/65">
+                  Our clients on Google: <span className="font-semibold text-white">Tree Jaws 4.9</span> from 427 reviews,{' '}
+                  <span className="font-semibold text-white">Mahalo 5.0</span>
+                </p>
               </div>
             </div>
           </Reveal>
