@@ -312,8 +312,8 @@ export default function HomePage() {
       </section>
 
       {/* Problem */}
-      <section className="relative overflow-hidden bg-white py-24 sm:py-32">
-        <div className="dot-grid pointer-events-none absolute inset-x-0 top-0 h-72 [mask-image:radial-gradient(ellipse_60%_100%_at_50%_0%,#000,transparent)]" aria-hidden />
+      <section className="bg-leaks relative overflow-hidden py-24 sm:py-32">
+        <div className="grid-lines-light pointer-events-none absolute inset-0 opacity-70 [mask-image:radial-gradient(ellipse_70%_60%_at_50%_55%,#000_20%,transparent_75%)]" aria-hidden />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <div className="grid items-end gap-8 lg:grid-cols-[1.15fr_0.85fr]">
             <Reveal>
