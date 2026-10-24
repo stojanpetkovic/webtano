@@ -14,11 +14,9 @@ import {
   SearchX,
   ShieldCheck,
   Target,
-  TrendingUp,
   Wallet,
   Zap,
 } from 'lucide-react';
-import { CaseCard } from '@/components/site/CaseCard';
 import { CheckForm } from '@/components/site/CheckForm';
 import { CountUp } from '@/components/site/CountUp';
 import { Reveal } from '@/components/site/Reveal';
@@ -183,7 +181,7 @@ export default function HomePage() {
             </Reveal>
             <Reveal delay={240}>
               <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
-                <Link href="#check" className={`${primaryButton} w-full sm:w-auto`}>
+                <Link href="#hero-form" className={`${primaryButton} w-full sm:w-auto`}>
                   Get a free website check
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
                 </Link>
@@ -213,47 +211,22 @@ export default function HomePage() {
             </dl>
           </div>
 
-          <Reveal variant="scale" delay={200} className="relative mx-auto w-full max-w-md lg:max-w-none">
+          <Reveal variant="scale" delay={200} className="relative mx-auto w-full max-w-lg lg:max-w-none">
             <div className="pointer-events-none absolute -inset-12 rounded-full bg-forest-600/30 blur-3xl" aria-hidden />
-            <div className="relative animate-float-slow">
-              <div className="overflow-hidden rounded-2xl border border-white/15 bg-white shadow-float shadow-black/50">
-                <div className="flex items-center gap-1.5 border-b border-zinc-200 bg-zinc-50 px-4 py-2.5" aria-hidden>
-                  <span className="h-2.5 w-2.5 rounded-full bg-zinc-300" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-zinc-300" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-zinc-300" />
-                  <span className="ml-3 flex-1 truncate rounded-md bg-white px-3 py-1 text-[11px] text-zinc-400 ring-1 ring-zinc-200">
-                    webtano.com/report
-                  </span>
-                </div>
-                <Image
-                  src="/work/report-example.webp"
-                  alt="An example monthly report: visitors, inquiries, calls, conversion rate, a daily chart and where visitors come from."
-                  width={1323}
-                  height={1568}
-                  priority
-                  sizes="(min-width: 1024px) 28rem, 90vw"
-                  className="h-auto w-full"
-                />
-              </div>
-            </div>
-            <div className="absolute -bottom-6 -left-3 animate-float rounded-2xl border border-forest-100 bg-white/95 p-4 text-forest-950 shadow-lift backdrop-blur sm:-left-10">
-              <p className="flex items-center gap-2.5 text-sm font-semibold">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-forest-700 text-lime">
-                  <Phone className="h-4 w-4" aria-hidden />
-                </span>
-                New call from Google Ads
-              </p>
-              <p className="mt-1.5 pl-[2.6rem] text-xs text-zinc-500">Every lead, the second it happens</p>
+            <div className="relative">
+              <CheckForm compact />
             </div>
             <div
-              className="absolute -top-5 -right-2 animate-float rounded-2xl border border-forest-100 bg-white/95 px-4 py-3 text-forest-950 shadow-lift backdrop-blur [animation-delay:-3s] sm:-right-6"
+              className="absolute -top-5 -right-2 hidden animate-float rounded-2xl border border-white/10 bg-forest-900/90 px-4 py-3 text-white shadow-lift backdrop-blur [animation-delay:-3s] sm:block lg:-right-8"
               aria-hidden
             >
               <p className="flex items-center gap-2 text-sm font-semibold">
-                <TrendingUp className="h-4 w-4 text-forest-700" />
-                +36% enquiries
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-lime text-forest-950">
+                  <Phone className="h-3.5 w-3.5" />
+                </span>
+                New call from Google Ads
               </p>
-              <p className="text-xs text-zinc-500">vs. previous month (demo)</p>
+              <p className="mt-1 pl-9 font-mono text-[10px] tracking-wide text-white/55 uppercase">Tracked the second it happens</p>
             </div>
           </Reveal>
         </div>
@@ -379,14 +352,79 @@ export default function HomePage() {
               lead="Every figure below comes from the client’s own lead tracking or ad account, not from a mock-up."
             />
           </Reveal>
-          <div className="mt-14 grid gap-7 md:grid-cols-2">
-            {caseStudies.map((c, i) => (
-              <Reveal key={c.slug} delay={(i % 2) * 110}>
-                <CaseCard item={c} />
-              </Reveal>
-            ))}
+          <div className="mt-16 space-y-20 sm:space-y-28">
+            {caseStudies.map((c, i) => {
+              const metrics = [c.headline, ...c.stats.slice(0, 2)];
+              const shot = c.shots[0];
+              return (
+                <article key={c.slug} className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+                  <Reveal variant="scale" className={i % 2 ? 'lg:order-2' : undefined}>
+                    <Link
+                      href={`/work/${c.slug}`}
+                      className="group relative block overflow-hidden rounded-3xl border border-zinc-200/80 bg-white shadow-float transition duration-500 hover:-translate-y-1"
+                      aria-label={`${c.client} case study`}
+                    >
+                      <div className="flex items-center gap-1.5 border-b border-zinc-200 bg-zinc-50 px-4 py-2.5" aria-hidden>
+                        <span className="h-2.5 w-2.5 rounded-full bg-zinc-300" />
+                        <span className="h-2.5 w-2.5 rounded-full bg-zinc-300" />
+                        <span className="h-2.5 w-2.5 rounded-full bg-zinc-300" />
+                        <span className="ml-3 truncate rounded-md bg-white px-3 py-0.5 text-[11px] text-zinc-500 ring-1 ring-zinc-200">
+                          {c.url.replace(/^https?:\/\//, '')}
+                        </span>
+                      </div>
+                      <div className="relative aspect-[16/10] overflow-hidden">
+                        <Image
+                          src={shot.src}
+                          alt={shot.alt}
+                          fill
+                          sizes="(min-width: 1024px) 34rem, 100vw"
+                          className="object-cover object-top transition duration-[1.2s] ease-out group-hover:scale-[1.04]"
+                        />
+                      </div>
+                    </Link>
+                  </Reveal>
+                  <div>
+                    <Reveal>
+                      <p className="font-mono text-[11px] font-medium tracking-[0.14em] text-forest-700 uppercase">
+                        {String(i + 1).padStart(2, '0')} · {c.sector} · {c.location}
+                      </p>
+                      <h3 className="mt-3 font-display text-3xl text-forest-950 sm:text-4xl">{c.client}</h3>
+                      <p className="mt-3 text-lg leading-relaxed text-zinc-600">{c.summary}</p>
+                    </Reveal>
+                    <dl className="mt-8 grid grid-cols-3 divide-x divide-zinc-200 border-y border-zinc-200">
+                      {metrics.map((m, j) => (
+                        <Reveal key={m.label} delay={j * 100} className="flex flex-col-reverse px-3 py-5 first:pl-0 sm:px-5">
+                          <dt className="mt-1.5 text-xs leading-snug text-zinc-500 sm:text-sm">{m.label}</dt>
+                          <dd className="font-display text-3xl text-forest-700 sm:text-[2.6rem] sm:leading-none">
+                            <CountUp value={m.value} />
+                          </dd>
+                        </Reveal>
+                      ))}
+                    </dl>
+                    <Reveal delay={200}>
+                      <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3">
+                        <Link
+                          href={`/work/${c.slug}`}
+                          className="group inline-flex items-center gap-2 rounded-full bg-forest-950 px-5 py-3 text-sm font-semibold text-white shadow-soft transition duration-300 hover:-translate-y-0.5 hover:bg-forest-800 hover:shadow-lift"
+                        >
+                          View case study
+                          <ArrowRight className="h-4 w-4 text-lime transition-transform group-hover:translate-x-1" aria-hidden />
+                        </Link>
+                        <ul className="flex flex-wrap gap-2">
+                          {c.services.slice(0, 3).map((sv) => (
+                            <li key={sv} className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-600">
+                              {sv}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </Reveal>
+                  </div>
+                </article>
+              );
+            })}
           </div>
-          <Reveal className="mt-12 text-center">
+          <Reveal className="mt-20 text-center">
             <Link
               href="/work"
               className="group inline-flex items-center gap-2 rounded-full border border-forest-200 bg-white px-5 py-3 font-semibold text-forest-800 shadow-soft transition duration-300 hover:-translate-y-0.5 hover:border-forest-700 hover:shadow-lift"
