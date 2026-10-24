@@ -322,22 +322,15 @@ body {
   }
 }
 
-/* Results: a quiet light canvas with soft light behind the case cards, and
-   the dark stage each site's screenshot sits on. */
+/* Results: a quiet light canvas with soft light behind the case cards. */
 .bg-results {
   background:
     radial-gradient(45% 35% at 0% 30%, rgb(1 175 233 / 0.12), transparent 70%),
     radial-gradient(45% 35% at 100% 65%, rgb(37 99 235 / 0.1), transparent 70%),
     radial-gradient(60% 30% at 50% 100%, rgb(1 175 233 / 0.08), transparent 70%),
-linear-gradient(180deg, rgb(5 6 10 / 0.06), transparent 9rem),
+    linear-gradient(180deg, rgb(5 6 10 / 0.06), transparent 9rem),
     linear-gradient(0deg, rgb(5 6 10 / 0.035), transparent 9rem),
     linear-gradient(180deg, #ffffff 0%, #f5f8fc 50%, #f3f6fa 100%);
-}
-.case-stage {
-  background:
-    radial-gradient(70% 60% at 50% 0%, rgb(1 175 233 / 0.16), transparent 70%),
-    radial-gradient(60% 60% at 0% 100%, rgb(37 99 235 / 0.45), transparent 70%),
-    linear-gradient(160deg, #0f1c3d, var(--color-ink-975));
 }
 
 /* How we work: light pooling behind the statement on the left. */
