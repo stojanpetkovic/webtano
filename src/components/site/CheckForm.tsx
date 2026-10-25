@@ -28,9 +28,9 @@ const label = 'text-sm font-medium text-zinc-800 max-md:text-[15px]';
 // Service chips: 44px touch targets on phones.
 const chip =
   'inline-block rounded-full border border-zinc-300 px-3.5 py-1.5 text-sm text-zinc-700 transition hover:border-azure-600 hover:text-ink-800 peer-checked:border-azure-700 peer-checked:bg-azure-700 peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-azure-700/40 max-md:flex max-md:min-h-11 max-md:items-center max-md:border-transparent max-md:bg-[#f2f2f7] max-md:px-4 max-md:text-[15px] max-md:font-medium max-md:peer-checked:bg-azure-700';
-// The compact form's chips fill four equal columns, so they always sit on one line.
+// The compact form's chips fill equal columns: a 2 x 2 grid on phones, one row of four from tablets up.
 const chipRow =
-  "flex! h-full min-h-10 w-full items-center justify-center px-1! text-center tracking-[-0.01em] text-[clamp(10.5px,3.25vw,13px)]! leading-tight whitespace-nowrap max-md:min-h-11 max-md:font-medium";
+  'flex! h-full min-h-10 w-full items-center justify-center px-1! text-center leading-tight whitespace-nowrap md:tracking-[-0.01em] md:text-[clamp(10.5px,3.25vw,13px)]! max-md:min-h-12 max-md:px-2! max-md:font-medium';
 // The send button: a full width, 54px app button on phones.
 const submit = 'max-md:min-h-[54px] max-md:rounded-2xl max-md:text-[17px] max-md:shadow-none max-md:hover:translate-y-0';
 
@@ -124,13 +124,14 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
           <legend className={label}>
           What do you need? <span className="font-normal text-zinc-500">Pick all that apply.</span>
         </legend>
-          {/* Four chips in one row at every width: equal columns, shorter labels, smaller text. */}
-          <div className="mt-2 grid grid-cols-4 gap-1 min-[375px]:gap-1.5 sm:gap-2">
+          {/* Two even rows on phones, one row of four with shorter labels on larger screens. */}
+          <div className="mt-2 grid grid-cols-2 gap-2 md:grid-cols-4">
             {SERVICES.slice(0, 4).map((s, i) => (
               <label key={s.value} className="min-w-0 cursor-pointer">
                 <input type="checkbox" name="service" value={s.value} defaultChecked={i === 0} className="peer sr-only" />
                 <span className={`${chip} ${chipRow}`}>
-                  {'short' in s ? s.short : s.label}
+                  <span className="md:hidden">{s.label}</span>
+                  <span className="max-md:hidden">{'short' in s ? s.short : s.label}</span>
                 </span>
               </label>
             ))}
