@@ -1,9 +1,10 @@
 'use server';
 
 import { redirect } from 'next/navigation';
-import { refresh } from 'next/cache';
+import { refresh, revalidatePath } from 'next/cache';
 import { db } from '@/lib/admin/supabase';
 import { PROPOSAL_STATUS, STAGE_LABEL } from '@/lib/admin/crm/labels';
+import { PRICED_PATHS } from '@/lib/pricing';
 import type { DealStage, TaskStatus } from '@/lib/admin/crm/types';
 
 const UUID = /^[0-9a-f-]{36}$/;
@@ -326,6 +327,9 @@ export async function deleteTask(form: FormData) {
 
 /* ── Price list ────────────────────────────────────────────────────────── */
 
+// The site shows prices from the price list, so it is rebuilt after each change.
+const refreshSitePrices = () => PRICED_PATHS.forEach((path) => revalidatePath(path));
+
 async function lastItemPosition() {
   const { data } = await db().from('crm_items').select('position').order('position', { ascending: false }).limit(1).maybeSingle<{ position: number }>();
   return Number(data?.position ?? 0);
@@ -344,6 +348,7 @@ export async function saveItem(form: FormData) {
   };
   if (itemId) await db().from('crm_items').update(values).eq('id', itemId);
   else await db().from('crm_items').insert({ ...values, position: (await lastItemPosition()) + 10 });
+  refreshSitePrices();
   redirect('/admin/crm/items?notice=saved');
 }
 
@@ -373,6 +378,7 @@ export async function moveItem(form: FormData) {
 export async function deleteItem(form: FormData) {
   const itemId = id(form);
   if (itemId) await db().from('crm_items').delete().eq('id', itemId);
+  refreshSitePrices();
   redirect('/admin/crm/items?notice=deleted');
 }
 

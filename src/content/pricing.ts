@@ -1,5 +1,6 @@
-// Prices shown on /pricing, in US dollars. Change a number here and the page,
-// its comparison table and its structured data all follow.
+// Plans shown on /pricing, in US dollars. The prices here are the fallback: the
+// live prices come from the admin price list (Cenovnik) through livePricing() in
+// src/lib/pricing.ts, matched by id. Names, features and notes stay here.
 
 export interface Plan {
   id: string;
@@ -127,11 +128,21 @@ export const websitePlans: Plan[] = [
   },
 ];
 
-export const addOns = [
-  { name: 'Hosting and care', price: '$99/mo', text: 'Hosting in your name, updates, backups, uptime monitoring and small edits.' },
-  { name: 'Local Services Ads', price: '$300/mo', text: 'Setup and management of Google’s pay-per-lead ads, with lead disputes handled for you.' },
-  { name: 'Extra articles', price: '$350 each', text: 'Researched blog articles written for your market, with images and FAQs.' },
-  { name: 'Extra pages', price: '$250 each', text: 'Additional service or location pages, written and designed to match your site.' },
+export interface AddOn {
+  /** Matches the slug of the item in the admin price list (Cenovnik). */
+  id: string;
+  name: string;
+  price: number;
+  /** Shown after the price: "/mo" or " each". */
+  per: '/mo' | ' each';
+  text: string;
+}
+
+export const addOns: AddOn[] = [
+  { id: 'hosting', name: 'Hosting and care', price: 99, per: '/mo', text: 'Hosting in your name, updates, backups, uptime monitoring and small edits.' },
+  { id: 'local-services-ads', name: 'Local Services Ads', price: 300, per: '/mo', text: 'Setup and management of Google’s pay-per-lead ads, with lead disputes handled for you.' },
+  { id: 'extra-article', name: 'Extra articles', price: 350, per: ' each', text: 'Researched blog articles written for your market, with images and FAQs.' },
+  { id: 'extra-page', name: 'Extra pages', price: 250, per: ' each', text: 'Additional service or location pages, written and designed to match your site.' },
 ];
 
 /** What every client gets, whatever they buy. */

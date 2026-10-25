@@ -29,7 +29,7 @@ import { SwipeRow } from '@/components/site/SwipeRow';
 import { SectionHeading } from '@/components/site/Section';
 import { AdsVisual, LeadsVisual, SearchVisual, SpeedVisual } from '@/components/site/ServiceVisuals';
 import { caseStudies } from '@/content/work';
-import { monthlyPlans, websitePlans } from '@/content/pricing';
+import { livePricing, type Pricing } from '@/lib/pricing';
 import { AreaVisual, NumbersVisual, OwnershipVisual, RingingPhone } from '@/components/site/PromiseVisuals';
 
 const heroStats = [
@@ -162,34 +162,36 @@ const steps = [
 ];
 
 const usd = (n: number) => `$${n.toLocaleString('en-US')}`;
-const planPrice = (id: string) => monthlyPlans.find((p) => p.id === id)?.price ?? 0;
-
-const faqs = [
-  {
-    q: 'How much does it cost?',
-    a: `Websites start at ${usd(websitePlans[0].price)} as one fixed price. Google Ads management starts at ${usd(planPrice('google-ads'))} a month and local SEO at ${usd(planPrice('local-seo'))}, with no setup fee and no long contract. All plans are on the pricing page.`,
-  },
-  {
-    q: 'Do you work with my competitors?',
-    a: 'No. We take one company per trade in each service area, so the pages and ads we build for you never compete with another client of ours.',
-  },
-  {
-    q: 'What happens to my current site and rankings?',
-    a: 'Your current site stays live until the new one is ready. Content and addresses move over, and old pages are redirected so nothing that ranks today gets lost.',
-  },
-  {
-    q: 'Who owns the website?',
-    a: 'You do. The domain, the code and the hosting are in your name from day one. If you ever leave, you take everything with you.',
-  },
-  {
-    q: 'Do you only work with tree services?',
-    a: 'Tree services are where most of our work is, but the same approach works for any local company that lives on phone calls: dentists, medical transport, contractors and more.',
-  },
-  {
-    q: 'How fast do you reply?',
-    a: 'Within one business day, to every enquiry.',
-  },
-];
+// The FAQ quotes today's prices from the admin price list.
+const faqList = ({ monthlyPlans, websitePlans }: Pricing) => {
+  const planPrice = (id: string) => monthlyPlans.find((p) => p.id === id)?.price ?? 0;
+  return [
+    {
+      q: 'How much does it cost?',
+      a: `Websites start at ${usd(websitePlans[0].price)} as one fixed price. Google Ads management starts at ${usd(planPrice('google-ads'))} a month and local SEO at ${usd(planPrice('local-seo'))}, with no setup fee and no long contract. All plans are on the pricing page.`,
+    },
+    {
+      q: 'Do you work with my competitors?',
+      a: 'No. We take one company per trade in each service area, so the pages and ads we build for you never compete with another client of ours.',
+    },
+    {
+      q: 'What happens to my current site and rankings?',
+      a: 'Your current site stays live until the new one is ready. Content and addresses move over, and old pages are redirected so nothing that ranks today gets lost.',
+    },
+    {
+      q: 'Who owns the website?',
+      a: 'You do. The domain, the code and the hosting are in your name from day one. If you ever leave, you take everything with you.',
+    },
+    {
+      q: 'Do you only work with tree services?',
+      a: 'Tree services are where most of our work is, but the same approach works for any local company that lives on phone calls: dentists, medical transport, contractors and more.',
+    },
+    {
+      q: 'How fast do you reply?',
+      a: 'Within one business day, to every enquiry.',
+    },
+  ];
+};
 
 // Short proof lines for the client cards under the hero.
 const clientHighlight: Record<string, { value: string; label: string }> = {
@@ -208,7 +210,11 @@ const clientProof = [
 const primaryButton =
   'group inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 font-semibold text-ink-950 shadow-glow transition duration-300 hover:-translate-y-0.5 hover:bg-accent-dark';
 
-export default function HomePage() {
+// Prices come from the admin price list; saving it refreshes this page at once.
+export const revalidate = 3600;
+
+export default async function HomePage() {
+  const faqs = faqList(await livePricing());
   return (
     <>
       {/* Hero */}

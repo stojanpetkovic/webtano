@@ -4,14 +4,22 @@ import { ArrowRight, Check, Minus, Plus, Sparkles } from 'lucide-react';
 import { FaqList } from '@/components/site/FaqList';
 import { Reveal } from '@/components/site/Reveal';
 import { SwipeRow } from '@/components/site/SwipeRow';
-import { addOns, comparison, included, monthlyPlans, pricingFaqs, websitePlans, type Plan } from '@/content/pricing';
+import { comparison, included, pricingFaqs, type Plan } from '@/content/pricing';
+import { livePricing } from '@/lib/pricing';
 import { site } from '@/content/site';
 
-export const metadata: Metadata = {
-  title: 'Pricing: websites, local SEO and Google Ads',
-  description: `Clear prices for local service companies: Google Ads from $${monthlyPlans.find((p) => p.id === 'google-ads')?.price}/mo, local SEO and websites from $${websitePlans[0].price.toLocaleString('en-US')}. No setup fees, no long contracts, every lead tracked.`,
-  alternates: { canonical: '/pricing' },
-};
+// Prices come from the admin price list; saving it refreshes this page at once,
+// and this hourly refresh is the fallback.
+export const revalidate = 3600;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { monthlyPlans, websitePlans } = await livePricing();
+  return {
+    title: 'Pricing: websites, local SEO and Google Ads',
+    description: `Clear prices for local service companies: Google Ads from $${monthlyPlans.find((p) => p.id === 'google-ads')?.price.toLocaleString('en-US')}/mo, local SEO and websites from $${websitePlans[0].price.toLocaleString('en-US')}. No setup fees, no long contracts, every lead tracked.`,
+    alternates: { canonical: '/pricing' },
+  };
+}
 
 const money = (n: number) => `$${n.toLocaleString('en-US')}`;
 
@@ -87,7 +95,8 @@ function Cell({ v, hi }: { v: boolean | string; hi: boolean }) {
   return <span className="text-sm font-medium text-ink-950">{v}</span>;
 }
 
-export default function PricingPage() {
+export default async function PricingPage() {
+  const { monthlyPlans, websitePlans, addOns } = await livePricing();
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -295,7 +304,10 @@ export default function PricingPage() {
                   <div className="min-w-0 flex-1">
                     <p className="flex flex-wrap items-baseline justify-between gap-x-4">
                       <span className="font-display font-semibold text-ink-950">{a.name}</span>
-                      <span className="font-display font-semibold text-azure-700">{a.price}</span>
+                      <span className="font-display font-semibold text-azure-700">
+                        {money(a.price)}
+                        {a.per}
+                      </span>
                     </p>
                     <p className="mt-1 text-sm leading-relaxed text-zinc-600">{a.text}</p>
                   </div>

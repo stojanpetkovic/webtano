@@ -112,6 +112,8 @@ export interface Task {
 /** A row of crm_items: something on the price list that can go into a proposal. */
 export interface CatalogItem {
   id: string;
+  /** Set on items whose price is shown on webtano.com (the plan's id in src/content/pricing.ts). */
+  slug: string | null;
   group_name: string;
   name: string;
   details: string | null;

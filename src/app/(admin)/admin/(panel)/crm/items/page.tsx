@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowDown, ArrowUp, Eye, EyeOff, Pencil, Plus, Receipt, Repeat, Trash2 } from 'lucide-react';
+import { ArrowDown, ArrowUp, Eye, EyeOff, Globe, Pencil, Plus, Receipt, Repeat, Trash2 } from 'lucide-react';
 import { BILLING, ItemIcon } from '@/components/admin/crm/ItemIcon';
 import { PageHeading } from '@/components/admin/PageHeading';
 import { ConfirmSubmit } from '@/components/admin/ConfirmSubmit';
@@ -143,6 +143,11 @@ export default async function ItemsPage({ searchParams }: { searchParams: Promis
                                   {i.name}
                                 </Link>
                                 {!i.active && <span className="badge badge-lost">Sakrivena</span>}
+                                {i.slug && (
+                                  <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-2 py-0.5 text-[10.5px] font-medium text-sky-700 ring-1 ring-accent/25 ring-inset" title="Ova cena se prikazuje na webtano.com">
+                                    <Globe className="size-3" /> Na sajtu
+                                  </span>
+                                )}
                               </div>
                               {i.details && <p className="mt-0.5 line-clamp-2 text-[13px] text-muted">{i.details}</p>}
                             </div>
@@ -191,6 +196,18 @@ export default async function ItemsPage({ searchParams }: { searchParams: Promis
               <p className="card-sub">Naziv i opis vidi klijent u PDF-u, zato ih piši na engleskom.</p>
             </div>
           </div>
+          {editing?.slug && (
+            <div className="mx-5 mt-4 flex gap-2.5 rounded-xl bg-accent/[0.07] p-3 text-[13px] text-sky-900 ring-1 ring-accent/20 ring-inset">
+              <Globe className="mt-0.5 size-4 shrink-0 text-sky-600" />
+              <span>
+                Cena ove stavke se prikazuje na{' '}
+                <a href="https://webtano.com/pricing" target="_blank" rel="noopener" className="font-medium underline">
+                  webtano.com/pricing
+                </a>
+                . Kad je sačuvaš, sajt se odmah osveži.
+              </span>
+            </div>
+          )}
           <div className="card-body space-y-4">
             <div>
               <label className="form-label" htmlFor="name">Naziv</label>
