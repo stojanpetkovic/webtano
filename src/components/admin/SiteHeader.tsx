@@ -12,7 +12,7 @@ export function SiteHeader({
   site: Site;
   current: 'overview' | 'settings' | 'report';
   /** The CRM customer this site belongs to, when it is linked. */
-  customer?: { id: string; company: string } | null;
+  customer?: { id: string; name: string } | null;
 }) {
   const tabs = [
     { key: 'overview', label: 'Pregled', icon: ChartColumn, href: `/admin/sites/${site.id}` },
@@ -39,7 +39,7 @@ export function SiteHeader({
           <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-zinc-500">
             {customer ? (
               <Link href={`/admin/crm/customers/${customer.id}`} className="inline-flex items-center gap-1 font-medium text-primary hover:underline">
-                <Users className="size-3.5" /> {customer.company}
+                <Users className="size-3.5" /> {customer.name}
               </Link>
             ) : (
               (site.client_name ?? 'Bez imena klijenta')

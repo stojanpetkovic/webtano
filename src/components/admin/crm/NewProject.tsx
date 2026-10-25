@@ -1,7 +1,7 @@
 import { Modal } from '@/components/admin/Modal';
 import { ProjectForm } from './ProjectForm';
 import { db } from '@/lib/admin/supabase';
-import type { Customer } from '@/lib/admin/crm/types';
+import type { CustomerOption } from '@/lib/admin/crm/types';
 
 /** "Novi projekat" as a pop-up, with the customer chosen when given. */
 export async function NewProject({
@@ -17,10 +17,10 @@ export async function NewProject({
   defaultOpen?: boolean;
   closeHref?: string;
 }) {
-  const { data } = await db().from('crm_customers').select('id, company').order('company');
+  const { data } = await db().from('crm_customers').select('id, company, contact_name').order('contact_name');
   return (
     <Modal label={label} title="Novi projekat" buttonClassName={buttonClassName} defaultOpen={defaultOpen} closeHref={closeHref}>
-      <ProjectForm customers={(data ?? []) as Pick<Customer, 'id' | 'company'>[]} customerId={customerId} />
+      <ProjectForm customers={(data ?? []) as CustomerOption[]} customerId={customerId} />
     </Modal>
   );
 }

@@ -9,10 +9,11 @@ import { ProjectForm } from '@/components/admin/crm/ProjectForm';
 import { TaskBoard } from '@/components/admin/crm/TaskBoard';
 import { deleteProject } from '../../actions';
 import { db } from '@/lib/admin/supabase';
+import { customerName } from '@/lib/admin/crm/labels';
 import { PROJECT_STATUS, money } from '@/lib/admin/crm/labels';
 import { formatDate } from '@/lib/admin/format';
 import { toParams } from '@/lib/admin/params';
-import type { Activity, Customer, Project, Task } from '@/lib/admin/crm/types';
+import type { Activity, CustomerOption, Project, Task } from '@/lib/admin/crm/types';
 
 export const dynamic = 'force-dynamic';
 export const metadata: Metadata = { title: 'Projekat' };
@@ -32,12 +33,12 @@ export default async function ProjectPage({
   const [{ data: tasks }, { data: activity }, { data: customers }] = await Promise.all([
     db().from('crm_tasks').select('*').eq('project_id', id).order('position'),
     db().from('crm_activity').select('*').eq('project_id', id).order('created_at', { ascending: false }),
-    db().from('crm_customers').select('id, company').order('company'),
+    db().from('crm_customers').select('id, company, contact_name').order('contact_name'),
   ]);
   const list = (tasks ?? []) as Task[];
   const done = list.filter((t) => t.status === 'done').length;
   const pct = list.length ? Math.round((done / list.length) * 100) : 0;
-  const customer = ((customers ?? []) as Pick<Customer, 'id' | 'company'>[]).find((c) => c.id === project.customer_id);
+  const customer = ((customers ?? []) as CustomerOption[]).find((c) => c.id === project.customer_id);
   const today = new Date().toISOString().slice(0, 10);
 
   return (
@@ -47,7 +48,7 @@ export default async function ProjectPage({
         crumbs={[{ label: 'WebTano CRM' }, { label: 'Projekti', href: '/admin/crm/projects' }]}
         description={
           <>
-            {customer ? <Link href={`/admin/crm/customers/${customer.id}`} className="text-primary hover:underline">{customer.company}</Link> : 'Bez klijenta'}
+            {customer ? <Link href={`/admin/crm/customers/${customer.id}`} className="text-primary hover:underline">{customerName(customer)}</Link> : 'Bez klijenta'}
             {project.deadline && ` · rok ${formatDate(project.deadline)}`}
             {project.budget != null && ` · ${money(Number(project.budget))}`}
           </>
@@ -82,7 +83,7 @@ export default async function ProjectPage({
               <span className="text-xs text-muted group-open:hidden">Otvori</span>
             </summary>
             <div className="card-body">
-              <ProjectForm project={project} customers={(customers ?? []) as Pick<Customer, 'id' | 'company'>[]} />
+              <ProjectForm project={project} customers={(customers ?? []) as CustomerOption[]} />
             </div>
           </details>
           <form action={deleteProject} className="text-right">

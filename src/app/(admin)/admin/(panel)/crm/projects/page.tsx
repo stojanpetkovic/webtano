@@ -4,7 +4,7 @@ import { CalendarDays, Plus } from 'lucide-react';
 import { PageHeading } from '@/components/admin/PageHeading';
 import { NewProject } from '@/components/admin/crm/NewProject';
 import { db } from '@/lib/admin/supabase';
-import { PROJECT_STATUS, money } from '@/lib/admin/crm/labels';
+import { PROJECT_STATUS, customerName, money } from '@/lib/admin/crm/labels';
 import { formatDate } from '@/lib/admin/format';
 import { toParams } from '@/lib/admin/params';
 import type { Project, ProjectStatus } from '@/lib/admin/crm/types';
@@ -12,12 +12,12 @@ import type { Project, ProjectStatus } from '@/lib/admin/crm/types';
 export const dynamic = 'force-dynamic';
 export const metadata: Metadata = { title: 'Projekti' };
 
-type Row = Project & { crm_customers: { company: string } | null; crm_tasks: { status: string; due_date: string | null }[] };
+type Row = Project & { crm_customers: { company: string | null; contact_name: string | null } | null; crm_tasks: { status: string; due_date: string | null }[] };
 
 export default async function ProjectsPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const query = toParams(await searchParams);
   const filter = query.get('status') ?? 'active';
-  const { data } = await db().from('crm_projects').select('*, crm_customers(company), crm_tasks(status, due_date)').order('created_at', { ascending: false });
+  const { data } = await db().from('crm_projects').select('*, crm_customers(company, contact_name), crm_tasks(status, due_date)').order('created_at', { ascending: false });
   const all = (data ?? []) as Row[];
   const activeKeys: ProjectStatus[] = ['not_started', 'in_progress', 'on_hold'];
   const rows = filter === 'all' ? all : filter === 'active' ? all.filter((p) => activeKeys.includes(p.status)) : all.filter((p) => p.status === filter);
@@ -65,7 +65,7 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <Link href={`/admin/crm/projects/${p.id}`} className="block truncate text-[15px] font-semibold text-ink after:absolute after:inset-0">{p.name}</Link>
-                    <p className="mt-0.5 truncate text-xs text-zinc-500">{p.crm_customers?.company ?? 'Bez klijenta'}</p>
+                    <p className="mt-0.5 truncate text-xs text-zinc-500">{p.crm_customers ? customerName(p.crm_customers) : 'Bez klijenta'}</p>
                   </div>
                   <span className={`badge ${PROJECT_STATUS[p.status].badge}`}>{PROJECT_STATUS[p.status].label}</span>
                 </div>

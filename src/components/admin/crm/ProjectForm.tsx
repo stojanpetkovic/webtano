@@ -1,8 +1,8 @@
 import { saveProject } from '@/app/(admin)/admin/(panel)/crm/actions';
-import { PROJECT_STATUS } from '@/lib/admin/crm/labels';
-import type { Customer, Project } from '@/lib/admin/crm/types';
+import { PROJECT_STATUS, customerName } from '@/lib/admin/crm/labels';
+import type { CustomerOption, Project } from '@/lib/admin/crm/types';
 
-export function ProjectForm({ project, customers, customerId }: { project?: Project; customers: Pick<Customer, 'id' | 'company'>[]; customerId?: string }) {
+export function ProjectForm({ project, customers, customerId }: { project?: Project; customers: CustomerOption[]; customerId?: string }) {
   return (
     <form action={saveProject} className="space-y-4">
       {project && <input type="hidden" name="id" value={project.id} />}
@@ -16,7 +16,7 @@ export function ProjectForm({ project, customers, customerId }: { project?: Proj
           <select className="form-input" id="customer_id" name="customer_id" defaultValue={project?.customer_id ?? customerId ?? ''}>
             <option value="">—</option>
             {customers.map((c) => (
-              <option key={c.id} value={c.id}>{c.company}</option>
+              <option key={c.id} value={c.id}>{customerName(c)}{c.company && c.contact_name ? ` · ${c.company}` : ''}</option>
             ))}
           </select>
         </div>

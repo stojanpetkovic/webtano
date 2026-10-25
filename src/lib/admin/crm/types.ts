@@ -7,9 +7,11 @@ export type TaskStatus = 'todo' | 'doing' | 'review' | 'done';
 export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent';
 export type ActivityKind = 'note' | 'call' | 'email' | 'meeting' | 'system';
 
+/** A customer is a person; their company and websites hang off them. */
 export interface Customer {
   id: string;
-  company: string;
+  /** Optional: the business name, also shown on proposals. */
+  company: string | null;
   contact_name: string | null;
   email: string | null;
   phone: string | null;
@@ -126,6 +128,9 @@ export interface CatalogItem {
   created_at: string;
   updated_at: string;
 }
+
+/** What a customer picker needs. */
+export type CustomerOption = Pick<Customer, 'id' | 'company' | 'contact_name'>;
 
 /** A row of crm_customer_sites: a client website that belongs to a customer. */
 export interface CustomerSite {

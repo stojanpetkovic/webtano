@@ -4,6 +4,7 @@ import { site as siteConfig } from '@/content/site';
 import { monthlyPlans, websitePlans } from '@/content/pricing';
 import type { Lead } from '../types';
 import type { Deal } from './types';
+import { customerName } from './labels';
 
 /** The sites row the webtano.com form writes to. Its leads belong to the CRM, not to the client lists. */
 export async function webtanoSiteId(): Promise<string | null> {
@@ -72,7 +73,8 @@ export async function syncDeals(): Promise<void> {
 }
 
 /** The CRM customer a client site is linked to, if any. */
-export async function siteCustomer(siteId: string): Promise<{ id: string; company: string } | null> {
-  const { data } = await db().from('crm_customer_sites').select('crm_customers(id, company)').eq('site_id', siteId).maybeSingle();
-  return ((data as unknown as { crm_customers: { id: string; company: string } | null } | null)?.crm_customers) ?? null;
+export async function siteCustomer(siteId: string): Promise<{ id: string; name: string } | null> {
+  const { data } = await db().from('crm_customer_sites').select('crm_customers(id, company, contact_name)').eq('site_id', siteId).maybeSingle();
+  const c = (data as unknown as { crm_customers: { id: string; company: string | null; contact_name: string | null } | null } | null)?.crm_customers;
+  return c ? { id: c.id, name: customerName(c) } : null;
 }

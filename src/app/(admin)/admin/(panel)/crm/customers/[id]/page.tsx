@@ -13,7 +13,7 @@ import { ServicePills } from '@/components/admin/crm/ServicePills';
 import { NewProposal } from '@/components/admin/crm/NewProposal';
 import { deleteCustomer } from '../../actions';
 import { db } from '@/lib/admin/supabase';
-import { PROJECT_STATUS, PROPOSAL_STATUS, STAGE_LABEL, money, totals } from '@/lib/admin/crm/labels';
+import { PROJECT_STATUS, PROPOSAL_STATUS, STAGE_LABEL, customerName, money, totals } from '@/lib/admin/crm/labels';
 import { formatDate } from '@/lib/admin/format';
 import { toParams } from '@/lib/admin/params';
 import type { Activity, Customer, Deal, Project, Proposal, ProposalItem } from '@/lib/admin/crm/types';
@@ -52,9 +52,9 @@ export default async function CustomerPage({
   return (
     <>
       <PageHeading
-        title={customer.company}
+        title={customerName(customer)}
         crumbs={[{ label: 'WebTano CRM' }, { label: 'Klijenti', href: '/admin/crm/customers' }]}
-        description={[customer.contact_name, customer.industry].filter(Boolean).join(' · ') || undefined}
+        description={[customer.contact_name ? customer.company : null, customer.industry].filter(Boolean).join(' · ') || undefined}
       >
         <NewProposal
           customerId={customer.id}

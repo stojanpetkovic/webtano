@@ -7,7 +7,15 @@ import { Modal } from '@/components/admin/Modal';
 import { CustomerForm } from '@/components/admin/crm/CustomerForm';
 import { ServicePills } from '@/components/admin/crm/ServicePills';
 import { db } from '@/lib/admin/supabase';
-import { money } from '@/lib/admin/crm/labels';
+import { customerName, money } from '@/lib/admin/crm/labels';
+
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase();
 import { formatDate } from '@/lib/admin/format';
 import { toParams } from '@/lib/admin/params';
 import type { Customer } from '@/lib/admin/crm/types';
@@ -22,7 +30,7 @@ export default async function CustomersPage({ searchParams }: { searchParams: Pr
   const q = (query.get('q') ?? '').trim().slice(0, 100).replace(/[%,()*\\]/g, ' ').trim();
   const requested = Math.max(1, Math.floor(Number(query.get('page')) || 1));
 
-  let list = db().from('crm_customers').select('*', { count: 'exact' }).order('company');
+  let list = db().from('crm_customers').select('*', { count: 'exact' }).order('contact_name');
   if (q) list = list.or(`company.ilike.%${q}%,contact_name.ilike.%${q}%,email.ilike.%${q}%`);
   const { data, count } = await list.range((requested - 1) * PAGE_SIZE, requested * PAGE_SIZE - 1);
   const customers = (data ?? []) as Customer[];
@@ -58,7 +66,7 @@ export default async function CustomersPage({ searchParams }: { searchParams: Pr
 
   return (
     <>
-      <PageHeading title="Klijenti" crumbs={[{ label: 'WebTano CRM' }]} description="Firme sa kojima radiš ili si radio.">
+      <PageHeading title="Klijenti" crumbs={[{ label: 'WebTano CRM' }]} description="Ljudi sa kojima radiš. Firme i sajtovi se vezuju za svakog klijenta.">
         <Modal
           label={
             <>
@@ -77,7 +85,7 @@ export default async function CustomersPage({ searchParams }: { searchParams: Pr
         <form method="get" className="flex gap-2 border-b border-line p-4">
           <div className="relative flex-1 sm:max-w-sm">
             <Search className="pointer-events-none absolute start-3.5 top-1/2 size-4 -translate-y-1/2 text-zinc-400" />
-            <input className="form-input ps-10" name="q" type="search" defaultValue={q} placeholder="Firma, kontakt ili email" aria-label="Pretraga klijenata" />
+            <input className="form-input ps-10" name="q" type="search" defaultValue={q} placeholder="Ime, firma ili email" aria-label="Pretraga klijenata" />
           </div>
           <button className="btn btn-outline" type="submit">Traži</button>
         </form>
@@ -91,9 +99,9 @@ export default async function CustomersPage({ searchParams }: { searchParams: Pr
             <table className="table">
               <thead>
                 <tr>
-                  <th>Firma</th>
+                  <th>Klijent</th>
                   <th>Usluge</th>
-                  <th>Kontakt</th>
+                  <th>Firma i kontakt</th>
                   <th className="text-right">Prihvaćene ponude</th>
                   <th className="text-right">Aktivni projekti</th>
                   <th>Status</th>
@@ -106,11 +114,11 @@ export default async function CustomersPage({ searchParams }: { searchParams: Pr
                     <td>
                       <div className="flex items-center gap-3">
                         <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-ink-800 to-ink-975 text-xs font-semibold text-white">
-                          {c.company.slice(0, 2).toUpperCase()}
+                          {initials(customerName(c))}
                         </span>
                         <div className="min-w-0">
                           <Link href={`/admin/crm/customers/${c.id}`} className="font-medium text-ink after:absolute after:inset-0 hover:text-primary">
-                            {c.company}
+                            {customerName(c)}
                           </Link>
                           <div className="text-xs text-muted">
                             {domains.get(c.id)?.length ? (
@@ -128,7 +136,7 @@ export default async function CustomersPage({ searchParams }: { searchParams: Pr
                       <ServicePills services={c.services} className="max-w-[220px]" />
                     </td>
                     <td>
-                      <div className="text-ink">{c.contact_name ?? '—'}</div>
+                      <div className="text-ink">{c.company && c.contact_name ? c.company : '—'}</div>
                       <div className="text-xs text-muted">{c.email ?? c.phone ?? ''}</div>
                     </td>
                     <td className="text-right font-semibold text-ink tabular-nums">{revenue.get(c.id) ? money(revenue.get(c.id)!) : '—'}</td>

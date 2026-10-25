@@ -1,8 +1,8 @@
 import { saveProposal } from '@/app/(admin)/admin/(panel)/crm/actions';
 import { ProposalEditor, type EditorItem, type PriceListEntry } from './ProposalEditor';
-import { PROPOSAL_STATUS } from '@/lib/admin/crm/labels';
+import { PROPOSAL_STATUS, customerName } from '@/lib/admin/crm/labels';
 import { DEFAULT_INTRO, DEFAULT_TERMS } from '@/lib/admin/crm/priceList';
-import type { Customer, Deal, Proposal, ProposalItem } from '@/lib/admin/crm/types';
+import type { CustomerOption, Deal, Proposal, ProposalItem } from '@/lib/admin/crm/types';
 
 const inDays = (n: number) => new Date(Date.now() + n * 86_400_000).toISOString().slice(0, 10);
 
@@ -17,7 +17,7 @@ export function ProposalForm({
 }: {
   proposal?: Proposal;
   items?: ProposalItem[];
-  customers: Pick<Customer, 'id' | 'company'>[];
+  customers: CustomerOption[];
   deals: Pick<Deal, 'id' | 'name' | 'company'>[];
   priceList: PriceListEntry[];
   preset?: { customer_id?: string; deal_id?: string; title?: string; items?: EditorItem[] };
@@ -41,7 +41,7 @@ export function ProposalForm({
             <select className="form-input" id="customer_id" name="customer_id" defaultValue={proposal?.customer_id ?? preset.customer_id ?? ''}>
               <option value="">—</option>
               {customers.map((c) => (
-                <option key={c.id} value={c.id}>{c.company}</option>
+                <option key={c.id} value={c.id}>{customerName(c)}{c.company && c.contact_name ? ` · ${c.company}` : ''}</option>
               ))}
             </select>
           </div>

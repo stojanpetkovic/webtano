@@ -10,7 +10,7 @@ import { db } from '@/lib/admin/supabase';
 import { PROPOSAL_STATUS } from '@/lib/admin/crm/labels';
 import { priceList } from '@/lib/admin/crm/priceList';
 import { toParams } from '@/lib/admin/params';
-import type { Customer, Deal, Proposal, ProposalItem } from '@/lib/admin/crm/types';
+import type { CustomerOption, Deal, Proposal, ProposalItem } from '@/lib/admin/crm/types';
 
 export const dynamic = 'force-dynamic';
 export const metadata: Metadata = { title: 'Ponuda' };
@@ -38,7 +38,7 @@ export default async function ProposalPage({
   const [{ data: proposal }, { data: items }, { data: customers }, { data: deals }, { data: project }] = await Promise.all([
     db().from('crm_proposals').select('*').eq('id', id).maybeSingle<Proposal>(),
     db().from('crm_proposal_items').select('*').eq('proposal_id', id).order('position'),
-    db().from('crm_customers').select('id, company').order('company'),
+    db().from('crm_customers').select('id, company, contact_name').order('contact_name'),
     db().from('crm_deals').select('id, name, company').eq('archived', false).order('created_at', { ascending: false }),
     db().from('crm_projects').select('id').eq('proposal_id', id).limit(1).maybeSingle<{ id: string }>(),
   ]);
@@ -80,7 +80,7 @@ export default async function ProposalPage({
       <ProposalForm
         proposal={proposal}
         items={(items ?? []) as ProposalItem[]}
-        customers={(customers ?? []) as Pick<Customer, 'id' | 'company'>[]}
+        customers={(customers ?? []) as CustomerOption[]}
         deals={(deals ?? []) as Pick<Deal, 'id' | 'name' | 'company'>[]}
         priceList={await priceList()}
       />

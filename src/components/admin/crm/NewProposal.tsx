@@ -2,7 +2,7 @@ import { Modal } from '@/components/admin/Modal';
 import { ProposalForm } from './ProposalForm';
 import { db } from '@/lib/admin/supabase';
 import { priceList } from '@/lib/admin/crm/priceList';
-import type { Customer, Deal } from '@/lib/admin/crm/types';
+import type { CustomerOption, Deal } from '@/lib/admin/crm/types';
 
 // What a form lead asked for, as the first line of its proposal.
 const SERVICE_ITEM: Record<string, string> = {
@@ -29,7 +29,7 @@ export async function NewProposal({
   closeHref?: string;
 }) {
   const [{ data: customers }, { data: deals }, catalog] = await Promise.all([
-    db().from('crm_customers').select('id, company').order('company'),
+    db().from('crm_customers').select('id, company, contact_name').order('contact_name'),
     db().from('crm_deals').select('*').eq('archived', false).not('stage', 'in', '(won,lost)').order('created_at', { ascending: false }),
     priceList(),
   ]);
@@ -49,7 +49,7 @@ export async function NewProposal({
     >
       <ProposalForm
         inModal
-        customers={(customers ?? []) as Pick<Customer, 'id' | 'company'>[]}
+        customers={(customers ?? []) as CustomerOption[]}
         deals={dealList}
         priceList={catalog}
         preset={{

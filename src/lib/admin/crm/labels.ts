@@ -57,6 +57,11 @@ export const SERVICES: Record<string, string> = {
   other: 'Nešto drugo',
 };
 
+/** A customer's display name: the person, else the business. */
+export function customerName(c: { contact_name?: string | null; company?: string | null }) {
+  return c.contact_name?.trim() || c.company?.trim() || 'Bez imena';
+}
+
 export function money(n: number | null | undefined, currency = 'USD') {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: n && n % 1 ? 2 : 0 }).format(n ?? 0);
 }

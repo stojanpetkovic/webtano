@@ -107,7 +107,7 @@ export async function convertDeal(form: FormData) {
     const { data: created } = await db()
       .from('crm_customers')
       .insert({
-        company: deal.company || deal.website || deal.name,
+        company: deal.company || null,
         contact_name: deal.name,
         email: deal.email,
         phone: deal.phone,
@@ -139,8 +139,8 @@ export async function addActivity(form: FormData) {
 export async function saveCustomer(form: FormData) {
   const customerId = id(form);
   const values = {
-    company: str(form, 'company', 200) ?? 'Bez naziva',
-    contact_name: str(form, 'contact_name', 200),
+    contact_name: str(form, 'contact_name', 200) ?? 'Bez imena',
+    company: str(form, 'company', 200),
     email: str(form, 'email', 200),
     phone: str(form, 'phone', 60),
     website: str(form, 'website', 200),

@@ -3,8 +3,8 @@ import { SERVICES } from '@/lib/admin/crm/labels';
 import type { Customer } from '@/lib/admin/crm/types';
 
 const fields: { name: keyof Customer; label: string; type?: string; placeholder?: string; wide?: boolean }[] = [
-  { name: 'company', label: 'Firma', placeholder: 'Turner Tree Care' },
-  { name: 'contact_name', label: 'Kontakt osoba' },
+  { name: 'contact_name', label: 'Ime i prezime', placeholder: 'Mike Turner' },
+  { name: 'company', label: 'Firma (opciono)', placeholder: 'Turner Tree Care' },
   { name: 'email', label: 'Email', type: 'email' },
   { name: 'phone', label: 'Telefon' },
   { name: 'website', label: 'Sajt', placeholder: 'firma.com' },
@@ -29,7 +29,7 @@ export function CustomerForm({ customer }: { customer?: Customer }) {
               type={f.type ?? 'text'}
               defaultValue={(customer?.[f.name] as string | null) ?? ''}
               placeholder={f.placeholder}
-              required={f.name === 'company'}
+              required={f.name === 'contact_name'}
             />
           </div>
         ))}
