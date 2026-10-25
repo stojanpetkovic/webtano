@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Globe, Plus } from 'lucide-react';
+import { Globe, Users } from 'lucide-react';
 import { PageHeading } from '@/components/admin/PageHeading';
 import { Pagination } from '@/components/admin/Pagination';
 import { Sparkline } from '@/components/admin/Sparkline';
@@ -9,7 +9,6 @@ import { timeAgo } from '@/lib/admin/format';
 import { dailySeries, daysAgo } from '@/lib/admin/stats';
 import { toParams } from '@/lib/admin/params';
 import type { Site } from '@/lib/admin/types';
-import { NewSiteForm } from './SiteForms';
 
 export const dynamic = 'force-dynamic';
 export const metadata: Metadata = { title: 'Sajtovi' };
@@ -45,9 +44,9 @@ export default async function SitesPage({ searchParams }: { searchParams: Promis
   return (
     <>
       <PageHeading title="Sajtovi" description={`${allSites.length} sajtova, ${active} aktivnih. Lidovi i posete za poslednjih 30 dana.`}>
-        <a href="#novi" className="btn btn-primary">
-          <Plus className="size-4" /> Dodaj sajt
-        </a>
+        <Link href="/admin/crm/customers" className="btn btn-outline" title="Novi sajt se dodaje kod klijenta">
+          <Users className="size-4" /> Dodaj sajt preko klijenta
+        </Link>
       </PageHeading>
       <div className="card">
         <div className="overflow-x-auto">
@@ -66,7 +65,7 @@ export default async function SitesPage({ searchParams }: { searchParams: Promis
               {sites.length === 0 && (
                 <tr>
                   <td colSpan={6} className="text-center text-muted py-8">
-                    Još nema sajtova. Dodaj prvi ispod.
+                    Još nema sajtova. Sajt se dodaje kod klijenta.
                   </td>
                 </tr>
               )}
@@ -114,8 +113,6 @@ export default async function SitesPage({ searchParams }: { searchParams: Promis
           />
         )}
       </div>
-
-      <NewSiteForm />
     </>
   );
 }

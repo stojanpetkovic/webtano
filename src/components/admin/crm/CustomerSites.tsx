@@ -1,5 +1,7 @@
 import Link from 'next/link';
-import { ExternalLink, FileText, Globe, Link2, Unlink } from 'lucide-react';
+import { ExternalLink, FileText, Globe, Link2, Plus, Unlink } from 'lucide-react';
+import { Modal } from '@/components/admin/Modal';
+import { NewSiteForm } from '@/app/(admin)/admin/(panel)/sites/SiteForms';
 import { linkSite, unlinkSite } from '@/app/(admin)/admin/(panel)/crm/actions';
 import { db } from '@/lib/admin/supabase';
 import { webtanoSiteId } from '@/lib/admin/crm/data';
@@ -8,7 +10,7 @@ import type { CustomerSite } from '@/lib/admin/crm/types';
 import type { Site } from '@/lib/admin/types';
 
 /** The customer's websites, with their last 30 days, and a picker to link another one. */
-export async function CustomerSites({ customerId }: { customerId: string }) {
+export async function CustomerSites({ customerId, customerName }: { customerId: string; customerName: string }) {
   const [{ data: links }, { data: sitesData }, webtano] = await Promise.all([
     db().from('crm_customer_sites').select('*'),
     db().from('sites').select('*').order('name'),
@@ -38,8 +40,20 @@ export async function CustomerSites({ customerId }: { customerId: string }) {
     <div className="card">
       <div className="card-header">
         <h2 className="card-title">Sajtovi</h2>
-        <span className="text-xs text-muted">{mine.length ? 'Lidovi u 30 dana' : ''}</span>
+        <Modal
+          label={
+            <>
+              <Plus className="size-3.5" /> Novi sajt
+            </>
+          }
+          buttonClassName="btn btn-sm btn-light"
+          title="Novi sajt"
+          description={`Sajt se odmah vezuje za klijenta ${customerName}.`}
+        >
+          <NewSiteForm customerId={customerId} clientName={customerName} />
+        </Modal>
       </div>
+      {mine.length > 0 && <p className="-mt-1 px-5 pb-1 text-right text-xs text-muted">Lidovi u 30 dana</p>}
       <ul className="divide-y divide-line">
         {mine.length === 0 && <li className="px-5 py-4 text-muted">Nijedan sajt nije povezan.</li>}
         {mine.map((s) => (

@@ -101,10 +101,10 @@ export default async function DashboardPage() {
         <div className="card card-body flex flex-wrap items-center justify-between gap-5">
           <div>
             <h2 className="card-title">Dodaj prvi sajt</h2>
-            <p className="text-muted mt-1">Svaki sajt dobija svoj ključ i jednu liniju koda koja šalje forme ovde.</p>
+            <p className="text-muted mt-1">Sajt se dodaje kod klijenta i dobija jednu liniju koda koja šalje forme ovde.</p>
           </div>
-          <Link href="/admin/sites" className="btn btn-primary">
-            Dodaj sajt
+          <Link href="/admin/crm/customers" className="btn btn-primary">
+            Otvori klijente
           </Link>
         </div>
       )}

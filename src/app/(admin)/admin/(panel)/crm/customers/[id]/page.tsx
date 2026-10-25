@@ -161,7 +161,7 @@ export default async function CustomerPage({
             {customer.notes && <p className="border-t border-line px-5 py-4 text-[13px] whitespace-pre-line text-zinc-600">{customer.notes}</p>}
           </div>
 
-          <CustomerSites customerId={customer.id} />
+          <CustomerSites customerId={customer.id} customerName={customerName(customer)} />
 
           {(deals ?? []).length > 0 && (
             <div className="card">
