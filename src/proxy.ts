@@ -5,7 +5,8 @@ import { isSameOrigin } from '@/lib/admin/csrf';
 
 // The endpoints client sites post to. Each checks the caller's origin against
 // the submitting site's own domain instead (src/app/api/leads, hit, event).
-const CROSS_SITE_ENDPOINTS = ['/api/leads', '/api/hit', '/api/event'];
+// Mail apps post the one-click unsubscribe, which carries its own token.
+const CROSS_SITE_ENDPOINTS = ['/api/leads', '/api/hit', '/api/event', '/api/newsletter/unsubscribe'];
 
 /**
  * Same-origin check for every state-changing request, then the login guard

@@ -6,6 +6,7 @@ import { Footer } from '@/components/site/Footer';
 import { MobileTabBar } from '@/components/site/MobileTabBar';
 import { RevealObserver } from '@/components/site/RevealObserver';
 import { Tracking } from '@/components/site/Tracking';
+import { NewsletterPopup } from '@/components/site/Newsletter';
 import { site } from '@/content/site';
 import { appSettings } from '@/lib/admin/settings';
 import { OG_IMAGE } from '@/lib/seo';
@@ -48,7 +49,7 @@ export const viewport: Viewport = {
 };
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
-  const { tracking: t, company } = await appSettings();
+  const { tracking: t, company, newsletter } = await appSettings();
   // Who we are, once for every page: search engines tie each page to this one business.
   const graph = {
     '@context': 'https://schema.org',
@@ -99,7 +100,8 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         <RevealObserver />
         <Header />
         <main>{children}</main>
-        <Footer />
+        <Footer newsletter={newsletter.footer} />
+        {newsletter.popup && <NewsletterPopup />}
         {/* Keeps the end of the footer clear of the phone tab bar. */}
         <div className="h-[calc(6rem+env(safe-area-inset-bottom))] md:hidden" aria-hidden />
         <MobileTabBar />

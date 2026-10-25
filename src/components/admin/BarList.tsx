@@ -4,12 +4,16 @@ export function BarList({
   items,
   empty = 'Još nema podataka.',
   sub,
+  currency,
 }: {
   title: string;
   items: { label: string; count: number }[];
   empty?: string;
   sub?: string;
+  /** Values are money in this currency; otherwise counts. */
+  currency?: string;
 }) {
+  const fmt = (n: number) => (currency ? new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(n) : n.toLocaleString('sr-Latn-RS'));
   const max = Math.max(1, ...items.map((i) => i.count));
   const total = items.reduce((n, i) => n + i.count, 0);
   return (
@@ -29,7 +33,7 @@ export function BarList({
               {item.label}
             </span>
             <span className="relative flex shrink-0 items-baseline gap-2">
-              <span className="font-semibold text-ink tabular-nums">{item.count.toLocaleString('sr-Latn-RS')}</span>
+              <span className="font-semibold text-ink tabular-nums">{fmt(item.count)}</span>
               {total > 0 && <span className="w-9 text-right text-[11px] text-zinc-400 tabular-nums">{Math.round((item.count / total) * 100)}%</span>}
             </span>
           </div>

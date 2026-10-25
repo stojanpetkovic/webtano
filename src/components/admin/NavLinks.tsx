@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
-import { CheckSquare, FileText, FolderKanban, Globe, Inbox, KanbanSquare, LayoutDashboard, Settings, Tags, Users, Zap } from 'lucide-react';
+import { CheckSquare, FileText, FolderKanban, Globe, Inbox, KanbanSquare, LayoutDashboard, MailPlus, Settings, Wallet, Tags, Users, Zap } from 'lucide-react';
 
 export function NavLinks({ newLeads, crmNew }: { newLeads: number; crmNew: number }) {
   const path = usePathname().replace(/\/$/, '') || '/admin';
@@ -33,11 +33,19 @@ export function NavLinks({ newLeads, crmNew }: { newLeads: number; crmNew: numbe
       ],
     },
     {
+      title: 'Finansije',
+      items: [{ href: '/admin/finance', label: 'Prihodi i rashodi', icon: Wallet, active: at('/admin/finance'), badge: 0 }],
+    },
+    {
       title: 'Klijentski sajtovi',
       items: [
         { href: '/admin/sites', label: 'Sajtovi i izveštaji', icon: Globe, active: at('/admin/sites'), badge: 0 },
         { href: '/admin/leads', label: 'Lidovi sa sajtova', icon: Inbox, active: at('/admin/leads'), badge: newLeads },
       ],
+    },
+    {
+      title: 'Marketing',
+      items: [{ href: '/admin/subscribers', label: 'Pretplatnici', icon: MailPlus, active: at('/admin/subscribers'), badge: 0 }],
     },
     {
       title: 'Sistem',
@@ -46,7 +54,7 @@ export function NavLinks({ newLeads, crmNew }: { newLeads: number; crmNew: numbe
   ];
 
   return (
-    <nav className="flex-1 overflow-y-auto px-4 py-2" aria-label="Glavni meni">
+    <nav className="flex-1 overflow-y-auto px-4 py-2 lg:flex-none lg:overflow-visible" aria-label="Glavni meni">
       {sections.map((section) => (
         <div key={section.title} className="mb-3">
           <div className="menu-title">{section.title}</div>

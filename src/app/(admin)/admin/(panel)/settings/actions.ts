@@ -13,6 +13,6 @@ export async function saveSettings(form: FormData) {
   if (invalid.length) redirect(`/admin/settings?invalid=${encodeURIComponent(invalid.join(', '))}#${section}`);
   const { error } = await db().from('crm_settings').upsert({ key: section, value, updated_at: new Date().toISOString() }, { onConflict: 'key' });
   // Tracking codes and the company name are on every page of the site: rebuild them now, not in an hour.
-  if (!error && (section === 'tracking' || section === 'company')) revalidatePath('/', 'layout');
+  if (!error && (section === 'tracking' || section === 'company' || section === 'newsletter')) revalidatePath('/', 'layout');
   redirect(`/admin/settings?${error ? 'error' : 'saved'}=${section}#${section}`);
 }

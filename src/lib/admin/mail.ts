@@ -65,9 +65,12 @@ export function shell({
   body,
   footer,
   preheader,
+  unsubscribe,
   lang = 'sr',
 }: {
   lang?: 'sr' | 'en';
+  /** Adds an unsubscribe link to the footer, for newsletter emails. */
+  unsubscribe?: string;
   eyebrow?: string;
   heading: string;
   intro?: string;
@@ -94,7 +97,7 @@ ${preheader ? `<div style="display:none;max-height:0;overflow:hidden;opacity:0;c
       ${body}
     </td></tr>
     <tr><td align="center" style="padding:20px 24px 0;font-size:12px;line-height:18px;color:#9aa0ab">
-      ${escape(footer)}<br><a href="https://webtano.com" style="color:#9aa0ab;text-decoration:underline">webtano.com</a>
+      ${escape(footer)}<br>${unsubscribe ? `<a href="${escape(unsubscribe)}" style="color:#9aa0ab;text-decoration:underline">Unsubscribe</a> · ` : ''}<a href="https://webtano.com" style="color:#9aa0ab;text-decoration:underline">webtano.com</a>
     </td></tr>
   </table>
 </td></tr></table>

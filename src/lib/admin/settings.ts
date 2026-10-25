@@ -103,9 +103,10 @@ export const SETTINGS = {
   },
   invoices: {
     title: 'Fakture',
-    description: 'Koristi se kad stignu pretplate i fakture (faza 3). Možeš da popuniš unapred.',
+    description: 'Računi iz Finansija. Pravni naziv, adresa, PIB i matični broj iz sekcije Firma idu na svaki račun. Valuta je ista kao za ponude.',
     fields: [
       { key: 'due_days', label: 'Rok plaćanja', type: 'number', min: 0, max: 60, suffix: 'dana' },
+      { key: 'tax_pct', label: 'Porez na računu', type: 'number', min: 0, max: 50, suffix: '%', hint: 'Podrazumevano 0. Menja se i na svakom računu.' },
       { key: 'prefix', label: 'Prefiks broja', type: 'text', placeholder: 'WT-', hint: 'Faktura dobija broj kao WT-0001.' },
       { key: 'payment_details', label: 'Instrukcije za uplatu', type: 'textarea', wide: true, hint: 'Račun, Wise, Zelle… Ide na svaku fakturu.' },
       { key: 'note', label: 'Napomena na fakturi', type: 'textarea', wide: true },
@@ -165,6 +166,19 @@ export const SETTINGS = {
       },
     ],
   },
+  newsletter: {
+    title: 'Newsletter',
+    description: 'Prijava na newsletter na webtano.com. Prijave vidiš pod Marketing → Pretplatnici.',
+    fields: [
+      {
+        key: 'popup',
+        label: 'Prikaži popup za prijavu',
+        type: 'toggle',
+        hint: 'Pojavljuje se posle 12 sekundi i skrolovanja (na telefonu kasnije), najviše jednom po poseti, i ne vraća se 30 dana kad ga posetilac zatvori.',
+      },
+      { key: 'footer', label: 'Prikaži prijavu u futeru', type: 'toggle' },
+    ],
+  },
 } as const satisfies Record<string, { title: string; description: string; fields: readonly Field[] }>;
 
 export type Section = keyof typeof SETTINGS;
@@ -183,7 +197,7 @@ const DEFAULTS = {
   },
   proposals: { valid_days: 14, currency: 'USD', intro: DEFAULT_INTRO, terms: DEFAULT_TERMS },
   notifications: { owner_email: '', timezone: 'Europe/Belgrade', digest_hour: 8, digest_weekends: false, unanswered_hours: 24, unanswered_days: 7 },
-  invoices: { due_days: 7, prefix: 'WT-', payment_details: '', note: '' },
+  invoices: { due_days: 7, tax_pct: 0, prefix: 'WT-', payment_details: '', note: '' },
   tracking: {
     ga4_id: '',
     gtm_id: '',
@@ -196,6 +210,7 @@ const DEFAULTS = {
     facebook_verification: '',
     consent: true,
   },
+  newsletter: { popup: true, footer: true },
 };
 
 export type AppSettings = typeof DEFAULTS;

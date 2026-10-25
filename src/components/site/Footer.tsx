@@ -4,6 +4,7 @@ import { site } from '@/content/site';
 import { caseStudies } from '@/content/work';
 import { Logo } from './Logo';
 import { CookieSettingsLink } from './Tracking';
+import { NewsletterForm } from './Newsletter';
 
 const columns = [
   {
@@ -28,6 +29,7 @@ const columns = [
       { href: '/#faq', label: 'FAQ' },
       { href: '/demo/report', label: 'Demo report' },
       { href: '/privacy', label: 'Privacy' },
+      { href: '/terms', label: 'Terms' },
     ],
   },
 ];
@@ -39,13 +41,27 @@ const mobileLinks = [
   { href: '/blog', label: 'Blog' },
   { href: '/#faq', label: 'FAQ' },
   { href: '/privacy', label: 'Privacy' },
+  { href: '/terms', label: 'Terms' },
 ];
 
-export function Footer() {
+export function Footer({ newsletter = true }: { newsletter?: boolean }) {
   const year = new Date().getFullYear();
   return (
     <footer className="relative overflow-hidden bg-ink-975 text-white/65">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        {/* Newsletter sign-up, above the links. */}
+        {newsletter && (
+        <div className="grid gap-5 border-t border-white/10 py-10 max-md:border-0 max-md:pt-7 max-md:pb-2 md:grid-cols-[1.3fr_2fr] md:items-center md:gap-16">
+          <div>
+            <p className="font-mono text-[10px] tracking-[0.14em] text-accent uppercase">The WebTano letter</p>
+            <p className="mt-2 font-display text-xl font-bold text-white max-md:text-lg">One useful email a month</p>
+            <p className="mt-1.5 max-w-sm text-sm leading-relaxed max-md:hidden">Practical tips on getting more calls from your website, local SEO and Google Ads.</p>
+          </div>
+          <div className="md:max-w-lg">
+            <NewsletterForm source="footer" dark />
+          </div>
+        </div>
+        )}
         <div className="grid gap-12 border-t border-white/10 py-14 max-md:gap-6 max-md:border-0 max-md:py-7 md:grid-cols-[1.3fr_2fr] md:gap-16">
           <div>
             <Logo light />

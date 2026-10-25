@@ -21,6 +21,8 @@ const SCHEMA: { label: string; table: string; column: string; file: string }[] =
   { label: 'Usluge na klijentima', table: 'crm_customers', column: 'services', file: '20261025_crm_customer_services.sql' },
   { label: 'Sajtovi klijenata', table: 'crm_customer_sites', column: 'site_id', file: '20261025_crm_customer_sites.sql' },
   { label: 'Cenovnik', table: 'crm_items', column: 'slug', file: '20261025_crm_items_slug.sql' },
+  { label: 'Newsletter', table: 'newsletter_subscribers', column: 'token', file: '20261025_newsletter.sql' },
+  { label: 'Finansije', table: 'fin_invoices', column: 'number', file: '20261025_finance.sql' },
 ];
 
 // Only whether each variable is set: values never reach the page.

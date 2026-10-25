@@ -15,7 +15,22 @@ interface Slice {
 }
 
 /** A doughnut with the total in the middle and a legend that doubles as the table of values. */
-export function DonutChart({ title, items, sub, empty = 'Još nema podataka.' }: { title: string; items: Slice[]; sub?: string; empty?: string }) {
+export function DonutChart({
+  title,
+  items,
+  sub,
+  empty = 'Još nema podataka.',
+  currency,
+}: {
+  title: string;
+  items: Slice[];
+  sub?: string;
+  empty?: string;
+  /** Values are money in this currency (finance pages); otherwise counts. */
+  currency?: string;
+}) {
+  const fmt = (n: number) =>
+    currency ? new Intl.NumberFormat('en-US', { style: 'currency', currency, notation: n >= 100_000 ? 'compact' : 'standard', maximumFractionDigits: 0 }).format(n) : n.toLocaleString('sr-Latn-RS');
   const canvas = useRef<HTMLCanvasElement>(null);
   const total = items.reduce((n, i) => n + i.count, 0);
   const colors = useMemo(() => items.map((it, i) => it.color ?? SERIES[i % SERIES.length]), [items]);
@@ -59,7 +74,7 @@ export function DonutChart({ title, items, sub, empty = 'Još nema podataka.' }:
               <canvas ref={canvas} role="img" aria-label={`${title}: ${items.map((i) => `${i.label} ${i.count}`).join(', ')}`} />
               <div className="pointer-events-none absolute inset-0 grid place-items-center text-center">
                 <div>
-                  <div className="text-2xl font-semibold tracking-tight text-ink tabular-nums">{total.toLocaleString('sr-Latn-RS')}</div>
+                  <div className="text-2xl font-semibold tracking-tight text-ink tabular-nums">{fmt(total)}</div>
                   <div className="text-[11px] text-zinc-500">ukupno</div>
                 </div>
               </div>
@@ -71,7 +86,7 @@ export function DonutChart({ title, items, sub, empty = 'Još nema podataka.' }:
                   <span className="min-w-0 flex-1 truncate text-zinc-700" title={it.label}>
                     {it.label}
                   </span>
-                  <span className="font-semibold text-ink tabular-nums">{it.count}</span>
+                  <span className="font-semibold text-ink tabular-nums">{currency ? fmt(it.count) : it.count}</span>
                   <span className="w-10 text-right text-xs text-zinc-400 tabular-nums">{Math.round((it.count / total) * 100)}%</span>
                 </li>
               ))}
