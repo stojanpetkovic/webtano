@@ -4,16 +4,44 @@ import { ArrowRight } from 'lucide-react';
 import { CaseCard } from '@/components/site/CaseCard';
 import { Reveal } from '@/components/site/Reveal';
 import { caseStudies } from '@/content/work';
+import { site } from '@/content/site';
+import { jsonLd, OG_IMAGE } from '@/lib/seo';
 
 export const metadata: Metadata = {
   title: 'Case studies',
   description: 'Websites, local SEO and Google Ads for tree services, a dental practice and a medical transport company, with the numbers from their own lead tracking.',
   alternates: { canonical: '/work' },
+  openGraph: { url: '/work', images: [OG_IMAGE] },
+};
+
+const structured = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'CollectionPage',
+      '@id': `${site.url}/work#page`,
+      name: 'Case studies',
+      url: `${site.url}/work`,
+      isPartOf: { '@id': `${site.url}/#website` },
+      mainEntity: {
+        '@type': 'ItemList',
+        itemListElement: caseStudies.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: `${c.client} case study`, url: `${site.url}/work/${c.slug}` })),
+      },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: site.url },
+        { '@type': 'ListItem', position: 2, name: 'Case studies', item: `${site.url}/work` },
+      ],
+    },
+  ],
 };
 
 export default function WorkPage() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(structured) }} />
       <section className="bg-spotlight relative overflow-hidden py-16 text-white sm:py-24">
         <div className="grid-lines pointer-events-none absolute inset-0 opacity-60" aria-hidden />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">

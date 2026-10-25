@@ -3,6 +3,7 @@ import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { site } from '@/content/site';
 import { caseStudies } from '@/content/work';
 import { Logo } from './Logo';
+import { CookieSettingsLink } from './Tracking';
 
 const columns = [
   {
@@ -83,7 +84,10 @@ export function Footer() {
 
       <div className="relative border-t border-white/10">
         <div className="mx-auto flex max-w-6xl flex-col gap-3 py-6 pr-20 pl-4 text-xs sm:flex-row sm:items-center sm:justify-between sm:pr-24 sm:pl-6 xl:pr-6">
-          <p>© {year} WebTano · webtano.com</p>
+          <p>
+            © {year} WebTano · webtano.com
+            <CookieSettingsLink className="ms-3 underline-offset-2 hover:text-white hover:underline" />
+          </p>
           <p>Websites, local SEO and Google Ads, measured by our own tracking.</p>
         </div>
       </div>

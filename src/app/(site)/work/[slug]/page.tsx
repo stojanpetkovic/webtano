@@ -6,6 +6,8 @@ import { ArrowLeft, ArrowRight, Check, ExternalLink } from 'lucide-react';
 import { CountUp } from '@/components/site/CountUp';
 import { Reveal } from '@/components/site/Reveal';
 import { caseStudies, findCase } from '@/content/work';
+import { site } from '@/content/site';
+import { jsonLd } from '@/lib/seo';
 
 export function generateStaticParams() {
   return caseStudies.map((c) => ({ slug: c.slug }));
@@ -21,7 +23,7 @@ export async function generateMetadata({ params }: PageProps<'/work/[slug]'>): P
     title: `${item.client} case study`,
     description: `${item.sector} in ${item.location}: ${item.summary}`,
     alternates: { canonical: `/work/${item.slug}` },
-    openGraph: { images: [item.shots[0].src] },
+    openGraph: { type: 'article', url: `/work/${item.slug}`, images: [{ url: item.shots[0].src, alt: item.shots[0].alt }] },
   };
 }
 
@@ -40,8 +42,37 @@ export default async function CasePage({ params }: PageProps<'/work/[slug]'>) {
     { label: 'SEO', value: item.lighthouse.seo },
   ];
 
+  const url = `${site.url}/work/${item.slug}`;
+  const structured = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Article',
+        '@id': `${url}#case-study`,
+        headline: `${item.client} case study`,
+        description: item.summary,
+        url,
+        image: `${site.url}${item.shots[0].src}`,
+        inLanguage: 'en-US',
+        author: { '@id': `${site.url}/#organization` },
+        publisher: { '@id': `${site.url}/#organization` },
+        about: { '@type': 'Organization', name: item.client, url: item.url, address: item.location },
+        keywords: item.services.join(', '),
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: site.url },
+          { '@type': 'ListItem', position: 2, name: 'Case studies', item: `${site.url}/work` },
+          { '@type': 'ListItem', position: 3, name: item.client, item: url },
+        ],
+      },
+    ],
+  };
+
   return (
     <article>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(structured) }} />
       <header className="bg-spotlight relative overflow-hidden pt-12 pb-28 text-white sm:pt-16">
         <div className="grid-lines pointer-events-none absolute inset-0 opacity-60" aria-hidden />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">

@@ -1,3 +1,5 @@
+import type { Metadata } from 'next';
+import { OG_IMAGE } from '@/lib/seo';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -212,6 +214,8 @@ const primaryButton =
 
 // Prices come from the admin price list; saving it refreshes this page at once.
 export const revalidate = 3600;
+
+export const metadata: Metadata = { alternates: { canonical: '/' }, openGraph: { url: '/', images: [OG_IMAGE] } };
 
 export default async function HomePage() {
   const faqs = faqList(await livePricing());

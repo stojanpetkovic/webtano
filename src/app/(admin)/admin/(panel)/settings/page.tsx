@@ -82,6 +82,7 @@ function Input({ section, field, value }: { section: Section; field: Field; valu
           type={field.type}
           defaultValue={String(value ?? '')}
           placeholder={'placeholder' in field ? field.placeholder : undefined}
+          pattern={'pattern' in field ? field.pattern : undefined}
         />
       )}
       {field.hint && <p className="form-hint">{field.hint}</p>}
@@ -99,6 +100,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
   const todo = missing.length + VARIABLES.filter((v) => !v.set).length;
   const saved = query.get('saved');
   const failed = query.get('error');
+  const invalid = query.get('invalid');
 
   return (
     <>
@@ -118,6 +120,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
       </PageHeading>
 
       {saved && saved in SETTINGS && <div className="alert alert-success">Sačuvano: {SETTINGS[saved as Section].title}.</div>}
+      {invalid && <div className="alert alert-danger">Nije sačuvano, proveri format: {invalid}.</div>}
       {failed && <div className="alert alert-danger">Nije sačuvano. Tabela crm_settings još ne postoji u bazi, pogledaj Stanje sistema.</div>}
 
       <div className="grid items-start gap-4 xl:grid-cols-3">

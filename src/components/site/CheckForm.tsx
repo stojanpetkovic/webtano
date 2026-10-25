@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useRef } from 'react';
+import { useActionState, useEffect, useRef } from 'react';
 import { BadgeCheck, CheckCircle2, Gauge, KeyRound, Loader2, Lock, Star } from 'lucide-react';
 import { submitCheck, type CheckState } from '@/app/(site)/actions';
 
@@ -41,6 +41,11 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
       // Storage blocked: send the form without attribution.
     }
   }
+
+  // A sent form is the conversion Google Ads and the Meta Pixel count (when they are set up and allowed).
+  useEffect(() => {
+    if (state.ok) window.wtTrack?.lead();
+  }, [state.ok]);
 
   if (state.ok) {
     return (

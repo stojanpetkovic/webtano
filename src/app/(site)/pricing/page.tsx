@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { OG_IMAGE } from '@/lib/seo';
 import Link from 'next/link';
 import { ArrowRight, Check, Minus, Plus, Sparkles } from 'lucide-react';
 import { FaqList } from '@/components/site/FaqList';
@@ -18,6 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: 'Pricing: websites, local SEO and Google Ads',
     description: `Clear prices for local service companies: Google Ads from $${monthlyPlans.find((p) => p.id === 'google-ads')?.price.toLocaleString('en-US')}/mo, local SEO and websites from $${websitePlans[0].price.toLocaleString('en-US')}. No setup fees, no long contracts, every lead tracked.`,
     alternates: { canonical: '/pricing' },
+    openGraph: { url: '/pricing', images: [OG_IMAGE] },
   };
 }
 

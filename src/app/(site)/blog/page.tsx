@@ -8,9 +8,9 @@ import { categories, postImage, posts } from '@/content/blog';
 import { site } from '@/content/site';
 
 export const metadata: Metadata = {
-  title: 'Blog: local SEO, Google Ads and websites for service companies',
+  title: 'Blog: local SEO, Google Ads and websites',
   description:
-    'Practical guides on Google Ads, local SEO, AI search, websites and lead tracking for tree services and other local service companies. Written from the accounts and sites we run.',
+    'Practical guides on Google Ads, local SEO, AI search, websites and lead tracking for tree services and other local companies, from the accounts we run.',
   alternates: { canonical: '/blog', types: { 'application/rss+xml': '/blog/rss.xml' } },
   openGraph: { type: 'website', url: '/blog', images: [postImage(posts[0]).src] },
 };

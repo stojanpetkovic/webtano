@@ -13,6 +13,7 @@ import { Reveal } from '@/components/site/Reveal';
 import { SwipeRow } from '@/components/site/SwipeRow';
 import { findPost, plainText, postImage, posts, readingTime, relatedPosts, toc } from '@/content/blog';
 import { site } from '@/content/site';
+import { metaDescription, pageTitle } from '@/lib/seo';
 
 export function generateStaticParams() {
   return posts.map((p) => ({ slug: p.slug }));
@@ -26,8 +27,8 @@ export async function generateMetadata({ params }: PageProps<'/blog/[slug]'>): P
   if (!post) return {};
   const img = postImage(post);
   return {
-    title: post.seoTitle ?? post.title,
-    description: post.description,
+    title: pageTitle(post.seoTitle ?? post.title),
+    description: metaDescription(post.description),
     keywords: post.keywords,
     authors: [{ name: 'WebTano team', url: site.url }],
     alternates: { canonical: `/blog/${post.slug}` },
@@ -35,14 +36,14 @@ export async function generateMetadata({ params }: PageProps<'/blog/[slug]'>): P
       type: 'article',
       url: `/blog/${post.slug}`,
       title: post.title,
-      description: post.description,
+      description: metaDescription(post.description, 200),
       publishedTime: post.published,
       modifiedTime: post.updated ?? post.published,
       section: post.category,
       tags: post.keywords,
       images: [{ url: img.src, width: img.width, height: img.height, alt: img.alt }],
     },
-    twitter: { card: 'summary_large_image', title: post.title, description: post.description, images: [img.src] },
+    twitter: { card: 'summary_large_image', title: post.title, description: metaDescription(post.description, 200), images: [img.src] },
   };
 }
 
