@@ -2,6 +2,7 @@ import { Resend } from 'resend';
 import { db } from './supabase';
 import { env } from './env';
 import { leadSource } from './leads';
+import { appSettings, ownerEmail } from './settings';
 import type { Lead, Site } from './types';
 
 
@@ -159,8 +160,22 @@ async function sendOne(
 
 /** Emails the lead to the site's client addresses and to the owner, logging every attempt. */
 export async function sendLeadEmails(site: Site, lead: Lead, only?: 'client' | 'owner') {
+  // The owner address set in Podešavanja wins over OWNER_EMAIL.
+  const owner = ownerEmail(await appSettings());
+  const wantOwner = only !== 'client' && site.notify_owner && owner;
   if (!env.resendApiKey || !env.leadsFromEmail) {
-    console.error('RESEND_API_KEY or LEADS_FROM_EMAIL missing; lead emails not sent');
+    const missing = !env.resendApiKey ? 'RESEND_API_KEY' : 'LEADS_FROM_EMAIL';
+    console.error(`${missing} missing; lead emails not sent`);
+    // Logged as failed so the lead page shows why nothing arrived.
+    const recipients = [
+      ...(only !== 'owner' ? site.client_emails.map((to) => ({ to, kind: 'client' as const })) : []),
+      ...(wantOwner ? [{ to: owner, kind: 'owner' as const }] : []),
+    ];
+    await Promise.all(
+      recipients.map(({ to, kind }) =>
+        log({ lead_id: lead.id, recipient: to, kind, status: 'failed', error: `${missing} is not set on the server` }),
+      ),
+    );
     return;
   }
   const resend = new Resend(env.resendApiKey);
@@ -170,9 +185,9 @@ export async function sendLeadEmails(site: Site, lead: Lead, only?: 'client' | '
     const clientMessage = render(site, lead, site.email_language, null);
     for (const to of site.client_emails) jobs.push(sendOne(resend, lead, to, 'client', clientMessage));
   }
-  if (only !== 'client' && site.notify_owner && env.ownerEmail) {
+  if (wantOwner) {
     const ownerMessage = render(site, lead, 'sr', `${env.siteUrl}/admin/leads/${lead.id}`);
-    jobs.push(sendOne(resend, lead, env.ownerEmail, 'owner', ownerMessage));
+    jobs.push(sendOne(resend, lead, owner, 'owner', ownerMessage));
   }
   await Promise.all(jobs);
 }
