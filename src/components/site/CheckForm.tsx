@@ -301,7 +301,11 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
         {pending ? 'Sending…' : 'Get my free website check'}
       </button>
       <p className="mt-3 text-center text-xs text-zinc-500">
-        We use your details only to reply to you. See our{' '}
+        We use your details only to reply to you. By sending, you agree to our{' '}
+        <a href="/terms" className="underline">
+          terms
+        </a>{' '}
+        and{' '}
         <a href="/privacy" className="underline">
           privacy notice
         </a>

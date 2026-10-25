@@ -12,5 +12,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${site.url}/blog`, priority: 0.8, lastModified: posts[0].updated ?? posts[0].published },
     ...posts.map((p) => ({ url: `${site.url}/blog/${p.slug}`, priority: 0.7, lastModified: p.updated ?? p.published })),
     { url: `${site.url}/privacy`, priority: 0.2 },
+    { url: `${site.url}/terms`, priority: 0.2 },
   ];
 }

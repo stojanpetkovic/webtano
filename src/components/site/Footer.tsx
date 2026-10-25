@@ -28,6 +28,7 @@ const columns = [
       { href: '/#faq', label: 'FAQ' },
       { href: '/demo/report', label: 'Demo report' },
       { href: '/privacy', label: 'Privacy' },
+      { href: '/terms', label: 'Terms' },
     ],
   },
 ];
@@ -39,6 +40,7 @@ const mobileLinks = [
   { href: '/blog', label: 'Blog' },
   { href: '/#faq', label: 'FAQ' },
   { href: '/privacy', label: 'Privacy' },
+  { href: '/terms', label: 'Terms' },
 ];
 
 export function Footer() {
