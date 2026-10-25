@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { ProposalSheet } from '@/components/admin/crm/ProposalSheet';
 import { db } from '@/lib/admin/supabase';
+import { appSettings } from '@/lib/admin/settings';
 import type { Customer, Deal, Proposal, ProposalItem } from '@/lib/admin/crm/types';
 
 export const dynamic = 'force-dynamic';
@@ -23,10 +24,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ProposalPdfPage({ params }: Props) {
   const proposal = await load((await params).id);
   if (!proposal) redirect('/admin/crm/proposals');
-  const [{ data: items }, { data: customer }, { data: deal }] = await Promise.all([
+  const [{ data: items }, { data: customer }, { data: deal }, settings] = await Promise.all([
     db().from('crm_proposal_items').select('*').eq('proposal_id', proposal.id).order('position'),
     proposal.customer_id ? db().from('crm_customers').select('*').eq('id', proposal.customer_id).maybeSingle<Customer>() : Promise.resolve({ data: null }),
     proposal.deal_id ? db().from('crm_deals').select('*').eq('id', proposal.deal_id).maybeSingle<Deal>() : Promise.resolve({ data: null }),
+    appSettings(),
   ]);
-  return <ProposalSheet proposal={proposal} items={(items ?? []) as ProposalItem[]} customer={customer as Customer | null} deal={deal as Deal | null} />;
+  return (
+    <ProposalSheet
+      proposal={proposal}
+      items={(items ?? []) as ProposalItem[]}
+      customer={customer as Customer | null}
+      deal={deal as Deal | null}
+      company={settings.company}
+    />
+  );
 }

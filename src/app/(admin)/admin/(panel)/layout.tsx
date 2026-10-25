@@ -31,7 +31,8 @@ export default async function PanelLayout({ children }: { children: React.ReactN
 
         <NavLinks newLeads={newLeads} crmNew={crmNew} />
 
-        <div className="relative m-4 overflow-hidden rounded-2xl bg-white/[0.04] p-4 ring-1 ring-white/[0.08]">
+        {/* Hidden on short screens, so the menu keeps room for every item. */}
+        <div className="relative m-4 hidden overflow-hidden rounded-2xl bg-white/[0.04] p-4 ring-1 ring-white/[0.08] [@media(min-height:960px)]:block">
           <p className="text-[13px] font-semibold text-white">Kod za sajtove</p>
           <p className="mt-1 text-xs leading-relaxed text-white/50">Jedna linija iz podešavanja sajta hvata forme i broji posete.</p>
           <Link href="/admin/sites" className="btn btn-sm btn-accent mt-3 w-full">

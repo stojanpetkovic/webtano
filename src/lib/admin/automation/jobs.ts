@@ -1,17 +1,17 @@
 import { db } from '../supabase';
-import { env } from '../env';
 import { formatDate } from '../format';
 import { STAGE_LABEL, dealServices, SERVICES } from '../crm/labels';
 import type { Deal, Task } from '../crm/types';
 import { OWNER_FOOTER, adminUrl, layout } from './emails';
 import { alreadyQueued, queue, type QueueResult } from './outbox';
 import type { Mode } from './registry';
+import { ownerEmail, type AppSettings } from '../settings';
 
-/** The wall clock in Belgrade, where Stojan reads these emails. */
-export function belgrade(now: Date) {
+/** The wall clock where Stojan reads these emails (Podešavanja, Belgrade by default). */
+export function localClock(now: Date, timeZone: string) {
   const parts = Object.fromEntries(
     new Intl.DateTimeFormat('en-GB', {
-      timeZone: 'Europe/Belgrade',
+      timeZone,
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
@@ -32,12 +32,16 @@ const services = (d: Deal) =>
     .join(', ');
 
 /**
- * Weekdays from 8:00 to 11:00 Belgrade time, once a day: what needs Stojan today.
+ * Once a day, in the three hours from the hour set in Podešavanja (8:00 by default), weekdays
+ * unless weekends are on: what needs Stojan today.
  * The window keeps a late run from sending a "morning" email in the afternoon.
  */
-export async function morningDigest(now: Date, mode: Mode): Promise<QueueResult[]> {
-  const { date, hour, weekday } = belgrade(now);
-  if (['Sat', 'Sun'].includes(weekday) || hour < 8 || hour > 11 || !env.ownerEmail) return [];
+export async function morningDigest(now: Date, mode: Mode, settings: AppSettings): Promise<QueueResult[]> {
+  const n = settings.notifications;
+  const to = ownerEmail(settings);
+  const { date, hour, weekday } = localClock(now, n.timezone);
+  const weekend = ['Sat', 'Sun'].includes(weekday);
+  if ((weekend && !n.digest_weekends) || hour < n.digest_hour || hour >= n.digest_hour + 3 || !to) return [];
   const key = `morning-digest:${date}`;
   if (await alreadyQueued(key)) return [];
 
@@ -88,18 +92,20 @@ export async function morningDigest(now: Date, mode: Mode): Promise<QueueResult[
     button: { label: 'Otvori lidove', href: adminUrl('/admin/crm/leads') },
     footer: OWNER_FOOTER,
   });
-  return [await queue({ kind: 'morning-digest', dedupeKey: key, to: env.ownerEmail, subject: `Danas: ${counts.join(', ')}`, html, text }, mode)];
+  return [await queue({ kind: 'morning-digest', dedupeKey: key, to, subject: `Danas: ${counts.join(', ')}`, html, text }, mode)];
 }
 
 /**
- * A form lead still in "Novi" 24 hours after it came in, with nothing logged on it
- * but the system note. Leads older than 7 days are left alone, so the first run
+ * A form lead still in "Novi" a set number of hours (24 by default) after it came in, with nothing logged on it
+ * but the system note. Leads older than the set number of days (7) are left alone, so the first run
  * does not flood the inbox with old ones.
  */
-export async function unansweredLeads(now: Date, mode: Mode): Promise<QueueResult[]> {
-  if (!env.ownerEmail) return [];
-  const dayAgo = new Date(now.getTime() - 24 * 3600e3).toISOString();
-  const weekAgo = new Date(now.getTime() - 7 * 24 * 3600e3).toISOString();
+export async function unansweredLeads(now: Date, mode: Mode, settings: AppSettings): Promise<QueueResult[]> {
+  const { unanswered_hours: hours, unanswered_days: days } = settings.notifications;
+  const to = ownerEmail(settings);
+  if (!to) return [];
+  const dayAgo = new Date(now.getTime() - hours * 3600e3).toISOString();
+  const weekAgo = new Date(now.getTime() - days * 24 * 3600e3).toISOString();
   const { data } = await db()
     .from('crm_deals')
     .select('*, crm_activity(kind)')
@@ -116,7 +122,7 @@ export async function unansweredLeads(now: Date, mode: Mode): Promise<QueueResul
     if (await alreadyQueued(key)) continue;
     const href = adminUrl(`/admin/crm/leads/${d.id}`);
     const { html, text } = layout({
-      heading: `${d.name} čeka odgovor već dan`,
+      heading: `${d.name} čeka odgovor već ${hours} h`,
       intro: `Upit sa webtano.com stigao je ${formatDate(d.created_at)} i još je u fazi Novi. Što pre odgovoriš, veća je šansa za dogovor.`,
       sections: [
         {
@@ -132,7 +138,7 @@ export async function unansweredLeads(now: Date, mode: Mode): Promise<QueueResul
         {
           kind: 'unanswered-lead',
           dedupeKey: key,
-          to: env.ownerEmail,
+          to,
           subject: `Lid bez odgovora: ${d.name}`,
           html,
           text,

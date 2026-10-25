@@ -3,11 +3,24 @@ import { ArrowLeft } from 'lucide-react';
 import { PrintButton } from './PrintButton';
 import { money, totals } from '@/lib/admin/crm/labels';
 import type { Customer, Deal, Proposal, ProposalItem } from '@/lib/admin/crm/types';
+import type { AppSettings } from '@/lib/admin/settings';
 
 const day = (iso: string) => new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(iso));
 
 /** The client-facing proposal, in English, laid out for one or two A4 pages. */
-export function ProposalSheet({ proposal, items, customer, deal }: { proposal: Proposal; items: ProposalItem[]; customer: Customer | null; deal: Deal | null }) {
+export function ProposalSheet({
+  proposal,
+  items,
+  customer,
+  deal,
+  company,
+}: {
+  proposal: Proposal;
+  items: ProposalItem[];
+  customer: Customer | null;
+  deal: Deal | null;
+  company: AppSettings['company'];
+}) {
   const t = totals(items, proposal.discount_pct);
   const c = proposal.currency;
   const to = {
@@ -36,8 +49,8 @@ export function ProposalSheet({ proposal, items, customer, deal }: { proposal: P
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/brand/webtano-mark.svg" alt="" width={34} height={34} className="size-[34px] rounded-[10px]" />
             <div>
-              <div className="text-[17px] font-semibold tracking-tight text-ink">WebTano</div>
-              <div className="text-[11px] text-zinc-500">Websites, Local SEO and Google Ads · webtano.com</div>
+              <div className="text-[17px] font-semibold tracking-tight text-ink">{company.name}</div>
+              <div className="text-[11px] text-zinc-500">{[company.tagline, company.website].filter(Boolean).join(' · ')}</div>
             </div>
           </div>
           <div className="text-right">
@@ -127,7 +140,9 @@ export function ProposalSheet({ proposal, items, customer, deal }: { proposal: P
           </div>
         </section>
 
-        <footer className="mt-10 border-t border-zinc-200 pt-4 text-center text-[11px] text-zinc-400">WebTano · webtano.com</footer>
+        <footer className="mt-10 border-t border-zinc-200 pt-4 text-center text-[11px] text-zinc-400">
+          {[company.name, company.website, company.email, company.phone].filter(Boolean).join(' · ')}
+        </footer>
       </article>
     </div>
   );

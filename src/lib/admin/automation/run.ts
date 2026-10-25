@@ -1,10 +1,11 @@
 import { db } from '../supabase';
 import { syncDeals } from '../crm/data';
+import { appSettings, type AppSettings } from '../settings';
 import { morningDigest, unansweredLeads } from './jobs';
 import type { QueueResult } from './outbox';
 import { AUTOMATIONS, type AutomationKey, type AutomationSetting, type Mode } from './registry';
 
-const JOBS: Record<AutomationKey, (now: Date, mode: Mode) => Promise<QueueResult[]>> = {
+const JOBS: Record<AutomationKey, (now: Date, mode: Mode, settings: AppSettings) => Promise<QueueResult[]>> = {
   'morning-digest': morningDigest,
   'unanswered-lead': unansweredLeads,
 };
@@ -27,7 +28,7 @@ export async function automationSettings(): Promise<Record<string, AutomationSet
  * itself whether it is due, and one failing job never stops the others.
  */
 export async function runAutomations(now = new Date()): Promise<RunSummary> {
-  const settings = await automationSettings();
+  const [settings, app] = await Promise.all([automationSettings(), appSettings()]);
   if (!settings.all.enabled) return { paused: true };
   // New form leads first, so the jobs see them.
   await syncDeals().catch((err) => console.error('syncDeals before automations failed:', err));
@@ -40,7 +41,7 @@ export async function runAutomations(now = new Date()): Promise<RunSummary> {
       continue;
     }
     try {
-      const results = await JOBS[key](now, s.mode);
+      const results = await JOBS[key](now, s.mode, app);
       jobs[key] = {
         sent: results.filter((r) => r === 'sent').length,
         pending: results.filter((r) => r === 'pending').length,

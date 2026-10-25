@@ -2,13 +2,14 @@
 export const AUTOMATIONS = {
   'morning-digest': {
     label: 'Jutarnji pregled',
-    description: 'Radnim danom posle 8:00: novi lidovi, rokovi za sledeći korak i zadaci za danas ili koji kasne. Ne šalje se kad nema ničega.',
+    description:
+      'Radnim danom ujutru (vreme menjaš u Podešavanjima): novi lidovi, rokovi za sledeći korak i zadaci za danas ili koji kasne. Ne šalje se kad nema ničega.',
     audience: 'owner',
     defaultMode: 'auto',
   },
   'unanswered-lead': {
     label: 'Lid bez odgovora',
-    description: 'Lid sa forme stoji 24 sata u fazi Novi, a na njemu nema nijedne tvoje beleške, poziva ni emaila.',
+    description: 'Lid sa forme stoji u fazi Novi (24 sata, menja se u Podešavanjima), a na njemu nema nijedne tvoje beleške, poziva ni emaila.',
     audience: 'owner',
     defaultMode: 'auto',
   },

@@ -2,6 +2,7 @@ import { Modal } from '@/components/admin/Modal';
 import { ProposalForm } from './ProposalForm';
 import { db } from '@/lib/admin/supabase';
 import { priceList } from '@/lib/admin/crm/priceList';
+import { appSettings } from '@/lib/admin/settings';
 import { dealServices } from '@/lib/admin/crm/labels';
 import type { CustomerOption, Deal } from '@/lib/admin/crm/types';
 
@@ -29,10 +30,11 @@ export async function NewProposal({
   defaultOpen?: boolean;
   closeHref?: string;
 }) {
-  const [{ data: customers }, { data: deals }, catalog] = await Promise.all([
+  const [{ data: customers }, { data: deals }, catalog, settings] = await Promise.all([
     db().from('crm_customers').select('id, company, contact_name').order('contact_name'),
     db().from('crm_deals').select('*').eq('archived', false).not('stage', 'in', '(won,lost)').order('created_at', { ascending: false }),
     priceList(),
+    appSettings(),
   ]);
   const dealList = (deals ?? []) as Deal[];
   const deal = dealList.find((d) => d.id === dealId);
@@ -54,6 +56,7 @@ export async function NewProposal({
         customers={(customers ?? []) as CustomerOption[]}
         deals={dealList}
         priceList={catalog}
+        defaults={settings.proposals}
         preset={{
           customer_id: customerId ?? deal?.customer_id ?? undefined,
           deal_id: deal?.id,

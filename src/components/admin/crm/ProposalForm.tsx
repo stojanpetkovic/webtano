@@ -2,6 +2,7 @@ import { saveProposal } from '@/app/(admin)/admin/(panel)/crm/actions';
 import { ProposalEditor, type EditorItem, type PriceListEntry } from './ProposalEditor';
 import { PROPOSAL_STATUS, customerName } from '@/lib/admin/crm/labels';
 import { DEFAULT_INTRO, DEFAULT_TERMS } from '@/lib/admin/crm/priceList';
+import type { AppSettings } from '@/lib/admin/settings';
 import type { CustomerOption, Deal, Proposal, ProposalItem } from '@/lib/admin/crm/types';
 
 const inDays = (n: number) => new Date(Date.now() + n * 86_400_000).toISOString().slice(0, 10);
@@ -13,6 +14,7 @@ export function ProposalForm({
   deals,
   priceList,
   preset = {},
+  defaults,
   inModal = false,
 }: {
   proposal?: Proposal;
@@ -21,6 +23,8 @@ export function ProposalForm({
   deals: Pick<Deal, 'id' | 'name' | 'company'>[];
   priceList: PriceListEntry[];
   preset?: { customer_id?: string; deal_id?: string; title?: string; items?: EditorItem[] };
+  /** A new proposal's validity, currency, intro and terms, from Podešavanja. */
+  defaults?: AppSettings['proposals'];
   /** In a pop-up the save bar sticks to the pop-up's bottom edge instead of the page's. */
   inModal?: boolean;
 }) {
@@ -68,22 +72,22 @@ export function ProposalForm({
           </div>
           <div>
             <label className="form-label" htmlFor="valid_until">Važi do</label>
-            <input className="form-input" id="valid_until" name="valid_until" type="date" defaultValue={proposal?.valid_until ?? inDays(14)} />
+            <input className="form-input" id="valid_until" name="valid_until" type="date" defaultValue={proposal?.valid_until ?? inDays(defaults?.valid_days ?? 14)} />
           </div>
         </div>
       </div>
 
-      <ProposalEditor initial={initial} priceList={priceList} currency={proposal?.currency ?? 'USD'} discount={Number(proposal?.discount_pct ?? 0)} />
+      <ProposalEditor initial={initial} priceList={priceList} currency={proposal?.currency ?? defaults?.currency ?? 'USD'} discount={Number(proposal?.discount_pct ?? 0)} />
 
       <div className="card">
         <div className="card-body grid gap-4 lg:grid-cols-2">
           <div>
             <label className="form-label" htmlFor="intro">Uvod (vidi klijent, na engleskom)</label>
-            <textarea className="form-input" id="intro" name="intro" rows={5} defaultValue={proposal ? proposal.intro ?? '' : DEFAULT_INTRO} />
+            <textarea className="form-input" id="intro" name="intro" rows={5} defaultValue={proposal ? proposal.intro ?? '' : (defaults?.intro ?? DEFAULT_INTRO)} />
           </div>
           <div>
             <label className="form-label" htmlFor="terms">Uslovi (jedan po redu)</label>
-            <textarea className="form-input" id="terms" name="terms" rows={5} defaultValue={proposal ? proposal.terms ?? '' : DEFAULT_TERMS} />
+            <textarea className="form-input" id="terms" name="terms" rows={5} defaultValue={proposal ? proposal.terms ?? '' : (defaults?.terms ?? DEFAULT_TERMS)} />
           </div>
         </div>
       </div>
