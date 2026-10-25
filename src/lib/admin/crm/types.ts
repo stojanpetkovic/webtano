@@ -108,3 +108,17 @@ export interface Task {
   completed_at: string | null;
   created_at: string;
 }
+
+/** A row of crm_items: something on the price list that can go into a proposal. */
+export interface CatalogItem {
+  id: string;
+  group_name: string;
+  name: string;
+  details: string | null;
+  unit_price: number;
+  recurring: boolean;
+  active: boolean;
+  position: number;
+  created_at: string;
+  updated_at: string;
+}

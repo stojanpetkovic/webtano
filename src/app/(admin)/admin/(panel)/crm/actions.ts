@@ -323,3 +323,72 @@ export async function deleteTask(form: FormData) {
   if (taskId) await db().from('crm_tasks').delete().eq('id', taskId);
   refresh();
 }
+
+/* ── Price list ────────────────────────────────────────────────────────── */
+
+async function lastItemPosition() {
+  const { data } = await db().from('crm_items').select('position').order('position', { ascending: false }).limit(1).maybeSingle<{ position: number }>();
+  return Number(data?.position ?? 0);
+}
+
+export async function saveItem(form: FormData) {
+  const itemId = id(form);
+  const values = {
+    group_name: str(form, 'group_name', 80) ?? 'Ostalo',
+    name: str(form, 'name', 300) ?? 'Stavka',
+    details: str(form, 'details', 2000),
+    unit_price: Math.max(0, num(form, 'unit_price')),
+    recurring: form.get('recurring') === 'on',
+    active: form.get('active') === 'on',
+    updated_at: new Date().toISOString(),
+  };
+  if (itemId) await db().from('crm_items').update(values).eq('id', itemId);
+  else await db().from('crm_items').insert({ ...values, position: (await lastItemPosition()) + 10 });
+  redirect('/admin/crm/items?notice=saved');
+}
+
+export async function toggleItem(form: FormData) {
+  const itemId = id(form);
+  if (!itemId) return;
+  await db().from('crm_items').update({ active: form.get('active') === '1', updated_at: new Date().toISOString() }).eq('id', itemId);
+  refresh();
+}
+
+/** Swaps an item with its neighbour above or below in the list. */
+export async function moveItem(form: FormData) {
+  const itemId = id(form);
+  if (!itemId) return;
+  const { data } = await db().from('crm_items').select('id, position').order('position');
+  const list = (data ?? []) as { id: string; position: number }[];
+  const i = list.findIndex((r) => r.id === itemId);
+  const j = form.get('dir') === 'up' ? i - 1 : i + 1;
+  if (i < 0 || j < 0 || j >= list.length) return;
+  await Promise.all([
+    db().from('crm_items').update({ position: list[j].position }).eq('id', list[i].id),
+    db().from('crm_items').update({ position: list[i].position }).eq('id', list[j].id),
+  ]);
+  refresh();
+}
+
+export async function deleteItem(form: FormData) {
+  const itemId = id(form);
+  if (itemId) await db().from('crm_items').delete().eq('id', itemId);
+  redirect('/admin/crm/items?notice=deleted');
+}
+
+/** "Sačuvaj u cenovnik" on a proposal line: adds it to the price list for next time. */
+export async function addItemFromProposal(item: ItemInput): Promise<boolean> {
+  const name = String(item?.description ?? '').trim().slice(0, 300);
+  if (!name) return false;
+  const { error } = await db()
+    .from('crm_items')
+    .insert({
+      group_name: 'Ostalo',
+      name,
+      details: String(item.details ?? '').trim().slice(0, 2000) || null,
+      unit_price: Math.max(0, Number(item.unit_price) || 0),
+      recurring: Boolean(item.recurring),
+      position: (await lastItemPosition()) + 10,
+    });
+  return !error;
+}

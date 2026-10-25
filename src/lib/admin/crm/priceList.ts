@@ -1,8 +1,27 @@
 import { monthlyPlans, websitePlans } from '@/content/pricing';
 import type { PriceListEntry } from '@/components/admin/crm/ProposalEditor';
+import { db } from '@/lib/admin/supabase';
+import type { CatalogItem } from './types';
 
-/** The webtano.com price list as proposal items, so prices stay in one place (src/content/pricing.ts). */
-export function priceList(): PriceListEntry[] {
+/**
+ * The price list offered in proposals: the active rows of crm_items, edited under
+ * Cenovnik. Falls back to the webtano.com prices while the table does not exist.
+ */
+export async function priceList(): Promise<PriceListEntry[]> {
+  const { data, error } = await db().from('crm_items').select('*').eq('active', true).order('position');
+  if (error) return defaultPriceList();
+  return ((data ?? []) as CatalogItem[]).map((i) => ({
+    group: i.group_name,
+    description: i.name,
+    details: i.details ?? '',
+    qty: 1,
+    unit_price: Number(i.unit_price),
+    recurring: i.recurring,
+  }));
+}
+
+/** The webtano.com price list (src/content/pricing.ts) as proposal items. crm_items starts as a copy of it. */
+export function defaultPriceList(): PriceListEntry[] {
   return [
     ...websitePlans.map((p) => ({
       group: 'Sajtovi',

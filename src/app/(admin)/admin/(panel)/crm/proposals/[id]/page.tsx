@@ -8,6 +8,7 @@ import { ProposalForm } from '@/components/admin/crm/ProposalForm';
 import { deleteProposal, projectFromProposal, setProposalStatus } from '../../actions';
 import { db } from '@/lib/admin/supabase';
 import { PROPOSAL_STATUS } from '@/lib/admin/crm/labels';
+import { priceList } from '@/lib/admin/crm/priceList';
 import { toParams } from '@/lib/admin/params';
 import type { Customer, Deal, Proposal, ProposalItem } from '@/lib/admin/crm/types';
 
@@ -81,6 +82,7 @@ export default async function ProposalPage({
         items={(items ?? []) as ProposalItem[]}
         customers={(customers ?? []) as Pick<Customer, 'id' | 'company'>[]}
         deals={(deals ?? []) as Pick<Deal, 'id' | 'name' | 'company'>[]}
+        priceList={await priceList()}
       />
 
       <form action={deleteProposal} className="text-right">

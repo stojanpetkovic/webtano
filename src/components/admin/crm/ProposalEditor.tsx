@@ -1,7 +1,9 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import { GripVertical, Plus, Repeat, Trash2 } from 'lucide-react';
+import Link from 'next/link';
+import { useMemo, useState, useTransition } from 'react';
+import { BookmarkCheck, BookmarkPlus, GripVertical, Plus, Repeat, Trash2 } from 'lucide-react';
+import { addItemFromProposal } from '@/app/(admin)/admin/(panel)/crm/actions';
 import { money, totals } from '@/lib/admin/crm/labels';
 
 export interface EditorItem {
@@ -36,6 +38,14 @@ export function ProposalEditor({
   const [discount, setDiscount] = useState(initialDiscount);
   const t = useMemo(() => totals(items, discount), [items, discount]);
   const groups = [...new Set(priceList.map((p) => p.group))];
+  // Lines saved to the price list from here, by their text, so the button shows it.
+  const [saved, setSaved] = useState<string[]>([]);
+  const [, startSaving] = useTransition();
+  const known = (it: EditorItem) => saved.includes(it.description) || priceList.some((p) => p.description === it.description && p.unit_price === it.unit_price);
+  const saveToList = (it: EditorItem) =>
+    startSaving(async () => {
+      if (await addItemFromProposal(it)) setSaved((list) => [...list, it.description]);
+    });
 
   const update = (i: number, patch: Partial<EditorItem>) => setItems((list) => list.map((it, n) => (n === i ? { ...it, ...patch } : it)));
   const remove = (i: number) => setItems((list) => list.filter((_, n) => n !== i));
@@ -48,7 +58,10 @@ export function ProposalEditor({
       <div className="card-header">
         <div>
           <h2 className="card-title">Stavke</h2>
-          <p className="card-sub">Dodaj iz cenovnika ili ručno. Mesečne stavke su označene sa <Repeat className="inline size-3" />.</p>
+          <p className="card-sub">
+            Dodaj iz <Link href="/admin/crm/items" className="font-medium text-primary hover:underline">cenovnika</Link> ili ručno. Mesečne stavke su označene sa{' '}
+            <Repeat className="inline size-3" />.
+          </p>
         </div>
         <select
           className="form-input w-auto py-1.5 text-xs"
@@ -59,7 +72,7 @@ export function ProposalEditor({
           }}
           aria-label="Dodaj iz cenovnika"
         >
-          <option value="">+ Iz cenovnika…</option>
+          <option value="">{priceList.length ? '+ Iz cenovnika…' : 'Cenovnik je prazan'}</option>
           {groups.map((g) => (
             <optgroup key={g} label={g}>
               {priceList.map((p, n) =>
@@ -107,9 +120,20 @@ export function ProposalEditor({
                 </div>
               </div>
             </div>
-            <button type="button" onClick={() => remove(i)} className="grid size-9 cursor-pointer place-items-center justify-self-end rounded-lg text-zinc-400 hover:bg-rose-50 hover:text-rose-600" aria-label="Obriši stavku">
-              <Trash2 className="size-4" />
-            </button>
+            <div className="flex justify-end gap-1 md:flex-col">
+              {it.description.trim() && !known(it) ? (
+                <button type="button" onClick={() => saveToList(it)} className="grid size-9 cursor-pointer place-items-center rounded-lg text-zinc-400 hover:bg-zinc-100 hover:text-ink" title="Sačuvaj u cenovnik" aria-label="Sačuvaj u cenovnik">
+                  <BookmarkPlus className="size-4" />
+                </button>
+              ) : saved.includes(it.description) ? (
+                <span className="grid size-9 place-items-center text-emerald-600" title="Sačuvano u cenovniku">
+                  <BookmarkCheck className="size-4" />
+                </span>
+              ) : null}
+              <button type="button" onClick={() => remove(i)} className="grid size-9 cursor-pointer place-items-center rounded-lg text-zinc-400 hover:bg-rose-50 hover:text-rose-600" aria-label="Obriši stavku">
+                <Trash2 className="size-4" />
+              </button>
+            </div>
           </div>
         ))}
       </div>

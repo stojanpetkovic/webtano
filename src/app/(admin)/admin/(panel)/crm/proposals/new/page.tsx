@@ -26,14 +26,16 @@ export default async function NewProposalPage({ searchParams }: { searchParams: 
   const dealList = (deals ?? []) as Deal[];
   const deal = dealList.find((d) => d.id === query.get('deal'));
   const customerId = query.get('customer') ?? deal?.customer_id ?? undefined;
-  const first = deal?.service ? priceList().find((p) => p.description === SERVICE_ITEM[deal.service!]) : undefined;
+  const catalog = await priceList();
+  const first = deal?.service ? catalog.find((p) => p.description === SERVICE_ITEM[deal.service!]) : undefined;
 
   return (
     <>
-      <PageHeading title="Nova ponuda" crumbs={[{ label: 'WebTano CRM' }, { label: 'Ponude', href: '/admin/crm/proposals' }]} description="Stavke iz cenovnika se dodaju sa cenama sa webtano.com/pricing." />
+      <PageHeading title="Nova ponuda" crumbs={[{ label: 'WebTano CRM' }, { label: 'Ponude', href: '/admin/crm/proposals' }]} description="Stavke biraš iz svog cenovnika, a cene u ponudi možeš da menjaš." />
       <ProposalForm
         customers={(customers ?? []) as Pick<Customer, 'id' | 'company'>[]}
         deals={dealList}
+        priceList={catalog}
         preset={{
           customer_id: customerId,
           deal_id: deal?.id,

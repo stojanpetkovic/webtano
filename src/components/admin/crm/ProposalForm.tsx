@@ -1,7 +1,7 @@
 import { saveProposal } from '@/app/(admin)/admin/(panel)/crm/actions';
-import { ProposalEditor, type EditorItem } from './ProposalEditor';
+import { ProposalEditor, type EditorItem, type PriceListEntry } from './ProposalEditor';
 import { PROPOSAL_STATUS } from '@/lib/admin/crm/labels';
-import { DEFAULT_INTRO, DEFAULT_TERMS, priceList } from '@/lib/admin/crm/priceList';
+import { DEFAULT_INTRO, DEFAULT_TERMS } from '@/lib/admin/crm/priceList';
 import type { Customer, Deal, Proposal, ProposalItem } from '@/lib/admin/crm/types';
 
 const inDays = (n: number) => new Date(Date.now() + n * 86_400_000).toISOString().slice(0, 10);
@@ -11,12 +11,14 @@ export function ProposalForm({
   items = [],
   customers,
   deals,
+  priceList,
   preset = {},
 }: {
   proposal?: Proposal;
   items?: ProposalItem[];
   customers: Pick<Customer, 'id' | 'company'>[];
   deals: Pick<Deal, 'id' | 'name' | 'company'>[];
+  priceList: PriceListEntry[];
   preset?: { customer_id?: string; deal_id?: string; title?: string; items?: EditorItem[] };
 }) {
   const initial: EditorItem[] = proposal
@@ -68,7 +70,7 @@ export function ProposalForm({
         </div>
       </div>
 
-      <ProposalEditor initial={initial} priceList={priceList()} currency={proposal?.currency ?? 'USD'} discount={Number(proposal?.discount_pct ?? 0)} />
+      <ProposalEditor initial={initial} priceList={priceList} currency={proposal?.currency ?? 'USD'} discount={Number(proposal?.discount_pct ?? 0)} />
 
       <div className="card">
         <div className="card-body grid gap-4 lg:grid-cols-2">
