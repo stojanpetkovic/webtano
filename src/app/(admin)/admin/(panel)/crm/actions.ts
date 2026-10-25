@@ -3,7 +3,7 @@
 import { redirect } from 'next/navigation';
 import { refresh, revalidatePath } from 'next/cache';
 import { db } from '@/lib/admin/supabase';
-import { PROPOSAL_STATUS, SERVICES, STAGE_LABEL } from '@/lib/admin/crm/labels';
+import { PROPOSAL_STATUS, SERVICES, STAGE_LABEL, dealServices } from '@/lib/admin/crm/labels';
 import { PRICED_PATHS } from '@/lib/pricing';
 import type { DealStage, TaskStatus } from '@/lib/admin/crm/types';
 
@@ -58,7 +58,8 @@ export async function saveDeal(form: FormData) {
     email: str(form, 'email', 200),
     phone: str(form, 'phone', 60),
     website: str(form, 'website', 200),
-    service: str(form, 'service', 60),
+    service: services(form)[0] ?? null,
+    services: services(form),
     source: str(form, 'source', 100),
     value: Math.max(0, num(form, 'value')),
     stage: oneOf(form.get('stage'), STAGES, 'new'),
@@ -113,7 +114,7 @@ export async function convertDeal(form: FormData) {
         email: deal.email,
         phone: deal.phone,
         website: deal.website,
-        services: deal.service && deal.service in SERVICES ? [deal.service] : [],
+        services: dealServices(deal),
       })
       .select('id')
       .single<{ id: string }>();
@@ -261,8 +262,8 @@ export async function projectFromProposal(form: FormData) {
     db().from('crm_proposal_items').select('description, position').eq('proposal_id', proposalId).order('position'),
   ]);
   if (!p) redirect('/admin/crm/proposals');
-  // The project covers the service the deal asked for, when there is one.
-  const { data: deal } = p.deal_id ? await db().from('crm_deals').select('service').eq('id', p.deal_id).maybeSingle() : { data: null };
+  // The project covers the services the deal asked for.
+  const { data: deal } = p.deal_id ? await db().from('crm_deals').select('service, services').eq('id', p.deal_id).maybeSingle() : { data: null };
   const { data: project } = await db()
     .from('crm_projects')
     .insert({
@@ -271,7 +272,7 @@ export async function projectFromProposal(form: FormData) {
       proposal_id: p.id,
       status: 'not_started',
       start_date: new Date().toISOString().slice(0, 10),
-      services: deal?.service && deal.service in SERVICES ? [deal.service] : [],
+      services: deal ? dealServices(deal) : [],
     })
     .select('id')
     .single<{ id: string }>();

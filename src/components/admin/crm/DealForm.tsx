@@ -1,5 +1,6 @@
 import { saveDeal } from '@/app/(admin)/admin/(panel)/crm/actions';
-import { SERVICES, STAGES } from '@/lib/admin/crm/labels';
+import { STAGES, dealServices } from '@/lib/admin/crm/labels';
+import { ServiceChoices } from './ServiceChoices';
 import type { Deal } from '@/lib/admin/crm/types';
 
 /** Create or edit a deal. Plain form posting to a server action. */
@@ -8,6 +9,7 @@ export function DealForm({ deal }: { deal?: Deal }) {
     <form action={saveDeal} className="space-y-4">
       {deal && <input type="hidden" name="id" value={deal.id} />}
       <div className="grid gap-4 sm:grid-cols-2">
+        <ServiceChoices selected={deal ? dealServices(deal) : []} hint="Izaberi jednu ili više." />
         <div>
           <label className="form-label" htmlFor="name">Ime i prezime</label>
           <input className="form-input" id="name" name="name" defaultValue={deal?.name} required />
@@ -31,15 +33,6 @@ export function DealForm({ deal }: { deal?: Deal }) {
         <div>
           <label className="form-label" htmlFor="source">Izvor</label>
           <input className="form-input" id="source" name="source" defaultValue={deal?.source ?? ''} placeholder="Preporuka, LinkedIn…" />
-        </div>
-        <div>
-          <label className="form-label" htmlFor="service">Usluga</label>
-          <select className="form-input" id="service" name="service" defaultValue={deal?.service ?? ''}>
-            <option value="">—</option>
-            {Object.entries(SERVICES).map(([k, v]) => (
-              <option key={k} value={k}>{v}</option>
-            ))}
-          </select>
         </div>
         <div>
           <label className="form-label" htmlFor="value">Procena vrednosti (USD)</label>

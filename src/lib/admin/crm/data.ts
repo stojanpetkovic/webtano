@@ -4,7 +4,7 @@ import { site as siteConfig } from '@/content/site';
 import { monthlyPlans, websitePlans } from '@/content/pricing';
 import type { Lead } from '../types';
 import type { Deal } from './types';
-import { customerName } from './labels';
+import { customerName, parseServices } from './labels';
 
 /** The sites row the webtano.com form writes to. Its leads belong to the CRM, not to the client lists. */
 export async function webtanoSiteId(): Promise<string | null> {
@@ -12,7 +12,7 @@ export async function webtanoSiteId(): Promise<string | null> {
   return data?.id ?? null;
 }
 
-// A first guess at what a deal is worth, from the service picked on the form and the price list.
+// A first guess at what a deal is worth, from the services picked on the form and the price list.
 const price = (id: string) => [...monthlyPlans, ...websitePlans].find((p) => p.id === id)?.price ?? 0;
 const ESTIMATE: Record<string, number> = {
   'new-website': price('starter-site'),
@@ -37,7 +37,7 @@ export async function syncDeals(): Promise<void> {
   if (!fresh.length) return;
 
   const rows = fresh.map((l) => {
-    const service = l.data?.service ?? null;
+    const services = parseServices(l.data?.service);
     let website = (l.data?.website ?? '').trim() || null;
     if (website) website = website.replace(/^https?:\/\//, '').replace(/\/$/, '');
     return {
@@ -48,8 +48,9 @@ export async function syncDeals(): Promise<void> {
       phone: l.visitor_phone,
       website,
       source: leadSource(l),
-      service,
-      value: ESTIMATE[service ?? ''] ?? 0,
+      service: services[0] ?? null,
+      services,
+      value: services.reduce((sum, k) => sum + (ESTIMATE[k] ?? 0), 0),
       stage: 'new',
       // Newest on top of the column.
       position: -new Date(l.created_at).getTime() / 1000,

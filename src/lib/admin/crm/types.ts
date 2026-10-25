@@ -37,7 +37,10 @@ export interface Deal {
   phone: string | null;
   website: string | null;
   source: string | null;
+  /** The first of services; kept for older code and rows. */
   service: string | null;
+  /** SERVICES keys, one or more. */
+  services: string[];
   value: number;
   stage: DealStage;
   position: number;

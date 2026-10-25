@@ -12,7 +12,7 @@ import { DealForm } from '@/components/admin/crm/DealForm';
 import { StageSteps } from '@/components/admin/crm/StageSteps';
 import { convertDeal, deleteDeal } from '../../actions';
 import { db } from '@/lib/admin/supabase';
-import { PROPOSAL_STATUS, SERVICES, money } from '@/lib/admin/crm/labels';
+import { PROPOSAL_STATUS, SERVICES, money, parseServices } from '@/lib/admin/crm/labels';
 import { formatDateTime } from '@/lib/admin/format';
 import { toParams } from '@/lib/admin/params';
 import type { Activity, Deal, Proposal } from '@/lib/admin/crm/types';
@@ -22,7 +22,7 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = { title: 'Lid' };
 
 const FIELD_LABELS: Record<string, string> = {
-  service: 'Usluga',
+  service: 'Usluge',
   website: 'Sajt',
   business: 'Posao',
   timeline: 'Kada',
@@ -89,7 +89,7 @@ export default async function DealPage({
                 {formFields.map(([k, v]) => (
                   <div key={k} className="grid gap-1 px-5 py-3 sm:grid-cols-[140px_1fr]">
                     <dt className="text-[13px] text-zinc-500">{FIELD_LABELS[k]}</dt>
-                    <dd className="text-[13.5px] whitespace-pre-line text-ink">{k === 'service' ? SERVICES[v] ?? v : k === 'timeline' ? TIMELINE[v] ?? v : v}</dd>
+                    <dd className="text-[13.5px] whitespace-pre-line text-ink">{k === 'service' ? parseServices(v).map((s) => SERVICES[s]).join(', ') || v : k === 'timeline' ? TIMELINE[v] ?? v : v}</dd>
                   </div>
                 ))}
               </dl>

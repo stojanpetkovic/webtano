@@ -2,9 +2,10 @@ import { Modal } from '@/components/admin/Modal';
 import { ProposalForm } from './ProposalForm';
 import { db } from '@/lib/admin/supabase';
 import { priceList } from '@/lib/admin/crm/priceList';
+import { dealServices } from '@/lib/admin/crm/labels';
 import type { CustomerOption, Deal } from '@/lib/admin/crm/types';
 
-// What a form lead asked for, as the first line of its proposal.
+// What a lead asked for, as the first lines of its proposal.
 const SERVICE_ITEM: Record<string, string> = {
   'new-website': 'Starter site',
   redesign: 'Starter site',
@@ -35,7 +36,8 @@ export async function NewProposal({
   ]);
   const dealList = (deals ?? []) as Deal[];
   const deal = dealList.find((d) => d.id === dealId);
-  const first = deal?.service ? catalog.find((p) => p.description === SERVICE_ITEM[deal.service!]) : undefined;
+  const names = new Set(deal ? dealServices(deal).map((k) => SERVICE_ITEM[k]) : []);
+  const asked = catalog.filter((p) => names.has(p.description));
 
   return (
     <Modal
@@ -56,7 +58,7 @@ export async function NewProposal({
           customer_id: customerId ?? deal?.customer_id ?? undefined,
           deal_id: deal?.id,
           title: deal ? `Proposal for ${deal.company ?? deal.name}` : undefined,
-          items: first ? [{ description: first.description, details: first.details, qty: 1, unit_price: first.unit_price, recurring: first.recurring }] : [],
+          items: asked.map((p) => ({ description: p.description, details: p.details, qty: 1, unit_price: p.unit_price, recurring: p.recurring })),
         }}
       />
     </Modal>

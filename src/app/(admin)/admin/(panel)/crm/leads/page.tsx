@@ -10,7 +10,8 @@ import { MarkLeadsSeen } from '@/components/admin/MarkLeadsSeen';
 import { db } from '@/lib/admin/supabase';
 import { syncDeals } from '@/lib/admin/crm/data';
 import { unseenLeadCount } from '@/lib/admin/seen';
-import { SERVICES, STAGES, STAGE_LABEL, money } from '@/lib/admin/crm/labels';
+import { STAGES, STAGE_LABEL, dealServices, money } from '@/lib/admin/crm/labels';
+import { ServicePills } from '@/components/admin/crm/ServicePills';
 import { timeAgo } from '@/lib/admin/format';
 import { toParams } from '@/lib/admin/params';
 import { daysAgo } from '@/lib/admin/stats';
@@ -102,7 +103,7 @@ export default async function CrmLeadsPage({ searchParams }: { searchParams: Pro
                         </Link>
                         <div className="text-xs text-muted">{d.company ?? d.email ?? '—'}</div>
                       </td>
-                      <td>{d.service ? SERVICES[d.service] ?? d.service : '—'}</td>
+                      <td>{dealServices(d).length ? <ServicePills services={dealServices(d)} /> : '—'}</td>
                       <td>
                         <span className={`badge ${d.stage === 'won' ? 'badge-won' : d.stage === 'lost' ? 'badge-lost' : d.stage === 'new' ? 'badge-new' : 'badge-contacted'}`}>
                           {STAGE_LABEL[d.stage]}

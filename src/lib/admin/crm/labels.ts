@@ -57,6 +57,15 @@ export const SERVICES: Record<string, string> = {
   other: 'Nešto drugo',
 };
 
+/** Turns what a lead sent ("new-website, ads", or one key) into known SERVICES keys. */
+export function parseServices(value: unknown): string[] {
+  const list = Array.isArray(value) ? value : String(value ?? '').split(',');
+  return [...new Set(list.map((s) => String(s).trim()).filter((k) => k in SERVICES))];
+}
+
+/** A deal's services, falling back to the single service of older rows. */
+export const dealServices = (d: { services?: string[] | null; service?: string | null }) => (d.services?.length ? d.services : parseServices(d.service));
+
 /** A customer's display name: the person, else the business. */
 export function customerName(c: { contact_name?: string | null; company?: string | null }) {
   return c.contact_name?.trim() || c.company?.trim() || 'Bez imena';

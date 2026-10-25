@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { CalendarClock, Globe, Mail, Phone } from 'lucide-react';
 import { Board } from './Board';
 import { moveDeal } from '@/app/(admin)/admin/(panel)/crm/actions';
-import { SERVICES, STAGES, money } from '@/lib/admin/crm/labels';
+import { SERVICES, STAGES, dealServices, money } from '@/lib/admin/crm/labels';
 import type { Deal } from '@/lib/admin/crm/types';
 
 type Card = Deal & { column: string };
@@ -41,7 +41,9 @@ export function DealBoard({ deals }: { deals: Deal[] }) {
               {Number(d.value) > 0 && <span className="shrink-0 text-[13px] font-semibold text-ink tabular-nums">{money(Number(d.value))}</span>}
             </div>
             <div className="mt-3 flex flex-wrap items-center gap-1.5">
-              {d.service && <span className="rounded-md bg-accent/10 px-1.5 py-0.5 text-[11px] font-medium text-primary">{SERVICES[d.service] ?? d.service}</span>}
+              {dealServices(d).map((k) => (
+                <span key={k} className="rounded-md bg-accent/10 px-1.5 py-0.5 text-[11px] font-medium text-primary">{SERVICES[k]}</span>
+              ))}
               {d.source && <span className="rounded-md bg-zinc-100 px-1.5 py-0.5 text-[11px] text-zinc-600">{d.source}</span>}
             </div>
             {d.next_step && (

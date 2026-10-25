@@ -92,11 +92,13 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
         </div>
 
         <fieldset className="mt-5">
-          <legend className={label}>What do you need?</legend>
+          <legend className={label}>
+          What do you need? <span className="font-normal text-zinc-500">Pick all that apply.</span>
+        </legend>
           <div className="mt-2 flex flex-wrap gap-2">
             {SERVICES.slice(0, 4).map((s, i) => (
               <label key={s.value} className="cursor-pointer">
-                <input type="radio" name="service" value={s.value} defaultChecked={i === 0} className="peer sr-only" />
+                <input type="checkbox" name="service" value={s.value} defaultChecked={i === 0} className="peer sr-only" />
                 <span className="inline-block rounded-full border border-zinc-300 px-3 py-1.5 text-sm text-zinc-700 transition hover:border-azure-600 peer-checked:border-azure-700 peer-checked:bg-azure-700 peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-azure-700/40">
                   {s.label}
                 </span>
@@ -181,11 +183,13 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
       className="rounded-3xl border border-zinc-200/80 bg-white p-6 shadow-float sm:p-8"
     >
       <fieldset>
-        <legend className={label}>What do you need?</legend>
+        <legend className={label}>
+          What do you need? <span className="font-normal text-zinc-500">Pick all that apply.</span>
+        </legend>
         <div className="mt-2 flex flex-wrap gap-2">
           {SERVICES.map((s, i) => (
             <label key={s.value} className="cursor-pointer">
-              <input type="radio" name="service" value={s.value} defaultChecked={i === 0} className="peer sr-only" />
+              <input type="checkbox" name="service" value={s.value} defaultChecked={i === 0} className="peer sr-only" />
               <span className="inline-block rounded-full border border-zinc-300 px-3.5 py-1.5 text-sm text-zinc-700 transition hover:border-azure-600 hover:text-ink-800 peer-checked:border-azure-700 peer-checked:bg-azure-700 peer-checked:shadow-soft peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-azure-700/40">
                 {s.label}
               </span>
