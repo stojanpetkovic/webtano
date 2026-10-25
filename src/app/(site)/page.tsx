@@ -27,7 +27,6 @@ import { CountUp } from '@/components/site/CountUp';
 import { FaqList } from '@/components/site/FaqList';
 import { HeroBackdrop } from '@/components/site/HeroBackdrop';
 import { Reveal } from '@/components/site/Reveal';
-import { SwipeRow } from '@/components/site/SwipeRow';
 import { SectionHeading } from '@/components/site/Section';
 import { AdsVisual, LeadsVisual, SearchVisual, SpeedVisual } from '@/components/site/ServiceVisuals';
 import { caseStudies } from '@/content/work';
@@ -222,29 +221,33 @@ export default async function HomePage() {
   return (
     <>
       {/* Hero */}
-      <section className="bg-spotlight relative overflow-hidden pt-14 pb-24 text-white sm:pt-20 lg:pb-32">
+      <section className="bg-spotlight relative overflow-hidden pt-14 pb-24 text-white max-md:pt-8 max-md:pb-4 sm:pt-20 lg:pb-32">
         <HeroBackdrop />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" aria-hidden />
-        <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-[1.08fr_0.92fr]">
-          <div className="text-center lg:text-left">
-            <Reveal>
+        <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-4 max-md:gap-6 max-md:px-3 sm:px-6 lg:grid-cols-[1.08fr_0.92fr]">
+          <div className="text-center max-md:px-1 lg:text-left">
+            <Reveal className="max-md:hidden">
               <p className="inline-flex items-center gap-2.5 rounded-full border border-white/12 bg-white/[0.04] px-3.5 py-1.5 font-mono text-xs tracking-wide text-white/75 shadow-[inset_0_1px_0_rgb(255_255_255/0.06)] backdrop-blur">
                 <span className="h-2 w-2 animate-pulse-dot rounded-full bg-accent" aria-hidden />
                 Taking on one company per service area
               </p>
             </Reveal>
             <Reveal delay={80}>
-              <h1 className="mt-6 font-display text-[2.6rem] leading-[1.02] text-balance sm:text-6xl lg:text-[4.4rem]">
+              <h1 className="mt-6 font-display text-[2.6rem] leading-[1.02] text-balance max-md:mt-0 max-md:text-[1.95rem] max-md:leading-[1.08] sm:text-6xl lg:text-[4.4rem]">
                 Websites and ads that turn searches into <span className="text-gradient">booked jobs</span>
               </h1>
             </Reveal>
             <Reveal delay={160}>
-              <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-pretty text-white/70 lg:mx-0">
+              {/* Phones: one short line, so the form is on the first screen. */}
+              <p className="mx-auto mt-3 max-w-xs text-[15px] leading-snug text-white/70 md:hidden">
+                Websites, local SEO and Google Ads. Every call and form counted.
+              </p>
+              <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-pretty text-white/70 max-md:hidden lg:mx-0">
                 WebTano builds fast websites and runs local SEO and Google Ads for tree services and other local companies. Every
                 call and form is counted, so you see exactly which dollars bring in work.
               </p>
             </Reveal>
-            <Reveal delay={240}>
+            <Reveal delay={240} className="max-md:hidden">
               <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
                 <Link href="#hero-form" className={`${primaryButton} w-full sm:w-auto`}>
                   Get a free website check
@@ -262,7 +265,7 @@ export default async function HomePage() {
                 Free, no obligation, reply within one business day
               </p>
             </Reveal>
-            <dl className="mt-12 grid grid-cols-3 gap-3 sm:gap-4">
+            <dl className="mt-12 grid grid-cols-3 gap-3 max-md:hidden sm:gap-4">
               {heroStats.map((s, i) => (
                 <Reveal key={s.label} delay={320 + i * 90}>
                   <div className="h-full rounded-2xl border border-white/10 bg-white/[0.03] p-3 text-center shadow-[inset_0_1px_0_rgb(255_255_255/0.06)] backdrop-blur transition duration-300 hover:border-white/20 hover:bg-white/[0.06] sm:p-4 lg:text-left">
@@ -277,7 +280,7 @@ export default async function HomePage() {
           </div>
 
           <Reveal variant="scale" delay={200} className="relative mx-auto w-full max-w-lg lg:max-w-none">
-            <div className="pointer-events-none absolute -inset-12 rounded-full bg-azure-600/30 blur-3xl" aria-hidden />
+            <div className="pointer-events-none absolute -inset-12 rounded-full bg-azure-600/30 blur-3xl max-md:hidden" aria-hidden />
             <div className="relative">
               <CheckForm compact />
             </div>
@@ -286,7 +289,7 @@ export default async function HomePage() {
       </section>
 
       {/* Clients */}
-      <section className="bg-clients relative overflow-hidden py-16 sm:py-20">
+      <section className="bg-clients relative overflow-hidden py-16 max-md:py-8 sm:py-20">
         <div className="grid-lines-light pointer-events-none absolute inset-0" aria-hidden />
         {/* The hero's dark edge melts into this section instead of stopping at a hard line. */}
         <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-ink-975/[0.07] to-transparent" aria-hidden />
@@ -300,7 +303,7 @@ export default async function HomePage() {
                 Real businesses, real numbers, measured by our own tracking
               </h2>
             </Reveal>
-            <Reveal delay={100}>
+            <Reveal delay={100} className="max-md:hidden">
               <dl className="flex divide-x divide-zinc-200 rounded-2xl border border-zinc-200/80 bg-white/80 shadow-soft backdrop-blur">
                 {clientProof.map((p) => (
                   <div key={p.label} className="flex flex-col-reverse px-4 py-3 sm:px-6">
@@ -312,7 +315,7 @@ export default async function HomePage() {
             </Reveal>
           </div>
 
-          <ul className="mt-10 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
+          <ul className="mt-10 grid grid-cols-2 gap-3 max-md:mt-5 sm:gap-5 lg:grid-cols-4">
             {caseStudies.map((c, i) => (
               <Reveal as="li" key={c.slug} delay={i * 90}>
                 <Link
@@ -323,7 +326,7 @@ export default async function HomePage() {
                     className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent to-transparent opacity-0 transition duration-500 group-hover:opacity-100"
                     aria-hidden
                   />
-                  <div className="relative flex h-28 items-center justify-center bg-gradient-to-b from-zinc-50 to-white px-5 sm:h-36">
+                  <div className="relative flex h-28 items-center justify-center bg-gradient-to-b from-zinc-50 to-white px-5 max-md:h-20 sm:h-36">
                     <Image
                       src={`/clients/${c.slug}.webp`}
                       alt={c.client}
@@ -349,11 +352,18 @@ export default async function HomePage() {
               </Reveal>
             ))}
           </ul>
+          <Link
+            href="/work"
+            className="mt-4 flex h-12 items-center justify-center gap-2 rounded-2xl bg-[#f2f2f7] text-[15px] font-semibold text-ink-950 md:hidden"
+          >
+            All case studies
+            <ArrowRight className="h-4 w-4" aria-hidden />
+          </Link>
         </div>
       </section>
 
       {/* Problem */}
-      <section className="bg-leaks relative overflow-hidden py-24 sm:py-32">
+      <section className="bg-leaks relative overflow-hidden py-24 max-md:py-8 sm:py-32">
         <div className="grid-lines-light pointer-events-none absolute inset-0 opacity-70 [mask-image:radial-gradient(ellipse_70%_60%_at_50%_55%,#000_20%,transparent_75%)]" aria-hidden />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <div className="grid items-end gap-8 lg:grid-cols-[1.15fr_0.85fr]">
@@ -366,7 +376,7 @@ export default async function HomePage() {
                 Your website may be sending customers to the company down the road
               </h2>
             </Reveal>
-            <Reveal delay={100}>
+            <Reveal delay={100} className="max-md:hidden">
               <p className="text-lg leading-relaxed text-pretty text-zinc-600">
                 Nothing warns you. No error and no alert, just calls that never come. Here is where a customer slips away on the way from
                 a search to a booked job.
@@ -374,34 +384,34 @@ export default async function HomePage() {
             </Reveal>
           </div>
 
-          <ol className="relative mt-16 grid gap-6 lg:grid-cols-4 lg:gap-5">
+          <ol className="relative mt-16 grid gap-6 max-md:mt-5 max-md:gap-2.5 lg:grid-cols-4 lg:gap-5">
             {/* The path itself: a line that runs through all four stages. */}
             <span className="pipeline pointer-events-none absolute top-[1.15rem] right-[12.5%] left-[12.5%] hidden h-0.5 rounded-full lg:block" aria-hidden />
-            <span className="pipeline-v pointer-events-none absolute top-4 bottom-4 left-[1.15rem] w-0.5 rounded-full lg:hidden" aria-hidden />
+            <span className="pipeline-v pointer-events-none absolute top-4 bottom-4 left-[1.15rem] w-0.5 rounded-full max-md:hidden lg:hidden" aria-hidden />
             {problems.map((p, i) => (
-              <Reveal as="li" key={p.title} delay={i * 120} className="relative flex flex-col pl-14 lg:pl-0">
-                <div className="absolute top-0 left-0 lg:static lg:flex lg:justify-center">
+              <Reveal as="li" key={p.title} delay={i * 120} className="relative flex flex-col pl-14 max-md:pl-0 lg:pl-0">
+                <div className="absolute top-0 left-0 max-md:hidden lg:static lg:flex lg:justify-center">
                   <span className="relative z-10 flex h-[2.3rem] w-[2.3rem] items-center justify-center rounded-full bg-ink-950 font-mono text-xs font-medium text-accent shadow-lift ring-4 ring-white">
                     {String(i + 1).padStart(2, '0')}
                   </span>
                 </div>
-                <p className="mt-2.5 mb-3 font-mono text-[11px] font-medium tracking-[0.16em] text-zinc-500 uppercase lg:mt-3 lg:mb-4 lg:text-center">
+                <p className="mt-2.5 mb-3 font-mono text-[11px] font-medium tracking-[0.16em] text-zinc-500 uppercase max-md:hidden lg:mt-3 lg:mb-4 lg:text-center">
                   {p.stage}
                 </p>
                 <article className="group flex flex-1 flex-col overflow-hidden rounded-3xl border border-zinc-200/80 bg-white shadow-soft transition duration-300 hover:-translate-y-1.5 hover:shadow-lift">
-                  <div className="flex-1 p-5 sm:p-6">
-                    <div className="flex items-center justify-between">
+                  <div className="flex-1 p-5 max-md:flex max-md:items-center max-md:gap-3 max-md:p-4 sm:p-6">
+                    <div className="flex items-center justify-between max-md:shrink-0">
                       <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-50 text-red-600 ring-1 ring-red-100 transition duration-300 group-hover:scale-105">
                         <p.icon className="h-5 w-5" aria-hidden />
                       </span>
-                      <span className="rounded-full bg-red-50 px-2.5 py-1 font-mono text-[10px] font-medium tracking-wide text-red-700 uppercase ring-1 ring-red-100">
+                      <span className="rounded-full bg-red-50 px-2.5 py-1 font-mono text-[10px] font-medium tracking-wide text-red-700 uppercase ring-1 ring-red-100 max-md:hidden">
                         Leak
                       </span>
                     </div>
-                    <h3 className="mt-5 font-display text-lg text-ink-950">{p.title}</h3>
-                    <p className="mt-2 text-[15px] leading-relaxed text-zinc-600">{p.text}</p>
+                    <h3 className="mt-5 font-display text-lg text-ink-950 max-md:mt-0 max-md:text-[17px]">{p.title}</h3>
+                    <p className="mt-2 text-[15px] leading-relaxed text-zinc-600 max-md:hidden">{p.text}</p>
                   </div>
-                  <div className="flex gap-3 border-t border-azure-100 bg-azure-50/70 px-5 py-4 sm:px-6">
+                  <div className="flex gap-3 border-t border-azure-100 bg-azure-50/70 px-5 py-4 max-md:px-4 max-md:py-3 sm:px-6">
                     <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-azure-700 text-accent">
                       <Check className="h-3 w-3" aria-hidden />
                     </span>
@@ -415,7 +425,7 @@ export default async function HomePage() {
             ))}
           </ol>
 
-          <Reveal delay={150}>
+          <Reveal delay={150} className="max-md:hidden">
             <div className="mt-14 flex flex-col items-center justify-between gap-5 rounded-3xl bg-ink-975 px-6 py-6 text-center text-white shadow-float ring-1 ring-white/10 sm:px-8 md:flex-row md:text-left">
               <p className="max-w-2xl text-lg text-white/80">
                 <span className="font-semibold text-white">Close all four leaks</span> and the same ad budget brings in more booked jobs. The
@@ -431,7 +441,7 @@ export default async function HomePage() {
       </section>
 
       {/* Services */}
-      <section id="services" className="bg-spotlight edge-glow relative scroll-mt-16 overflow-hidden py-24 text-white sm:py-32">
+      <section id="services" className="bg-spotlight edge-glow relative scroll-mt-16 overflow-hidden py-24 text-white max-md:py-8 sm:py-32">
         <div className="grid-lines pointer-events-none absolute inset-0" aria-hidden />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal>
@@ -442,22 +452,22 @@ export default async function HomePage() {
               lead="One team for the website, the search rankings, the ads and the tracking, so nothing falls between two agencies."
             />
           </Reveal>
-          <SwipeRow label="Services" className="mt-14 grid gap-5 lg:grid-cols-3 lg:grid-rows-[auto_auto]">
+          <div className="mt-14 grid gap-5 max-md:mt-5 max-md:gap-2.5 lg:grid-cols-3 lg:grid-rows-[auto_auto]">
             {services.map((s, i) => (
               <Reveal key={s.title} delay={i * 100} className={s.area}>
                 <article className="group ring-gradient flex h-full flex-col overflow-hidden rounded-3xl bg-white/[0.03] shadow-[inset_0_1px_0_rgb(255_255_255/0.06)] backdrop-blur transition duration-300 hover:-translate-y-1 hover:bg-white/[0.05]">
-                  <div className="relative border-b border-white/10 bg-gradient-to-b from-white/[0.04] to-transparent p-5 sm:p-6">
+                  <div className="relative border-b border-white/10 bg-gradient-to-b from-white/[0.04] to-transparent p-5 max-md:hidden sm:p-6">
                     <s.visual />
                   </div>
-                  <div className="flex flex-1 flex-col p-6">
+                  <div className="flex flex-1 flex-col p-6 max-md:p-4">
                     <div className="flex items-center gap-3">
                       <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent ring-1 ring-accent/25 transition duration-300 group-hover:bg-accent group-hover:text-ink-950">
                         <s.icon className="h-[18px] w-[18px]" aria-hidden />
                       </span>
                       <h3 className="font-display text-xl">{s.title}</h3>
                     </div>
-                    <p className="mt-3 flex-1 leading-relaxed text-white/65">{s.text}</p>
-                    <ul className="mt-5 flex flex-wrap gap-2">
+                    <p className="mt-3 flex-1 leading-relaxed text-white/65 max-md:mt-2 max-md:text-[15px] max-md:leading-snug">{s.text}</p>
+                    <ul className="mt-5 flex flex-wrap gap-2 max-md:hidden">
                       {s.points.map((point) => (
                         <li
                           key={point}
@@ -472,15 +482,16 @@ export default async function HomePage() {
                 </article>
               </Reveal>
             ))}
-          </SwipeRow>
-          <p className="mt-6 text-center font-mono text-[10px] tracking-wide text-white/35 uppercase">
+          </div>
+          <p className="mt-6 text-center font-mono text-[10px] tracking-wide text-white/35 uppercase max-md:hidden">
             Illustrations use example data. Real figures are in the case studies below.
           </p>
         </div>
       </section>
 
       {/* Results */}
-      <section id="work" className="bg-results relative scroll-mt-16 overflow-hidden py-24 sm:py-32">
+      {/* On phones the client cards above already carry the results, so this section is desktop only. */}
+      <section id="work" className="bg-results relative scroll-mt-16 overflow-hidden py-24 max-md:hidden sm:py-32">
         <div className="grid-lines-light pointer-events-none absolute inset-x-0 top-0 h-[36rem] [mask-image:linear-gradient(#000,transparent)]" aria-hidden />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal>
@@ -490,10 +501,10 @@ export default async function HomePage() {
               lead="Every figure below comes from the client’s own lead tracking, ad account or a Lighthouse run on the live site, not from a mock-up."
             />
           </Reveal>
-          <Reveal className="mt-14">
+          <Reveal className="mt-14 max-md:mt-5">
             <CaseTabs cases={caseStudies} />
           </Reveal>
-          <Reveal className="mt-10 flex flex-col items-center gap-3 text-center">
+          <Reveal className="mt-10 flex flex-col items-center gap-3 text-center max-md:mt-5">
             <Link
               href="/work"
               className="group inline-flex items-center gap-2 rounded-full border border-azure-200 bg-white px-5 py-3 font-semibold text-ink-800 shadow-soft transition duration-300 hover:-translate-y-0.5 hover:border-azure-700 hover:shadow-lift"
@@ -506,10 +517,10 @@ export default async function HomePage() {
       </section>
 
       {/* Promises */}
-      <section className="bg-promises edge-glow relative overflow-hidden py-24 text-white sm:py-32">
+      <section className="bg-promises edge-glow relative overflow-hidden py-24 text-white max-md:py-8 sm:py-32">
         <div className="grid-lines pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_70%_70%_at_30%_40%,#000,transparent)]" aria-hidden />
-        <div className="relative mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-[0.92fr_1.08fr] lg:gap-16">
-          <Reveal className="lg:sticky lg:top-28 lg:self-start">
+        <div className="relative mx-auto grid max-w-6xl gap-12 px-4 max-md:gap-5 sm:px-6 lg:grid-cols-[0.92fr_1.08fr] lg:gap-16">
+          <Reveal className="max-md:text-center lg:sticky lg:top-28 lg:self-start">
             <p className="inline-flex items-center gap-2 rounded-full bg-white/[0.04] px-3 py-1 font-mono text-[11px] font-medium tracking-[0.14em] text-accent uppercase ring-1 ring-white/12">
               <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden />
               How we work
@@ -517,11 +528,11 @@ export default async function HomePage() {
             <h2 className="mt-4 font-display text-3xl text-balance md:text-[2.75rem] md:leading-[1.08]">
               We only win when <span className="text-gradient">the phone rings</span>
             </h2>
-            <p className="mt-4 text-lg text-pretty text-white/70">
+            <p className="mt-4 text-lg text-pretty text-white/70 max-md:hidden">
               Most agencies get paid for activity. We judge our work by one number, the leads you can count, and these three rules are part of
               every agreement.
             </p>
-            <div className="ring-gradient mt-8 flex items-center gap-5 rounded-3xl bg-white/[0.03] p-5 sm:p-6">
+            <div className="ring-gradient mt-8 flex items-center gap-5 rounded-3xl bg-white/[0.03] p-5 max-md:hidden sm:p-6">
               <RingingPhone />
               <div>
                 <p className="font-mono text-[10px] tracking-[0.14em] text-white/45 uppercase">What we answer to</p>
@@ -529,7 +540,7 @@ export default async function HomePage() {
                 <p className="mt-1 text-sm text-white/60">Not clicks, impressions or rankings on their own.</p>
               </div>
             </div>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
+            <div className="mt-8 flex flex-wrap items-center gap-3 max-md:hidden">
               <Link
                 href="/#hero-form"
                 className="group inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-ink-950 shadow-glow transition hover:-translate-y-0.5 hover:bg-accent-dark"
@@ -543,10 +554,10 @@ export default async function HomePage() {
             </div>
           </Reveal>
 
-          <SwipeRow as="ol" label="Our rules" className="space-y-4">
+          <ol className="space-y-4 max-md:space-y-2.5">
             {promises.map((p, i) => (
               <Reveal key={p.title} as="li" delay={i * 110}>
-                <div className="ring-gradient group grid items-center gap-6 rounded-3xl bg-white/[0.03] p-6 transition duration-300 hover:bg-white/[0.05] sm:grid-cols-[1fr_13.5rem] sm:p-7">
+                <div className="ring-gradient group grid items-center gap-6 rounded-3xl bg-white/[0.03] p-6 transition duration-300 hover:bg-white/[0.05] max-md:p-4 sm:grid-cols-[1fr_13.5rem] sm:p-7">
                   <div>
                     <div className="flex items-center gap-3">
                       <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent ring-1 ring-accent/25 transition group-hover:bg-accent/15">
@@ -554,24 +565,24 @@ export default async function HomePage() {
                       </span>
                       <span className="font-mono text-[10px] tracking-[0.14em] text-white/45 uppercase">Rule {String(i + 1).padStart(2, '0')}</span>
                     </div>
-                    <h3 className="mt-4 font-display text-2xl">{p.title}</h3>
-                    <p className="mt-2 leading-relaxed text-white/65">{p.text}</p>
+                    <h3 className="mt-4 font-display text-2xl max-md:mt-3 max-md:text-xl">{p.title}</h3>
+                    <p className="mt-2 leading-relaxed text-white/65 max-md:text-[15px] max-md:leading-snug">{p.text}</p>
                   </div>
-                  <div className="rounded-2xl bg-ink-975/70 p-3.5 ring-1 ring-white/[0.08]">
+                  <div className="rounded-2xl bg-ink-975/70 p-3.5 ring-1 ring-white/[0.08] max-md:hidden">
                     <p.visual />
                   </div>
                 </div>
               </Reveal>
             ))}
-          </SwipeRow>
+          </ol>
         </div>
       </section>
 
       {/* Report */}
-      <section id="report" className="bg-report relative scroll-mt-16 overflow-hidden py-24 sm:py-32">
+      <section id="report" className="bg-report relative scroll-mt-16 overflow-hidden py-24 max-md:py-8 sm:py-32">
         <div className="grid-lines-light pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_60%_60%_at_75%_45%,#000,transparent)]" aria-hidden />
         <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
-          <div>
+          <div className="max-md:text-center">
             <Reveal>
               <p className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 font-mono text-[11px] font-medium tracking-[0.14em] text-azure-700 uppercase shadow-soft ring-1 ring-zinc-200">
                 <span className="h-1.5 w-1.5 rounded-full bg-azure-600" aria-hidden />
@@ -580,12 +591,12 @@ export default async function HomePage() {
               <h2 className="mt-4 font-display text-3xl text-balance text-ink-950 md:text-[2.75rem] md:leading-[1.08]">
                 Without numbers you are guessing, and that is how budgets disappear
               </h2>
-              <p className="mt-4 text-lg text-pretty text-zinc-600">
+              <p className="mt-4 text-lg text-pretty text-zinc-600 max-md:hidden">
                 Every site we build or run comes with our own lead tracking: every enquiry, every call and every dollar, in one report written in
                 plain language.
               </p>
             </Reveal>
-            <ul className="mt-9 grid gap-x-8 gap-y-6 sm:grid-cols-2">
+            <ul className="mt-9 grid gap-x-8 gap-y-6 max-md:mt-5 max-md:gap-y-4 max-md:text-left sm:grid-cols-2">
               {reportPoints.map((p, i) => (
                 <Reveal as="li" key={p.title} delay={i * 80} className="flex gap-3.5">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ink-950 text-accent">
@@ -593,12 +604,12 @@ export default async function HomePage() {
                   </span>
                   <div>
                     <h3 className="font-display text-[17px] text-ink-950">{p.title}</h3>
-                    <p className="mt-1 text-sm leading-relaxed text-zinc-600">{p.text}</p>
+                    <p className="mt-1 text-sm leading-relaxed text-zinc-600 max-md:hidden">{p.text}</p>
                   </div>
                 </Reveal>
               ))}
             </ul>
-            <Reveal delay={200} className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-3">
+            <Reveal delay={200} className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-3 max-md:mt-6 max-md:justify-center">
               <Link
                 href="/demo/report"
                 className="group inline-flex items-center gap-2 rounded-full bg-ink-950 px-5 py-3 text-sm font-semibold text-white shadow-soft transition duration-300 hover:-translate-y-0.5 hover:bg-ink-800"
@@ -606,11 +617,11 @@ export default async function HomePage() {
                 Open the live demo report
                 <ArrowUpRight className="h-4 w-4 text-accent transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
               </Link>
-              <span className="text-sm text-zinc-500">Example data, every button works.</span>
+              <span className="text-sm text-zinc-500 max-md:hidden">Example data, every button works.</span>
             </Reveal>
           </div>
 
-          <Reveal variant="scale" delay={150} className="relative">
+          <Reveal variant="scale" delay={150} className="relative max-md:hidden">
             <div className="pointer-events-none absolute -inset-4 rounded-full bg-[radial-gradient(closest-side,rgb(1_175_233/0.22),transparent)] blur-2xl sm:-inset-10" aria-hidden />
             <Link
               href="/demo/report"
@@ -671,7 +682,7 @@ export default async function HomePage() {
       </section>
 
       {/* Process */}
-      <section id="process" className="bg-process edge-glow relative scroll-mt-16 overflow-hidden py-24 text-white sm:py-32">
+      <section id="process" className="bg-process edge-glow relative scroll-mt-16 overflow-hidden py-24 text-white max-md:py-8 sm:py-32">
         <div className="grid-lines pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_70%_60%_at_50%_45%,#000,transparent)]" aria-hidden />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal>
@@ -683,7 +694,7 @@ export default async function HomePage() {
             />
           </Reveal>
 
-          <Reveal as="ol" className="relative mt-16 grid gap-5 lg:grid-cols-4 lg:gap-6">
+          <Reveal as="ol" className="relative mt-16 grid gap-5 max-md:mt-5 max-md:gap-2.5 lg:grid-cols-4 lg:gap-6">
             {/* The progress line fills from step one to step four as the section comes into view. */}
             <span className="pointer-events-none absolute top-6 right-[12.5%] left-[12.5%] hidden h-px bg-white/10 lg:block" aria-hidden>
               <span className="proc-fill-x absolute inset-y-0 left-0 bg-gradient-to-r from-accent via-accent to-azure-600" />
@@ -692,17 +703,17 @@ export default async function HomePage() {
               <span className="proc-fill-y absolute inset-x-0 top-0 bg-gradient-to-b from-accent to-azure-600" />
             </span>
             {steps.map((s, i) => (
-              <li key={s.title} className="relative flex flex-col pl-16 lg:pl-0" style={{ '--step': i } as React.CSSProperties}>
+              <li key={s.title} className="relative flex flex-col pl-16 max-md:pl-14 lg:pl-0" style={{ '--step': i } as React.CSSProperties}>
                 <span className="proc-node absolute top-0 left-0 flex h-12 w-12 items-center justify-center rounded-full bg-ink-975 font-mono text-sm font-medium lg:relative lg:mx-auto">
                   {String(i + 1).padStart(2, '0')}
                 </span>
-                <div className="proc-card group flex-1 rounded-3xl bg-white/[0.03] p-6 ring-1 ring-white/10 transition duration-300 hover:bg-white/[0.06] lg:mt-6">
+                <div className="proc-card group flex-1 rounded-3xl bg-white/[0.03] p-6 ring-1 ring-white/10 transition duration-300 hover:bg-white/[0.06] max-md:p-4 lg:mt-6">
                   <p className="inline-flex items-center gap-1.5 rounded-full bg-accent/10 px-2.5 py-0.5 font-mono text-[10px] tracking-wide text-accent uppercase ring-1 ring-accent/20">
                     {s.when}
                   </p>
-                  <h3 className="mt-4 font-display text-xl">{s.title}</h3>
-                  <p className="mt-2 text-[15px] leading-relaxed text-white/65">{s.text}</p>
-                  <div className="mt-5 border-t border-white/10 pt-4">
+                  <h3 className="mt-4 font-display text-xl max-md:mt-2.5 max-md:text-lg">{s.title}</h3>
+                  <p className="mt-2 text-[15px] leading-relaxed text-white/65 max-md:mt-1 max-md:leading-snug">{s.text}</p>
+                  <div className="mt-5 border-t border-white/10 pt-4 max-md:hidden">
                     <p className="font-mono text-[10px] tracking-[0.14em] text-white/40 uppercase">You get</p>
                     <p className="mt-1.5 flex gap-2 text-sm text-white/85">
                       <Check className="mt-0.5 h-4 w-4 shrink-0 text-accent" aria-hidden />
@@ -714,7 +725,7 @@ export default async function HomePage() {
             ))}
           </Reveal>
 
-          <Reveal delay={150}>
+          <Reveal delay={150} className="max-md:hidden">
             <div className="mx-auto mt-12 flex max-w-3xl flex-col items-center justify-between gap-4 rounded-full bg-white/[0.04] p-2 pl-6 ring-1 ring-white/10 sm:flex-row max-sm:rounded-3xl max-sm:p-5 max-sm:text-center">
               <p className="text-sm text-white/75">
                 <span className="font-semibold text-white">Step one is free</span> and you are under no obligation after it.
@@ -732,7 +743,7 @@ export default async function HomePage() {
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="bg-faq relative scroll-mt-16 overflow-hidden py-24 sm:py-32">
+      <section id="faq" className="bg-faq relative scroll-mt-16 overflow-hidden py-24 max-md:py-8 sm:py-32">
         <div className="dot-grid pointer-events-none absolute inset-0 opacity-60 [mask-image:radial-gradient(ellipse_50%_60%_at_15%_40%,#000,transparent)]" aria-hidden />
         <script
           type="application/ld+json"
@@ -744,16 +755,16 @@ export default async function HomePage() {
             }).replace(/</g, '\\u003c'),
           }}
         />
-        <div className="relative mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
-          <Reveal className="lg:sticky lg:top-28 lg:self-start">
+        <div className="relative mx-auto grid max-w-6xl gap-12 px-4 max-md:gap-4 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+          <Reveal className="max-md:text-center lg:sticky lg:top-28 lg:self-start">
             <p className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 font-mono text-[11px] font-medium tracking-[0.14em] text-azure-700 uppercase shadow-soft ring-1 ring-zinc-200">
               <span className="h-1.5 w-1.5 rounded-full bg-azure-600" aria-hidden />
               Questions
             </p>
             <h2 className="mt-4 font-display text-3xl text-balance text-ink-950 md:text-[2.75rem] md:leading-[1.08]">Before you ask</h2>
-            <p className="mt-4 text-lg text-pretty text-zinc-600">The things owners ask us most, answered straight. No fine print.</p>
+            <p className="mt-4 text-lg text-pretty text-zinc-600 max-md:hidden">The things owners ask us most, answered straight. No fine print.</p>
 
-            <div className="mt-8 overflow-hidden rounded-3xl bg-ink-975 text-white ring-1 ring-ink-900">
+            <div className="mt-8 overflow-hidden rounded-3xl bg-ink-975 text-white ring-1 ring-ink-900 max-md:hidden">
               <div className="relative p-6">
                 <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_90%_at_100%_0%,rgb(1_175_233/0.16),transparent_60%)]" aria-hidden />
                 <p className="relative flex items-center gap-2 font-mono text-[10px] tracking-[0.14em] text-accent uppercase">
@@ -787,7 +798,7 @@ export default async function HomePage() {
             </div>
           </Reveal>
 
-          <Reveal className="rounded-3xl bg-white px-5 shadow-[0_1px_2px_rgb(10_14_30/0.04),0_8px_24px_-12px_rgb(10_14_30/0.10)] ring-1 ring-zinc-200/80 sm:px-8">
+          <Reveal className="rounded-3xl bg-white px-5 shadow-[0_1px_2px_rgb(10_14_30/0.04),0_8px_24px_-12px_rgb(10_14_30/0.10)] ring-1 ring-zinc-200/80 max-md:px-4 sm:px-8">
             <FaqList items={faqs} />
           </Reveal>
         </div>
@@ -798,31 +809,31 @@ export default async function HomePage() {
         <div className="grid-lines pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_70%_80%_at_50%_30%,#000,transparent)]" aria-hidden />
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent" aria-hidden />
         <div className="final-orb pointer-events-none absolute -top-40 left-1/2 h-[34rem] w-[34rem] -translate-x-1/2 rounded-full" aria-hidden />
-        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 py-24 sm:px-6 sm:py-32 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
+        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 py-24 max-md:py-10 max-md:text-center sm:px-6 sm:py-32 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
           <Reveal>
             <p className="inline-flex items-center gap-2 rounded-full bg-white/[0.04] px-3 py-1 font-mono text-[11px] font-medium tracking-[0.14em] text-accent uppercase ring-1 ring-white/12">
               <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-accent" aria-hidden />
               Taking new clients, one per area
             </p>
-            <h2 className="mt-5 font-display text-4xl text-balance md:text-[3.5rem] md:leading-[1.02]">
+            <h2 className="mt-5 font-display text-4xl text-balance max-md:text-3xl md:text-[3.5rem] md:leading-[1.02]">
               The company that shows up first gets the call. Let’s make that <span className="text-gradient">you</span>.
             </h2>
-            <p className="mt-5 max-w-xl text-lg text-white/70">
+            <p className="mt-5 max-w-xl text-lg text-white/70 max-md:mx-auto max-md:mt-3 max-md:text-base">
               The check is free. The worst case: you learn exactly what loses you customers and what to fix first.
             </p>
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-9 flex flex-col gap-3 max-md:mt-6 sm:flex-row">
               <Link href="#hero-form" className={primaryButton}>
                 Get my free website check
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
               </Link>
               <Link
                 href="/work"
-                className="inline-flex items-center justify-center rounded-full border border-white/20 px-6 py-3.5 font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-white/10"
+                className="inline-flex items-center justify-center rounded-full border border-white/20 px-6 py-3.5 font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-white/10 max-md:hidden"
               >
                 See our work
               </Link>
             </div>
-            <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/60">
+            <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/60 max-md:mt-5 max-md:justify-center">
               {['No obligation', 'One fixed price', 'You own everything'].map((t) => (
                 <li key={t} className="flex items-center gap-1.5">
                   <Check className="h-4 w-4 text-accent" aria-hidden />
@@ -832,7 +843,7 @@ export default async function HomePage() {
             </ul>
           </Reveal>
 
-          <Reveal variant="scale" delay={120}>
+          <Reveal variant="scale" delay={120} className="max-md:hidden">
             <div className="ring-gradient rounded-3xl bg-white/[0.04] p-6 backdrop-blur sm:p-7">
               <p className="font-mono text-[10px] tracking-[0.14em] text-white/45 uppercase">What happens after you send the form</p>
               <ol className="mt-5 space-y-5">

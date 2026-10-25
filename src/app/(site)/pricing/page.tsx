@@ -223,7 +223,8 @@ export default async function PricingPage() {
           </SwipeRow>
 
           {/* Side-by-side comparison */}
-          <Reveal className="mt-16">
+          {/* The comparison table needs a wide screen; on phones the plan cards above say the same. */}
+          <Reveal className="mt-16 max-md:hidden">
             <div className="overflow-x-auto rounded-3xl bg-white ring-1 ring-zinc-200/80">
               <table className="w-full min-w-[40rem] border-collapse text-left">
                 <caption className="sr-only">What each monthly plan includes</caption>

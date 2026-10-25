@@ -94,17 +94,18 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
         data-lead-ignore
         className="scroll-mt-24 rounded-3xl border border-white/10 bg-white p-6 text-zinc-700 shadow-float shadow-black/40 max-md:rounded-[24px] max-md:border-0 max-md:p-5 sm:p-7"
       >
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-3 max-md:hidden">
           <p className="font-mono text-[11px] font-medium tracking-[0.14em] text-azure-700 uppercase">Free website check</p>
           <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-azure-50 px-2.5 py-1 text-[11px] font-semibold whitespace-nowrap text-ink-800 ring-1 ring-azure-100">
             <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-azure-600" aria-hidden />
             Reply in 1 day
           </span>
         </div>
-        <p className="mt-3 font-display text-2xl text-ink-950 sm:text-[1.7rem] sm:leading-tight">See what your site is costing you</p>
-        <p className="mt-1.5 text-sm text-zinc-500">A real review of your site and your top competitors, within one business day.</p>
+        <p className="mt-3 font-display text-2xl text-ink-950 max-md:mt-0 max-md:text-[1.35rem] max-md:leading-tight sm:text-[1.7rem] sm:leading-tight">See what your site is costing you</p>
+        <p className="mt-1 text-[13px] text-zinc-500 md:hidden">Free check, reply within one business day.</p>
+        <p className="mt-1.5 text-sm text-zinc-500 max-md:hidden">A real review of your site and your top competitors, within one business day.</p>
 
-        <div className="mt-5 flex items-center gap-3 rounded-2xl bg-zinc-50 px-4 py-3 ring-1 ring-zinc-200/70">
+        <div className="mt-5 flex items-center gap-3 rounded-2xl bg-zinc-50 px-4 py-3 ring-1 ring-zinc-200/70 max-md:hidden">
           <span className="flex shrink-0 gap-0.5 text-amber-400" aria-hidden>
             {[0, 1, 2, 3, 4].map((i) => (
               <Star key={i} className="h-4 w-4 fill-current" />
@@ -116,7 +117,7 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
           </p>
         </div>
 
-        <fieldset className="mt-5">
+        <fieldset className="mt-5 max-md:mt-4">
           <legend className={label}>
           What do you need? <span className="font-normal text-zinc-500">Pick all that apply.</span>
         </legend>
@@ -132,7 +133,7 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
           </div>
         </fieldset>
 
-        <div className="mt-4 grid gap-3.5 sm:grid-cols-2">
+        <div className="mt-4 grid gap-3.5 max-md:gap-3 sm:grid-cols-2">
           <div>
             <label htmlFor={id('name')} className={label}>
               Your name
@@ -183,7 +184,7 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
           <Lock className="h-3.5 w-3.5" aria-hidden />
           No obligation. We use your details only to reply.
         </p>
-        <ul className="mt-5 grid grid-cols-3 gap-2 border-t border-zinc-100 pt-5 text-center">
+        <ul className="mt-5 grid grid-cols-3 gap-2 border-t border-zinc-100 pt-5 text-center max-md:hidden">
           {[
             { icon: BadgeCheck, title: 'Google Ads', text: 'managed in-house' },
             { icon: Gauge, title: '90+ speed', text: 'Lighthouse score' },
