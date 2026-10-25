@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
-import { CheckSquare, FileText, FolderKanban, Globe, Inbox, KanbanSquare, LayoutDashboard, Tags, Users } from 'lucide-react';
+import { CheckSquare, FileText, FolderKanban, Globe, Inbox, KanbanSquare, LayoutDashboard, Tags, Users, Zap } from 'lucide-react';
 
 export function NavLinks({ newLeads, crmNew }: { newLeads: number; crmNew: number }) {
   const path = usePathname().replace(/\/$/, '') || '/admin';
@@ -29,6 +29,7 @@ export function NavLinks({ newLeads, crmNew }: { newLeads: number; crmNew: numbe
         { href: '/admin/crm/items', label: 'Cenovnik', icon: Tags, active: at('/admin/crm/items'), badge: 0 },
         { href: '/admin/crm/projects', label: 'Projekti', icon: FolderKanban, active: at('/admin/crm/projects'), badge: 0 },
         { href: '/admin/crm/tasks', label: 'Zadaci', icon: CheckSquare, active: at('/admin/crm/tasks'), badge: 0 },
+        { href: '/admin/crm/automations', label: 'Automatizacija', icon: Zap, active: at('/admin/crm/automations'), badge: 0 },
       ],
     },
     {

@@ -28,6 +28,10 @@ export const env = {
   get ipHashSalt() {
     return read(process.env.IP_HASH_SALT);
   },
+  /** The bearer token the Railway cron sends to /api/cron. */
+  get cronSecret() {
+    return read(process.env.CRON_SECRET);
+  },
   get siteUrl() {
     return read(process.env.SITE_URL).replace(/\/$/, '') || 'https://webtano.com';
   },
