@@ -1,6 +1,7 @@
 import { env } from '../env';
+import { CYAN, INK, button, buttons, escape, kicker, shell } from '../mail';
 
-export const escape = (value: string) => value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+export { escape };
 
 export const adminUrl = (path: string) => `${env.siteUrl}${path}`;
 
@@ -9,14 +10,16 @@ export interface Section {
   rows: { label: string; note?: string; href: string }[];
 }
 
-/** One plain email in the lead emails' look: a heading, an intro, sections of linked rows, a button. */
+/** An email to Stojan in the shared WebTano frame: a heading, an intro, sections of linked rows, a button. */
 export function layout({
+  eyebrow = 'WebTano admin',
   heading,
   intro,
   sections = [],
-  button,
+  button: action,
   footer,
 }: {
+  eyebrow?: string;
   heading: string;
   intro: string;
   sections?: Section[];
@@ -26,27 +29,27 @@ export function layout({
   const blocks = sections
     .filter((s) => s.rows.length)
     .map(
-      (s) => `<h2 style="margin:28px 0 8px;font-size:15px;color:#18181b">${escape(s.title)}</h2>
-      <table style="width:100%;border-collapse:collapse">${s.rows
+      (s) => `<div style="margin:28px 0 0">${kicker(`${s.title} · ${s.rows.length}`)}
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:10px 0 0;border-collapse:separate;border:1px solid #e7e9ee;border-radius:12px">${s.rows
         .map(
-          (r) => `<tr><td style="padding:10px 12px;border-bottom:1px solid #e4e4e7;font-size:14px">
-            <a href="${escape(r.href)}" style="color:#0369a1;text-decoration:none;font-weight:600">${escape(r.label)}</a>
-            ${r.note ? `<div style="margin-top:2px;color:#71717a;font-size:13px">${escape(r.note)}</div>` : ''}
+          (r, i) => `<tr><td style="${i ? 'border-top:1px solid #e7e9ee;' : ''}padding:13px 16px">
+            <a href="${escape(r.href)}" style="display:block;text-decoration:none">
+              <span style="display:block;font-size:15px;line-height:21px;font-weight:600;color:${INK}">${escape(r.label)} <span style="color:${CYAN}">&rsaquo;</span></span>
+              ${r.note ? `<span style="display:block;margin-top:3px;font-size:13px;line-height:19px;color:#6b7280">${escape(r.note)}</span>` : ''}
+            </a>
           </td></tr>`,
         )
-        .join('')}</table>`,
+        .join('')}</table></div>`,
     )
     .join('');
-  const html = `<!doctype html><html><body style="margin:0;background:#f4f6f9;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
-  <div style="max-width:600px;margin:0 auto;padding:32px 16px">
-    <div style="background:#fff;border-radius:16px;padding:28px;border:1px solid #e4e4e7">
-      <h1 style="margin:0;font-size:20px;color:#18181b">${escape(heading)}</h1>
-      <p style="margin:10px 0 0;color:#3f3f46;font-size:14px;line-height:1.55">${escape(intro)}</p>
-      ${blocks}
-      ${button ? `<p style="margin:28px 0 0"><a href="${escape(button.href)}" style="display:inline-block;background:#18181b;color:#fff;text-decoration:none;font-weight:600;font-size:14px;padding:11px 18px;border-radius:10px">${escape(button.label)}</a></p>` : ''}
-    </div>
-    <p style="margin:16px 0 0;text-align:center;color:#a1a1aa;font-size:12px">${escape(footer)}</p>
-  </div></body></html>`;
+  const html = shell({
+    eyebrow,
+    heading,
+    intro,
+    body: `${blocks}${action ? `<div style="margin:28px 0 0">${buttons([button(action.label, action.href)])}</div>` : ''}`,
+    footer,
+    preheader: intro,
+  });
   const text = [
     heading,
     '',
@@ -54,7 +57,7 @@ export function layout({
     ...sections
       .filter((s) => s.rows.length)
       .flatMap((s) => ['', s.title, ...s.rows.map((r) => `- ${r.label}${r.note ? ` (${r.note})` : ''}: ${r.href}`)]),
-    ...(button ? ['', `${button.label}: ${button.href}`] : []),
+    ...(action ? ['', `${action.label}: ${action.href}`] : []),
     '',
     footer,
   ].join('\n');

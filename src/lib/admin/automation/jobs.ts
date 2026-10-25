@@ -61,6 +61,7 @@ export async function morningDigest(now: Date, mode: Mode, settings: AppSettings
     dueTasks.length && `${dueTasks.length} ${dueTasks.length === 1 ? 'zadatak' : 'zadataka'}`,
   ].filter(Boolean);
   const { html, text } = layout({
+    eyebrow: 'Jutarnji pregled',
     heading: 'Šta te danas čeka',
     intro: `Dobro jutro. Za danas: ${counts.join(', ')}.`,
     sections: [
@@ -122,6 +123,7 @@ export async function unansweredLeads(now: Date, mode: Mode, settings: AppSettin
     if (await alreadyQueued(key)) continue;
     const href = adminUrl(`/admin/crm/leads/${d.id}`);
     const { html, text } = layout({
+      eyebrow: 'Lid bez odgovora',
       heading: `${d.name} čeka odgovor već ${hours} h`,
       intro: `Upit sa webtano.com stigao je ${formatDate(d.created_at)} i još je u fazi Novi. Što pre odgovoriš, veća je šansa za dogovor.`,
       sections: [

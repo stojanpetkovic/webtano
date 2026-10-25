@@ -3,41 +3,51 @@ import { db } from './supabase';
 import { env } from './env';
 import { leadSource } from './leads';
 import { appSettings, ownerEmail } from './settings';
+import { CYAN, INK, button, buttons, escape, facts, kicker, panel, shell } from './mail';
 import type { Lead, Site } from './types';
-
 
 const copy = {
   sr: {
-    subject: (site: string, form: string) => `Novi upit sa sajta ${site} (${form})`,
-    heading: 'Stigao je novi upit',
-    intro: (site: string) => `Neko je upravo popunio formu na sajtu ${site}. Svi podaci iz forme su ispod.`,
-    replyHint: 'Odgovorite direktno na ovaj email i odgovor ide posetiocu.',
+    subject: (site: string, who: string | null) => (who ? `Novi upit: ${who} · ${site}` : `Novi upit sa sajta ${site}`),
+    eyebrow: (site: string) => `${site} · novi upit`,
+    heading: (who: string | null) => (who ? `Novi upit: ${who}` : 'Stigao je novi upit'),
+    intro: (form: string, site: string, time: string) => `Preko forme „${form}" na sajtu ${site}, ${time}.`,
+    contact: 'Kontakt',
+    reply: 'Odgovori emailom',
+    call: 'Pozovi',
+    replyHint: 'Možete i samo da odgovorite na ovaj email: odgovor ide direktno posetiocu.',
+    message: 'Poruka',
+    fields: 'Ostali podaci iz forme',
     details: 'Detalji',
-    form: 'Forma',
     page: 'Stranica',
     source: 'Izvor',
     time: 'Vreme',
-    footer: 'Ovaj email je automatski poslat sa WebTano sistema za upite · webtano.com',
-    locale: 'sr-RS',
+    admin: 'Otvori u adminu',
+    preheader: (msg: string | null, site: string) => msg ?? `Novi upit sa sajta ${site}`,
+    footer: 'Ovaj email je automatski poslat sa WebTano sistema za upite.',
+    locale: 'sr-Latn-RS',
   },
   en: {
-    subject: (site: string, form: string) => `New inquiry from ${site} (${form})`,
-    heading: 'You have a new inquiry',
-    intro: (site: string) => `Someone just filled in a form on ${site}. Everything they submitted is below.`,
-    replyHint: 'Reply to this email and your answer goes straight to the visitor.',
+    subject: (site: string, who: string | null) => (who ? `New inquiry: ${who} · ${site}` : `New inquiry from ${site}`),
+    eyebrow: (site: string) => `${site} · new inquiry`,
+    heading: (who: string | null) => (who ? `New inquiry from ${who}` : 'You have a new inquiry'),
+    intro: (form: string, site: string, time: string) => `Through the "${form}" form on ${site}, ${time}.`,
+    contact: 'Contact',
+    reply: 'Reply by email',
+    call: 'Call',
+    replyHint: 'You can also just reply to this email: your answer goes straight to the visitor.',
+    message: 'Message',
+    fields: 'Other form details',
     details: 'Details',
-    form: 'Form',
     page: 'Page',
     source: 'Source',
     time: 'Time',
-    footer: 'This email was sent automatically by the WebTano lead system · webtano.com',
+    admin: 'Open in admin',
+    preheader: (msg: string | null, site: string) => msg ?? `New inquiry from ${site}`,
+    footer: 'This email was sent automatically by the WebTano lead system.',
     locale: 'en-US',
   },
 } as const;
-
-function escape(value: string): string {
-  return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
 
 function label(key: string): string {
   const spaced = key
@@ -47,66 +57,97 @@ function label(key: string): string {
   return spaced.charAt(0).toUpperCase() + spaced.slice(1);
 }
 
-function row(name: string, value: string): string {
-  return `<tr>
-    <td style="padding:10px 12px;border-bottom:1px solid #e4e4e7;color:#71717a;font-size:13px;vertical-align:top;width:34%">${escape(name)}</td>
-    <td style="padding:10px 12px;border-bottom:1px solid #e4e4e7;color:#18181b;font-size:14px;white-space:pre-wrap">${escape(value)}</td>
-  </tr>`;
+// Form fields that hold the visitor's own words, shown as the message block.
+const MESSAGE_KEY = /message|poruk|comment|komentar|napomen|opis|pitanj|details|detalj|note|upit|inquiry|question/i;
+
+/** Splits the form into the visitor's message and the rest, leaving out what the contact block already shows. */
+function splitFields(lead: Lead) {
+  const entries = Object.entries(lead.data).filter(([, v]) => v.trim() !== '');
+  const messages = entries.filter(([k]) => MESSAGE_KEY.test(k)).sort((a, b) => b[1].length - a[1].length);
+  const message = messages[0] ?? null;
+  const shown = new Set([lead.visitor_name, lead.visitor_email, lead.visitor_phone].filter(Boolean).map((v) => v!.trim()));
+  const rest = entries.filter(([k, v]) => k !== message?.[0] && !shown.has(v.trim()));
+  return { message: message?.[1] ?? null, rest };
 }
 
-function render(site: Site, lead: Lead, lang: 'sr' | 'en', adminLink: string | null) {
+const tel = (phone: string) => `tel:${phone.replace(/[^\d+]/g, '')}`;
+
+export function render(site: Site, lead: Lead, lang: 'sr' | 'en', adminLink: string | null) {
   const t = copy[lang];
   const time = new Intl.DateTimeFormat(t.locale, {
     dateStyle: 'long',
     timeStyle: 'short',
     timeZone: site.timezone || 'Europe/Belgrade',
   }).format(new Date(lead.created_at));
+  const who = lead.visitor_name?.trim() || null;
+  const { message, rest } = splitFields(lead);
+  const subjectLine = `${t.subject(site.name, who)}`;
 
-  const fields = Object.entries(lead.data)
-    .map(([k, v]) => row(label(k), v))
-    .join('');
-  const meta = [
-    row(t.form, lead.form_name),
-    lead.page_url ? row(t.page, lead.page_url) : '',
-    row(t.source, leadSource(lead)),
-    row(t.time, time),
+  const contactLines = [
+    who && `<div style="font-size:17px;line-height:24px;font-weight:700;color:${INK}">${escape(who)}</div>`,
+    lead.visitor_email &&
+      `<div style="font-size:14px;line-height:22px"><a href="mailto:${escape(lead.visitor_email)}" style="color:${INK};text-decoration:underline;text-decoration-color:${CYAN}">${escape(lead.visitor_email)}</a></div>`,
+    lead.visitor_phone &&
+      `<div style="font-size:14px;line-height:22px"><a href="${tel(lead.visitor_phone)}" style="color:${INK};text-decoration:underline;text-decoration-color:${CYAN}">${escape(lead.visitor_phone)}</a></div>`,
+  ].filter(Boolean);
+  const actions = buttons(
+    [
+      lead.visitor_email && button(t.reply, `mailto:${lead.visitor_email}?subject=${encodeURIComponent(`Re: ${site.name}`)}`),
+      lead.visitor_phone && button(t.call, tel(lead.visitor_phone), Boolean(lead.visitor_email)),
+    ].filter((b): b is string => Boolean(b)),
+  );
+
+  const body = [
+    contactLines.length
+      ? `<div style="margin:24px 0 0">${panel(`${kicker(t.contact)}<div style="margin:8px 0 ${actions ? '14px' : '0'}">${contactLines.join('')}</div>${actions}`)}</div>`
+      : '',
+    message
+      ? `<div style="margin:26px 0 0">${kicker(t.message)}
+        <div style="margin:10px 0 0;padding:4px 0 4px 16px;border-left:3px solid ${CYAN};font-size:15px;line-height:24px;color:${INK};white-space:pre-wrap;word-break:break-word">${escape(message)}</div></div>`
+      : '',
+    rest.length
+      ? `<div style="margin:26px 0 0">${kicker(t.fields)}<div style="margin:4px 0 0">${facts(rest.map(([k, v]) => ({ label: label(k), value: v })))}</div></div>`
+      : '',
+    `<div style="margin:26px 0 0">${kicker(t.details)}<div style="margin:4px 0 0">${facts(
+      [
+        lead.page_url ? { label: t.page, value: lead.page_url.replace(/^https?:\/\//, ''), href: lead.page_url } : null,
+        { label: t.source, value: leadSource(lead) },
+        { label: t.time, value: time },
+      ].filter((r) => r !== null),
+    )}</div></div>`,
+    lead.visitor_email ? `<p style="margin:22px 0 0;font-size:13px;line-height:20px;color:#6b7280">${escape(t.replyHint)}</p>` : '',
+    adminLink ? `<div style="margin:24px 0 0">${buttons([button(t.admin, adminLink)])}</div>` : '',
   ].join('');
 
-  const html = `<!doctype html><html><body style="margin:0;background:#f4f4f5;font-family:Arial,Helvetica,sans-serif">
-  <div style="max-width:600px;margin:0 auto;padding:24px 16px">
-    <div style="background:#ffffff;border-radius:8px;overflow:hidden;border:1px solid #e4e4e7">
-      <div style="background:#3b82f6;padding:20px 24px;color:#ffffff">
-        <div style="font-size:13px;opacity:.85">${escape(site.name)}</div>
-        <div style="font-size:20px;font-weight:bold;margin-top:4px">${t.heading}</div>
-      </div>
-      <div style="padding:20px 24px">
-        <p style="margin:0 0 6px;color:#3f3f46;font-size:14px">${escape(t.intro(site.name))}</p>
-        ${lead.visitor_email ? `<p style="margin:0 0 16px;color:#71717a;font-size:13px">${t.replyHint}</p>` : ''}
-        <table style="width:100%;border-collapse:collapse">${fields}</table>
-        <div style="margin:20px 0 6px;font-size:12px;font-weight:bold;color:#a1a1aa;text-transform:uppercase;letter-spacing:.06em">${t.details}</div>
-        <table style="width:100%;border-collapse:collapse">${meta}</table>
-        ${adminLink ? `<p style="margin:20px 0 0"><a href="${adminLink}" style="display:inline-block;background:#3b82f6;color:#fff;text-decoration:none;padding:10px 16px;border-radius:5px;font-size:14px">Otvori u adminu</a></p>` : ''}
-      </div>
-    </div>
-    <p style="color:#a1a1aa;font-size:11px;text-align:center;margin:16px 0 0">${t.footer}</p>
-  </div></body></html>`;
+  const html = shell({
+    lang,
+    eyebrow: t.eyebrow(site.name),
+    heading: t.heading(who),
+    intro: t.intro(lead.form_name, site.name, time),
+    body,
+    footer: t.footer,
+    preheader: t.preheader(message ? message.slice(0, 120) : null, site.name),
+  });
 
   const text = [
-    t.heading,
-    t.intro(site.name),
+    t.heading(who),
+    t.intro(lead.form_name, site.name, time),
     '',
-    ...Object.entries(lead.data).map(([k, v]) => `${label(k)}: ${v}`),
+    who ? `${who}` : '',
+    lead.visitor_email ?? '',
+    lead.visitor_phone ?? '',
+    message ? `\n${t.message}:\n${message}` : '',
+    rest.length ? `\n${rest.map(([k, v]) => `${label(k)}: ${v}`).join('\n')}` : '',
     '',
-    `${t.form}: ${lead.form_name}`,
     lead.page_url ? `${t.page}: ${lead.page_url}` : '',
     `${t.source}: ${leadSource(lead)}`,
     `${t.time}: ${time}`,
-    adminLink ? `\n${adminLink}` : '',
+    adminLink ? `\n${t.admin}: ${adminLink}` : '',
   ]
     .filter((line) => line !== '')
     .join('\n');
 
-  return { subject: t.subject(site.name, lead.form_name), html, text };
+  return { subject: subjectLine, html, text };
 }
 
 async function log(entry: {
