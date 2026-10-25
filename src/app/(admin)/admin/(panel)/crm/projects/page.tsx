@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { ServicePills } from '@/components/admin/crm/ServicePills';
 import { CalendarDays, Plus } from 'lucide-react';
 import { PageHeading } from '@/components/admin/PageHeading';
 import { NewProject } from '@/components/admin/crm/NewProject';
@@ -66,6 +67,7 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
                   <div className="min-w-0">
                     <Link href={`/admin/crm/projects/${p.id}`} className="block truncate text-[15px] font-semibold text-ink after:absolute after:inset-0">{p.name}</Link>
                     <p className="mt-0.5 truncate text-xs text-zinc-500">{p.crm_customers ? customerName(p.crm_customers) : 'Bez klijenta'}</p>
+                    <ServicePills services={p.services} className="mt-2" />
                   </div>
                   <span className={`badge ${PROJECT_STATUS[p.status].badge}`}>{PROJECT_STATUS[p.status].label}</span>
                 </div>

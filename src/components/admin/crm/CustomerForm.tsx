@@ -1,5 +1,5 @@
 import { saveCustomer } from '@/app/(admin)/admin/(panel)/crm/actions';
-import { SERVICES } from '@/lib/admin/crm/labels';
+import { ServiceChoices } from './ServiceChoices';
 import type { Customer } from '@/lib/admin/crm/types';
 
 const fields: { name: keyof Customer; label: string; type?: string; placeholder?: string; wide?: boolean }[] = [
@@ -33,20 +33,7 @@ export function CustomerForm({ customer }: { customer?: Customer }) {
             />
           </div>
         ))}
-        <fieldset className="sm:col-span-2">
-          <legend className="form-label">Usluge</legend>
-          <div className="flex flex-wrap gap-2">
-            {Object.entries(SERVICES).map(([key, label]) => (
-              <label
-                key={key}
-                className="cursor-pointer rounded-full border border-line px-3.5 py-1.5 text-[13px] text-zinc-600 transition select-none hover:border-zinc-300 has-checked:border-ink has-checked:bg-ink has-checked:text-white"
-              >
-                <input type="checkbox" name="services" value={key} defaultChecked={customer?.services?.includes(key)} className="sr-only" />
-                {label}
-              </label>
-            ))}
-          </div>
-        </fieldset>
+        <ServiceChoices selected={customer?.services} />
         <div>
           <label className="form-label" htmlFor="status">Status</label>
           <select className="form-input" id="status" name="status" defaultValue={customer?.status ?? 'active'}>

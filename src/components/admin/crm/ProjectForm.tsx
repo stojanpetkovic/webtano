@@ -1,6 +1,7 @@
 import { saveProject } from '@/app/(admin)/admin/(panel)/crm/actions';
 import { PROJECT_STATUS, customerName } from '@/lib/admin/crm/labels';
 import type { CustomerOption, Project } from '@/lib/admin/crm/types';
+import { ServiceChoices } from './ServiceChoices';
 
 export function ProjectForm({ project, customers, customerId }: { project?: Project; customers: CustomerOption[]; customerId?: string }) {
   return (
@@ -11,6 +12,7 @@ export function ProjectForm({ project, customers, customerId }: { project?: Proj
           <label className="form-label" htmlFor="name">Naziv projekta</label>
           <input className="form-input" id="name" name="name" required defaultValue={project?.name ?? ''} placeholder="Novi sajt za Turner Tree Care" />
         </div>
+        <ServiceChoices selected={project?.services} legend="Usluge u projektu" hint="Izaberi jednu ili više." />
         <div>
           <label className="form-label" htmlFor="customer_id">Klijent</label>
           <select className="form-input" id="customer_id" name="customer_id" defaultValue={project?.customer_id ?? customerId ?? ''}>

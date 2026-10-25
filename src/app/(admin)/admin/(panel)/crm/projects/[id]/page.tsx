@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { ServicePills } from '@/components/admin/crm/ServicePills';
 import { redirect } from 'next/navigation';
 import { Trash2 } from 'lucide-react';
 import { PageHeading } from '@/components/admin/PageHeading';
@@ -54,6 +55,7 @@ export default async function ProjectPage({
           </>
         }
       >
+        <ServicePills services={project.services} />
         <span className={`badge ${PROJECT_STATUS[project.status].badge}`}>{PROJECT_STATUS[project.status].label}</span>
       </PageHeading>
 

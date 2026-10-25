@@ -19,6 +19,7 @@ const num = (f: FormData, k: string) => {
 };
 const date = (f: FormData, k: string) => (/^\d{4}-\d{2}-\d{2}$/.test(String(f.get(k))) ? String(f.get(k)) : null);
 const oneOf = <T extends string>(v: unknown, list: readonly T[], fallback: T): T => (list.includes(v as T) ? (v as T) : fallback);
+const services = (f: FormData) => f.getAll('services').map(String).filter((k) => k in SERVICES);
 const id = (f: FormData, k = 'id') => {
   const v = String(f.get(k) ?? '');
   return UUID.test(v) ? v : null;
@@ -148,7 +149,7 @@ export async function saveCustomer(form: FormData) {
     city: str(form, 'city', 100),
     country: str(form, 'country', 100),
     industry: str(form, 'industry', 100),
-    services: form.getAll('services').map(String).filter((k) => k in SERVICES),
+    services: services(form),
     status: oneOf(form.get('status'), ['active', 'inactive'] as const, 'active'),
     notes: str(form, 'notes', 5000),
   };
@@ -260,9 +261,18 @@ export async function projectFromProposal(form: FormData) {
     db().from('crm_proposal_items').select('description, position').eq('proposal_id', proposalId).order('position'),
   ]);
   if (!p) redirect('/admin/crm/proposals');
+  // The project covers the service the deal asked for, when there is one.
+  const { data: deal } = p.deal_id ? await db().from('crm_deals').select('service').eq('id', p.deal_id).maybeSingle() : { data: null };
   const { data: project } = await db()
     .from('crm_projects')
-    .insert({ name: String(p.title).replace(/^proposal for\s+/i, ''), customer_id: p.customer_id, proposal_id: p.id, status: 'not_started', start_date: new Date().toISOString().slice(0, 10) })
+    .insert({
+      name: String(p.title).replace(/^proposal for\s+/i, ''),
+      customer_id: p.customer_id,
+      proposal_id: p.id,
+      status: 'not_started',
+      start_date: new Date().toISOString().slice(0, 10),
+      services: deal?.service && deal.service in SERVICES ? [deal.service] : [],
+    })
     .select('id')
     .single<{ id: string }>();
   if (!project) redirect(`/admin/crm/proposals/${proposalId}`);
@@ -286,6 +296,7 @@ export async function saveProject(form: FormData) {
     deadline: date(form, 'deadline'),
     budget: str(form, 'budget') ? Math.max(0, num(form, 'budget')) : null,
     description: str(form, 'description', 5000),
+    services: services(form),
   };
   if (projectId) {
     await db().from('crm_projects').update(values).eq('id', projectId);

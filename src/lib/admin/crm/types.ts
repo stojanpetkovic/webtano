@@ -97,6 +97,8 @@ export interface Project {
   deadline: string | null;
   budget: number | null;
   description: string | null;
+  /** SERVICES keys, one or more. */
+  services: string[];
   created_at: string;
 }
 

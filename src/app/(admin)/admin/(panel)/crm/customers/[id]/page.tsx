@@ -98,6 +98,7 @@ export default async function CustomerPage({
                   <div className="min-w-0">
                     <Link href={`/admin/crm/projects/${p.id}`} className="block truncate text-[13.5px] font-medium text-ink after:absolute after:inset-0">{p.name}</Link>
                     <span className="text-xs text-muted">{p.deadline ? `Rok ${formatDate(p.deadline)}` : 'Bez roka'}</span>
+                    <ServicePills services={p.services} className="mt-1" />
                   </div>
                   <span className={`badge ${PROJECT_STATUS[p.status].badge}`}>{PROJECT_STATUS[p.status].label}</span>
                 </li>
