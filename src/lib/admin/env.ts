@@ -26,6 +26,10 @@ export const env = {
   get newsletterFromEmail() {
     return read(process.env.NEWSLETTER_FROM_EMAIL) || read(process.env.LEADS_FROM_EMAIL);
   },
+  /** Sender of invoice emails; falls back to LEADS_FROM_EMAIL. */
+  get invoicesFromEmail() {
+    return read(process.env.INVOICES_FROM_EMAIL) || read(process.env.LEADS_FROM_EMAIL);
+  },
   get ownerEmail() {
     return read(process.env.OWNER_EMAIL);
   },

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
-import { CheckSquare, FileText, FolderKanban, Globe, Inbox, KanbanSquare, LayoutDashboard, MailPlus, Settings, Tags, Users, Zap } from 'lucide-react';
+import { CheckSquare, FileText, FolderKanban, Globe, Inbox, KanbanSquare, LayoutDashboard, MailPlus, Settings, Wallet, Tags, Users, Zap } from 'lucide-react';
 
 export function NavLinks({ newLeads, crmNew }: { newLeads: number; crmNew: number }) {
   const path = usePathname().replace(/\/$/, '') || '/admin';
@@ -31,6 +31,10 @@ export function NavLinks({ newLeads, crmNew }: { newLeads: number; crmNew: numbe
         { href: '/admin/crm/tasks', label: 'Zadaci', icon: CheckSquare, active: at('/admin/crm/tasks'), badge: 0 },
         { href: '/admin/crm/automations', label: 'Automatizacija', icon: Zap, active: at('/admin/crm/automations'), badge: 0 },
       ],
+    },
+    {
+      title: 'Finansije',
+      items: [{ href: '/admin/finance', label: 'Prihodi i rashodi', icon: Wallet, active: at('/admin/finance'), badge: 0 }],
     },
     {
       title: 'Klijentski sajtovi',

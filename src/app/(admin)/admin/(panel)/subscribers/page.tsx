@@ -189,7 +189,7 @@ export default async function SubscribersPage({ searchParams }: { searchParams: 
             {all.length ? 'Nema pretplatnika za ove filtere.' : 'Još nema prijava. Stižu iz popupa i futera na webtano.com.'}
           </p>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="relative overflow-x-auto">
             <table className="table">
               <thead>
                 <tr>
