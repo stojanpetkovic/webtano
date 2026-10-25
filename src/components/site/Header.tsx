@@ -27,7 +27,9 @@ function LanguageSwitch({ light = false, full = false, onPick }: { light?: boole
             {full ? NAMES[l] : l.toUpperCase()}
           </span>
         ) : (
-          <Link
+          // A plain link: the other language has its own root layout (html lang, fonts, scripts),
+          // so it loads as a fresh page instead of a client-side transition.
+          <a
             key={l}
             href={localePath(other, path)}
             hrefLang={l === 'sr' ? 'sr-Latn-RS' : 'en-US'}
@@ -37,7 +39,7 @@ function LanguageSwitch({ light = false, full = false, onPick }: { light?: boole
             className={`rounded-full px-2.5 py-1 transition ${light ? 'text-zinc-500 hover:text-ink-950' : 'text-white/55 hover:text-white'}`}
           >
             {full ? NAMES[l] : l.toUpperCase()}
-          </Link>
+          </a>
         ),
       )}
     </div>

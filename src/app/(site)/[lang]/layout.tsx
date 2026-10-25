@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import Script from 'next/script';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { Header } from '@/components/site/Header';
 import { BackToTop } from '@/components/site/BackToTop';
@@ -101,7 +102,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
     <html lang={HTML_LANG[lang]} className={`${sans.variable} ${mono.variable}`} suppressHydrationWarning>
       <head>
         {/* Lets the scroll animations hide content only when they can also show it. */}
-        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+        <Script id="js-class" strategy="beforeInteractive">{"document.documentElement.classList.add('js')"}</Script>
       </head>
       <body className="min-h-screen">
         <LangProvider lang={lang}>
