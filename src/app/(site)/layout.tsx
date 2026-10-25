@@ -101,7 +101,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         <main>{children}</main>
         <Footer />
         {/* Keeps the end of the footer clear of the phone tab bar. */}
-        <div className="h-[calc(5.5rem+env(safe-area-inset-bottom))] bg-ink-975 md:hidden" aria-hidden />
+        <div className="h-[calc(6rem+env(safe-area-inset-bottom))] md:hidden" aria-hidden />
         <MobileTabBar />
         <BackToTop />
         {/* Our own collector: page views and call clicks on webtano.com land in the admin like any client site. */}

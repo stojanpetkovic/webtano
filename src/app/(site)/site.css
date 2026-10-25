@@ -589,3 +589,101 @@ html {
     transform: none;
   }
 }
+
+/* ---------- Phones: the site as an app ----------
+   Under 768px the page becomes an iOS style inset grouped layout: a soft grey canvas,
+   every section a rounded card with a small gap around it, flat surfaces and no drop
+   shadows (hairline rings stay). Section order and content are the same as on desktop. */
+@media (max-width: 767px) {
+  html,
+  body {
+    background: var(--app-canvas);
+  }
+  :root {
+    --app-canvas: #f2f2f7;
+    --app-gap: 10px;
+  }
+
+  /* Every top level section, and the footer, is a rounded card on the canvas. */
+  main section:not(section section, .bg-paper),
+  body > footer {
+    margin: var(--app-gap) var(--app-gap) 0;
+    border-radius: 28px;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  /* Sections whose cards overlap the hero above sit straight on the canvas. */
+  main section.bg-paper {
+    background: transparent;
+  }
+
+  /* Flat surfaces: one soft light from the top on dark cards, plain white on light ones. */
+  .bg-spotlight,
+  .bg-spotlight-center,
+  .bg-promises,
+  .bg-process,
+  .bg-final {
+    background:
+      radial-gradient(120% 55% at 50% 0%, rgb(37 99 235 / 0.3), transparent 72%),
+      var(--color-ink-950);
+  }
+  .bg-clients,
+  .bg-leaks,
+  .bg-results,
+  .bg-report,
+  .bg-faq {
+    background: #fff;
+  }
+  main section.bg-zinc-50,
+  main section.bg-azure-50 {
+    background: #fff;
+  }
+  body > footer {
+    background: var(--color-ink-950);
+  }
+
+  /* Decoration that reads as "website" rather than "app". */
+  .grid-lines,
+  .grid-lines-light,
+  .dot-grid,
+  .hero-aurora,
+  .hero-beam-x,
+  .hero-beam-y,
+  .hero-pointer,
+  .final-orb {
+    display: none;
+  }
+  .edge-glow::after,
+  .hairline-top::before,
+  .hairline-bottom::after {
+    content: none;
+  }
+
+  /* No drop shadows on a phone; rings and borders still draw the edges. */
+  main *,
+  body > footer *,
+  main section {
+    --tw-shadow: 0 0 #0000 !important;
+  }
+
+  /* Tighter vertical rhythm inside the cards. */
+  main section.py-24:not(section section),
+  main section.py-20:not(section section) {
+    padding-top: 3.25rem;
+    padding-bottom: 3.5rem;
+  }
+  main section.pb-24:not(section section) {
+    padding-bottom: 3.5rem;
+  }
+  main section.pt-14:not(section section) {
+    padding-top: 2.75rem;
+  }
+
+  /* Rounder inner cards, closer to iOS. */
+  main .rounded-2xl {
+    border-radius: 20px;
+  }
+  main .rounded-3xl {
+    border-radius: 24px;
+  }
+}

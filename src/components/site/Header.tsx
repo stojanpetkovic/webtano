@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { ArrowRight, ArrowUpRight, Menu, Star, X } from 'lucide-react';
+import { ArrowRight, ChevronRight, Menu, Star, X } from 'lucide-react';
 import { site } from '@/content/site';
 import { Logo } from './Logo';
 
@@ -47,13 +47,19 @@ export function Header() {
   return (
     <>
       <header
-        className={`sticky top-0 z-50 border-b transition-all duration-300 ${
-          scrolled ? 'border-white/10 bg-ink-975/80 shadow-[0_10px_30px_-12px_rgb(0_0_0/0.5)] backdrop-blur-xl' : 'border-transparent bg-ink-975'
+        className={`sticky top-0 z-50 border-b transition-all duration-300 max-md:bg-[#f2f2f7]/80 max-md:shadow-none max-md:backdrop-blur-xl max-md:backdrop-saturate-150 ${
+          scrolled
+            ? 'border-white/10 bg-ink-975/80 shadow-[0_10px_30px_-12px_rgb(0_0_0/0.5)] backdrop-blur-xl max-md:border-black/[0.08]'
+            : 'border-transparent bg-ink-975'
         }`}
       >
-        <div className={`mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 transition-all duration-300 sm:px-6 ${scrolled ? 'h-16' : 'h-[4.5rem]'}`}>
+        <div
+          className={`mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 transition-all duration-300 max-md:h-14 sm:px-6 ${scrolled ? 'h-16' : 'h-[4.5rem]'}`}
+        >
           <Link href="/" aria-label="WebTano home" className="shrink-0 transition-opacity hover:opacity-90">
-            <Logo light className="h-8 w-auto sm:h-9" />
+            {/* Phones get a light, app style bar, so the dark wordmark. */}
+            <Logo light className="hidden h-9 w-auto md:block" />
+            <Logo className="h-7 w-auto md:hidden" />
           </Link>
 
           <nav aria-label="Main" className="hidden md:block">
@@ -80,7 +86,7 @@ export function Header() {
           <div className="flex items-center gap-2">
             <Link
               href="/#hero-form"
-              className="group inline-flex items-center gap-1.5 rounded-full bg-accent px-3.5 py-2 text-sm font-semibold whitespace-nowrap text-ink-950 shadow-glow transition hover:-translate-y-px hover:bg-accent-dark sm:px-4"
+              className="group inline-flex items-center gap-1.5 rounded-full bg-accent px-3.5 py-2 text-sm font-semibold whitespace-nowrap text-ink-950 shadow-glow transition hover:-translate-y-px hover:bg-accent-dark max-md:py-1.5 max-md:shadow-none sm:px-4"
             >
               <span className="sm:hidden">Free check</span>
               <span className="hidden sm:inline">Free website check</span>
@@ -93,7 +99,7 @@ export function Header() {
               aria-expanded={open}
               aria-controls="mobile-nav"
               aria-label="Open menu"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/[0.04] text-white transition hover:bg-white/10 md:hidden"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-black/[0.06] text-ink-950 transition active:bg-black/10 md:hidden"
             >
               <Menu className="h-5 w-5" aria-hidden />
             </button>
@@ -106,30 +112,30 @@ export function Header() {
         <div
           aria-hidden
           onClick={() => setOpen(false)}
-          className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${open ? 'opacity-100' : 'opacity-0'}`}
+          className={`absolute inset-0 bg-black/30 transition-opacity duration-300 ${open ? 'opacity-100' : 'opacity-0'}`}
         />
         <nav
           id="mobile-nav"
           aria-label="Mobile"
           inert={!open}
-          className={`bg-spotlight absolute inset-y-0 right-0 flex w-[86%] max-w-sm flex-col border-l border-white/10 text-white shadow-[-30px_0_60px_-20px_rgb(0_0_0/0.6)] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-            open ? 'translate-x-0' : 'translate-x-full'
+          className={`absolute inset-y-2 right-2 flex w-[86%] max-w-sm flex-col overflow-hidden rounded-[28px] bg-[#f2f2f7] text-ink-950 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            open ? 'translate-x-0' : 'translate-x-[calc(100%+1rem)]'
           }`}
         >
-          <div className="flex h-[4.5rem] shrink-0 items-center justify-between border-b border-white/10 px-5">
-            <Logo light className="h-8 w-auto" />
+          <div className="flex h-16 shrink-0 items-center justify-between px-5">
+            <Logo className="h-7 w-auto" />
             <button
               ref={closeRef}
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close menu"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/[0.04] transition hover:bg-white/10"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-black/[0.06] transition active:bg-black/10"
             >
               <X className="h-5 w-5" aria-hidden />
             </button>
           </div>
 
-          <ul className="flex-1 overflow-y-auto px-3 py-4">
+          <ul className="mx-3 mt-1 min-h-0 overflow-y-auto rounded-2xl bg-white">
             {site.nav.map((item, i) => (
               <li
                 key={item.href}
@@ -139,42 +145,38 @@ export function Header() {
                 <Link
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className="group flex items-center gap-4 rounded-2xl px-3 py-4 transition hover:bg-white/[0.06]"
+                  className={`flex items-center gap-4 px-4 py-3.5 transition active:bg-black/[0.04] ${i ? 'border-t border-black/[0.06]' : ''}`}
                 >
-                  <span className="font-mono text-xs text-accent/80">{String(i + 1).padStart(2, '0')}</span>
-                  <span className="flex-1 font-display text-2xl">{item.label}</span>
-                  <ArrowUpRight
-                    className="h-5 w-5 text-white/40 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-accent"
-                    aria-hidden
-                  />
+                  <span className="flex-1 text-[17px] font-medium">{item.label}</span>
+                  <ChevronRight className="h-5 w-5 text-zinc-400" aria-hidden />
                 </Link>
               </li>
             ))}
           </ul>
 
           <div
-            className={`shrink-0 space-y-4 border-t border-white/10 p-5 transition duration-500 ease-out ${open ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}
+            className={`mt-auto shrink-0 space-y-4 p-5 transition duration-500 ease-out ${open ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}
             style={{ transitionDelay: open ? '380ms' : '0ms' }}
           >
-            <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3">
+            <div className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3">
               <span className="flex gap-0.5 text-amber-400" aria-hidden>
                 {[0, 1, 2, 3, 4].map((i) => (
                   <Star key={i} className="h-3.5 w-3.5 fill-current" />
                 ))}
               </span>
-              <p className="text-xs text-white/65">
-                Our clients on Google: <span className="font-semibold text-white">4.9 and 5.0</span>
+              <p className="text-xs text-zinc-600">
+                Our clients on Google: <span className="font-semibold text-ink-950">4.9 and 5.0</span>
               </p>
             </div>
             <Link
               href="/#hero-form"
               onClick={() => setOpen(false)}
-              className="group flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 font-semibold text-ink-950 shadow-glow transition hover:bg-accent-dark"
+              className="group flex h-[52px] w-full items-center justify-center gap-2 rounded-2xl bg-accent px-6 text-[17px] font-semibold text-ink-950 transition active:bg-accent-dark"
             >
               Get a free website check
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
             </Link>
-            <p className="text-center font-mono text-[10px] tracking-wide text-white/40 uppercase">Reply within one business day</p>
+            <p className="text-center text-xs text-zinc-500">Reply within one business day</p>
           </div>
         </nav>
       </div>

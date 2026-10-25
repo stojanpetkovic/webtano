@@ -20,9 +20,16 @@ const TIMELINES = [
   { value: 'exploring', label: 'Just exploring' },
 ];
 
+// On phones the fields turn into iOS style filled fields: 17px text (so iOS never zooms in),
+// 52px tall, grey fill and no border until focused.
 const input =
-  'mt-1.5 w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-zinc-900 placeholder:text-zinc-400 shadow-[inset_0_1px_2px_rgb(0_0_0/0.04)] transition hover:border-zinc-400 focus:border-azure-700 focus:ring-4 focus:ring-azure-700/15 focus:outline-none';
-const label = 'text-sm font-medium text-zinc-800';
+  'mt-1.5 w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-zinc-900 placeholder:text-zinc-400 shadow-[inset_0_1px_2px_rgb(0_0_0/0.04)] transition hover:border-zinc-400 focus:border-azure-700 focus:ring-4 focus:ring-azure-700/15 focus:outline-none max-md:min-h-[52px] max-md:rounded-[14px] max-md:border-transparent max-md:bg-[#f2f2f7] max-md:px-4 max-md:py-3 max-md:text-[17px] max-md:shadow-none max-md:focus:border-accent max-md:focus:bg-white max-md:focus:ring-accent/15';
+const label = 'text-sm font-medium text-zinc-800 max-md:text-[15px]';
+// Service chips: 44px touch targets on phones.
+const chip =
+  'inline-block rounded-full border border-zinc-300 px-3.5 py-1.5 text-sm text-zinc-700 transition hover:border-azure-600 hover:text-ink-800 peer-checked:border-azure-700 peer-checked:bg-azure-700 peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-azure-700/40 max-md:flex max-md:min-h-11 max-md:items-center max-md:border-transparent max-md:bg-[#f2f2f7] max-md:px-4 max-md:text-[15px] max-md:font-medium max-md:peer-checked:bg-azure-700';
+// The send button: a full width, 54px app button on phones.
+const submit = 'max-md:min-h-[54px] max-md:rounded-2xl max-md:text-[17px] max-md:shadow-none max-md:hover:translate-y-0';
 
 export function CheckForm({ compact = false }: { compact?: boolean }) {
   // Two copies of the form can sit on one page, so field ids get a prefix.
@@ -85,7 +92,7 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
         action={action}
         onSubmit={attachAttribution}
         data-lead-ignore
-        className="scroll-mt-24 rounded-3xl border border-white/10 bg-white p-6 text-zinc-700 shadow-float shadow-black/40 sm:p-7"
+        className="scroll-mt-24 rounded-3xl border border-white/10 bg-white p-6 text-zinc-700 shadow-float shadow-black/40 max-md:rounded-[24px] max-md:border-0 max-md:p-5 sm:p-7"
       >
         <div className="flex items-center justify-between gap-3">
           <p className="font-mono text-[11px] font-medium tracking-[0.14em] text-azure-700 uppercase">Free website check</p>
@@ -117,7 +124,7 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
             {SERVICES.slice(0, 4).map((s, i) => (
               <label key={s.value} className="cursor-pointer">
                 <input type="checkbox" name="service" value={s.value} defaultChecked={i === 0} className="peer sr-only" />
-                <span className="inline-block rounded-full border border-zinc-300 px-3 py-1.5 text-sm text-zinc-700 transition hover:border-azure-600 peer-checked:border-azure-700 peer-checked:bg-azure-700 peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-azure-700/40">
+                <span className={chip}>
                   {s.label}
                 </span>
               </label>
@@ -130,25 +137,25 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
             <label htmlFor={id('name')} className={label}>
               Your name
             </label>
-            <input id={id('name')} name="name" required minLength={2} className={input} autoComplete="name" />
+            <input id={id('name')} name="name" required minLength={2} className={input} autoComplete="name" autoCapitalize="words" enterKeyHint="next" />
           </div>
           <div>
             <label htmlFor={id('email')} className={label}>
               Email
             </label>
-            <input id={id('email')} name="email" type="email" required className={input} autoComplete="email" />
+            <input id={id('email')} name="email" type="email" required className={input} autoComplete="email" inputMode="email" autoCapitalize="none" autoCorrect="off" spellCheck={false} enterKeyHint="next" />
           </div>
           <div>
             <label htmlFor={id('website')} className={label}>
               Current website
             </label>
-            <input id={id('website')} name="website" placeholder="yourbusiness.com" className={input} autoComplete="url" />
+            <input id={id('website')} name="website" placeholder="yourbusiness.com" className={input} autoComplete="url" inputMode="url" autoCapitalize="none" autoCorrect="off" spellCheck={false} enterKeyHint="next" />
           </div>
           <div>
             <label htmlFor={id('business')} className={label}>
               Business and city
             </label>
-            <input id={id('business')} name="business" placeholder="Tree service in Tampa" className={input} />
+            <input id={id('business')} name="business" placeholder="Tree service in Tampa" className={input} autoCapitalize="sentences" enterKeyHint="next" />
           </div>
         </div>
         <div className="hidden" aria-hidden>
@@ -167,7 +174,7 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
         <button
           type="submit"
           disabled={pending}
-          className="group mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 font-semibold text-ink-950 shadow-glow transition hover:-translate-y-px hover:bg-accent-dark disabled:translate-y-0 disabled:opacity-70"
+          className={`group mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 font-semibold text-ink-950 shadow-glow transition hover:-translate-y-px hover:bg-accent-dark disabled:translate-y-0 disabled:opacity-70 ${submit}`}
         >
           {pending && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
           {pending ? 'Sending…' : 'Get my free website check'}
@@ -198,7 +205,7 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
       action={action}
       onSubmit={attachAttribution}
       data-lead-ignore
-      className="rounded-3xl border border-zinc-200/80 bg-white p-6 shadow-float sm:p-8"
+      className="rounded-3xl border border-zinc-200/80 bg-white p-6 shadow-float max-md:rounded-[24px] max-md:border-0 max-md:p-5 sm:p-8"
     >
       <fieldset>
         <legend className={label}>
@@ -208,7 +215,7 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
           {SERVICES.map((s, i) => (
             <label key={s.value} className="cursor-pointer">
               <input type="checkbox" name="service" value={s.value} defaultChecked={i === 0} className="peer sr-only" />
-              <span className="inline-block rounded-full border border-zinc-300 px-3.5 py-1.5 text-sm text-zinc-700 transition hover:border-azure-600 hover:text-ink-800 peer-checked:border-azure-700 peer-checked:bg-azure-700 peer-checked:shadow-soft peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-azure-700/40">
+              <span className={chip}>
                 {s.label}
               </span>
             </label>
@@ -221,31 +228,31 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
           <label htmlFor={id('website')} className={label}>
             Current website
           </label>
-          <input id={id('website')} name="website" placeholder="yourbusiness.com" className={input} autoComplete="url" />
+          <input id={id('website')} name="website" placeholder="yourbusiness.com" className={input} autoComplete="url" inputMode="url" autoCapitalize="none" autoCorrect="off" spellCheck={false} enterKeyHint="next" />
         </div>
         <div>
           <label htmlFor={id('business')} className={label}>
             Business and city
           </label>
-          <input id={id('business')} name="business" placeholder="Tree service in Tampa" className={input} />
+          <input id={id('business')} name="business" placeholder="Tree service in Tampa" className={input} autoCapitalize="sentences" enterKeyHint="next" />
         </div>
         <div>
           <label htmlFor={id('name')} className={label}>
             Your name
           </label>
-          <input id={id('name')} name="name" required minLength={2} className={input} autoComplete="name" />
+          <input id={id('name')} name="name" required minLength={2} className={input} autoComplete="name" autoCapitalize="words" enterKeyHint="next" />
         </div>
         <div>
           <label htmlFor={id('email')} className={label}>
             Email
           </label>
-          <input id={id('email')} name="email" type="email" required className={input} autoComplete="email" />
+          <input id={id('email')} name="email" type="email" required className={input} autoComplete="email" inputMode="email" autoCapitalize="none" autoCorrect="off" spellCheck={false} enterKeyHint="next" />
         </div>
         <div>
           <label htmlFor={id('phone')} className={label}>
             Phone <span className="font-normal text-zinc-500">(optional)</span>
           </label>
-          <input id={id('phone')} name="phone" type="tel" className={input} autoComplete="tel" />
+          <input id={id('phone')} name="phone" type="tel" className={input} autoComplete="tel" inputMode="tel" enterKeyHint="next" />
         </div>
         <div>
           <label htmlFor={id('timeline')} className={label}>
@@ -287,7 +294,7 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
       <button
         type="submit"
         disabled={pending}
-        className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-azure-700 px-6 py-3.5 font-semibold text-white shadow-[0_10px_24px_-10px_rgb(37_99_235/0.7)] transition hover:-translate-y-px hover:bg-ink-800 hover:shadow-[0_14px_28px_-10px_rgb(37_99_235/0.8)] disabled:translate-y-0 disabled:opacity-70"
+        className={`mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-azure-700 px-6 py-3.5 font-semibold text-white shadow-[0_10px_24px_-10px_rgb(37_99_235/0.7)] transition hover:-translate-y-px hover:bg-ink-800 hover:shadow-[0_14px_28px_-10px_rgb(37_99_235/0.8)] disabled:translate-y-0 disabled:opacity-70 ${submit}`}
       >
         {pending && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
         {pending ? 'Sending…' : 'Get my free website check'}
