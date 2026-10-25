@@ -1,11 +1,13 @@
+import type { L, T } from '@/lib/i18n';
+
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export const TIMEZONES = [
-  { value: 'Europe/Belgrade', label: 'Srbija (Beograd)' },
-  { value: 'America/New_York', label: 'SAD – istok (Florida, New York)' },
-  { value: 'America/Chicago', label: 'SAD – centralno' },
-  { value: 'America/Los_Angeles', label: 'SAD – zapad' },
-  { value: 'Europe/London', label: 'UK (London)' },
+export const TIMEZONES: { value: string; label: L }[] = [
+  { value: 'Europe/Belgrade', label: { en: 'Serbia (Belgrade)', sr: 'Srbija (Beograd)' } },
+  { value: 'America/New_York', label: { en: 'US East (Florida, New York)', sr: 'SAD – istok (Florida, New York)' } },
+  { value: 'America/Chicago', label: { en: 'US Central', sr: 'SAD – centralno' } },
+  { value: 'America/Los_Angeles', label: { en: 'US West', sr: 'SAD – zapad' } },
+  { value: 'Europe/London', label: { en: 'UK (London)', sr: 'UK (London)' } },
 ];
 
 /** Normalises "https://www.Example.com/path" to "example.com". */
@@ -31,7 +33,7 @@ export function parseEmails(input: string): {
   return { emails, invalid: parts.filter((e) => !EMAIL.test(e)) };
 }
 
-export function readSiteForm(form: FormData) {
+export function readSiteForm(form: FormData, t: T) {
   const name = String(form.get('name') ?? '').trim();
   const domain = normalizeDomain(String(form.get('domain') ?? ''));
   const { emails, invalid } = parseEmails(String(form.get('client_emails') ?? ''));
@@ -40,9 +42,9 @@ export function readSiteForm(form: FormData) {
   const timezone = TIMEZONES.some((t) => t.value === tz) ? tz : 'Europe/Belgrade';
 
   const errors: string[] = [];
-  if (!name) errors.push('Naziv sajta je obavezan.');
-  if (!domain || !domain.includes('.')) errors.push('Domen nije ispravan (npr. valenaapartmani.com).');
-  if (invalid.length) errors.push(`Neispravni emailovi: ${invalid.join(', ')}`);
+  if (!name) errors.push(t('The site name is required.', 'Naziv sajta je obavezan.'));
+  if (!domain || !domain.includes('.')) errors.push(t('The domain is not valid (e.g. valenaapartmani.com).', 'Domen nije ispravan (npr. valenaapartmani.com).'));
+  if (invalid.length) errors.push(`${t('Invalid emails', 'Neispravni emailovi')}: ${invalid.join(', ')}`);
 
   return {
     errors,

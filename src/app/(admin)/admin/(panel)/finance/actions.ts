@@ -7,6 +7,7 @@ import { appSettings } from '@/lib/admin/settings';
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES, categoryFor, todayBelgrade } from '@/lib/admin/finance/labels';
 import { UUID, createInvoice, loadInvoice, markPaid, saveItems, sendInvoice, billTo } from '@/lib/admin/finance/data';
 import type { Project } from '@/lib/admin/crm/types';
+import { getAdminI18n } from '@/lib/admin/i18n';
 
 // Form readers: trimmed, length-capped, empty becomes null.
 const str = (f: FormData, k: string, max = 500) => String(f.get(k) ?? '').trim().slice(0, max) || null;
@@ -229,7 +230,7 @@ export async function completeProject(form: FormData) {
   const description = str(form, 'description', 500) ?? project.name;
 
   await db().from('crm_projects').update({ status: 'done' }).eq('id', projectId);
-  await db().from('crm_activity').insert({ kind: 'system', project_id: projectId, customer_id: project.customer_id, body: 'Projekat je označen kao završen.' });
+  await db().from('crm_activity').insert({ kind: 'system', project_id: projectId, customer_id: project.customer_id, body: (await getAdminI18n()).t('Project marked as done.', 'Projekat je označen kao završen.') });
 
   let invoiceId: string | null = null;
   let notice = 'completed';

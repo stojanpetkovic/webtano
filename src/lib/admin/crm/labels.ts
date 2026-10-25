@@ -1,60 +1,61 @@
+import type { L, Lang } from '@/lib/i18n';
 import type { DealStage, ProjectStatus, ProposalStatus, TaskPriority, TaskStatus, ActivityKind } from './types';
 
-export const STAGES: { key: DealStage; label: string; dot: string }[] = [
-  { key: 'new', label: 'Novi', dot: 'bg-sky-500' },
-  { key: 'contacted', label: 'Kontaktiran', dot: 'bg-amber-500' },
-  { key: 'qualified', label: 'Kvalifikovan', dot: 'bg-violet-500' },
-  { key: 'proposal', label: 'Ponuda poslata', dot: 'bg-cyan-500' },
-  { key: 'won', label: 'Dogovoren', dot: 'bg-emerald-500' },
-  { key: 'lost', label: 'Izgubljen', dot: 'bg-zinc-400' },
+export const STAGES: { key: DealStage; label: L; dot: string }[] = [
+  { key: 'new', label: { en: 'New', sr: 'Novi' }, dot: 'bg-sky-500' },
+  { key: 'contacted', label: { en: 'Contacted', sr: 'Kontaktiran' }, dot: 'bg-amber-500' },
+  { key: 'qualified', label: { en: 'Qualified', sr: 'Kvalifikovan' }, dot: 'bg-violet-500' },
+  { key: 'proposal', label: { en: 'Proposal sent', sr: 'Ponuda poslata' }, dot: 'bg-cyan-500' },
+  { key: 'won', label: { en: 'Won', sr: 'Dogovoren' }, dot: 'bg-emerald-500' },
+  { key: 'lost', label: { en: 'Lost', sr: 'Izgubljen' }, dot: 'bg-zinc-400' },
 ];
-export const STAGE_LABEL = Object.fromEntries(STAGES.map((s) => [s.key, s.label])) as Record<DealStage, string>;
+export const STAGE_LABEL = Object.fromEntries(STAGES.map((s) => [s.key, s.label])) as Record<DealStage, L>;
 
-export const PROPOSAL_STATUS: Record<ProposalStatus, { label: string; badge: string }> = {
-  draft: { label: 'Nacrt', badge: 'badge-lost' },
-  sent: { label: 'Poslata', badge: 'badge-new' },
-  accepted: { label: 'Prihvaćena', badge: 'badge-won' },
-  declined: { label: 'Odbijena', badge: 'badge-spam' },
+export const PROPOSAL_STATUS: Record<ProposalStatus, { label: L; badge: string }> = {
+  draft: { label: { en: 'Draft', sr: 'Nacrt' }, badge: 'badge-lost' },
+  sent: { label: { en: 'Sent', sr: 'Poslata' }, badge: 'badge-new' },
+  accepted: { label: { en: 'Accepted', sr: 'Prihvaćena' }, badge: 'badge-won' },
+  declined: { label: { en: 'Declined', sr: 'Odbijena' }, badge: 'badge-spam' },
 };
 
-export const PROJECT_STATUS: Record<ProjectStatus, { label: string; badge: string }> = {
-  not_started: { label: 'Nije počeo', badge: 'badge-lost' },
-  in_progress: { label: 'U toku', badge: 'badge-new' },
-  on_hold: { label: 'Na čekanju', badge: 'badge-contacted' },
-  done: { label: 'Završen', badge: 'badge-won' },
-  cancelled: { label: 'Otkazan', badge: 'badge-spam' },
+export const PROJECT_STATUS: Record<ProjectStatus, { label: L; badge: string }> = {
+  not_started: { label: { en: 'Not started', sr: 'Nije počeo' }, badge: 'badge-lost' },
+  in_progress: { label: { en: 'In progress', sr: 'U toku' }, badge: 'badge-new' },
+  on_hold: { label: { en: 'On hold', sr: 'Na čekanju' }, badge: 'badge-contacted' },
+  done: { label: { en: 'Done', sr: 'Završen' }, badge: 'badge-won' },
+  cancelled: { label: { en: 'Cancelled', sr: 'Otkazan' }, badge: 'badge-spam' },
 };
 
-export const TASK_COLUMNS: { key: TaskStatus; label: string; dot: string }[] = [
-  { key: 'todo', label: 'Za uraditi', dot: 'bg-zinc-400' },
-  { key: 'doing', label: 'U toku', dot: 'bg-sky-500' },
-  { key: 'review', label: 'Na proveri', dot: 'bg-amber-500' },
-  { key: 'done', label: 'Završeno', dot: 'bg-emerald-500' },
+export const TASK_COLUMNS: { key: TaskStatus; label: L; dot: string }[] = [
+  { key: 'todo', label: { en: 'To do', sr: 'Za uraditi' }, dot: 'bg-zinc-400' },
+  { key: 'doing', label: { en: 'In progress', sr: 'U toku' }, dot: 'bg-sky-500' },
+  { key: 'review', label: { en: 'In review', sr: 'Na proveri' }, dot: 'bg-amber-500' },
+  { key: 'done', label: { en: 'Done', sr: 'Završeno' }, dot: 'bg-emerald-500' },
 ];
-export const TASK_STATUS_LABEL = Object.fromEntries(TASK_COLUMNS.map((s) => [s.key, s.label])) as Record<TaskStatus, string>;
+export const TASK_STATUS_LABEL = Object.fromEntries(TASK_COLUMNS.map((s) => [s.key, s.label])) as Record<TaskStatus, L>;
 
-export const PRIORITY: Record<TaskPriority, { label: string; cls: string }> = {
-  low: { label: 'Nizak', cls: 'bg-zinc-100 text-zinc-600' },
-  medium: { label: 'Srednji', cls: 'bg-sky-50 text-sky-700' },
-  high: { label: 'Visok', cls: 'bg-amber-50 text-amber-700' },
-  urgent: { label: 'Hitno', cls: 'bg-rose-50 text-rose-700' },
+export const PRIORITY: Record<TaskPriority, { label: L; cls: string }> = {
+  low: { label: { en: 'Low', sr: 'Nizak' }, cls: 'bg-zinc-100 text-zinc-600' },
+  medium: { label: { en: 'Medium', sr: 'Srednji' }, cls: 'bg-sky-50 text-sky-700' },
+  high: { label: { en: 'High', sr: 'Visok' }, cls: 'bg-amber-50 text-amber-700' },
+  urgent: { label: { en: 'Urgent', sr: 'Hitno' }, cls: 'bg-rose-50 text-rose-700' },
 };
 
-export const ACTIVITY: Record<ActivityKind, string> = {
-  note: 'Beleška',
-  call: 'Poziv',
-  email: 'Email',
-  meeting: 'Sastanak',
-  system: 'Sistem',
+export const ACTIVITY: Record<ActivityKind, L> = {
+  note: { en: 'Note', sr: 'Beleška' },
+  call: { en: 'Call', sr: 'Poziv' },
+  email: { en: 'Email', sr: 'Email' },
+  meeting: { en: 'Meeting', sr: 'Sastanak' },
+  system: { en: 'System', sr: 'Sistem' },
 };
 
 /** The services on the webtano.com form, as the form sends them. */
-export const SERVICES: Record<string, string> = {
-  'new-website': 'Novi sajt',
-  redesign: 'Redizajn',
-  seo: 'Lokalni SEO',
-  ads: 'Google Ads',
-  other: 'Nešto drugo',
+export const SERVICES: Record<string, L> = {
+  'new-website': { en: 'New website', sr: 'Novi sajt' },
+  redesign: { en: 'Redesign', sr: 'Redizajn' },
+  seo: { en: 'Local SEO', sr: 'Lokalni SEO' },
+  ads: { en: 'Google Ads', sr: 'Google Ads' },
+  other: { en: 'Something else', sr: 'Nešto drugo' },
 };
 
 /** Turns what a lead sent ("new-website, ads", or one key) into known SERVICES keys. */
@@ -67,8 +68,8 @@ export function parseServices(value: unknown): string[] {
 export const dealServices = (d: { services?: string[] | null; service?: string | null }) => (d.services?.length ? d.services : parseServices(d.service));
 
 /** A customer's display name: the person, else the business. */
-export function customerName(c: { contact_name?: string | null; company?: string | null }) {
-  return c.contact_name?.trim() || c.company?.trim() || 'Bez imena';
+export function customerName(c: { contact_name?: string | null; company?: string | null }, lang: Lang) {
+  return c.contact_name?.trim() || c.company?.trim() || (lang === 'sr' ? 'Bez imena' : 'No name');
 }
 
 export function money(n: number | null | undefined, currency = 'USD') {
@@ -90,3 +91,7 @@ export function totals(items: { qty: number; unit_price: number; recurring?: boo
     discount: (oneTimeGross + monthlyGross) * (1 - factor),
   };
 }
+
+/** The price list's starting groups in English; groups Stojan names himself show as written. */
+const GROUP_EN: Record<string, string> = { Sajtovi: 'Websites', 'Mesečni planovi': 'Monthly plans', Dodaci: 'Add-ons', Ostalo: 'Other' };
+export const groupLabel = (name: string, lang: Lang) => (lang === 'en' ? (GROUP_EN[name] ?? name) : name);

@@ -1,10 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useT } from '@/components/i18n/LangProvider';
 
 /** "On this page" list that marks the section being read. */
 export function TableOfContents({ items }: { items: { id: string; text: string }[] }) {
   const [active, setActive] = useState(items[0]?.id);
+  const t = useT();
 
   useEffect(() => {
     const headings = items.map((i) => document.getElementById(i.id)).filter((h): h is HTMLElement => !!h);
@@ -20,8 +22,8 @@ export function TableOfContents({ items }: { items: { id: string; text: string }
   }, [items]);
 
   return (
-    <nav aria-label="On this page">
-      <p className="font-mono text-[10px] tracking-[0.14em] text-zinc-500 uppercase">On this page</p>
+    <nav aria-label={t('On this page', 'Na ovoj stranici')}>
+      <p className="font-mono text-[10px] tracking-[0.14em] text-zinc-500 uppercase">{t('On this page', 'Na ovoj stranici')}</p>
       <ol className="mt-4 space-y-0.5 border-l border-zinc-200">
         {items.map((i) => {
           const on = i.id === active;

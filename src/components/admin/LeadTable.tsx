@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { ChevronRight, Inbox } from 'lucide-react';
 import { STATUS_LABELS, timeAgo, formatDateTime } from '@/lib/admin/format';
 import { leadSource } from '@/lib/admin/leads';
+import { channelLabel } from '@/lib/admin/channels';
+import { getAdminI18n } from '@/lib/admin/i18n';
 import type { Lead, Site } from '@/lib/admin/types';
 
 // Soft avatar tints, picked from the name so a contact keeps its colour.
@@ -28,24 +30,26 @@ function tintOf(name: string) {
   return tints[h % tints.length];
 }
 
-export function LeadTable({
+export async function LeadTable({
   leads,
   sites,
   showSite = true,
-  empty = 'Još nema lidova.',
+  empty,
 }: {
   leads: Lead[];
   sites: Map<string, Site>;
   showSite?: boolean;
   empty?: string;
 }) {
+  const { lang, t } = await getAdminI18n();
+  const noName = t('No name', 'Bez imena');
   if (leads.length === 0)
     return (
       <div className="flex flex-col items-center gap-3 px-5 py-14 text-center">
         <span className="grid size-11 place-items-center rounded-2xl bg-zinc-100 text-zinc-400">
           <Inbox className="size-5" />
         </span>
-        <p className="text-[13.5px] text-zinc-500">{empty}</p>
+        <p className="text-[13.5px] text-zinc-500">{empty ?? t('No leads yet.', 'Još nema lidova.')}</p>
       </div>
     );
 
@@ -54,7 +58,7 @@ export function LeadTable({
       {/* Phones: one tappable row per lead instead of a wide table. */}
       <ul className="divide-y divide-line md:hidden">
         {leads.map((lead) => {
-          const name = lead.visitor_name || lead.visitor_email || lead.visitor_phone || 'Bez imena';
+          const name = lead.visitor_name || lead.visitor_email || lead.visitor_phone || noName;
           return (
             <li key={lead.id}>
               <Link href={`/admin/leads/${lead.id}`} className="flex items-center gap-3 px-4 py-3.5 transition active:bg-zinc-50">
@@ -64,16 +68,16 @@ export function LeadTable({
                 <span className="min-w-0 flex-1">
                   <span className="flex items-baseline justify-between gap-2">
                     <span className="truncate font-medium text-ink">{name}</span>
-                    <span className="shrink-0 text-xs text-zinc-400 tabular-nums">{timeAgo(lead.created_at)}</span>
+                    <span className="shrink-0 text-xs text-zinc-400 tabular-nums">{timeAgo(lead.created_at, lang)}</span>
                   </span>
                   <span className="mt-1 flex items-center gap-2 text-xs text-zinc-500">
                     {lead.is_spam ? (
                       <span className="badge badge-spam">Spam</span>
                     ) : (
-                      <span className={`badge badge-${lead.status}`}>{STATUS_LABELS[lead.status]}</span>
+                      <span className={`badge badge-${lead.status}`}>{STATUS_LABELS[lead.status][lang]}</span>
                     )}
                     <span className="truncate">
-                      {[showSite ? sites.get(lead.site_id)?.name : null, leadSource(lead)].filter(Boolean).join(' · ')}
+                      {[showSite ? sites.get(lead.site_id)?.name : null, channelLabel(leadSource(lead), lang)].filter(Boolean).join(' · ')}
                     </span>
                   </span>
                 </span>
@@ -87,18 +91,18 @@ export function LeadTable({
         <table className="table">
           <thead>
             <tr>
-              <th>Kontakt</th>
-              {showSite && <th>Sajt</th>}
-              <th>Forma</th>
-              <th>Izvor</th>
+              <th>{t('Contact', 'Kontakt')}</th>
+              {showSite && <th>{t('Site', 'Sajt')}</th>}
+              <th>{t('Form', 'Forma')}</th>
+              <th>{t('Source', 'Izvor')}</th>
               <th>Status</th>
-              <th className="text-right">Vreme</th>
-              <th className="w-8" aria-label="Otvori" />
+              <th className="text-right">{t('Time', 'Vreme')}</th>
+              <th className="w-8" aria-label={t('Open', 'Otvori')} />
             </tr>
           </thead>
           <tbody>
             {leads.map((lead) => {
-              const name = lead.visitor_name || lead.visitor_email || lead.visitor_phone || 'Bez imena';
+              const name = lead.visitor_name || lead.visitor_email || lead.visitor_phone || noName;
               return (
                 <tr key={lead.id} className="group relative">
                   <td>
@@ -119,17 +123,17 @@ export function LeadTable({
                   {showSite && <td className="whitespace-nowrap">{sites.get(lead.site_id)?.name ?? '—'}</td>}
                   <td className="max-w-[18ch] truncate">{lead.form_name}</td>
                   <td className="whitespace-nowrap">
-                    <span className="rounded-md bg-zinc-100 px-2 py-1 text-xs text-zinc-600">{leadSource(lead)}</span>
+                    <span className="rounded-md bg-zinc-100 px-2 py-1 text-xs text-zinc-600">{channelLabel(leadSource(lead), lang)}</span>
                   </td>
                   <td>
                     {lead.is_spam ? (
                       <span className="badge badge-spam">Spam</span>
                     ) : (
-                      <span className={`badge badge-${lead.status}`}>{STATUS_LABELS[lead.status]}</span>
+                      <span className={`badge badge-${lead.status}`}>{STATUS_LABELS[lead.status][lang]}</span>
                     )}
                   </td>
-                  <td className="whitespace-nowrap text-right text-muted tabular-nums" title={formatDateTime(lead.created_at)}>
-                    {timeAgo(lead.created_at)}
+                  <td className="whitespace-nowrap text-right text-muted tabular-nums" title={formatDateTime(lead.created_at, lang)}>
+                    {timeAgo(lead.created_at, lang)}
                   </td>
                   <td className="pe-4">
                     <ChevronRight className="size-4 text-zinc-300 transition group-hover:translate-x-0.5 group-hover:text-zinc-500" />

@@ -121,8 +121,8 @@ export function daysBetween(from: string, to: string): string[] {
 }
 
 /** The last `days` days including today, compared with the `days` before them. */
-export function siteAnalytics(site: Site, days: RangeDays): Promise<SiteAnalytics> {
-  return analyzeDays(site, dayList(days, site.timezone), dayList(days, site.timezone, days), 'sr');
+export function siteAnalytics(site: Site, days: RangeDays, locale: ReportLocale): Promise<SiteAnalytics> {
+  return analyzeDays(site, dayList(days, site.timezone), dayList(days, site.timezone, days), locale);
 }
 
 /**
@@ -306,14 +306,15 @@ export async function sitesOverview(sites: Site[], days: RangeDays) {
   });
 }
 
-/** "3,2%" — contacts per visit, or a dash when there were no visits to divide by. */
-export function rate(leads: number, visits: number): string {
+/** "3.2%" / "3,2%" — contacts per visit, or a dash when there were no visits to divide by. */
+export function rate(leads: number, visits: number, locale: ReportLocale): string {
   if (!visits) return '—';
-  return `${((leads / visits) * 100).toLocaleString('sr-Latn-RS', { maximumFractionDigits: 1 })}%`;
+  return `${((leads / visits) * 100).toLocaleString(locale === 'sr' ? 'sr-Latn-RS' : 'en-US', { maximumFractionDigits: 1 })}%`;
 }
 
-export function change(current: number, previous: number): { text: string; tone: 'up' | 'down' | 'neutral' } {
-  if (!previous) return { text: 'nema podataka za prethodni period', tone: 'neutral' };
+export function change(current: number, previous: number, locale: ReportLocale): { text: string; tone: 'up' | 'down' | 'neutral' } {
+  const sr = locale === 'sr';
+  if (!previous) return { text: sr ? 'nema podataka za prethodni period' : 'no data for the previous period', tone: 'neutral' };
   const pct = Math.round(((current - previous) / previous) * 100);
-  return { text: `${pct >= 0 ? '+' : ''}${pct}% u odnosu na prethodni period`, tone: pct >= 0 ? 'up' : 'down' };
+  return { text: `${pct >= 0 ? '+' : ''}${pct}% ${sr ? 'u odnosu na prethodni period' : 'vs the previous period'}`, tone: pct >= 0 ? 'up' : 'down' };
 }

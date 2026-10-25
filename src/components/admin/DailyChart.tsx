@@ -16,6 +16,8 @@ import {
 } from 'chart.js';
 import { SERIES } from './chartColors';
 import { GRID, applyChartTheme, shortDay } from './chartTheme';
+import { useLang } from '@/components/i18n/LangProvider';
+import { HTML_LANG } from '@/lib/i18n';
 
 Chart.register(BarController, BarElement, LineController, LineElement, PointElement, CategoryScale, LinearScale, Filler, Tooltip, Legend);
 
@@ -28,6 +30,7 @@ interface Series {
 
 function ChartCanvas({ title, labels, series, variant }: { title: string; labels: string[]; series: Series[]; variant: 'bar' | 'area' }) {
   const canvas = useRef<HTMLCanvasElement>(null);
+  const lang = useLang();
 
   useEffect(() => {
     if (!canvas.current) return;
@@ -37,7 +40,7 @@ function ChartCanvas({ title, labels, series, variant }: { title: string; labels
     const chart = new Chart(canvas.current, {
       type: variant === 'area' ? 'line' : 'bar',
       data: {
-        labels: labels.map(shortDay),
+        labels: labels.map((d) => shortDay(d, lang)),
         datasets: series.map((s, i) =>
           variant === 'area'
             ? {
@@ -84,7 +87,9 @@ function ChartCanvas({ title, labels, series, variant }: { title: string; labels
           tooltip: {
             callbacks: {
               footer: (items) =>
-                items.length > 1 ? `Ukupno: ${items.reduce((n, it) => n + Number(it.raw ?? 0), 0).toLocaleString('sr-Latn-RS')}` : '',
+                items.length > 1
+                  ? `${lang === 'sr' ? 'Ukupno' : 'Total'}: ${items.reduce((n, it) => n + Number(it.raw ?? 0), 0).toLocaleString(HTML_LANG[lang])}`
+                  : '',
             },
           },
         },
@@ -106,7 +111,7 @@ function ChartCanvas({ title, labels, series, variant }: { title: string; labels
       },
     });
     return () => chart.destroy();
-  }, [labels, series, variant]);
+  }, [labels, series, variant, lang]);
 
   return <canvas ref={canvas} aria-label={title} role="img" />;
 }

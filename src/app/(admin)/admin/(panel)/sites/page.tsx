@@ -9,13 +9,18 @@ import { timeAgo } from '@/lib/admin/format';
 import { dailySeries, daysAgo } from '@/lib/admin/stats';
 import { toParams } from '@/lib/admin/params';
 import type { Site } from '@/lib/admin/types';
+import { getAdminI18n } from '@/lib/admin/i18n';
 
 export const dynamic = 'force-dynamic';
-export const metadata: Metadata = { title: 'Sajtovi' };
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getAdminI18n();
+  return { title: t('Sites', 'Sajtovi') };
+}
 
 const PAGE_SIZE = 10;
 
 export default async function SitesPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const { lang, t } = await getAdminI18n();
   const query = toParams(await searchParams);
   const since = daysAgo(30);
   const [{ data: sitesData }, { data: recent }] = await Promise.all([
@@ -43,9 +48,15 @@ export default async function SitesPage({ searchParams }: { searchParams: Promis
 
   return (
     <>
-      <PageHeading title="Sajtovi" description={`${allSites.length} sajtova, ${active} aktivnih. Lidovi i posete za poslednjih 30 dana.`}>
-        <Link href="/admin/crm/customers" className="btn btn-outline" title="Novi sajt se dodaje kod klijenta">
-          <Users className="size-4" /> Dodaj sajt preko klijenta
+      <PageHeading
+        title={t('Sites', 'Sajtovi')}
+        description={t(
+          `${allSites.length} sites, ${active} active. Leads and visits for the last 30 days.`,
+          `${allSites.length} sajtova, ${active} aktivnih. Lidovi i posete za poslednjih 30 dana.`,
+        )}
+      >
+        <Link href="/admin/crm/customers" className="btn btn-outline" title={t('New sites are added from a customer', 'Novi sajt se dodaje kod klijenta')}>
+          <Users className="size-4" /> {t('Add a site via a customer', 'Dodaj sajt preko klijenta')}
         </Link>
       </PageHeading>
       <div className="card">
@@ -53,11 +64,11 @@ export default async function SitesPage({ searchParams }: { searchParams: Promis
           <table className="table">
             <thead>
               <tr>
-                <th>Sajt</th>
-                <th>Klijent</th>
-                <th className="text-right">Lidovi, 30 dana</th>
+                <th>{t('Site', 'Sajt')}</th>
+                <th>{t('Client', 'Klijent')}</th>
+                <th className="text-right">{t('Leads, 30 days', 'Lidovi, 30 dana')}</th>
                 <th className="hidden md:table-cell">Trend</th>
-                <th>Poslednji lid</th>
+                <th>{t('Last lead', 'Poslednji lid')}</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -65,7 +76,7 @@ export default async function SitesPage({ searchParams }: { searchParams: Promis
               {sites.length === 0 && (
                 <tr>
                   <td colSpan={6} className="text-center text-muted py-8">
-                    Još nema sajtova. Sajt se dodaje kod klijenta.
+                    {t('No sites yet. Sites are added from a customer.', 'Još nema sajtova. Sajt se dodaje kod klijenta.')}
                   </td>
                 </tr>
               )}
@@ -94,8 +105,8 @@ export default async function SitesPage({ searchParams }: { searchParams: Promis
                         className="h-8 w-28"
                       />
                     </td>
-                    <td className="text-muted whitespace-nowrap">{c ? timeAgo(c.last) : '—'}</td>
-                    <td>{site.active ? <span className="badge badge-won">Aktivan</span> : <span className="badge badge-lost">Pauziran</span>}</td>
+                    <td className="text-muted whitespace-nowrap">{c ? timeAgo(c.last, lang) : '—'}</td>
+                    <td>{site.active ? <span className="badge badge-won">{t('Active', 'Aktivan')}</span> : <span className="badge badge-lost">{t('Paused', 'Pauziran')}</span>}</td>
                   </tr>
                 );
               })}
@@ -109,7 +120,7 @@ export default async function SitesPage({ searchParams }: { searchParams: Promis
             total={allSites.length}
             href={(n) => (n > 1 ? `/admin/sites?page=${n}` : '/admin/sites')}
             sizes={[]}
-            noun="sajtova"
+            noun={t('sites', 'sajtova')}
           />
         )}
       </div>

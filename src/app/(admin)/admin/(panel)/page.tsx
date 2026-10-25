@@ -15,13 +15,21 @@ import type { Lead, Site } from '@/lib/admin/types';
 import type { Deal } from '@/lib/admin/crm/types';
 import { syncDeals, webtanoSiteId } from '@/lib/admin/crm/data';
 import { money } from '@/lib/admin/crm/labels';
+import { channelLabel } from '@/lib/admin/channels';
+import { getAdminI18n } from '@/lib/admin/i18n';
+import { HTML_LANG } from '@/lib/i18n';
 
 export const dynamic = 'force-dynamic';
-export const metadata: Metadata = { title: 'Kontrolna tabla' };
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getAdminI18n();
+  return { title: t('Dashboard', 'Kontrolna tabla') };
+}
 
 const DAYS = 30;
 
 export default async function DashboardPage() {
+  const { lang, t } = await getAdminI18n();
+  const num = (n: number) => n.toLocaleString(HTML_LANG[lang]);
   const since = daysAgo(60);
   await syncDeals();
   const webtanoId = await webtanoSiteId();
@@ -59,23 +67,25 @@ export default async function DashboardPage() {
   const last30 = leads.filter((l) => l.created_at >= cutoff);
   const statusColors = { new: '#2a78d6', contacted: '#eda100', won: '#1baf7a', lost: '#a1a1aa' } as const;
   const byStatus = (Object.keys(STATUS_LABELS) as (keyof typeof STATUS_LABELS)[]).map((status) => ({
-    label: STATUS_LABELS[status],
+    label: STATUS_LABELS[status][lang],
     count: last30.filter((l) => l.status === status).length,
     color: statusColors[status],
   }));
-  const bySource = summarize(last30).bySource;
+  const bySource = summarize(last30).bySource.map((s) => ({ ...s, label: channelLabel(s.label, lang) }));
   const newCount = leads.filter((l) => l.status === 'new').length;
 
   const overview = (await sitesOverview(sites, 30)).sort((a, b) => b.visitors - a.visitors || b.contacts - a.contacts);
   const visitors30 = overview.reduce((n, o) => n + o.visitors, 0);
   const changeNote =
-    stats.change === null ? 'nema podataka za prethodni period' : `${stats.change >= 0 ? '+' : ''}${stats.change}% u odnosu na prethodnih 30 dana`;
-  const today = new Intl.DateTimeFormat('sr-Latn-RS', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Belgrade' }).format(new Date());
+    stats.change === null
+      ? t('no data for the previous period', 'nema podataka za prethodni period')
+      : `${stats.change >= 0 ? '+' : ''}${stats.change}% ${t('vs the previous 30 days', 'u odnosu na prethodnih 30 dana')}`;
+  const today = new Intl.DateTimeFormat(HTML_LANG[lang], { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Belgrade' }).format(new Date());
 
   return (
     <>
       <PageHeading
-        title="Kontrolna tabla"
+        title={t('Dashboard', 'Kontrolna tabla')}
         description={
           <>
             <span className="inline-block first-letter:uppercase">{today}</span>
@@ -83,7 +93,10 @@ export default async function DashboardPage() {
               <>
                 {' · '}
                 <Link href="/admin/leads?status=new" className="font-medium text-primary hover:underline">
-                  {newCount} {newCount === 1 ? 'novi lid čeka' : 'novih lidova sa sajtova čeka'} odgovor
+                  {newCount}{' '}
+                  {newCount === 1
+                    ? t('new lead is waiting for a reply', 'novi lid čeka odgovor')
+                    : t('new site leads are waiting for a reply', 'novih lidova sa sajtova čeka odgovor')}
                 </Link>
               </>
             )}
@@ -91,20 +104,22 @@ export default async function DashboardPage() {
         }
       >
         <Link href="/admin/sites" className="btn btn-outline">
-          <FileText className="size-4" /> Izveštaji
+          <FileText className="size-4" /> {t('Reports', 'Izveštaji')}
         </Link>
         <Link href="/admin/leads" className="btn btn-primary">
-          <Inbox className="size-4" /> Lidovi sa sajtova
+          <Inbox className="size-4" /> {t('Site leads', 'Lidovi sa sajtova')}
         </Link>
       </PageHeading>
       {sites.length === 0 && (
         <div className="card card-body flex flex-wrap items-center justify-between gap-5">
           <div>
-            <h2 className="card-title">Dodaj prvi sajt</h2>
-            <p className="text-muted mt-1">Sajt se dodaje kod klijenta i dobija jednu liniju koda koja šalje forme ovde.</p>
+            <h2 className="card-title">{t('Add your first site', 'Dodaj prvi sajt')}</h2>
+            <p className="text-muted mt-1">
+              {t('Sites are added from a customer and get one line of code that sends forms here.', 'Sajt se dodaje kod klijenta i dobija jednu liniju koda koja šalje forme ovde.')}
+            </p>
           </div>
           <Link href="/admin/crm/customers" className="btn btn-primary">
-            Otvori klijente
+            {t('Open customers', 'Otvori klijente')}
           </Link>
         </div>
       )}
@@ -114,20 +129,20 @@ export default async function DashboardPage() {
         <div className="relative flex flex-wrap items-center justify-between gap-3">
           <div>
             <div className="font-mono text-[10px] tracking-[0.16em] text-accent uppercase">WebTano CRM</div>
-            <h2 className="mt-1 text-[17px] font-semibold text-white">Tvoja prodaja i projekti</h2>
+            <h2 className="mt-1 text-[17px] font-semibold text-white">{t('Your sales and projects', 'Tvoja prodaja i projekti')}</h2>
           </div>
           <Link href="/admin/crm/leads" className="btn btn-sm btn-accent">
-            <KanbanSquare className="size-4" /> Otvori tablu
+            <KanbanSquare className="size-4" /> {t('Open board', 'Otvori tablu')}
           </Link>
         </div>
         <div className="relative mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
           {[
-            { icon: Inbox, label: 'Novi lidovi', value: String(deals.filter((d) => d.stage === 'new').length), href: '/admin/crm/leads' },
-            { icon: CircleDollarSign, label: 'Vrednost u toku', value: money(openDeals.reduce((n, d) => n + Number(d.value || 0), 0)), href: '/admin/crm/leads' },
-            { icon: FileText, label: 'Ponude čekaju odgovor', value: String(proposalsOut ?? 0), href: '/admin/crm/proposals?status=sent' },
+            { icon: Inbox, label: t('New leads', 'Novi lidovi'), value: String(deals.filter((d) => d.stage === 'new').length), href: '/admin/crm/leads' },
+            { icon: CircleDollarSign, label: t('Open pipeline value', 'Vrednost u toku'), value: money(openDeals.reduce((n, d) => n + Number(d.value || 0), 0)), href: '/admin/crm/leads' },
+            { icon: FileText, label: t('Proposals awaiting reply', 'Ponude čekaju odgovor'), value: String(proposalsOut ?? 0), href: '/admin/crm/proposals?status=sent' },
             {
               icon: CheckSquare,
-              label: 'Zadaci za danas i kasne',
+              label: t('Tasks due today or late', 'Zadaci za danas i kasne'),
               value: String(tasksDue.length),
               href: '/admin/crm/tasks',
             },
@@ -142,17 +157,17 @@ export default async function DashboardPage() {
       </section>
 
       <div className="flex items-center gap-3 pt-2">
-        <h2 className="text-[15px] font-semibold">Klijentski sajtovi</h2>
+        <h2 className="text-[15px] font-semibold">{t('Client sites', 'Klijentski sajtovi')}</h2>
         <span className="h-px flex-1 bg-line" />
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
-        <StatCard icon={CalendarCheck} color="success" label="Upiti danas" value={stats.today} trend={allDaily.slice(-14)} />
-        <StatCard icon={CalendarDays} color="warning" label="Upiti, 7 dana" value={stats.last7} trend={allDaily.slice(-7)} />
+        <StatCard icon={CalendarCheck} color="success" label={t('Inquiries today', 'Upiti danas')} value={stats.today} trend={allDaily.slice(-14)} />
+        <StatCard icon={CalendarDays} color="warning" label={t('Inquiries, 7 days', 'Upiti, 7 dana')} value={stats.last7} trend={allDaily.slice(-7)} />
         <StatCard
           icon={Inbox}
           color="secondary"
-          label="Upiti, 30 dana"
+          label={t('Inquiries, 30 days', 'Upiti, 30 dana')}
           value={stats.last30}
           note={changeNote}
           tone={stats.change === null ? 'neutral' : stats.change >= 0 ? 'up' : 'down'}
@@ -161,52 +176,52 @@ export default async function DashboardPage() {
         <StatCard
           icon={Users}
           color="info"
-          label="Posetioci, 30 dana"
-          value={visitors30.toLocaleString('sr-Latn-RS')}
-          note={`na ${sites.filter((s) => s.active).length} aktivnih sajtova`}
+          label={t('Visitors, 30 days', 'Posetioci, 30 dana')}
+          value={num(visitors30)}
+          note={t(`on ${sites.filter((s) => s.active).length} active sites`, `na ${sites.filter((s) => s.active).length} aktivnih sajtova`)}
         />
       </div>
 
       <div className="grid gap-4 xl:grid-cols-3">
         <div className="min-w-0 xl:col-span-2">
           <DailyChart
-            title="Lidovi po danu"
-            total={`${stats.last30} lidova`}
-            note="30 dana, po sajtu"
+            title={t('Leads per day', 'Lidovi po danu')}
+            total={`${stats.last30} ${t('leads', 'lidova')}`}
+            note={t('30 days, by site', '30 dana, po sajtu')}
             labels={labels}
-            series={series.length ? series : [{ label: 'Lidovi', data: labels.map(() => 0) }]}
+            series={series.length ? series : [{ label: t('Leads', 'Lidovi'), data: labels.map(() => 0) }]}
           />
         </div>
-        <DonutChart title="Status lidova" sub="Poslednjih 30 dana" items={byStatus} />
+        <DonutChart title={t('Lead status', 'Status lidova')} sub={t('Last 30 days', 'Poslednjih 30 dana')} items={byStatus} />
       </div>
 
       <div className="grid gap-4 xl:grid-cols-3">
         <div className="card xl:col-span-2">
           <div className="card-header">
             <div>
-              <h2 className="card-title">Sajtovi</h2>
-              <p className="card-sub">Posete i kontakti, poslednjih 30 dana</p>
+              <h2 className="card-title">{t('Sites', 'Sajtovi')}</h2>
+              <p className="card-sub">{t('Visits and contacts, last 30 days', 'Posete i kontakti, poslednjih 30 dana')}</p>
             </div>
             <Link href="/admin/sites" className="btn btn-sm btn-light">
-              Svi sajtovi <MoveRight className="size-4" />
+              {t('All sites', 'Svi sajtovi')} <MoveRight className="size-4" />
             </Link>
           </div>
           <div className="overflow-x-auto">
             <table className="table">
               <thead>
                 <tr>
-                  <th>Sajt</th>
-                  <th className="text-right">Posetioci</th>
-                  <th className="text-right">Upiti</th>
-                  <th className="text-right">Pozivi</th>
-                  <th className="text-right">Stopa</th>
+                  <th>{t('Site', 'Sajt')}</th>
+                  <th className="text-right">{t('Visitors', 'Posetioci')}</th>
+                  <th className="text-right">{t('Inquiries', 'Upiti')}</th>
+                  <th className="text-right">{t('Calls', 'Pozivi')}</th>
+                  <th className="text-right">{t('Rate', 'Stopa')}</th>
                 </tr>
               </thead>
               <tbody>
                 {overview.length === 0 && (
                   <tr>
                     <td colSpan={5} className="text-center text-muted py-6">
-                      Još nema sajtova.
+                      {t('No sites yet.', 'Još nema sajtova.')}
                     </td>
                   </tr>
                 )}
@@ -220,27 +235,27 @@ export default async function DashboardPage() {
                         </Link>
                       </span>
                     </td>
-                    <td className="text-right tabular-nums">{o.visitors.toLocaleString('sr-Latn-RS')}</td>
+                    <td className="text-right tabular-nums">{num(o.visitors)}</td>
                     <td className="text-right tabular-nums font-semibold text-ink">{o.leads}</td>
                     <td className="text-right tabular-nums font-semibold text-ink">{o.calls}</td>
-                    <td className="text-right tabular-nums text-muted">{rate(o.contacts, o.visits)}</td>
+                    <td className="text-right tabular-nums text-muted">{rate(o.contacts, o.visits, lang)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         </div>
-        <DonutChart title="Odakle dolaze lidovi" sub="Izvor, poslednjih 30 dana" items={bySource} />
+        <DonutChart title={t('Where leads come from', 'Odakle dolaze lidovi')} sub={t('Source, last 30 days', 'Izvor, poslednjih 30 dana')} items={bySource} />
       </div>
 
       <div className="card">
         <div className="card-header">
           <div>
-            <h2 className="card-title">Poslednji lidovi</h2>
-            <p className="card-sub">Deset najnovijih upita sa svih sajtova</p>
+            <h2 className="card-title">{t('Latest leads', 'Poslednji lidovi')}</h2>
+            <p className="card-sub">{t('The ten newest inquiries from every site', 'Deset najnovijih upita sa svih sajtova')}</p>
           </div>
           <Link href="/admin/leads" className="btn btn-sm btn-light">
-            Svi lidovi <MoveRight className="size-4" />
+            {t('All leads', 'Svi lidovi')} <MoveRight className="size-4" />
           </Link>
         </div>
         <LeadTable leads={leads.slice(0, 10)} sites={siteMap} />

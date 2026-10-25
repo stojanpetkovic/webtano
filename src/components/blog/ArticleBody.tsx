@@ -1,9 +1,10 @@
 import { Lightbulb } from 'lucide-react';
 import { headingId, type Block } from '@/content/blog';
+import { DEFAULT_LANG, type Lang } from '@/lib/i18n';
 import { Inline } from './Inline';
 
 /** The article text, styled here rather than with a typography plugin. */
-export function ArticleBody({ blocks }: { blocks: Block[] }) {
+export function ArticleBody({ blocks, lang = DEFAULT_LANG }: { blocks: Block[]; lang?: Lang }) {
   return (
     <div className="text-[1.0625rem] leading-[1.8] text-zinc-700">
       {blocks.map((b, i) => {
@@ -22,7 +23,7 @@ export function ArticleBody({ blocks }: { blocks: Block[] }) {
         if ('p' in b)
           return (
             <p key={i} className="mt-5">
-              <Inline text={b.p} />
+              <Inline lang={lang} text={b.p} />
             </p>
           );
         if ('ul' in b)
@@ -31,7 +32,7 @@ export function ArticleBody({ blocks }: { blocks: Block[] }) {
               {b.ul.map((item) => (
                 <li key={item} className="relative pl-7">
                   <span className="absolute top-[0.7em] left-1 h-2 w-2 rounded-full bg-accent ring-4 ring-accent/15" aria-hidden />
-                  <Inline text={item} />
+                  <Inline lang={lang} text={item} />
                 </li>
               ))}
             </ul>
@@ -44,7 +45,7 @@ export function ArticleBody({ blocks }: { blocks: Block[] }) {
                   <span className="absolute top-0.5 left-0 flex h-7 w-7 items-center justify-center rounded-full bg-ink-950 font-mono text-xs font-medium text-accent" aria-hidden>
                     {n + 1}
                   </span>
-                  <Inline text={item} />
+                  <Inline lang={lang} text={item} />
                 </li>
               ))}
             </ol>
@@ -58,7 +59,7 @@ export function ArticleBody({ blocks }: { blocks: Block[] }) {
               <div className="text-base leading-relaxed">
                 {b.title && <p className="font-display font-semibold text-ink-950">{b.title}</p>}
                 <p className={b.title ? 'mt-1' : ''}>
-                  <Inline text={b.tip} />
+                  <Inline lang={lang} text={b.tip} />
                 </p>
               </div>
             </aside>
@@ -81,11 +82,11 @@ export function ArticleBody({ blocks }: { blocks: Block[] }) {
                     {row.map((cell, c) =>
                       c === 0 ? (
                         <th key={c} scope="row" className="px-4 py-3 align-top font-medium text-ink-950">
-                          <Inline text={cell} />
+                          <Inline lang={lang} text={cell} />
                         </th>
                       ) : (
                         <td key={c} className="px-4 py-3 align-top">
-                          <Inline text={cell} />
+                          <Inline lang={lang} text={cell} />
                         </td>
                       ),
                     )}

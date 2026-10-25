@@ -2,12 +2,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import type { CaseStudy } from '@/content/work';
+import { getI18n } from '@/lib/i18n-site';
 
-export function CaseCard({ item }: { item: CaseStudy }) {
+export async function CaseCard({ item }: { item: CaseStudy }) {
+  const { t, lp } = await getI18n();
   const shot = item.shots[0];
   return (
     <Link
-      href={`/work/${item.slug}`}
+      href={lp(`/work/${item.slug}`)}
       className="group flex h-full flex-col overflow-hidden rounded-3xl border border-zinc-200/80 bg-white shadow-soft transition duration-300 hover:-translate-y-1 hover:border-azure-200 hover:shadow-lift"
     >
       <div className="relative aspect-[16/9] overflow-hidden bg-zinc-100">
@@ -32,7 +34,7 @@ export function CaseCard({ item }: { item: CaseStudy }) {
         </div>
         <p className="mt-4 flex-1 text-zinc-600">{item.summary}</p>
         <span className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-azure-700">
-          Read the case study
+          {t('Read the case study', 'Pročitajte studiju slučaja')}
           <ArrowUpRight className="h-4 w-4 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
         </span>
       </div>

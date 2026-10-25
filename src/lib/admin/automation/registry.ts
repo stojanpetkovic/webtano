@@ -1,15 +1,20 @@
 /** Every automation the cron runs, with how it starts out before it is changed in the admin. */
 export const AUTOMATIONS = {
   'morning-digest': {
-    label: 'Jutarnji pregled',
-    description:
-      'Radnim danom ujutru (vreme menjaš u Podešavanjima): novi lidovi, rokovi za sledeći korak i zadaci za danas ili koji kasne. Ne šalje se kad nema ničega.',
+    label: { en: 'Morning digest', sr: 'Jutarnji pregled' },
+    description: {
+      en: 'Weekday mornings (set the time in Settings): new leads, next steps that are due and tasks for today or overdue. Not sent when there is nothing.',
+      sr: 'Radnim danom ujutru (vreme menjaš u Podešavanjima): novi lidovi, rokovi za sledeći korak i zadaci za danas ili koji kasne. Ne šalje se kad nema ničega.',
+    },
     audience: 'owner',
     defaultMode: 'auto',
   },
   'unanswered-lead': {
-    label: 'Lid bez odgovora',
-    description: 'Lid sa forme stoji u fazi Novi (24 sata, menja se u Podešavanjima), a na njemu nema nijedne tvoje beleške, poziva ni emaila.',
+    label: { en: 'Unanswered lead', sr: 'Lid bez odgovora' },
+    description: {
+      en: 'A form lead has sat in the New stage (24 hours, changed in Settings) with none of your notes, calls or emails on it.',
+      sr: 'Lid sa forme stoji u fazi Novi (24 sata, menja se u Podešavanjima), a na njemu nema nijedne tvoje beleške, poziva ni emaila.',
+    },
     audience: 'owner',
     defaultMode: 'auto',
   },

@@ -16,6 +16,8 @@ const CROSS_SITE_ENDPOINTS = ['/api/leads', '/api/hit', '/api/event', '/api/news
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  if (!pathname.startsWith('/admin') && !pathname.startsWith('/api')) return routeLanguage(request);
+
   const changesState = !['GET', 'HEAD', 'OPTIONS'].includes(request.method);
   const crossSiteAllowed = CROSS_SITE_ENDPOINTS.some((p) => pathname === p || pathname === `${p}/`);
   if (changesState && !crossSiteAllowed && !isSameOrigin(request)) {
@@ -75,6 +77,27 @@ export async function proxy(request: NextRequest) {
   return next;
 }
 
+// Paths outside the two languages: the admin's public demo report and files served as they are.
+const UNLOCALIZED = ['/demo'];
+const FILE = /\.[a-z0-9]+$/i;
+
+/**
+ * English is the site's default and lives at the root, Serbian under /sr. Both
+ * are one route tree, app/(site)/[lang], so English addresses are rewritten to
+ * /en without changing the URL, and /en itself redirects to the plain address.
+ */
+function routeLanguage(request: NextRequest) {
+  const { pathname, search } = request.nextUrl;
+  if (UNLOCALIZED.some((p) => pathname === p || pathname.startsWith(`${p}/`))) return NextResponse.next();
+  if (FILE.test(pathname) && !pathname.endsWith('/rss.xml')) return NextResponse.next();
+  if (pathname === '/sr' || pathname.startsWith('/sr/')) return NextResponse.next();
+  if (pathname === '/en' || pathname.startsWith('/en/')) {
+    return NextResponse.redirect(new URL(`${pathname.slice(3) || '/'}${search}`, request.url), 308);
+  }
+  return NextResponse.rewrite(new URL(`/en${pathname === '/' ? '' : pathname}${search}`, request.url));
+}
+
 export const config = {
-  matcher: ['/admin/:path*', '/api/:path*'],
+  // Everything but Next's own files; routeLanguage lets other static files through.
+  matcher: ['/((?!_next/).*)'],
 };

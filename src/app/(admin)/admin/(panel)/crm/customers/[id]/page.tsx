@@ -18,9 +18,13 @@ import { formatDate } from '@/lib/admin/format';
 import { toParams } from '@/lib/admin/params';
 import type { Activity, Customer, Deal, Project, Proposal, ProposalItem } from '@/lib/admin/crm/types';
 import { CircleDollarSign, Repeat } from 'lucide-react';
+import { getAdminI18n } from '@/lib/admin/i18n';
 
 export const dynamic = 'force-dynamic';
-export const metadata: Metadata = { title: 'Klijent' };
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getAdminI18n();
+  return { title: t('Customer', 'Klijent') };
+}
 
 type ProposalWithItems = Proposal & { crm_proposal_items: ProposalItem[] };
 
@@ -31,6 +35,7 @@ export default async function CustomerPage({
   params: Promise<{ id: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const { lang, t: tr } = await getAdminI18n();
   const { id } = await params;
   const notice = toParams(await searchParams).get('notice');
   if (!/^[0-9a-f-]{36}$/.test(id)) redirect('/admin/crm/customers');
@@ -52,8 +57,8 @@ export default async function CustomerPage({
   return (
     <>
       <PageHeading
-        title={customerName(customer)}
-        crumbs={[{ label: 'WebTano CRM' }, { label: 'Klijenti', href: '/admin/crm/customers' }]}
+        title={customerName(customer, lang)}
+        crumbs={[{ label: 'WebTano CRM' }, { label: tr('Customers', 'Klijenti'), href: '/admin/crm/customers' }]}
         description={[customer.contact_name ? customer.company : null, customer.industry].filter(Boolean).join(' · ') || undefined}
       >
         <NewProposal
@@ -61,7 +66,7 @@ export default async function CustomerPage({
           buttonClassName="btn btn-outline"
           label={
             <>
-              <FileText className="size-4" /> Nova ponuda
+              <FileText className="size-4" /> {tr('New proposal', 'Nova ponuda')}
             </>
           }
         />
@@ -69,38 +74,44 @@ export default async function CustomerPage({
           customerId={customer.id}
           label={
             <>
-              <FolderKanban className="size-4" /> Novi projekat
+              <FolderKanban className="size-4" /> {tr('New project', 'Novi projekat')}
             </>
           }
         />
       </PageHeading>
 
-      {notice === 'saved' && <div className="alert alert-success">Sačuvano.</div>}
-      {notice === 'converted' && <div className="alert alert-success">Lid je pretvoren u klijenta. Sledeći korak: ponuda ili projekat.</div>}
+      {notice === 'saved' && <div className="alert alert-success">{tr('Saved.', 'Sačuvano.')}</div>}
+      {notice === 'converted' && <div className="alert alert-success">
+          {tr('The lead is now a customer. Next step: a proposal or a project.', 'Lid je pretvoren u klijenta. Sledeći korak: ponuda ili projekat.')}
+        </div>
+      }
 
       <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
-        <StatCard icon={CircleDollarSign} color="success" label="Jednokratno (prihvaćeno)" value={money(oneTime)} />
-        <StatCard icon={Repeat} color="primary" label="Mesečno (prihvaćeno)" value={money(monthly)} />
-        <StatCard icon={FileText} color="info" label="Ponude" value={props.length} note={`${props.filter((p) => p.status === 'sent').length} čeka odgovor`} />
-        <StatCard icon={FolderKanban} color="secondary" label="Aktivni projekti" value={activeProjects.length} />
+        <StatCard icon={CircleDollarSign} color="success" label={tr('One-time (accepted)', 'Jednokratno (prihvaćeno)')} value={money(oneTime)} />
+        <StatCard icon={Repeat} color="primary" label={tr('Monthly (accepted)', 'Mesečno (prihvaćeno)')} value={money(monthly)} />
+        <StatCard icon={FileText} color="info" label={tr('Proposals', 'Ponude')}
+          value={props.length}
+          note={tr(`${props.filter((p) => p.status === 'sent').length} awaiting reply`, `${props.filter((p) => p.status === 'sent').length} čeka odgovor`)}
+        />
+        <StatCard icon={FolderKanban} color="secondary" label={tr('Active projects', 'Aktivni projekti')} value={activeProjects.length} />
       </div>
 
       <div className="grid gap-4 xl:grid-cols-3">
         <div className="min-w-0 space-y-4 xl:col-span-2">
           <div className="card">
             <div className="card-header">
-              <h2 className="card-title">Projekti</h2>
+              <h2 className="card-title">{tr('Projects', 'Projekti')}</h2>
             </div>
             <ul className="divide-y divide-line">
-              {(projects ?? []).length === 0 && <li className="px-5 py-4 text-muted">Još nema projekata.</li>}
+              {(projects ?? []).length === 0 && <li className="px-5 py-4 text-muted">{tr('No projects yet.', 'Još nema projekata.')}</li>}
               {((projects ?? []) as Project[]).map((p) => (
                 <li key={p.id} className="relative flex items-center justify-between gap-3 px-5 py-3">
                   <div className="min-w-0">
                     <Link href={`/admin/crm/projects/${p.id}`} className="block truncate text-[13.5px] font-medium text-ink after:absolute after:inset-0">{p.name}</Link>
-                    <span className="text-xs text-muted">{p.deadline ? `Rok ${formatDate(p.deadline)}` : 'Bez roka'}</span>
+                    <span className="text-xs text-muted">{p.deadline ? `${tr('Due', 'Rok')} ${formatDate(p.deadline, lang)}` : tr('No deadline', 'Bez roka')}</span>
                     <ServicePills services={p.services} className="mt-1" />
                   </div>
-                  <span className={`badge ${PROJECT_STATUS[p.status].badge}`}>{PROJECT_STATUS[p.status].label}</span>
+                  <span className={`badge ${PROJECT_STATUS[p.status].badge}`}>{PROJECT_STATUS[p.status].label[lang]}</span>
                 </li>
               ))}
             </ul>
@@ -108,10 +119,10 @@ export default async function CustomerPage({
 
           <div className="card">
             <div className="card-header">
-              <h2 className="card-title">Ponude</h2>
+              <h2 className="card-title">{tr('Proposals', 'Ponude')}</h2>
             </div>
             <ul className="divide-y divide-line">
-              {props.length === 0 && <li className="px-5 py-4 text-muted">Još nema ponuda.</li>}
+              {props.length === 0 && <li className="px-5 py-4 text-muted">{tr('No proposals yet.', 'Još nema ponuda.')}</li>}
               {props.map((p) => {
                 const t = totals(p.crm_proposal_items, p.discount_pct);
                 return (
@@ -120,10 +131,10 @@ export default async function CustomerPage({
                       <Link href={`/admin/crm/proposals/${p.id}`} className="block truncate text-[13.5px] font-medium text-ink after:absolute after:inset-0">#{p.number} {p.title}</Link>
                       <span className="text-xs text-muted tabular-nums">
                         {money(t.oneTime, p.currency)}
-                        {t.monthly > 0 && ` + ${money(t.monthly, p.currency)}/mes`}
+                        {t.monthly > 0 && ` + ${money(t.monthly, p.currency)}${tr('/mo', '/mes')}`}
                       </span>
                     </div>
-                    <span className={`badge ${PROPOSAL_STATUS[p.status].badge}`}>{PROPOSAL_STATUS[p.status].label}</span>
+                    <span className={`badge ${PROPOSAL_STATUS[p.status].badge}`}>{PROPOSAL_STATUS[p.status].label[lang]}</span>
                   </li>
                 );
               })}
@@ -136,12 +147,12 @@ export default async function CustomerPage({
         <div className="min-w-0 space-y-4">
           <div className="card">
             <div className="card-header">
-              <h2 className="card-title">Kontakt</h2>
-              {customer.status === 'active' ? <span className="badge badge-won">Aktivan</span> : <span className="badge badge-lost">Neaktivan</span>}
+              <h2 className="card-title">{tr('Contact', 'Kontakt')}</h2>
+              {customer.status === 'active' ? <span className="badge badge-won">{tr('Active', 'Aktivan')}</span> : <span className="badge badge-lost">{tr('Inactive', 'Neaktivan')}</span>}
             </div>
             {customer.services?.length > 0 && (
               <div className="border-b border-line px-5 py-4">
-                <div className="mb-2 text-[11px] font-semibold tracking-wider text-zinc-500 uppercase">Usluge</div>
+                <div className="mb-2 text-[11px] font-semibold tracking-wider text-zinc-500 uppercase">{tr('Services', 'Usluge')}</div>
                 <ServicePills services={customer.services} />
               </div>
             )}
@@ -162,16 +173,16 @@ export default async function CustomerPage({
             {customer.notes && <p className="border-t border-line px-5 py-4 text-[13px] whitespace-pre-line text-zinc-600">{customer.notes}</p>}
           </div>
 
-          <CustomerSites customerId={customer.id} customerName={customerName(customer)} />
+          <CustomerSites customerId={customer.id} customerName={customerName(customer, lang)} />
 
           {(deals ?? []).length > 0 && (
             <div className="card">
-              <div className="card-header"><h2 className="card-title">Lidovi</h2></div>
+              <div className="card-header"><h2 className="card-title">{tr('Leads', 'Lidovi')}</h2></div>
               <ul className="divide-y divide-line">
                 {((deals ?? []) as Deal[]).map((d) => (
                   <li key={d.id} className="relative flex items-center justify-between gap-3 px-5 py-3">
                     <Link href={`/admin/crm/leads/${d.id}`} className="truncate text-[13.5px] font-medium text-ink after:absolute after:inset-0">{d.name}</Link>
-                    <span className="text-xs text-muted">{STAGE_LABEL[d.stage]}</span>
+                    <span className="text-xs text-muted">{STAGE_LABEL[d.stage][lang]}</span>
                   </li>
                 ))}
               </ul>
@@ -180,16 +191,19 @@ export default async function CustomerPage({
 
           <details className="card group">
             <summary className="card-header cursor-pointer list-none border-b-0 group-open:border-b">
-              <h2 className="card-title">Izmeni podatke</h2>
-              <span className="text-xs text-muted group-open:hidden">Otvori</span>
+              <h2 className="card-title">{tr('Edit details', 'Izmeni podatke')}</h2>
+              <span className="text-xs text-muted group-open:hidden">{tr('Open', 'Otvori')}</span>
             </summary>
             <div className="card-body"><CustomerForm customer={customer} /></div>
           </details>
 
           <form action={deleteCustomer} className="text-right">
             <input type="hidden" name="id" value={customer.id} />
-            <ConfirmSubmit className="btn btn-sm btn-danger" message="Obrisati klijenta? Ponude i projekti ostaju, ali bez klijenta.">
-              <Trash2 className="size-4" /> Obriši klijenta
+            <ConfirmSubmit
+              className="btn btn-sm btn-danger"
+              message={tr('Delete this customer? Proposals and projects stay, without a customer.', 'Obrisati klijenta? Ponude i projekti ostaju, ali bez klijenta.')}
+            >
+              <Trash2 className="size-4" /> {tr('Delete customer', 'Obriši klijenta')}
             </ConfirmSubmit>
           </form>
         </div>

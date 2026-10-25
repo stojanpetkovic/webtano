@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, type ReactNode } from 'react';
-import type { Category } from '@/content/blog';
+import { useLang, useT } from '@/components/i18n/LangProvider';
+import { categoryLabel, type Category } from '@/content/blog';
 
 /**
  * Category filter over the post grid. Every card is rendered on the server and
@@ -9,11 +10,13 @@ import type { Category } from '@/content/blog';
  */
 export function BlogGrid({ categories, cards }: { categories: { name: Category; count: number }[]; cards: { category: Category; node: ReactNode }[] }) {
   const [active, setActive] = useState<Category | null>(null);
+  const lang = useLang();
+  const t = useT();
   const total = cards.length;
 
   return (
     <>
-      <div role="group" aria-label="Filter by topic" className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
+      <div role="group" aria-label={t('Filter by topic', 'Filtriraj po temi')} className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
         {[{ name: null, count: total }, ...categories].map((c) => {
           const on = active === c.name;
           return (
@@ -26,7 +29,7 @@ export function BlogGrid({ categories, cards }: { categories: { name: Category; 
                 on ? 'bg-ink-950 text-white ring-ink-950' : 'bg-white text-zinc-600 ring-zinc-200 hover:text-ink-950 hover:ring-zinc-300'
               }`}
             >
-              {c.name ?? 'All posts'}
+              {c.name ? categoryLabel(lang, c.name) : t('All posts', 'Svi tekstovi')}
               <span className={`font-mono text-[11px] ${on ? 'text-accent' : 'text-zinc-400'}`}>{c.count}</span>
             </button>
           );

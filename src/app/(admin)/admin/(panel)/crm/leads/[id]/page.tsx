@@ -17,18 +17,27 @@ import { formatDateTime } from '@/lib/admin/format';
 import { toParams } from '@/lib/admin/params';
 import type { Activity, Deal, Proposal } from '@/lib/admin/crm/types';
 import type { Lead } from '@/lib/admin/types';
+import { getAdminI18n } from '@/lib/admin/i18n';
+import type { L } from '@/lib/i18n';
 
 export const dynamic = 'force-dynamic';
-export const metadata: Metadata = { title: 'Lid' };
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getAdminI18n();
+  return { title: t('Lead', 'Lid') };
+}
 
-const FIELD_LABELS: Record<string, string> = {
-  service: 'Usluge',
-  website: 'Sajt',
-  business: 'Posao',
-  timeline: 'Kada',
-  message: 'Poruka',
+const FIELD_LABELS: Record<string, L> = {
+  service: { en: 'Services', sr: 'Usluge' },
+  website: { en: 'Website', sr: 'Sajt' },
+  business: { en: 'Business', sr: 'Posao' },
+  timeline: { en: 'When', sr: 'Kada' },
+  message: { en: 'Message', sr: 'Poruka' },
 };
-const TIMELINE: Record<string, string> = { asap: 'Što pre', '1-3-months': 'Za 1 do 3 meseca', exploring: 'Samo istražuje' };
+const TIMELINE: Record<string, L> = {
+  asap: { en: 'As soon as possible', sr: 'Što pre' },
+  '1-3-months': { en: 'In 1 to 3 months', sr: 'Za 1 do 3 meseca' },
+  exploring: { en: 'Just exploring', sr: 'Samo istražuje' },
+};
 
 export default async function DealPage({
   params,
@@ -37,6 +46,7 @@ export default async function DealPage({
   params: Promise<{ id: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const { lang, t } = await getAdminI18n();
   const { id } = await params;
   const notice = toParams(await searchParams).get('notice');
   if (!/^[0-9a-f-]{36}$/.test(id)) redirect('/admin/crm/leads');
@@ -53,25 +63,25 @@ export default async function DealPage({
   return (
     <>
       {(await unseenLeadCount('crm')) > 0 && <MarkLeadsSeen scope="crm" />}
-      <PageHeading title={deal.name} crumbs={[{ label: 'WebTano CRM' }, { label: 'Lidovi', href: '/admin/crm/leads' }]} description={deal.company ?? undefined}>
+      <PageHeading title={deal.name} crumbs={[{ label: 'WebTano CRM' }, { label: t('Leads', 'Lidovi'), href: '/admin/crm/leads' }]} description={deal.company ?? undefined}>
         <NewProposal
           dealId={deal.id}
           buttonClassName="btn btn-outline"
           label={
             <>
-              <FileText className="size-4" /> Napravi ponudu
+              <FileText className="size-4" /> {t('Create proposal', 'Napravi ponudu')}
             </>
           }
         />
         <form action={convertDeal}>
           <input type="hidden" name="id" value={deal.id} />
           <button className="btn btn-primary" type="submit">
-            <UserCheck className="size-4" /> {deal.customer_id ? 'Otvori klijenta' : 'Pretvori u klijenta'}
+            <UserCheck className="size-4" /> {deal.customer_id ? t('Open customer', 'Otvori klijenta') : t('Convert to customer', 'Pretvori u klijenta')}
           </button>
         </form>
       </PageHeading>
 
-      {notice === 'saved' && <div className="alert alert-success">Sačuvano.</div>}
+      {notice === 'saved' && <div className="alert alert-success">{t('Saved.', 'Sačuvano.')}</div>}
 
       <div className="card card-body">
         <StageSteps dealId={deal.id} stage={deal.stage} />
@@ -82,14 +92,20 @@ export default async function DealPage({
           {formFields.length > 0 && (
             <div className="card">
               <div className="card-header">
-                <h2 className="card-title">Upit sa webtano.com</h2>
-                {lead && <span className="text-xs text-muted">{formatDateTime((lead as Lead).created_at)}</span>}
+                <h2 className="card-title">{t('Inquiry from webtano.com', 'Upit sa webtano.com')}</h2>
+                {lead && <span className="text-xs text-muted">{formatDateTime((lead as Lead).created_at, lang)}</span>}
               </div>
               <dl className="divide-y divide-line">
                 {formFields.map(([k, v]) => (
                   <div key={k} className="grid gap-1 px-5 py-3 sm:grid-cols-[140px_1fr]">
-                    <dt className="text-[13px] text-zinc-500">{FIELD_LABELS[k]}</dt>
-                    <dd className="text-[13.5px] whitespace-pre-line text-ink">{k === 'service' ? parseServices(v).map((s) => SERVICES[s]).join(', ') || v : k === 'timeline' ? TIMELINE[v] ?? v : v}</dd>
+                    <dt className="text-[13px] text-zinc-500">{FIELD_LABELS[k][lang]}</dt>
+                    <dd className="text-[13.5px] whitespace-pre-line text-ink">{k === 'service'
+                        ? parseServices(v)
+                            .map((s) => SERVICES[s][lang])
+                            .join(', ') || v
+                        : k === 'timeline'
+                          ? (TIMELINE[v]?.[lang] ?? v)
+                          : v}</dd>
                   </div>
                 ))}
               </dl>
@@ -101,7 +117,7 @@ export default async function DealPage({
         <div className="min-w-0 space-y-4">
           <div className="card">
             <div className="card-header">
-              <h2 className="card-title">Kontakt</h2>
+              <h2 className="card-title">{t('Contact', 'Kontakt')}</h2>
               {Number(deal.value) > 0 && <span className="text-[15px] font-semibold text-ink tabular-nums">{money(Number(deal.value))}</span>}
             </div>
             <ul className="space-y-3 p-5 text-[13.5px]">
@@ -136,16 +152,16 @@ export default async function DealPage({
 
           <div className="card">
             <div className="card-header">
-              <h2 className="card-title">Ponude</h2>
+              <h2 className="card-title">{t('Proposals', 'Ponude')}</h2>
             </div>
             <ul className="divide-y divide-line">
-              {(proposals ?? []).length === 0 && <li className="px-5 py-4 text-muted">Još nema ponuda.</li>}
+              {(proposals ?? []).length === 0 && <li className="px-5 py-4 text-muted">{t('No proposals yet.', 'Još nema ponuda.')}</li>}
               {((proposals ?? []) as Proposal[]).map((p) => (
                 <li key={p.id} className="relative flex items-center justify-between gap-3 px-5 py-3">
                   <Link href={`/admin/crm/proposals/${p.id}`} className="truncate text-[13.5px] font-medium text-ink after:absolute after:inset-0">
                     #{p.number} {p.title}
                   </Link>
-                  <span className={`badge ${PROPOSAL_STATUS[p.status].badge}`}>{PROPOSAL_STATUS[p.status].label}</span>
+                  <span className={`badge ${PROPOSAL_STATUS[p.status].badge}`}>{PROPOSAL_STATUS[p.status].label[lang]}</span>
                 </li>
               ))}
             </ul>
@@ -153,8 +169,8 @@ export default async function DealPage({
 
           <details className="card group">
             <summary className="card-header cursor-pointer list-none border-b-0 group-open:border-b">
-              <h2 className="card-title">Izmeni podatke</h2>
-              <span className="text-xs text-muted group-open:hidden">Otvori</span>
+              <h2 className="card-title">{t('Edit details', 'Izmeni podatke')}</h2>
+              <span className="text-xs text-muted group-open:hidden">{t('Open', 'Otvori')}</span>
             </summary>
             <div className="card-body">
               <DealForm deal={deal} />
@@ -163,8 +179,11 @@ export default async function DealPage({
 
           <form action={deleteDeal} className="text-right">
             <input type="hidden" name="id" value={deal.id} />
-            <ConfirmSubmit className="btn btn-sm btn-danger" message="Obrisati ovaj lid iz CRM-a? Originalni upit ostaje u bazi.">
-              <Trash2 className="size-4" /> Obriši lid
+            <ConfirmSubmit
+              className="btn btn-sm btn-danger"
+              message={t('Delete this lead from the CRM? The original inquiry stays in the database.', 'Obrisati ovaj lid iz CRM-a? Originalni upit ostaje u bazi.')}
+            >
+              <Trash2 className="size-4" /> {t('Delete lead', 'Obriši lid')}
             </ConfirmSubmit>
           </form>
         </div>

@@ -11,10 +11,14 @@ import { dailySeries, daysAgo } from '@/lib/admin/stats';
 import { formatDateTime, timeAgo } from '@/lib/admin/format';
 import { toParams } from '@/lib/admin/params';
 import { PENDING_DAYS, SOURCES, SUBSCRIBER_STATUS, type Subscriber, type SubscriberStatus } from '@/lib/admin/newsletter';
+import { getAdminI18n } from '@/lib/admin/i18n';
 import { deleteSubscriber, resendConfirmation, unsubscribeSubscriber } from './actions';
 
 export const dynamic = 'force-dynamic';
-export const metadata: Metadata = { title: 'Pretplatnici' };
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getAdminI18n();
+  return { title: t('Subscribers', 'Pretplatnici') };
+}
 
 const SIZES = [25, 50, 100];
 const DAYS = 30;
@@ -22,6 +26,7 @@ const TZ = 'Europe/Belgrade';
 const BADGE: Record<SubscriberStatus, string> = { confirmed: 'badge-won', pending: 'badge-contacted', unsubscribed: 'badge-lost' };
 
 export default async function SubscribersPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const { lang, t } = await getAdminI18n();
   const query = toParams(await searchParams);
   const status = (['confirmed', 'pending', 'unsubscribed'] as const).find((s) => s === query.get('status')) ?? '';
   const q = (query.get('q') ?? '').trim().toLowerCase().replace(/[%_,()]/g, '');
@@ -37,11 +42,12 @@ export default async function SubscribersPage({ searchParams }: { searchParams: 
   if (error)
     return (
       <>
-        <PageHeading title="Pretplatnici" crumbs={[{ label: 'Marketing' }]} />
+        <PageHeading title={t('Subscribers', 'Pretplatnici')} crumbs={[{ label: 'Marketing' }]} />
         <div className="card mt-6 p-6">
-          <p className="font-semibold text-ink">Tabela za newsletter još ne postoji</p>
+          <p className="font-semibold text-ink">{t('The newsletter table does not exist yet', 'Tabela za newsletter još ne postoji')}</p>
           <p className="mt-1 text-sm text-muted">
-            Pokreni SQL iz <code className="font-mono">supabase/migrations/20261025_newsletter.sql</code> u Supabase SQL Editoru, pa osveži stranicu.
+            {t('Run the SQL from', 'Pokreni SQL iz')} <code className="font-mono">supabase/migrations/20261025_newsletter.sql</code>{' '}
+            {t('in the Supabase SQL Editor, then refresh the page.', 'u Supabase SQL Editoru, pa osveži stranicu.')}
           </p>
         </div>
       </>
@@ -60,14 +66,14 @@ export default async function SubscribersPage({ searchParams }: { searchParams: 
 
   const labels = dailySeries([], DAYS, TZ).map((d) => d.day);
   const series = Object.entries(SOURCES)
-    .map(([key, label], slot) => ({ label, slot, data: dailySeries(recent.filter((r) => r.source === key), DAYS, TZ).map((d) => d.count) }))
+    .map(([key, label], slot) => ({ label: label[lang], slot, data: dailySeries(recent.filter((r) => r.source === key), DAYS, TZ).map((d) => d.count) }))
     .filter((s) => s.data.some((n) => n > 0));
 
   const tabs: { key: '' | SubscriberStatus; label: string; n: number }[] = [
-    { key: '', label: 'Svi', n: all.length },
-    { key: 'confirmed', label: 'Potvrđeni', n: count('confirmed') },
-    { key: 'pending', label: 'Čekaju potvrdu', n: count('pending') },
-    { key: 'unsubscribed', label: 'Odjavljeni', n: count('unsubscribed') },
+    { key: '', label: t('All', 'Svi'), n: all.length },
+    { key: 'confirmed', label: t('Confirmed', 'Potvrđeni'), n: count('confirmed') },
+    { key: 'pending', label: t('Awaiting confirmation', 'Čekaju potvrdu'), n: count('pending') },
+    { key: 'unsubscribed', label: t('Unsubscribed', 'Odjavljeni'), n: count('unsubscribed') },
   ];
 
   const filtered = () => {
@@ -98,66 +104,84 @@ export default async function SubscribersPage({ searchParams }: { searchParams: 
   return (
     <>
       <PageHeading
-        title="Pretplatnici"
+        title={t('Subscribers', 'Pretplatnici')}
         crumbs={[{ label: 'Marketing' }]}
-        description="Prijave na newsletter sa webtano.com (popup i futer). Svaka adresa potvrđuje prijavu emailom pre nego što uđe na listu."
+        description={t(
+          'Newsletter sign-ups from webtano.com (popup and footer). Every address confirms by email before it joins the list.',
+          'Prijave na newsletter sa webtano.com (popup i futer). Svaka adresa potvrđuje prijavu emailom pre nego što uđe na listu.',
+        )}
       >
         <Link href="/admin/settings#newsletter" className="btn btn-light">
-          Podešavanja popupa
+          {t('Popup settings', 'Podešavanja popupa')}
         </Link>
         <a href={exportHref} className="btn btn-outline">
-          <Download className="size-4" /> Izvezi CSV
+          <Download className="size-4" /> {t('Export CSV', 'Izvezi CSV')}
         </a>
       </PageHeading>
 
       <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         <StatCard
-          label="Aktivni pretplatnici"
+          label={t('Active subscribers', 'Aktivni pretplatnici')}
           value={count('confirmed')}
           icon={MailCheck}
           color="success"
-          note={`+${confirmedRecent.length} za ${DAYS} dana`}
+          note={t(`+${confirmedRecent.length} in ${DAYS} days`, `+${confirmedRecent.length} za ${DAYS} dana`)}
           trend={dailySeries(confirmedRecent.map((r) => ({ created_at: r.confirmed_at! })), DAYS, TZ).map((d) => d.count)}
         />
-        <StatCard label="Nove prijave" value={recent.length} icon={UserPlus} color="info" note={`poslednjih ${DAYS} dana`} trend={dailySeries(recent, DAYS, TZ).map((d) => d.count)} />
         <StatCard
-          label="Čekaju potvrdu"
+          label={t('New sign-ups', 'Nove prijave')}
+          value={recent.length}
+          icon={UserPlus}
+          color="info"
+          note={t(`last ${DAYS} days`, `poslednjih ${DAYS} dana`)} trend={dailySeries(recent, DAYS, TZ).map((d) => d.count)} />
+        <StatCard
+          label={t('Awaiting confirmation', 'Čekaju potvrdu')}
           value={count('pending')}
           icon={Hourglass}
           color="warning"
-          note={rate === null ? `brišu se posle ${PENDING_DAYS} dana` : `${rate}% prijava se potvrdi`}
+          note={
+            rate === null
+              ? t(`deleted after ${PENDING_DAYS} days`, `brišu se posle ${PENDING_DAYS} dana`)
+              : t(`${rate}% of sign-ups confirm`, `${rate}% prijava se potvrdi`)
+          }
         />
-        <StatCard label="Odjavljeni" value={count('unsubscribed')} icon={MailX} color="danger" note={`${unsubRecent.length} za ${DAYS} dana`} />
+        <StatCard
+          label={t('Unsubscribed', 'Odjavljeni')}
+          value={count('unsubscribed')}
+          icon={MailX}
+          color="danger"
+          note={t(`${unsubRecent.length} in ${DAYS} days`, `${unsubRecent.length} za ${DAYS} dana`)}
+        />
       </div>
 
       <div className="mt-6">
         <DailyChart
-          title="Prijave po danu"
-          total={`${recent.length} prijava`}
-          note={`${DAYS} dana, po mestu prijave`}
+          title={t('Sign-ups per day', 'Prijave po danu')}
+          total={`${recent.length} ${t('sign-ups', 'prijava')}`}
+          note={t(`${DAYS} days, by where they signed up`, `${DAYS} dana, po mestu prijave`)}
           labels={labels}
-          series={series.length ? series : [{ label: 'Prijave', data: labels.map(() => 0) }]}
+          series={series.length ? series : [{ label: t('Sign-ups', 'Prijave'), data: labels.map(() => 0) }]}
         />
       </div>
 
       <div className="card mt-6">
         <nav className="flex gap-1 overflow-x-auto border-b border-line px-3 pt-2" aria-label="Status">
-          {tabs.map((t) => {
-            const active = t.key === status;
+          {tabs.map((tab) => {
+            const active = tab.key === status;
             return (
               <Link
-                key={t.key || 'all'}
-                href={link({ status: t.key || null })}
+                key={tab.key || 'all'}
+                href={link({ status: tab.key || null })}
                 aria-current={active ? 'page' : undefined}
                 className={`-mb-px flex shrink-0 items-center gap-2 border-b-2 px-3 py-3 text-[13px] font-medium transition ${
                   active ? 'border-ink text-ink' : 'border-transparent text-zinc-500 hover:text-ink'
                 }`}
               >
-                {t.label}
+                {tab.label}
                 <span
                   className={`rounded-full px-1.5 py-0.5 font-mono text-[10.5px] leading-none tabular-nums ${active ? 'bg-ink text-white' : 'bg-zinc-100 text-zinc-500'}`}
                 >
-                  {t.n}
+                  {tab.n}
                 </span>
               </Link>
             );
@@ -168,25 +192,27 @@ export default async function SubscribersPage({ searchParams }: { searchParams: 
           {status && <input type="hidden" name="status" value={status} />}
           <div className="relative flex-1">
             <label className="sr-only" htmlFor="q">
-              Pretraga
+              {t('Search', 'Pretraga')}
             </label>
             <Search className="pointer-events-none absolute start-3.5 top-1/2 size-4 -translate-y-1/2 text-zinc-400" />
-            <input className="form-input ps-10" id="q" name="q" type="search" defaultValue={q} placeholder="Pretraži email" />
+            <input className="form-input ps-10" id="q" name="q" type="search" defaultValue={q} placeholder={t('Search email', 'Pretraži email')} />
           </div>
           <button className="btn btn-primary" type="submit">
-            Traži
+            {t('Search', 'Traži')}
           </button>
           {q && (
-            <Link href={link({ q: null })} className="btn btn-light" title="Poništi pretragu">
+            <Link href={link({ q: null })} className="btn btn-light" title={t('Clear search', 'Poništi pretragu')}>
               <RotateCcw className="size-4" />
-              <span className="sr-only">Poništi</span>
+              <span className="sr-only">{t('Clear', 'Poništi')}</span>
             </Link>
           )}
         </form>
 
         {rows.length === 0 ? (
           <p className="px-5 py-12 text-center text-sm text-muted">
-            {all.length ? 'Nema pretplatnika za ove filtere.' : 'Još nema prijava. Stižu iz popupa i futera na webtano.com.'}
+            {all.length
+              ? t('No subscribers match these filters.', 'Nema pretplatnika za ove filtere.')
+              : t('No sign-ups yet. They come from the popup and footer on webtano.com.', 'Još nema prijava. Stižu iz popupa i futera na webtano.com.')}
           </p>
         ) : (
           <div className="relative overflow-x-auto">
@@ -195,9 +221,9 @@ export default async function SubscribersPage({ searchParams }: { searchParams: 
                 <tr>
                   <th>Email</th>
                   <th className="max-md:hidden">Status</th>
-                  <th className="max-md:hidden">Izvor</th>
-                  <th className="max-md:hidden">Prijavljen</th>
-                  <th className="text-right">Akcije</th>
+                  <th className="max-md:hidden">{t('Source', 'Izvor')}</th>
+                  <th className="max-md:hidden">{t('Signed up', 'Prijavljen')}</th>
+                  <th className="text-right">{t('Actions', 'Akcije')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -206,49 +232,54 @@ export default async function SubscribersPage({ searchParams }: { searchParams: 
                     <td>
                       <div className="max-w-[32ch] truncate font-medium text-ink max-md:max-w-[22ch]">{s.email}</div>
                       <div className="mt-1 flex items-center gap-2 text-xs text-muted md:hidden">
-                        <span className={`badge ${BADGE[s.status]}`}>{SUBSCRIBER_STATUS[s.status]}</span>
-                        {SOURCES[s.source] ?? s.source} · {timeAgo(s.created_at)}
+                        <span className={`badge ${BADGE[s.status]}`}>{SUBSCRIBER_STATUS[s.status][lang]}</span>
+                        {SOURCES[s.source]?.[lang] ?? s.source} · {timeAgo(s.created_at, lang)}
                       </div>
                       {s.page_url && <div className="max-w-[40ch] truncate text-xs text-muted max-md:hidden">{s.page_url.replace(/^https?:\/\/[^/]+/, '') || '/'}</div>}
                     </td>
                     <td className="max-md:hidden">
-                      <span className={`badge ${BADGE[s.status]}`}>{SUBSCRIBER_STATUS[s.status]}</span>
-                      {s.status === 'confirmed' && s.confirmed_at && <div className="mt-1 text-xs text-muted max-md:hidden">{formatDateTime(s.confirmed_at)}</div>}
+                      <span className={`badge ${BADGE[s.status]}`}>{SUBSCRIBER_STATUS[s.status][lang]}</span>
+                      {s.status === 'confirmed' && s.confirmed_at && (
+                        <div className="mt-1 text-xs text-muted max-md:hidden">{formatDateTime(s.confirmed_at, lang)}</div>
+                      )}
                     </td>
                     <td className="whitespace-nowrap max-md:hidden">
-                      <span className="rounded-md bg-zinc-100 px-2 py-1 text-xs text-zinc-600">{SOURCES[s.source] ?? s.source}</span>
+                      <span className="rounded-md bg-zinc-100 px-2 py-1 text-xs text-zinc-600">{SOURCES[s.source]?.[lang] ?? s.source}</span>
                     </td>
-                    <td className="whitespace-nowrap text-sm text-zinc-600 max-md:hidden" title={formatDateTime(s.created_at)}>
-                      {timeAgo(s.created_at)}
+                    <td className="whitespace-nowrap text-sm text-zinc-600 max-md:hidden" title={formatDateTime(s.created_at, lang)}>
+                      {timeAgo(s.created_at, lang)}
                     </td>
                     <td>
                       <div className="flex justify-end gap-1">
                         {s.status === 'pending' && (
                           <form action={resendConfirmation}>
                             <input type="hidden" name="id" value={s.id} />
-                            <button type="submit" className="btn btn-sm btn-light" title="Pošalji email za potvrdu ponovo">
+                            <button type="submit" className="btn btn-sm btn-light" title={t('Send the confirmation email again', 'Pošalji email za potvrdu ponovo')}>
                               <Send className="size-3.5" />
-                              <span className="max-lg:sr-only">Pošalji ponovo</span>
+                              <span className="max-lg:sr-only">{t('Resend', 'Pošalji ponovo')}</span>
                             </button>
                           </form>
                         )}
                         {s.status === 'confirmed' && (
                           <form action={unsubscribeSubscriber}>
                             <input type="hidden" name="id" value={s.id} />
-                            <ConfirmSubmit message={`Odjaviti ${s.email}?`} className="btn btn-sm btn-light">
+                            <ConfirmSubmit message={t(`Unsubscribe ${s.email}?`, `Odjaviti ${s.email}?`)} className="btn btn-sm btn-light">
                               <MailX className="size-3.5" />
-                              <span className="max-lg:sr-only">Odjavi</span>
+                              <span className="max-lg:sr-only">{t('Unsubscribe', 'Odjavi')}</span>
                             </ConfirmSubmit>
                           </form>
                         )}
                         <form action={deleteSubscriber}>
                           <input type="hidden" name="id" value={s.id} />
                           <ConfirmSubmit
-                            message={`Trajno obrisati ${s.email}? Ovo se koristi za zahtev za brisanje podataka i ne može da se vrati.`}
+                            message={t(
+                              `Delete ${s.email} for good? This is for data deletion requests and cannot be undone.`,
+                              `Trajno obrisati ${s.email}? Ovo se koristi za zahtev za brisanje podataka i ne može da se vrati.`,
+                            )}
                             className="btn btn-sm btn-light hover:text-rose-600"
                           >
                             <Trash2 className="size-3.5" />
-                            <span className="sr-only">Obriši</span>
+                            <span className="sr-only">{t('Delete', 'Obriši')}</span>
                           </ConfirmSubmit>
                         </form>
                       </div>
@@ -259,11 +290,13 @@ export default async function SubscribersPage({ searchParams }: { searchParams: 
             </table>
           </div>
         )}
-        <Pagination page={page} pageSize={size} href={pageHref} sizes={SIZES} total={found ?? total} noun="pretplatnika" />
+        <Pagination page={page} pageSize={size} href={pageHref} sizes={SIZES} total={found ?? total} noun={t('subscribers', 'pretplatnika')} />
       </div>
       <p className="mt-4 text-xs text-muted">
-        Nepotvrđene prijave se same brišu posle {PENDING_DAYS} dana. Za slanje newslettera izvezi potvrđene u CSV i uvezi ih u Resend (Audiences) ili drugi alat;
-        u svaki email ide link za odjavu.
+        {t(
+          `Unconfirmed sign-ups are deleted on their own after ${PENDING_DAYS} days. To send a newsletter, export the confirmed ones to CSV and import them into Resend (Audiences) or another tool; every email gets an unsubscribe link.`,
+          `Nepotvrđene prijave se same brišu posle ${PENDING_DAYS} dana. Za slanje newslettera izvezi potvrđene u CSV i uvezi ih u Resend (Audiences) ili drugi alat; u svaki email ide link za odjavu.`,
+        )}
       </p>
     </>
   );

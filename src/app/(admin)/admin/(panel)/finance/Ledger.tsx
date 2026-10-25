@@ -2,9 +2,11 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { RotateCcw, Search } from 'lucide-react';
 import { PERIODS, type Period } from '@/lib/admin/finance/labels';
+import { getAdminI18n } from '@/lib/admin/i18n';
+import type { L } from '@/lib/i18n';
 
 /** Period chips, a category filter and a search box, shared by the income and expense lists. */
-export function LedgerFilters({
+export async function LedgerFilters({
   base,
   period,
   category,
@@ -17,6 +19,7 @@ export function LedgerFilters({
   q: string;
   categories: [string, string][];
 }) {
+  const { lang, t } = await getAdminI18n();
   const href = (changes: Record<string, string | null>) => {
     const p = new URLSearchParams({ ...(period !== '12m' ? { period } : {}), ...(category ? { category } : {}), ...(q ? { q } : {}) });
     for (const [k, v] of Object.entries(changes)) {
@@ -26,7 +29,7 @@ export function LedgerFilters({
     const s = p.toString();
     return s ? `${base}?${s}` : base;
   };
-  const periods: [Period | 'all', string][] = [...(Object.entries(PERIODS) as [Period, string][]), ['all', 'Sve']];
+  const periods: [Period | 'all', string][] = [...(Object.entries(PERIODS) as [Period, L][]).map(([k, v]) => [k, v[lang]] as [Period, string]), ['all', t('All', 'Sve')]];
   return (
     <div className="space-y-3 border-b border-line p-4">
       <nav className="flex flex-wrap gap-1.5" aria-label="Period">
@@ -45,16 +48,16 @@ export function LedgerFilters({
         {period !== '12m' && <input type="hidden" name="period" value={period} />}
         <div className="relative min-w-0 flex-1 basis-56">
           <label className="sr-only" htmlFor="q">
-            Pretraga
+            {t('Search', 'Pretraga')}
           </label>
           <Search className="pointer-events-none absolute start-3.5 top-1/2 size-4 -translate-y-1/2 text-zinc-400" />
-          <input className="form-input ps-10" id="q" name="q" type="search" defaultValue={q} placeholder="Opis ili dobavljač" />
+          <input className="form-input ps-10" id="q" name="q" type="search" defaultValue={q} placeholder={t('Description or vendor', 'Opis ili dobavljač')} />
         </div>
         <label className="sr-only" htmlFor="category">
-          Kategorija
+          {t('Category', 'Kategorija')}
         </label>
         <select className="form-input w-auto min-w-0 flex-1 basis-40 sm:flex-none" id="category" name="category" defaultValue={category}>
-          <option value="">Sve kategorije</option>
+          <option value="">{t('All categories', 'Sve kategorije')}</option>
           {categories.map(([k, v]) => (
             <option key={k} value={k}>
               {v}
@@ -62,12 +65,12 @@ export function LedgerFilters({
           ))}
         </select>
         <button className="btn btn-primary" type="submit">
-          Filtriraj
+          {t('Filter', 'Filtriraj')}
         </button>
         {(q || category) && (
-          <Link href={href({ q: null, category: null })} className="btn btn-light" title="Poništi filtere">
+          <Link href={href({ q: null, category: null })} className="btn btn-light" title={t('Clear filters', 'Poništi filtere')}>
             <RotateCcw className="size-4" />
-            <span className="sr-only">Poništi</span>
+            <span className="sr-only">{t('Clear', 'Poništi')}</span>
           </Link>
         )}
       </form>
@@ -75,13 +78,15 @@ export function LedgerFilters({
   );
 }
 
-const NOTICES: Record<string, [string, string]> = {
-  saved: ['alert-success', 'Sačuvano.'],
-  deleted: ['alert-success', 'Obrisano.'],
-  amount: ['alert-danger', 'Iznos mora biti veći od nule.'],
+const NOTICES: Record<string, [string, L]> = {
+  saved: ['alert-success', { en: 'Saved.', sr: 'Sačuvano.' }],
+  deleted: ['alert-success', { en: 'Deleted.', sr: 'Obrisano.' }],
+  amount: ['alert-danger', { en: 'The amount must be more than zero.', sr: 'Iznos mora biti veći od nule.' }],
 };
 
-export function Notice({ code, extra }: { code: string | null; extra?: Record<string, [string, ReactNode]> }) {
-  const n = code ? (extra?.[code] ?? NOTICES[code]) : null;
+export async function Notice({ code, extra }: { code: string | null; extra?: Record<string, [string, ReactNode]> }) {
+  const { lang } = await getAdminI18n();
+  const base = code ? NOTICES[code] : undefined;
+  const n = code ? (extra?.[code] ?? (base ? [base[0], base[1][lang]] : null)) : null;
   return n ? <div className={`alert ${n[0]}`}>{n[1]}</div> : null;
 }

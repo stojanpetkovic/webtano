@@ -3,6 +3,8 @@
 import { useEffect, useRef } from 'react';
 import { Chart, BarController, BarElement, LineController, LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
 import { GRID, INK, applyChartTheme } from '../chartTheme';
+import { useLang } from '@/components/i18n/LangProvider';
+import { translator } from '@/lib/i18n';
 
 Chart.register(BarController, BarElement, LineController, LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -23,6 +25,8 @@ export function FinanceChart({
   ebitda: number[];
   currency: string;
 }) {
+  const lang = useLang();
+  const t = translator(lang);
   const canvas = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -35,8 +39,8 @@ export function FinanceChart({
       data: {
         labels,
         datasets: [
-          { type: 'bar', label: 'Prihodi', data: income, backgroundColor: INCOME, borderRadius: 5, maxBarThickness: 22, order: 2 },
-          { type: 'bar', label: 'Rashodi', data: expenses, backgroundColor: EXPENSE, borderRadius: 5, maxBarThickness: 22, order: 2 },
+          { type: 'bar', label: t('Income', 'Prihodi'), data: income, backgroundColor: INCOME, borderRadius: 5, maxBarThickness: 22, order: 2 },
+          { type: 'bar', label: t('Expenses', 'Rashodi'), data: expenses, backgroundColor: EXPENSE, borderRadius: 5, maxBarThickness: 22, order: 2 },
           {
             type: 'line',
             label: 'EBITDA',
@@ -71,7 +75,9 @@ export function FinanceChart({
       },
     });
     return () => chart.destroy();
-  }, [labels, income, expenses, ebitda, currency]);
+    // t comes from lang, which is listed; t itself is a new function every render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [labels, income, expenses, ebitda, currency, lang]);
 
-  return <canvas ref={canvas} role="img" aria-label="Prihodi, rashodi i EBITDA po mesecima" />;
+  return <canvas ref={canvas} role="img" aria-label={t('Income, expenses and EBITDA by month', 'Prihodi, rashodi i EBITDA po mesecima')} />;
 }

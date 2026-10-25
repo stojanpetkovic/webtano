@@ -2,6 +2,7 @@ import { Resend } from 'resend';
 import { db } from './supabase';
 import { env } from './env';
 import { leadSource } from './leads';
+import { channelLabel } from './channels';
 import { appSettings, ownerEmail } from './settings';
 import { CYAN, INK, button, buttons, escape, facts, kicker, panel, shell } from './mail';
 import type { Lead, Site } from './types';
@@ -111,7 +112,7 @@ export function render(site: Site, lead: Lead, lang: 'sr' | 'en', adminLink: str
     `<div style="margin:26px 0 0">${kicker(t.details)}<div style="margin:4px 0 0">${facts(
       [
         lead.page_url ? { label: t.page, value: lead.page_url.replace(/^https?:\/\//, ''), href: lead.page_url } : null,
-        { label: t.source, value: leadSource(lead) },
+        { label: t.source, value: channelLabel(leadSource(lead), lang) },
         { label: t.time, value: time },
       ].filter((r) => r !== null),
     )}</div></div>`,
@@ -140,7 +141,7 @@ export function render(site: Site, lead: Lead, lang: 'sr' | 'en', adminLink: str
     rest.length ? `\n${rest.map(([k, v]) => `${label(k)}: ${v}`).join('\n')}` : '',
     '',
     lead.page_url ? `${t.page}: ${lead.page_url}` : '',
-    `${t.source}: ${leadSource(lead)}`,
+    `${t.source}: ${channelLabel(leadSource(lead), lang)}`,
     `${t.time}: ${time}`,
     adminLink ? `\n${t.admin}: ${adminLink}` : '',
   ]

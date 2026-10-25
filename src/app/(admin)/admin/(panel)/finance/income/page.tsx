@@ -13,16 +13,21 @@ import { formatDate } from '@/lib/admin/format';
 import { toParams } from '@/lib/admin/params';
 import { financeOptions } from '@/lib/admin/finance/options';
 import { INCOME_CATEGORIES, INCOME_SOURCE, PERIODS, cash, periodRange, todayBelgrade, type Period } from '@/lib/admin/finance/labels';
+import { getAdminI18n } from '@/lib/admin/i18n';
 import type { Income } from '@/lib/admin/finance/types';
 import { deleteIncome } from '../actions';
 import { LedgerFilters, Notice } from '../Ledger';
 
 export const dynamic = 'force-dynamic';
-export const metadata: Metadata = { title: 'Prihodi' };
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getAdminI18n();
+  return { title: t('Income', 'Prihodi') };
+}
 
 const SIZE = 50;
 
 export default async function IncomePage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const { lang, t } = await getAdminI18n();
   const query = toParams(await searchParams);
   const period = ([...Object.keys(PERIODS), 'all'] as (Period | 'all')[]).find((p) => p === query.get('period')) ?? '12m';
   const category = query.get('category') && query.get('category')! in INCOME_CATEGORIES ? query.get('category')! : '';
@@ -47,7 +52,7 @@ export default async function IncomePage({ searchParams }: { searchParams: Promi
   }
   const [settings, options, { data, count, error }, { data: amounts }] = await Promise.all([
     appSettings(),
-    financeOptions(),
+    financeOptions(lang),
     list.range((page - 1) * SIZE, page * SIZE - 1),
     sums.limit(50_000),
   ]);
@@ -67,15 +72,19 @@ export default async function IncomePage({ searchParams }: { searchParams: Promi
 
   return (
     <>
-      <PageHeading title="Prihodi" crumbs={[{ label: 'Finansije', href: '/admin/finance' }]} description="Svaka uplata: ručno uneta, iz završenog projekta ili iz plaćenog računa.">
+      <PageHeading
+        title={t('Income', 'Prihodi')}
+        crumbs={[{ label: t('Finance', 'Finansije'), href: '/admin/finance' }]}
+        description={t('Every payment: entered by hand, from a finished project or from a paid invoice.', 'Svaka uplata: ručno uneta, iz završenog projekta ili iz plaćenog računa.')}
+      >
         <Modal
           label={
             <>
-              <Plus className="size-4" /> Dodaj prihod
+              <Plus className="size-4" /> {t('Add income', 'Dodaj prihod')}
             </>
           }
-          title="Novi prihod"
-          description="Uplata koja nije stigla preko računa. Plaćeni računi se knjiže sami."
+          title={t('New income', 'Novi prihod')}
+          description={t('A payment that did not come through an invoice. Paid invoices are recorded on their own.', 'Uplata koja nije stigla preko računa. Plaćeni računi se knjiže sami.')}
         >
           <IncomeForm customers={options.customers} projects={options.projects} currency={currency} today={today} returnTo={here} />
         </Modal>
@@ -86,38 +95,38 @@ export default async function IncomePage({ searchParams }: { searchParams: Promi
         <FinanceSetup />
       ) : (
         <div className="card">
-          <LedgerFilters base="/admin/finance/income" period={period} category={category} q={q} categories={Object.entries(INCOME_CATEGORIES)} />
+          <LedgerFilters base="/admin/finance/income" period={period} category={category} q={q} categories={Object.entries(INCOME_CATEGORIES).map(([k, v]) => [k, v[lang]] as [string, string])} />
           <div className="flex items-baseline justify-between gap-3 border-b border-line px-5 py-3 text-[13px]">
             <span className="text-muted">
-              {count ?? 0} uplata · {period === 'all' ? 'svi unosi' : PERIODS[period].toLowerCase()}
+              {t(`${count ?? 0} payments`, `${count ?? 0} uplata`)} · {period === 'all' ? t('all entries', 'svi unosi') : PERIODS[period][lang].toLowerCase()}
             </span>
             <span>
-              Ukupno <strong className="text-base text-emerald-600 tabular-nums">{cash(total, currency, total % 1 !== 0)}</strong>
+              {t('Total', 'Ukupno')} <strong className="text-base text-emerald-600 tabular-nums">{cash(total, currency, total % 1 !== 0)}</strong>
             </span>
           </div>
           {rows.length === 0 ? (
-            <p className="px-5 py-12 text-center text-sm text-muted">Nema prihoda za ove filtere.</p>
+            <p className="px-5 py-12 text-center text-sm text-muted">{t('No income for these filters.', 'Nema prihoda za ove filtere.')}</p>
           ) : (
             <div className="relative overflow-x-auto">
               <table className="table">
                 <thead>
                   <tr>
-                    <th>Datum</th>
-                    <th>Opis</th>
-                    <th className="max-md:hidden">Klijent</th>
-                    <th className="max-lg:hidden">Kategorija</th>
-                    <th className="text-right">Iznos</th>
-                    <th className="w-24" aria-label="Akcije" />
+                    <th>{t('Date', 'Datum')}</th>
+                    <th>{t('Description', 'Opis')}</th>
+                    <th className="max-md:hidden">{t('Client', 'Klijent')}</th>
+                    <th className="max-lg:hidden">{t('Category', 'Kategorija')}</th>
+                    <th className="text-right">{t('Amount', 'Iznos')}</th>
+                    <th className="w-24" aria-label={t('Actions', 'Akcije')} />
                   </tr>
                 </thead>
                 <tbody>
                   {rows.map((r) => (
                     <tr key={r.id}>
-                      <td className="whitespace-nowrap text-zinc-600">{formatDate(r.date)}</td>
+                      <td className="whitespace-nowrap text-zinc-600">{formatDate(r.date, lang)}</td>
                       <td>
-                        <div className="max-w-[34ch] truncate font-medium text-ink">{r.description || INCOME_CATEGORIES[r.category]}</div>
+                        <div className="max-w-[34ch] truncate font-medium text-ink">{r.description || INCOME_CATEGORIES[r.category]?.[lang]}</div>
                         <div className="mt-0.5 flex items-center gap-1.5 text-xs text-muted">
-                          <span className="rounded bg-zinc-100 px-1.5 py-0.5">{INCOME_SOURCE[r.source]}</span>
+                          <span className="rounded bg-zinc-100 px-1.5 py-0.5">{INCOME_SOURCE[r.source]?.[lang]}</span>
                           {r.project_id && options.projectById.get(r.project_id) && (
                             <Link href={`/admin/crm/projects/${r.project_id}`} className="truncate hover:text-primary">
                               {options.projectById.get(r.project_id)}
@@ -126,16 +135,16 @@ export default async function IncomePage({ searchParams }: { searchParams: Promi
                         </div>
                       </td>
                       <td className="max-w-[22ch] truncate max-md:hidden">{(r.customer_id && options.customerById.get(r.customer_id)) || '—'}</td>
-                      <td className="whitespace-nowrap text-zinc-600 max-lg:hidden">{INCOME_CATEGORIES[r.category] ?? r.category}</td>
+                      <td className="whitespace-nowrap text-zinc-600 max-lg:hidden">{INCOME_CATEGORIES[r.category]?.[lang] ?? r.category}</td>
                       <td className="text-right font-semibold whitespace-nowrap text-emerald-600 tabular-nums">+{cash(Number(r.amount), currency, Number(r.amount) % 1 !== 0)}</td>
                       <td>
                         <div className="flex justify-end gap-1">
                           {r.invoice_id ? (
-                            <Link href={`/admin/finance/invoices/${r.invoice_id}`} className="btn btn-sm btn-light" title="Otvori račun">
+                            <Link href={`/admin/finance/invoices/${r.invoice_id}`} className="btn btn-sm btn-light" title={t('Open invoice', 'Otvori račun')}>
                               <FileText className="size-3.5" />
                             </Link>
                           ) : (
-                            <Link href={`${here}${here.includes('?') ? '&' : '?'}edit=${r.id}`} className="btn btn-sm btn-light" title="Izmeni" scroll={false}>
+                            <Link href={`${here}${here.includes('?') ? '&' : '?'}edit=${r.id}`} className="btn btn-sm btn-light" title={t('Edit', 'Izmeni')} scroll={false}>
                               <Pencil className="size-3.5" />
                             </Link>
                           )}
@@ -144,10 +153,14 @@ export default async function IncomePage({ searchParams }: { searchParams: Promi
                             <input type="hidden" name="return" value={here} />
                             <ConfirmSubmit
                               className="btn btn-sm btn-light hover:text-rose-600"
-                              message={r.invoice_id ? 'Obrisati prihod? Račun se vraća na „Izdat“ (čeka uplatu).' : 'Obrisati ovaj prihod?'}
+                              message={
+                                r.invoice_id
+                                  ? t('Delete this income? The invoice goes back to “Issued” (waiting for payment).', 'Obrisati prihod? Račun se vraća na „Izdat“ (čeka uplatu).')
+                                  : t('Delete this income?', 'Obrisati ovaj prihod?')
+                              }
                             >
                               <Trash2 className="size-3.5" />
-                              <span className="sr-only">Obriši</span>
+                              <span className="sr-only">{t('Delete', 'Obriši')}</span>
                             </ConfirmSubmit>
                           </form>
                         </div>
@@ -158,11 +171,11 @@ export default async function IncomePage({ searchParams }: { searchParams: Promi
               </table>
             </div>
           )}
-          <Pagination page={page} pageSize={SIZE} total={count ?? 0} href={pageHref} sizes={[SIZE]} noun="uplata" />
+          <Pagination page={page} pageSize={SIZE} total={count ?? 0} href={pageHref} sizes={[SIZE]} noun={t('payments', 'uplata')} />
         </div>
       )}
       {editing && (
-        <Modal title="Izmeni prihod" defaultOpen closeHref={here}>
+        <Modal title={t('Edit income', 'Izmeni prihod')} defaultOpen closeHref={here}>
           <IncomeForm income={editing} customers={options.customers} projects={options.projects} currency={currency} today={today} returnTo={here} />
         </Modal>
       )}

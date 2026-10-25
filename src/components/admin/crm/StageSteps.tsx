@@ -1,10 +1,12 @@
 import { Check } from 'lucide-react';
 import { setDealStage } from '@/app/(admin)/admin/(panel)/crm/actions';
 import { STAGES } from '@/lib/admin/crm/labels';
+import { getAdminI18n } from '@/lib/admin/i18n';
 import type { DealStage } from '@/lib/admin/crm/types';
 
 /** The pipeline as clickable steps: each one is a tiny form that moves the deal there. */
-export function StageSteps({ dealId, stage }: { dealId: string; stage: DealStage }) {
+export async function StageSteps({ dealId, stage }: { dealId: string; stage: DealStage }) {
+  const { lang, t } = await getAdminI18n();
   const open = STAGES.filter((s) => s.key !== 'lost');
   const current = open.findIndex((s) => s.key === stage);
   return (
@@ -32,7 +34,7 @@ export function StageSteps({ dealId, stage }: { dealId: string; stage: DealStage
                   aria-current={active ? 'step' : undefined}
                 >
                   {done && <Check className="size-3.5 text-emerald-600" />}
-                  {s.label}
+                  {s.label[lang]}
                 </button>
               </form>
             </li>
@@ -43,7 +45,7 @@ export function StageSteps({ dealId, stage }: { dealId: string; stage: DealStage
         <input type="hidden" name="id" value={dealId} />
         <input type="hidden" name="stage" value="lost" />
         <button type="submit" className={`btn btn-sm ${stage === 'lost' ? 'bg-zinc-700 text-white' : 'btn-light'}`}>
-          {stage === 'lost' ? 'Izgubljen' : 'Označi kao izgubljen'}
+          {stage === 'lost' ? t('Lost', 'Izgubljen') : t('Mark as lost', 'Označi kao izgubljen')}
         </button>
       </form>
     </div>

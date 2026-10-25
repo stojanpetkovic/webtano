@@ -8,14 +8,19 @@ import { db } from '@/lib/admin/supabase';
 import { PROJECT_STATUS, customerName, money } from '@/lib/admin/crm/labels';
 import { formatDate } from '@/lib/admin/format';
 import { toParams } from '@/lib/admin/params';
+import { getAdminI18n } from '@/lib/admin/i18n';
 import type { Project, ProjectStatus } from '@/lib/admin/crm/types';
 
 export const dynamic = 'force-dynamic';
-export const metadata: Metadata = { title: 'Projekti' };
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getAdminI18n();
+  return { title: t('Projects', 'Projekti') };
+}
 
 type Row = Project & { crm_customers: { company: string | null; contact_name: string | null } | null; crm_tasks: { status: string; due_date: string | null }[] };
 
 export default async function ProjectsPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const { lang, t: tr } = await getAdminI18n();
   const query = toParams(await searchParams);
   const filter = query.get('status') ?? 'active';
   const { data } = await db().from('crm_projects').select('*, crm_customers(company, contact_name), crm_tasks(status, due_date)').order('created_at', { ascending: false });
@@ -24,14 +29,14 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
   const rows = filter === 'all' ? all : filter === 'active' ? all.filter((p) => activeKeys.includes(p.status)) : all.filter((p) => p.status === filter);
   const today = new Date().toISOString().slice(0, 10);
   const tabs = [
-    ['active', 'Aktivni', all.filter((p) => activeKeys.includes(p.status)).length],
-    ['done', 'Završeni', all.filter((p) => p.status === 'done').length],
-    ['all', 'Svi', all.length],
+    ['active', tr('Active', 'Aktivni'), all.filter((p) => activeKeys.includes(p.status)).length],
+    ['done', tr('Done', 'Završeni'), all.filter((p) => p.status === 'done').length],
+    ['all', tr('All', 'Svi'), all.length],
   ] as const;
 
   return (
     <>
-      <PageHeading title="Projekti" crumbs={[{ label: 'WebTano CRM' }]} description="Svaki projekat ima svoje zadatke na tabli.">
+      <PageHeading title={tr('Projects', 'Projekti')} crumbs={[{ label: 'WebTano CRM' }]} description={tr('Each project has its own tasks on a board.', 'Svaki projekat ima svoje zadatke na tabli.')}>
         <nav className="segmented" aria-label="Filter">
           {tabs.map(([k, label, n]) => (
             <Link key={k} href={`/admin/crm/projects?status=${k}`} aria-current={filter === k ? 'page' : undefined}>
@@ -42,7 +47,7 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
         <NewProject
           label={
             <>
-              <Plus className="size-4" /> Novi projekat
+              <Plus className="size-4" /> {tr('New project', 'Novi projekat')}
             </>
           }
           customerId={query.get('customer') ?? undefined}
@@ -52,7 +57,7 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
       </PageHeading>
 
       {rows.length === 0 ? (
-        <div className="card card-body py-14 text-center text-muted">Nema projekata. Pokreni ga iz prihvaćene ponude ili dodaj novi.</div>
+        <div className="card card-body py-14 text-center text-muted">{tr('No projects. Start one from an accepted proposal or add a new one.', 'Nema projekata. Pokreni ga iz prihvaćene ponude ili dodaj novi.')}</div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {rows.map((p) => {
@@ -66,14 +71,14 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <Link href={`/admin/crm/projects/${p.id}`} className="block truncate text-[15px] font-semibold text-ink after:absolute after:inset-0">{p.name}</Link>
-                    <p className="mt-0.5 truncate text-xs text-zinc-500">{p.crm_customers ? customerName(p.crm_customers) : 'Bez klijenta'}</p>
+                    <p className="mt-0.5 truncate text-xs text-zinc-500">{p.crm_customers ? customerName(p.crm_customers, lang) : tr('No client', 'Bez klijenta')}</p>
                     <ServicePills services={p.services} className="mt-2" />
                   </div>
-                  <span className={`badge ${PROJECT_STATUS[p.status].badge}`}>{PROJECT_STATUS[p.status].label}</span>
+                  <span className={`badge ${PROJECT_STATUS[p.status].badge}`}>{PROJECT_STATUS[p.status].label[lang]}</span>
                 </div>
                 <div className="mt-5">
                   <div className="flex justify-between text-xs text-zinc-500">
-                    <span>{done} od {total} zadataka</span>
+                    <span>{tr(`${done} of ${total} tasks`, `${done} od ${total} zadataka`)}</span>
                     <span className="font-medium text-ink tabular-nums">{pct}%</span>
                   </div>
                   <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-zinc-100">
@@ -82,9 +87,9 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
                 </div>
                 <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
                   <span className={`inline-flex items-center gap-1 rounded-md px-2 py-1 ${late ? 'bg-rose-50 text-rose-700' : 'bg-zinc-100 text-zinc-600'}`}>
-                    <CalendarDays className="size-3.5" /> {p.deadline ? formatDate(p.deadline) : 'Bez roka'}
+                    <CalendarDays className="size-3.5" /> {p.deadline ? formatDate(p.deadline, lang) : tr('No deadline', 'Bez roka')}
                   </span>
-                  {overdue > 0 && <span className="rounded-md bg-rose-50 px-2 py-1 font-medium text-rose-700">{overdue} kasni</span>}
+                  {overdue > 0 && <span className="rounded-md bg-rose-50 px-2 py-1 font-medium text-rose-700">{tr(`${overdue} overdue`, `${overdue} kasni`)}</span>}
                   {p.budget != null && <span className="ms-auto font-semibold text-ink tabular-nums">{money(Number(p.budget))}</span>}
                 </div>
               </article>

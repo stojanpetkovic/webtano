@@ -4,6 +4,8 @@ import { useEffect, useMemo, useRef } from 'react';
 import { Chart, ArcElement, DoughnutController, Tooltip } from 'chart.js';
 import { SERIES } from './chartColors';
 import { applyChartTheme } from './chartTheme';
+import { useLang } from '@/components/i18n/LangProvider';
+import { HTML_LANG } from '@/lib/i18n';
 
 Chart.register(ArcElement, DoughnutController, Tooltip);
 
@@ -19,7 +21,7 @@ export function DonutChart({
   title,
   items,
   sub,
-  empty = 'Još nema podataka.',
+  empty,
   currency,
 }: {
   title: string;
@@ -29,8 +31,9 @@ export function DonutChart({
   /** Values are money in this currency (finance pages); otherwise counts. */
   currency?: string;
 }) {
+  const lang = useLang();
   const fmt = (n: number) =>
-    currency ? new Intl.NumberFormat('en-US', { style: 'currency', currency, notation: n >= 100_000 ? 'compact' : 'standard', maximumFractionDigits: 0 }).format(n) : n.toLocaleString('sr-Latn-RS');
+    currency ? new Intl.NumberFormat('en-US', { style: 'currency', currency, notation: n >= 100_000 ? 'compact' : 'standard', maximumFractionDigits: 0 }).format(n) : n.toLocaleString(HTML_LANG[lang]);
   const canvas = useRef<HTMLCanvasElement>(null);
   const total = items.reduce((n, i) => n + i.count, 0);
   const colors = useMemo(() => items.map((it, i) => it.color ?? SERIES[i % SERIES.length]), [items]);
@@ -67,7 +70,7 @@ export function DonutChart({
       </div>
       <div className="card-body flex flex-1 flex-col items-center justify-center gap-6">
         {total === 0 ? (
-          <p className="text-muted">{empty}</p>
+          <p className="text-muted">{empty ?? (lang === 'sr' ? 'Još nema podataka.' : 'No data yet.')}</p>
         ) : (
           <>
             <div className="relative size-44 shrink-0">
@@ -75,7 +78,7 @@ export function DonutChart({
               <div className="pointer-events-none absolute inset-0 grid place-items-center text-center">
                 <div>
                   <div className="text-2xl font-semibold tracking-tight text-ink tabular-nums">{fmt(total)}</div>
-                  <div className="text-[11px] text-zinc-500">ukupno</div>
+                  <div className="text-[11px] text-zinc-500">{lang === 'sr' ? 'ukupno' : 'total'}</div>
                 </div>
               </div>
             </div>

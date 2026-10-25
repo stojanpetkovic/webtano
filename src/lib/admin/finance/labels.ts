@@ -1,45 +1,50 @@
+import type { L, Lang } from '@/lib/i18n';
 import type { InvoiceStatus } from './types';
 
 /** What WebTano earns from. The keys match SERVICES where they overlap, so a project's service picks its category. */
-export const INCOME_CATEGORIES: Record<string, string> = {
-  website: 'Izrada sajta',
-  redesign: 'Redizajn',
-  seo: 'Lokalni SEO',
-  ads: 'Google Ads upravljanje',
-  maintenance: 'Održavanje i hosting',
-  consulting: 'Konsultacije',
-  other: 'Ostalo',
+export const INCOME_CATEGORIES: Record<string, L> = {
+  website: { en: 'Website build', sr: 'Izrada sajta' },
+  redesign: { en: 'Redesign', sr: 'Redizajn' },
+  seo: { en: 'Local SEO', sr: 'Lokalni SEO' },
+  ads: { en: 'Google Ads management', sr: 'Google Ads upravljanje' },
+  maintenance: { en: 'Maintenance and hosting', sr: 'Održavanje i hosting' },
+  consulting: { en: 'Consulting', sr: 'Konsultacije' },
+  other: { en: 'Other', sr: 'Ostalo' },
 };
 
 /**
  * Where money goes. `operating: false` marks taxes, interest and depreciation,
  * which EBITDA leaves out and net profit counts.
  */
-export const EXPENSE_CATEGORIES: Record<string, { label: string; operating: boolean }> = {
-  software: { label: 'Softver i alati', operating: true },
-  hosting: { label: 'Hosting i domeni', operating: true },
-  contractors: { label: 'Saradnici i podizvođači', operating: true },
-  marketing: { label: 'Marketing i oglasi', operating: true },
-  equipment: { label: 'Oprema (sitna)', operating: true },
-  office: { label: 'Kancelarija i internet', operating: true },
-  education: { label: 'Edukacija', operating: true },
-  accounting: { label: 'Knjigovodstvo i pravne usluge', operating: true },
-  bank: { label: 'Bankarske provizije', operating: true },
-  travel: { label: 'Putovanja', operating: true },
-  other: { label: 'Ostalo', operating: true },
-  tax: { label: 'Porezi i doprinosi', operating: false },
-  interest: { label: 'Kamate', operating: false },
-  depreciation: { label: 'Amortizacija', operating: false },
+export const EXPENSE_CATEGORIES: Record<string, { label: L; operating: boolean }> = {
+  software: { label: { en: 'Software and tools', sr: 'Softver i alati' }, operating: true },
+  hosting: { label: { en: 'Hosting and domains', sr: 'Hosting i domeni' }, operating: true },
+  contractors: { label: { en: 'Contractors and freelancers', sr: 'Saradnici i podizvođači' }, operating: true },
+  marketing: { label: { en: 'Marketing and ads', sr: 'Marketing i oglasi' }, operating: true },
+  equipment: { label: { en: 'Equipment (small)', sr: 'Oprema (sitna)' }, operating: true },
+  office: { label: { en: 'Office and internet', sr: 'Kancelarija i internet' }, operating: true },
+  education: { label: { en: 'Education', sr: 'Edukacija' }, operating: true },
+  accounting: { label: { en: 'Accounting and legal', sr: 'Knjigovodstvo i pravne usluge' }, operating: true },
+  bank: { label: { en: 'Bank fees', sr: 'Bankarske provizije' }, operating: true },
+  travel: { label: { en: 'Travel', sr: 'Putovanja' }, operating: true },
+  other: { label: { en: 'Other', sr: 'Ostalo' }, operating: true },
+  tax: { label: { en: 'Taxes and contributions', sr: 'Porezi i doprinosi' }, operating: false },
+  interest: { label: { en: 'Interest', sr: 'Kamate' }, operating: false },
+  depreciation: { label: { en: 'Depreciation', sr: 'Amortizacija' }, operating: false },
 };
 
-export const INVOICE_STATUS: Record<InvoiceStatus, { label: string; badge: string }> = {
-  draft: { label: 'Nacrt', badge: 'badge-lost' },
-  issued: { label: 'Izdat', badge: 'badge-new' },
-  paid: { label: 'Plaćen', badge: 'badge-won' },
-  void: { label: 'Storniran', badge: 'badge-spam' },
+export const INVOICE_STATUS: Record<InvoiceStatus, { label: L; badge: string }> = {
+  draft: { label: { en: 'Draft', sr: 'Nacrt' }, badge: 'badge-lost' },
+  issued: { label: { en: 'Issued', sr: 'Izdat' }, badge: 'badge-new' },
+  paid: { label: { en: 'Paid', sr: 'Plaćen' }, badge: 'badge-won' },
+  void: { label: { en: 'Void', sr: 'Storniran' }, badge: 'badge-spam' },
 };
 
-export const INCOME_SOURCE: Record<string, string> = { manual: 'Ručno', project: 'Projekat', invoice: 'Račun' };
+export const INCOME_SOURCE: Record<string, L> = {
+  manual: { en: 'Manual', sr: 'Ručno' },
+  project: { en: 'Project', sr: 'Projekat' },
+  invoice: { en: 'Invoice', sr: 'Račun' },
+};
 
 /** Income category for a project, from its first service. */
 export function categoryFor(services: string[] | null | undefined): string {
@@ -73,12 +78,12 @@ export function cash(n: number, currency = 'USD', cents = false) {
 }
 
 export const PERIODS = {
-  month: 'Ovaj mesec',
-  quarter: 'Ovaj kvartal',
-  ytd: 'Ova godina',
-  '12m': 'Poslednjih 12 meseci',
-  last_year: 'Prošla godina',
-} as const;
+  month: { en: 'This month', sr: 'Ovaj mesec' },
+  quarter: { en: 'This quarter', sr: 'Ovaj kvartal' },
+  ytd: { en: 'This year', sr: 'Ova godina' },
+  '12m': { en: 'Last 12 months', sr: 'Poslednjih 12 meseci' },
+  last_year: { en: 'Last year', sr: 'Prošla godina' },
+} as const satisfies Record<string, L>;
 export type Period = keyof typeof PERIODS;
 
 /** First and last day (inclusive, YYYY-MM-DD) of a period, by the calendar in Belgrade. */
@@ -123,9 +128,12 @@ export function monthsBetween(from: string, to: string): string[] {
   return out;
 }
 
-const MONTHS = ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'avg', 'sep', 'okt', 'nov', 'dec'];
-/** "2026-10" → "okt 26" */
-export const shortMonth = (ym: string) => `${MONTHS[Number(ym.slice(5, 7)) - 1]} ${ym.slice(2, 4)}`;
+const MONTHS = {
+  en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  sr: ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'avg', 'sep', 'okt', 'nov', 'dec'],
+};
+/** "2026-10" → "Oct 26" / "okt 26" */
+export const shortMonth = (ym: string, lang: Lang) => `${MONTHS[lang][Number(ym.slice(5, 7)) - 1]} ${ym.slice(2, 4)}`;
 
 /** Today in Belgrade, as YYYY-MM-DD. */
 export const todayBelgrade = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Belgrade' }).format(new Date());

@@ -4,11 +4,12 @@ import { PrintButton } from './PrintButton';
 import { money, totals } from '@/lib/admin/crm/labels';
 import type { Customer, Deal, Proposal, ProposalItem } from '@/lib/admin/crm/types';
 import type { AppSettings } from '@/lib/admin/settings';
+import { getAdminI18n } from '@/lib/admin/i18n';
 
 const day = (iso: string) => new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(iso));
 
 /** The client-facing proposal, in English, laid out for one or two A4 pages. */
-export function ProposalSheet({
+export async function ProposalSheet({
   proposal,
   items,
   customer,
@@ -21,6 +22,7 @@ export function ProposalSheet({
   deal: Deal | null;
   company: AppSettings['company'];
 }) {
+  const { t: tr } = await getAdminI18n();
   const t = totals(items, proposal.discount_pct);
   const c = proposal.currency;
   const to = {
@@ -37,7 +39,7 @@ export function ProposalSheet({
       <div className="sticky top-0 z-10 border-b border-zinc-200 bg-white print:hidden">
         <div className="mx-auto flex max-w-[210mm] items-center gap-3 px-4 py-3">
           <Link href={`/admin/crm/proposals/${proposal.id}`} className="btn btn-sm btn-light">
-            <ArrowLeft className="size-4" /> Nazad na ponudu
+            <ArrowLeft className="size-4" /> {tr('Back to the proposal', 'Nazad na ponudu')}
           </Link>
           <PrintButton />
         </div>

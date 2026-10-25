@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: `${site.name}: websites, local SEO and Google Ads`,
     short_name: site.name,
-    description: site.tagline,
+    description: site.tagline.en,
     start_url: '/',
     display: 'standalone',
     background_color: '#05060a',

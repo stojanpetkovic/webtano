@@ -1,10 +1,12 @@
 import { FileText, MapPin, Phone, Star } from 'lucide-react';
+import { getI18n } from '@/lib/i18n-site';
 
 // Small illustrations for the service cards. They show how each service looks
 // in use, with example data, and animate once their card scrolls into view.
 
 /** A Lighthouse-style speed score that fills up. */
-export function SpeedVisual() {
+export async function SpeedVisual() {
+  const { t } = await getI18n();
   const r = 34;
   const c = 2 * Math.PI * r;
   return (
@@ -27,16 +29,16 @@ export function SpeedVisual() {
         </svg>
         <div>
           <p className="font-display text-4xl text-white">96</p>
-          <p className="font-mono text-[10px] tracking-wide text-white/50 uppercase">Mobile speed score</p>
+          <p className="font-mono text-[10px] tracking-wide text-white/50 uppercase">{t('Mobile speed score', 'Brzina na telefonu')}</p>
           <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-accent/10 px-2 py-0.5 font-mono text-[10px] text-accent ring-1 ring-accent/20">
             <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden />
-            Loads in 1.2 s
+            {t('Loads in 1.2 s', 'Učitava se za 1,2 s')}
           </p>
         </div>
       </div>
       <ul className="mt-5 grid grid-cols-3 gap-2">
         {[
-          ['100', 'Accessibility'],
+          ['100', t('Accessibility', 'Pristupačnost')],
           ['100', 'Best practices'],
           ['100', 'SEO'],
         ].map(([v, k], i) => (
@@ -55,11 +57,12 @@ export function SpeedVisual() {
 }
 
 /** A local search result with the client on top. */
-export function SearchVisual() {
+export async function SearchVisual() {
+  const { t } = await getI18n();
   const rows = [
-    { name: 'Your Tree Service', top: true },
-    { name: 'Competitor A', top: false },
-    { name: 'Competitor B', top: false },
+    { name: t('Your Tree Service', 'Vaša firma'), top: true },
+    { name: t('Competitor A', 'Konkurent A'), top: false },
+    { name: t('Competitor B', 'Konkurent B'), top: false },
   ];
   return (
     <ul className="space-y-2">
@@ -80,7 +83,7 @@ export function SearchVisual() {
             <span className="block truncate text-sm font-semibold">{row.name}</span>
             <span className={`flex items-center gap-1 text-[11px] ${row.top ? 'text-zinc-500' : 'text-white/35'}`}>
               <Star className={`h-3 w-3 ${row.top ? 'fill-amber-400 text-amber-400' : ''}`} aria-hidden />
-              {row.top ? '4.9 · Open now' : '4.2 · Closes soon'}
+              {row.top ? t('4.9 · Open now', '4,9 · Sada otvoreno') : t('4.2 · Closes soon', '4,2 · Uskoro zatvara')}
             </span>
           </span>
           {row.top && (
@@ -93,18 +96,19 @@ export function SearchVisual() {
 }
 
 /** Cost per lead by campaign: the money moves to what works. */
-export function AdsVisual() {
+export async function AdsVisual() {
+  const { t } = await getI18n();
   const bars = [
-    { label: 'Tree removal', value: 92, cpl: '$38' },
-    { label: 'Emergency', value: 74, cpl: '$46' },
-    { label: 'Trimming', value: 48, cpl: '$61' },
-    { label: 'Stump grinding', value: 22, cpl: 'paused' },
+    { label: t('Tree removal', 'Uklanjanje drveća'), value: 92, cpl: '$38' },
+    { label: t('Emergency', 'Hitne intervencije'), value: 74, cpl: '$46' },
+    { label: t('Trimming', 'Orezivanje'), value: 48, cpl: '$61' },
+    { label: t('Stump grinding', 'Vađenje panjeva'), value: 22, cpl: null },
   ];
   return (
     <div>
       <div className="flex items-center justify-between font-mono text-[10px] tracking-wide text-white/45 uppercase">
-        <span>Budget by campaign</span>
-        <span>Cost per lead</span>
+        <span>{t('Budget by campaign', 'Budžet po kampanji')}</span>
+        <span>{t('Cost per lead', 'Cena po upitu')}</span>
       </div>
       <ul className="mt-3 space-y-3">
         {bars.map((b, i) => (
@@ -112,11 +116,11 @@ export function AdsVisual() {
             <span className="truncate text-white/70">{b.label}</span>
             <span className="h-2.5 overflow-hidden rounded-full bg-white/[0.06]">
               <span
-                className={`svc-bar block h-full rounded-full ${b.cpl === 'paused' ? 'bg-white/20' : 'bg-gradient-to-r from-azure-600 to-accent'}`}
+                className={`svc-bar block h-full rounded-full ${b.cpl === null ? 'bg-white/20' : 'bg-gradient-to-r from-azure-600 to-accent'}`}
                 style={{ '--bar': `${b.value}%`, '--bar-delay': `${i * 110}ms` } as React.CSSProperties}
               />
             </span>
-            <span className={`text-right font-mono ${b.cpl === 'paused' ? 'text-white/35' : 'text-accent'}`}>{b.cpl}</span>
+            <span className={`text-right font-mono ${b.cpl === null ? 'text-white/35' : 'text-accent'}`}>{b.cpl ?? t('paused', 'pauza')}</span>
           </li>
         ))}
       </ul>
@@ -125,20 +129,21 @@ export function AdsVisual() {
 }
 
 /** A live feed of leads arriving. */
-export function LeadsVisual() {
+export async function LeadsVisual() {
+  const { t } = await getI18n();
   const leads = [
-    { icon: Phone, title: 'Call from Google Ads', meta: 'Tree removal · 2 min ago' },
-    { icon: FileText, title: 'Quote form', meta: '“Oak over the roof” · 18 min ago' },
-    { icon: Phone, title: 'Call from Google Maps', meta: 'Emergency · 1 h ago' },
-    { icon: FileText, title: 'Booking request', meta: 'Stump grinding · 3 h ago' },
+    { icon: Phone, title: t('Call from Google Ads', 'Poziv iz Google Ads-a'), meta: t('Tree removal · 2 min ago', 'Uklanjanje drveća · pre 2 min') },
+    { icon: FileText, title: t('Quote form', 'Zahtev za ponudu'), meta: t('“Oak over the roof” · 18 min ago', '„Hrast iznad krova” · pre 18 min') },
+    { icon: Phone, title: t('Call from Google Maps', 'Poziv sa Google mapa'), meta: t('Emergency · 1 h ago', 'Hitno · pre 1 h') },
+    { icon: FileText, title: t('Booking request', 'Zahtev za termin'), meta: t('Stump grinding · 3 h ago', 'Vađenje panjeva · pre 3 h') },
   ];
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
       <div className="flex items-center justify-between px-1 pb-2">
-        <span className="font-mono text-[10px] tracking-wide text-white/45 uppercase">New leads</span>
+        <span className="font-mono text-[10px] tracking-wide text-white/45 uppercase">{t('New leads', 'Novi upiti')}</span>
         <span className="inline-flex items-center gap-1.5 font-mono text-[10px] text-accent uppercase">
           <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-accent" aria-hidden />
-          Live
+          {t('Live', 'Uživo')}
         </span>
       </div>
       <ul className="space-y-2">
@@ -160,9 +165,9 @@ export function LeadsVisual() {
       </ul>
       <div className="mt-3 grid grid-cols-3 gap-2 border-t border-white/10 pt-3 text-center">
         {[
-          ['74', 'Leads'],
-          ['$41', 'Per lead'],
-          ['7.9%', 'Rate'],
+          ['74', t('Leads', 'Upiti')],
+          ['$41', t('Per lead', 'Po upitu')],
+          [t('7.9%', '7,9%'), t('Rate', 'Stopa')],
         ].map(([v, k]) => (
           <div key={k}>
             <p className="font-display text-lg text-white">{v}</p>
@@ -172,8 +177,8 @@ export function LeadsVisual() {
       </div>
       <div className="mt-3 rounded-xl bg-white p-3 text-ink-950">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold">Monthly report</span>
-          <span className="font-mono text-[10px] text-zinc-500">Leads per day</span>
+          <span className="text-xs font-semibold">{t('Monthly report', 'Mesečni izveštaj')}</span>
+          <span className="font-mono text-[10px] text-zinc-500">{t('Leads per day', 'Upiti po danu')}</span>
         </div>
         <div className="mt-2 flex h-14 items-end gap-1" aria-hidden>
           {[30, 45, 38, 60, 52, 70, 48, 66, 80, 58, 74, 90, 68, 84].map((h, i) => (

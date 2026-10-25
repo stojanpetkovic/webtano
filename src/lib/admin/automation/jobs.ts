@@ -28,7 +28,7 @@ export function localClock(now: Date, timeZone: string) {
 const OPEN_STAGES = ['new', 'contacted', 'qualified', 'proposal'];
 const services = (d: Deal) =>
   dealServices(d)
-    .map((k) => SERVICES[k])
+    .map((k) => SERVICES[k]?.sr)
     .join(', ');
 
 /**
@@ -69,7 +69,7 @@ export async function morningDigest(now: Date, mode: Mode, settings: AppSettings
         title: 'Novi lidovi, još bez odgovora',
         rows: newDeals.map((d) => ({
           label: d.company ? `${d.name} · ${d.company}` : d.name,
-          note: [services(d), `stigao ${formatDate(d.created_at)}`].filter(Boolean).join(' · '),
+          note: [services(d), `stigao ${formatDate(d.created_at, 'sr')}`].filter(Boolean).join(' · '),
           href: adminUrl(`/admin/crm/leads/${d.id}`),
         })),
       },
@@ -77,7 +77,7 @@ export async function morningDigest(now: Date, mode: Mode, settings: AppSettings
         title: 'Sledeći korak na redu',
         rows: dueDeals.map((d) => ({
           label: d.next_step || d.name,
-          note: `${d.name} · ${STAGE_LABEL[d.stage]} · ${d.next_step_at! < date ? `kasni od ${formatDate(d.next_step_at!)}` : 'danas'}`,
+          note: `${d.name} · ${STAGE_LABEL[d.stage].sr} · ${d.next_step_at! < date ? `kasni od ${formatDate(d.next_step_at!, 'sr')}` : 'danas'}`,
           href: adminUrl(`/admin/crm/leads/${d.id}`),
         })),
       },
@@ -85,7 +85,7 @@ export async function morningDigest(now: Date, mode: Mode, settings: AppSettings
         title: 'Zadaci',
         rows: dueTasks.map((t) => ({
           label: t.title,
-          note: `${t.crm_projects?.name ?? 'Bez projekta'} · ${t.due_date! < date ? `kasni od ${formatDate(t.due_date!)}` : 'danas'}`,
+          note: `${t.crm_projects?.name ?? 'Bez projekta'} · ${t.due_date! < date ? `kasni od ${formatDate(t.due_date!, 'sr')}` : 'danas'}`,
           href: adminUrl(t.project_id ? `/admin/crm/projects/${t.project_id}` : '/admin/crm/tasks'),
         })),
       },
@@ -125,7 +125,7 @@ export async function unansweredLeads(now: Date, mode: Mode, settings: AppSettin
     const { html, text } = layout({
       eyebrow: 'Lid bez odgovora',
       heading: `${d.name} čeka odgovor već ${hours} h`,
-      intro: `Upit sa webtano.com stigao je ${formatDate(d.created_at)} i još je u fazi Novi. Što pre odgovoriš, veća je šansa za dogovor.`,
+      intro: `Upit sa webtano.com stigao je ${formatDate(d.created_at, 'sr')} i još je u fazi Novi. Što pre odgovoriš, veća je šansa za dogovor.`,
       sections: [
         {
           title: 'Lid',

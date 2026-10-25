@@ -8,15 +8,20 @@ import { db } from '@/lib/admin/supabase';
 import { PROPOSAL_STATUS, money, totals } from '@/lib/admin/crm/labels';
 import { formatDate } from '@/lib/admin/format';
 import { toParams } from '@/lib/admin/params';
+import { getAdminI18n } from '@/lib/admin/i18n';
 import type { Proposal, ProposalItem, ProposalStatus } from '@/lib/admin/crm/types';
 
 export const dynamic = 'force-dynamic';
-export const metadata: Metadata = { title: 'Ponude' };
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getAdminI18n();
+  return { title: t('Proposals', 'Ponude') };
+}
 
 const PAGE_SIZE = 25;
 type Row = Proposal & { crm_proposal_items: ProposalItem[]; crm_customers: { company: string } | null; crm_deals: { name: string } | null };
 
 export default async function ProposalsPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const { lang, t: tr } = await getAdminI18n();
   const query = toParams(await searchParams);
   const status = (Object.keys(PROPOSAL_STATUS) as ProposalStatus[]).find((s) => s === query.get('status')) ?? '';
   const page = Math.max(1, Math.floor(Number(query.get('page')) || 1));
@@ -37,11 +42,11 @@ export default async function ProposalsPage({ searchParams }: { searchParams: Pr
 
   return (
     <>
-      <PageHeading title="Ponude" crumbs={[{ label: 'WebTano CRM' }]} description="Ponude sa stavkama iz cenovnika, spremne za PDF.">
+      <PageHeading title={tr('Proposals', 'Ponude')} crumbs={[{ label: 'WebTano CRM' }]} description={tr('Proposals built from your price list, ready as a PDF.', 'Ponude sa stavkama iz cenovnika, spremne za PDF.')}>
         <NewProposal
           label={
             <>
-              <Plus className="size-4" /> Nova ponuda
+              <Plus className="size-4" /> {tr('New proposal', 'Nova ponuda')}
             </>
           }
           dealId={query.get('deal') ?? undefined}
@@ -53,7 +58,7 @@ export default async function ProposalsPage({ searchParams }: { searchParams: Pr
 
       <div className="card">
         <nav className="flex gap-1 overflow-x-auto border-b border-line px-3 pt-2" aria-label="Status">
-          {[['', 'Sve'] as const, ...Object.entries(PROPOSAL_STATUS).map(([k, v]) => [k, v.label] as const)].map(([key, label]) => {
+          {[['', tr('All', 'Sve')] as const, ...Object.entries(PROPOSAL_STATUS).map(([k, v]) => [k, v.label[lang]] as const)].map(([key, label]) => {
             const active = key === status;
             const n = key ? (counts.get(key) ?? 0) : (all ?? []).length;
             return (
@@ -70,19 +75,19 @@ export default async function ProposalsPage({ searchParams }: { searchParams: Pr
           })}
         </nav>
         {rows.length === 0 ? (
-          <p className="px-5 py-14 text-center text-muted">Nema ponuda.</p>
+          <p className="px-5 py-14 text-center text-muted">{tr('No proposals yet.', 'Nema ponuda.')}</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="table">
               <thead>
                 <tr>
-                  <th>Broj</th>
-                  <th>Ponuda</th>
-                  <th>Za</th>
-                  <th className="text-right">Jednokratno</th>
-                  <th className="text-right">Mesečno</th>
+                  <th>{tr('No.', 'Broj')}</th>
+                  <th>{tr('Proposal', 'Ponuda')}</th>
+                  <th>{tr('For', 'Za')}</th>
+                  <th className="text-right">{tr('One-time', 'Jednokratno')}</th>
+                  <th className="text-right">{tr('Monthly', 'Mesečno')}</th>
                   <th>Status</th>
-                  <th className="text-right">Važi do</th>
+                  <th className="text-right">{tr('Valid until', 'Važi do')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -96,9 +101,9 @@ export default async function ProposalsPage({ searchParams }: { searchParams: Pr
                       </td>
                       <td className="whitespace-nowrap">{p.crm_customers?.company ?? p.crm_deals?.name ?? '—'}</td>
                       <td className="text-right font-semibold text-ink tabular-nums">{money(t.oneTime, p.currency)}</td>
-                      <td className="text-right tabular-nums">{t.monthly ? `${money(t.monthly, p.currency)}/mes` : '—'}</td>
-                      <td><span className={`badge ${PROPOSAL_STATUS[p.status].badge}`}>{PROPOSAL_STATUS[p.status].label}</span></td>
-                      <td className="text-right whitespace-nowrap text-muted">{p.valid_until ? formatDate(p.valid_until) : '—'}</td>
+                      <td className="text-right tabular-nums">{t.monthly ? `${money(t.monthly, p.currency)}${tr('/mo', '/mes')}` : '—'}</td>
+                      <td><span className={`badge ${PROPOSAL_STATUS[p.status].badge}`}>{PROPOSAL_STATUS[p.status].label[lang]}</span></td>
+                      <td className="text-right whitespace-nowrap text-muted">{p.valid_until ? formatDate(p.valid_until, lang) : '—'}</td>
                     </tr>
                   );
                 })}
@@ -106,7 +111,7 @@ export default async function ProposalsPage({ searchParams }: { searchParams: Pr
             </table>
           </div>
         )}
-        {(count ?? 0) > 0 && <Pagination page={page} pageSize={PAGE_SIZE} total={count ?? 0} href={href} sizes={[]} noun="ponuda" />}
+        {(count ?? 0) > 0 && <Pagination page={page} pageSize={PAGE_SIZE} total={count ?? 0} href={href} sizes={[]} noun={tr('proposals', 'ponuda')} />}
       </div>
     </>
   );
