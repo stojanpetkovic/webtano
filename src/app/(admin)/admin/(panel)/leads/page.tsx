@@ -11,14 +11,19 @@ import { readFilters, leadQuery } from '@/lib/admin/leadQuery';
 import { webtanoSiteId } from '@/lib/admin/crm/data';
 import { STATUS_LABELS } from '@/lib/admin/format';
 import { toParams } from '@/lib/admin/params';
+import { getAdminI18n } from '@/lib/admin/i18n';
 import type { Lead, LeadStatus, Site } from '@/lib/admin/types';
 
 export const dynamic = 'force-dynamic';
-export const metadata: Metadata = { title: 'Lidovi' };
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getAdminI18n();
+  return { title: t('Site leads', 'Lidovi sa sajtova') };
+}
 
 const SIZES = [25, 50, 100];
 
 export default async function LeadsPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const { lang, t } = await getAdminI18n();
   const query = toParams(await searchParams);
   const filters = { ...readFilters(query), exclude: await webtanoSiteId() };
   const size = SIZES.includes(Number(query.get('size'))) ? Number(query.get('size')) : SIZES[0];
@@ -58,9 +63,13 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
   return (
     <>
       {(await unseenLeadCount('sites')) > 0 && <MarkLeadsSeen scope="sites" />}
-      <PageHeading title="Lidovi sa sajtova" crumbs={[{ label: 'Klijentski sajtovi' }]} description="Upiti sa sajtova klijenata, najnoviji prvi. WebTano upiti su u CRM-u.">
+      <PageHeading
+        title={t('Site leads', 'Lidovi sa sajtova')}
+        crumbs={[{ label: t('Client sites', 'Klijentski sajtovi') }]}
+        description={t('Inquiries from client sites, newest first. WebTano’s own inquiries are in the CRM.', 'Upiti sa sajtova klijenata, najnoviji prvi. WebTano upiti su u CRM-u.')}
+      >
         <a href={exportHref} className="btn btn-outline">
-          <Download className="size-4" /> Izvezi CSV
+          <Download className="size-4" /> {t('Export CSV', 'Izvezi CSV')}
         </a>
       </PageHeading>
 
@@ -78,7 +87,7 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
                   active ? 'border-ink text-ink' : 'border-transparent text-zinc-500 hover:text-ink'
                 }`}
               >
-                {status ? STATUS_LABELS[status] : 'Svi'}
+                {status ? STATUS_LABELS[status][lang] : t('All', 'Svi')}
                 <span
                   className={`rounded-full px-1.5 py-0.5 font-mono text-[10.5px] leading-none tabular-nums ${
                     active ? 'bg-ink text-white' : 'bg-zinc-100 text-zinc-500'
@@ -97,17 +106,17 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
           {size !== SIZES[0] && <input type="hidden" name="size" value={size} />}
           <div className="relative col-span-2 lg:col-span-1">
             <label className="sr-only" htmlFor="q">
-              Pretraga
+              {t('Search', 'Pretraga')}
             </label>
             <Search className="pointer-events-none absolute start-3.5 top-1/2 size-4 -translate-y-1/2 text-zinc-400" />
-            <input className="form-input ps-10" id="q" name="q" type="search" defaultValue={filters.q} placeholder="Ime, email ili telefon" />
+            <input className="form-input ps-10" id="q" name="q" type="search" defaultValue={filters.q} placeholder={t('Name, email or phone', 'Ime, email ili telefon')} />
           </div>
           <div className="col-span-2 sm:col-span-1">
             <label className="sr-only" htmlFor="site">
-              Sajt
+              {t('Site', 'Sajt')}
             </label>
             <select className="form-input" id="site" name="site" defaultValue={filters.site}>
-              <option value="">Svi sajtovi</option>
+              <option value="">{t('All sites', 'Svi sajtovi')}</option>
               {sites.filter((s) => s.id !== filters.exclude).map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.name}
@@ -117,35 +126,35 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
           </div>
           <div>
             <label className="sr-only" htmlFor="from">
-              Od
+              {t('From', 'Od')}
             </label>
-            <input className="form-input" type="date" id="from" name="from" defaultValue={filters.from} title="Od datuma" />
+            <input className="form-input" type="date" id="from" name="from" defaultValue={filters.from} title={t('From date', 'Od datuma')} />
           </div>
           <div>
             <label className="sr-only" htmlFor="to">
-              Do
+              {t('To', 'Do')}
             </label>
-            <input className="form-input" type="date" id="to" name="to" defaultValue={filters.to} title="Do datuma" />
+            <input className="form-input" type="date" id="to" name="to" defaultValue={filters.to} title={t('To date', 'Do datuma')} />
           </div>
           <div className="col-span-2 flex gap-2 sm:col-span-1">
             <button className="btn btn-primary flex-1 lg:flex-none" type="submit">
-              <SlidersHorizontal className="size-4" /> Filtriraj
+              <SlidersHorizontal className="size-4" /> {t('Filter', 'Filtriraj')}
             </button>
             {filtered && (
-              <Link href={link({ q: null, site: null, from: null, to: null, spam: null })} className="btn btn-light" title="Poništi filtere">
+              <Link href={link({ q: null, site: null, from: null, to: null, spam: null })} className="btn btn-light" title={t('Clear filters', 'Poništi filtere')}>
                 <RotateCcw className="size-4" />
-                <span className="sr-only">Poništi</span>
+                <span className="sr-only">{t('Clear', 'Poništi')}</span>
               </Link>
             )}
           </div>
           <label className="col-span-2 inline-flex items-center gap-2 text-[13px] text-zinc-600 lg:col-span-5">
             <input type="checkbox" name="spam" value="1" defaultChecked={filters.spam} className="size-4 rounded accent-ink-950" />
-            Prikaži samo spam
+            {t('Show spam only', 'Prikaži samo spam')}
           </label>
         </form>
 
-        <LeadTable leads={leads} sites={new Map(sites.map((s) => [s.id, s]))} empty="Nema lidova za ove filtere." />
-        <Pagination page={page} pageSize={size} total={total} href={pageHref} sizes={SIZES} noun={total === 1 ? 'lida' : 'lidova'} />
+        <LeadTable leads={leads} sites={new Map(sites.map((s) => [s.id, s]))} empty={t('No leads match these filters.', 'Nema lidova za ove filtere.')} />
+        <Pagination page={page} pageSize={size} total={total} href={pageHref} sizes={SIZES} noun={total === 1 ? t('lead', 'lida') : t('leads', 'lidova')} />
       </div>
     </>
   );

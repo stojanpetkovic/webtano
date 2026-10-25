@@ -5,21 +5,28 @@ import { CalendarClock, Globe, Mail, Phone } from 'lucide-react';
 import { Board } from './Board';
 import { moveDeal } from '@/app/(admin)/admin/(panel)/crm/actions';
 import { SERVICES, STAGES, dealServices, money } from '@/lib/admin/crm/labels';
+import { channelLabel } from '@/lib/admin/channels';
 import type { Deal } from '@/lib/admin/crm/types';
+import { useLang } from '@/components/i18n/LangProvider';
+import type { Lang } from '@/lib/i18n';
 
 type Card = Deal & { column: string };
 
-function daysSince(iso: string) {
+function daysSince(iso: string, lang: Lang) {
   const d = Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000);
-  return d <= 0 ? 'danas' : d === 1 ? 'juče' : `pre ${d} d`;
+  if (lang === 'sr') return d <= 0 ? 'danas' : d === 1 ? 'juče' : `pre ${d} d`;
+  return d <= 0 ? 'today' : d === 1 ? 'yesterday' : `${d} d ago`;
 }
 
 export function DealBoard({ deals }: { deals: Deal[] }) {
+  const lang = useLang();
+  const sr = lang === 'sr';
   const items: Card[] = deals.map((d) => ({ ...d, column: d.stage }));
   return (
     <Board<Card>
       columns={STAGES.map((s) => ({
         ...s,
+        label: s.label[lang],
         meta: (list) => {
           const total = (list as Card[]).reduce((n, d) => n + Number(d.value || 0), 0);
           return total ? money(total) : null;
@@ -42,9 +49,9 @@ export function DealBoard({ deals }: { deals: Deal[] }) {
             </div>
             <div className="mt-3 flex flex-wrap items-center gap-1.5">
               {dealServices(d).map((k) => (
-                <span key={k} className="rounded-md bg-accent/10 px-1.5 py-0.5 text-[11px] font-medium text-primary">{SERVICES[k]}</span>
+                <span key={k} className="rounded-md bg-accent/10 px-1.5 py-0.5 text-[11px] font-medium text-primary">{SERVICES[k]?.[lang] ?? k}</span>
               ))}
-              {d.source && <span className="rounded-md bg-zinc-100 px-1.5 py-0.5 text-[11px] text-zinc-600">{d.source}</span>}
+              {d.source && <span className="rounded-md bg-zinc-100 px-1.5 py-0.5 text-[11px] text-zinc-600">{channelLabel(d.source, lang)}</span>}
             </div>
             {d.next_step && (
               <p className={`mt-2.5 flex items-center gap-1.5 text-xs ${overdue ? 'text-rose-600' : 'text-zinc-600'}`}>
@@ -53,10 +60,10 @@ export function DealBoard({ deals }: { deals: Deal[] }) {
               </p>
             )}
             <div className="mt-3 flex items-center gap-2 border-t border-line pt-2.5 text-zinc-400">
-              {d.phone && <Phone className="size-3.5" aria-label="Ima telefon" />}
-              {d.email && <Mail className="size-3.5" aria-label="Ima email" />}
-              {d.website && <Globe className="size-3.5" aria-label="Ima sajt" />}
-              <span className="ms-auto text-[11px] tabular-nums">{daysSince(d.created_at)}</span>
+              {d.phone && <Phone className="size-3.5" aria-label={sr ? 'Ima telefon' : 'Has phone'} />}
+              {d.email && <Mail className="size-3.5" aria-label={sr ? 'Ima email' : 'Has email'} />}
+              {d.website && <Globe className="size-3.5" aria-label={sr ? 'Ima sajt' : 'Has website'} />}
+              <span className="ms-auto text-[11px] tabular-nums">{daysSince(d.created_at, lang)}</span>
               {picker}
             </div>
           </article>

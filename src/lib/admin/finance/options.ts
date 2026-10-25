@@ -1,14 +1,15 @@
+import type { Lang } from '@/lib/i18n';
 import { db } from '../supabase';
 import { customerName } from '../crm/labels';
 import type { CustomerOption } from '../crm/types';
 
 /** Customers and projects for the finance pickers, and lookups by id for the tables. */
-export async function financeOptions() {
+export async function financeOptions(lang: Lang) {
   const [{ data: customers }, { data: projects }] = await Promise.all([
     db().from('crm_customers').select('id, company, contact_name').order('contact_name'),
     db().from('crm_projects').select('id, name, customer_id, services, budget').order('created_at', { ascending: false }),
   ]);
-  const c = ((customers ?? []) as CustomerOption[]).map((x) => ({ id: x.id, label: customerName(x) }));
+  const c = ((customers ?? []) as CustomerOption[]).map((x) => ({ id: x.id, label: customerName(x, lang) }));
   const p = ((projects ?? []) as { id: string; name: string; customer_id: string | null; services: string[]; budget: number | null }[]).map((x) => ({
     id: x.id,
     label: x.name,

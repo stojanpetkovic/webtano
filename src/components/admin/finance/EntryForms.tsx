@@ -1,6 +1,8 @@
 import { saveExpense, saveIncome } from '@/app/(admin)/admin/(panel)/finance/actions';
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/lib/admin/finance/labels';
 import type { Expense, Income } from '@/lib/admin/finance/types';
+import { getAdminI18n } from '@/lib/admin/i18n';
+import type { T } from '@/lib/i18n';
 
 export interface Option {
   id: string;
@@ -17,11 +19,11 @@ function Footer({ label }: { label: string }) {
   );
 }
 
-function Amount({ value, currency, id }: { value?: number; currency: string; id: string }) {
+function Amount({ value, currency, id, t }: { value?: number; currency: string; id: string; t: T }) {
   return (
     <div>
       <label className="form-label" htmlFor={id}>
-        Iznos ({currency})
+        {t('Amount', 'Iznos')} ({currency})
       </label>
       <input
         className="form-input text-lg font-semibold tabular-nums"
@@ -39,7 +41,7 @@ function Amount({ value, currency, id }: { value?: number; currency: string; id:
 }
 
 /** Add or edit an income entry; it sits in a pop-up. */
-export function IncomeForm({
+export async function IncomeForm({
   income,
   customers,
   projects,
@@ -54,36 +56,37 @@ export function IncomeForm({
   today: string;
   returnTo: string;
 }) {
+  const { lang, t } = await getAdminI18n();
   const p = income?.id ?? 'new';
   return (
     <form action={saveIncome} className="grid gap-4 sm:grid-cols-2">
       {income && <input type="hidden" name="id" value={income.id} />}
       <input type="hidden" name="return" value={returnTo} />
-      <Amount value={income?.amount} currency={currency} id={`inc-amount-${p}`} />
+      <Amount value={income?.amount} currency={currency} id={`inc-amount-${p}`} t={t} />
       <div>
         <label className="form-label" htmlFor={`inc-date-${p}`}>
-          Datum uplate
+          {t('Payment date', 'Datum uplate')}
         </label>
         <input className="form-input" type="date" id={`inc-date-${p}`} name="date" required defaultValue={income?.date ?? today} />
       </div>
       <div>
         <label className="form-label" htmlFor={`inc-cat-${p}`}>
-          Kategorija
+          {t('Category', 'Kategorija')}
         </label>
         <select className="form-input" id={`inc-cat-${p}`} name="category" defaultValue={income?.category ?? 'website'}>
           {Object.entries(INCOME_CATEGORIES).map(([k, v]) => (
             <option key={k} value={k}>
-              {v}
+              {v[lang]}
             </option>
           ))}
         </select>
       </div>
       <div>
         <label className="form-label" htmlFor={`inc-cust-${p}`}>
-          Klijent
+          {t('Customer', 'Klijent')}
         </label>
         <select className="form-input" id={`inc-cust-${p}`} name="customer_id" defaultValue={income?.customer_id ?? ''}>
-          <option value="">Bez klijenta</option>
+          <option value="">{t('No customer', 'Bez klijenta')}</option>
           {customers.map((c) => (
             <option key={c.id} value={c.id}>
               {c.label}
@@ -93,10 +96,10 @@ export function IncomeForm({
       </div>
       <div className="sm:col-span-2">
         <label className="form-label" htmlFor={`inc-proj-${p}`}>
-          Projekat <span className="font-normal text-muted">(nije obavezno)</span>
+          {t('Project', 'Projekat')} <span className="font-normal text-muted">({t('optional', 'nije obavezno')})</span>
         </label>
         <select className="form-input" id={`inc-proj-${p}`} name="project_id" defaultValue={income?.project_id ?? ''}>
-          <option value="">Bez projekta</option>
+          <option value="">{t('No project', 'Bez projekta')}</option>
           {projects.map((c) => (
             <option key={c.id} value={c.id}>
               {c.label}
@@ -106,17 +109,17 @@ export function IncomeForm({
       </div>
       <div className="sm:col-span-2">
         <label className="form-label" htmlFor={`inc-desc-${p}`}>
-          Opis
+          {t('Description', 'Opis')}
         </label>
-        <input className="form-input" id={`inc-desc-${p}`} name="description" maxLength={500} defaultValue={income?.description ?? ''} placeholder="npr. Mesečno održavanje, oktobar" />
+        <input className="form-input" id={`inc-desc-${p}`} name="description" maxLength={500} defaultValue={income?.description ?? ''} placeholder={t('e.g. Monthly maintenance, October', 'npr. Mesečno održavanje, oktobar')} />
       </div>
-      <Footer label={income ? 'Sačuvaj prihod' : 'Dodaj prihod'} />
+      <Footer label={income ? t('Save income', 'Sačuvaj prihod') : t('Add income', 'Dodaj prihod')} />
     </form>
   );
 }
 
 /** Add or edit an expense; it sits in a pop-up. */
-export function ExpenseForm({
+export async function ExpenseForm({
   expense,
   projects,
   currency,
@@ -129,38 +132,39 @@ export function ExpenseForm({
   today: string;
   returnTo: string;
 }) {
+  const { lang, t } = await getAdminI18n();
   const p = expense?.id ?? 'new';
   return (
     <form action={saveExpense} className="grid gap-4 sm:grid-cols-2">
       {expense && <input type="hidden" name="id" value={expense.id} />}
       <input type="hidden" name="return" value={returnTo} />
-      <Amount value={expense?.amount} currency={currency} id={`exp-amount-${p}`} />
+      <Amount value={expense?.amount} currency={currency} id={`exp-amount-${p}`} t={t} />
       <div>
         <label className="form-label" htmlFor={`exp-date-${p}`}>
-          Datum
+          {t('Date', 'Datum')}
         </label>
         <input className="form-input" type="date" id={`exp-date-${p}`} name="date" required defaultValue={expense?.date ?? today} />
       </div>
       <div>
         <label className="form-label" htmlFor={`exp-cat-${p}`}>
-          Kategorija
+          {t('Category', 'Kategorija')}
         </label>
         <select className="form-input" id={`exp-cat-${p}`} name="category" defaultValue={expense?.category ?? 'software'}>
-          <optgroup label="Operativni troškovi (ulaze u EBITDA)">
+          <optgroup label={t('Operating costs (count in EBITDA)', 'Operativni troškovi (ulaze u EBITDA)')}>
             {Object.entries(EXPENSE_CATEGORIES)
               .filter(([, c]) => c.operating)
               .map(([k, c]) => (
                 <option key={k} value={k}>
-                  {c.label}
+                  {c.label[lang]}
                 </option>
               ))}
           </optgroup>
-          <optgroup label="Ispod EBITDA">
+          <optgroup label={t('Below EBITDA', 'Ispod EBITDA')}>
             {Object.entries(EXPENSE_CATEGORIES)
               .filter(([, c]) => !c.operating)
               .map(([k, c]) => (
                 <option key={k} value={k}>
-                  {c.label}
+                  {c.label[lang]}
                 </option>
               ))}
           </optgroup>
@@ -168,22 +172,22 @@ export function ExpenseForm({
       </div>
       <div>
         <label className="form-label" htmlFor={`exp-vendor-${p}`}>
-          Dobavljač
+          {t('Vendor', 'Dobavljač')}
         </label>
-        <input className="form-input" id={`exp-vendor-${p}`} name="vendor" maxLength={200} defaultValue={expense?.vendor ?? ''} placeholder="npr. Railway, Google, Figma" />
+        <input className="form-input" id={`exp-vendor-${p}`} name="vendor" maxLength={200} defaultValue={expense?.vendor ?? ''} placeholder={t('e.g. Railway, Google, Figma', 'npr. Railway, Google, Figma')} />
       </div>
       <div className="sm:col-span-2">
         <label className="form-label" htmlFor={`exp-desc-${p}`}>
-          Opis
+          {t('Description', 'Opis')}
         </label>
         <input className="form-input" id={`exp-desc-${p}`} name="description" maxLength={500} defaultValue={expense?.description ?? ''} />
       </div>
       <div>
         <label className="form-label" htmlFor={`exp-proj-${p}`}>
-          Projekat <span className="font-normal text-muted">(nije obavezno)</span>
+          {t('Project', 'Projekat')} <span className="font-normal text-muted">({t('optional', 'nije obavezno')})</span>
         </label>
         <select className="form-input" id={`exp-proj-${p}`} name="project_id" defaultValue={expense?.project_id ?? ''}>
-          <option value="">Opšti trošak</option>
+          <option value="">{t('General expense', 'Opšti trošak')}</option>
           {projects.map((c) => (
             <option key={c.id} value={c.id}>
               {c.label}
@@ -193,9 +197,9 @@ export function ExpenseForm({
       </div>
       <label className="flex cursor-pointer items-center gap-2.5 self-end pb-2.5 text-[13px] text-zinc-700">
         <input type="checkbox" name="recurring" defaultChecked={expense?.recurring} className="size-4 accent-ink" />
-        Mesečni trošak (pretplata)
+        {t('Monthly cost (subscription)', 'Mesečni trošak (pretplata)')}
       </label>
-      <Footer label={expense ? 'Sačuvaj rashod' : 'Dodaj rashod'} />
+      <Footer label={expense ? t('Save expense', 'Sačuvaj rashod') : t('Add expense', 'Dodaj rashod')} />
     </form>
   );
 }

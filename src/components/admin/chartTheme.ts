@@ -1,4 +1,5 @@
 import { Chart } from 'chart.js';
+import type { Lang } from '@/lib/i18n';
 
 export const INK = '#0b0d14';
 export const GRID = '#eef0f4';
@@ -26,8 +27,14 @@ export function applyChartTheme() {
   d.plugins.legend.labels.color = '#52525b';
 }
 
-/** "2026-10-24" → "24. okt" */
-export function shortDay(day: string) {
-  const months = ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'avg', 'sep', 'okt', 'nov', 'dec'];
-  return `${Number(day.slice(8, 10))}. ${months[Number(day.slice(5, 7)) - 1]}`;
+const MONTHS = {
+  en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  sr: ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'avg', 'sep', 'okt', 'nov', 'dec'],
+};
+
+/** "2026-10-24" → "Oct 24" / "24. okt" */
+export function shortDay(day: string, lang: Lang) {
+  const d = Number(day.slice(8, 10));
+  const m = MONTHS[lang][Number(day.slice(5, 7)) - 1];
+  return lang === 'sr' ? `${d}. ${m}` : `${m} ${d}`;
 }

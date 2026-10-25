@@ -2,6 +2,7 @@ import { Bot, CalendarDays, Mail, MessageSquare, Phone } from 'lucide-react';
 import { addActivity } from '@/app/(admin)/admin/(panel)/crm/actions';
 import { ACTIVITY } from '@/lib/admin/crm/labels';
 import { formatDateTime, timeAgo } from '@/lib/admin/format';
+import { getAdminI18n } from '@/lib/admin/i18n';
 import type { Activity, ActivityKind } from '@/lib/admin/crm/types';
 
 const ICON: Record<ActivityKind, typeof Bot> = { note: MessageSquare, call: Phone, email: Mail, meeting: CalendarDays, system: Bot };
@@ -14,30 +15,35 @@ const TINT: Record<ActivityKind, string> = {
 };
 
 /** A note form and the timeline under it. `target` says what the note belongs to. */
-export function ActivityFeed({ items, target }: { items: Activity[]; target: { deal_id?: string; customer_id?: string; project_id?: string } }) {
+export async function ActivityFeed({ items, target }: { items: Activity[]; target: { deal_id?: string; customer_id?: string; project_id?: string } }) {
+  const { lang, t } = await getAdminI18n();
   return (
     <div className="card">
       <div className="card-header">
-        <h2 className="card-title">Aktivnost</h2>
-        <span className="text-xs text-muted">{items.length} zapisa</span>
+        <h2 className="card-title">{t('Activity', 'Aktivnost')}</h2>
+        <span className="text-xs text-muted">
+          {items.length} {t(items.length === 1 ? 'entry' : 'entries', 'zapisa')}
+        </span>
       </div>
       <form action={addActivity} className="border-b border-line p-4">
         {Object.entries(target).map(([k, v]) => v && <input key={k} type="hidden" name={k} value={v} />)}
-        <textarea name="body" rows={2} required className="form-input resize-y" placeholder="Šta se desilo? Npr. „Pozvao, traži ponudu za redizajn do petka.”" />
+        <textarea name="body" rows={2} required className="form-input resize-y" placeholder={t('What happened? E.g. “Called, wants a redesign proposal by Friday.”', 'Šta se desilo? Npr. „Pozvao, traži ponudu za redizajn do petka.”')} />
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-          <div className="segmented" role="radiogroup" aria-label="Vrsta">
+          <div className="segmented" role="radiogroup" aria-label={t('Type', 'Vrsta')}>
             {(['note', 'call', 'email', 'meeting'] as const).map((k, i) => (
               <label key={k} className="cursor-pointer has-[:checked]:bg-white has-[:checked]:text-ink has-[:checked]:shadow-[0_1px_2px_rgb(10_14_30/0.08),0_0_0_1px_rgb(10_14_30/0.04)]">
                 <input type="radio" name="kind" value={k} defaultChecked={i === 0} className="sr-only" />
-                {ACTIVITY[k]}
+                {ACTIVITY[k][lang]}
               </label>
             ))}
           </div>
-          <button className="btn btn-primary btn-sm" type="submit">Dodaj</button>
+          <button className="btn btn-primary btn-sm" type="submit">
+            {t('Add', 'Dodaj')}
+          </button>
         </div>
       </form>
       <ol className="relative space-y-5 p-5 before:absolute before:top-7 before:bottom-7 before:left-[37px] before:w-px before:bg-line">
-        {items.length === 0 && <li className="text-muted">Još nema zapisa.</li>}
+        {items.length === 0 && <li className="text-muted">{t('No entries yet.', 'Još nema zapisa.')}</li>}
         {items.map((a) => {
           const Icon = ICON[a.kind];
           return (
@@ -47,8 +53,10 @@ export function ActivityFeed({ items, target }: { items: Activity[]; target: { d
               </span>
               <div className="min-w-0 flex-1 pt-1">
                 <div className="flex flex-wrap items-baseline gap-x-2 text-xs">
-                  <span className="font-medium text-ink">{ACTIVITY[a.kind]}</span>
-                  <span className="text-zinc-400" title={formatDateTime(a.created_at)}>{timeAgo(a.created_at)}</span>
+                  <span className="font-medium text-ink">{ACTIVITY[a.kind][lang]}</span>
+                  <span className="text-zinc-400" title={formatDateTime(a.created_at, lang)}>
+                    {timeAgo(a.created_at, lang)}
+                  </span>
                 </div>
                 <p className="mt-1 text-[13.5px] whitespace-pre-line text-zinc-700">{a.body}</p>
               </div>

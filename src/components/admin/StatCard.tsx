@@ -27,7 +27,7 @@ export function StatCard({
 }: {
   label: string;
   value: string | number;
-  /** "+12% u odnosu na…": a leading signed percentage becomes the coloured pill. */
+  /** "+12% vs…": a leading signed percentage becomes the coloured pill. */
   note?: string;
   tone?: 'up' | 'down' | 'neutral';
   icon?: LucideIcon;

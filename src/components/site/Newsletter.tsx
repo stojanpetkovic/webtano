@@ -4,7 +4,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useActionState, useEffect, useRef, useState } from 'react';
 import { ArrowRight, CheckCircle2, Loader2, Mail, X } from 'lucide-react';
-import { subscribeNewsletter, type NewsletterState } from '@/app/(site)/actions';
+import { subscribeNewsletter, type NewsletterState } from '@/app/(site)/[lang]/actions';
+import { useLang, useLocalePath, useT } from '@/components/i18n/LangProvider';
+import { splitPath } from '@/lib/i18n';
 
 // What the visitor did with the popup, so it is not shown again too soon.
 const KEY = 'wt_newsletter';
@@ -34,6 +36,9 @@ function mayShow(): boolean {
 /** The sign-up form, dark for the footer and light for the popup. */
 export function NewsletterForm({ source, dark = false, onDone }: { source: 'popup' | 'footer'; dark?: boolean; onDone?: () => void }) {
   const [state, action, pending] = useActionState<NewsletterState, FormData>(subscribeNewsletter, { ok: false });
+  const lang = useLang();
+  const t = useT();
+  const lp = useLocalePath();
 
   useEffect(() => {
     if (!state.ok) return;
@@ -46,8 +51,8 @@ export function NewsletterForm({ source, dark = false, onDone }: { source: 'popu
       <p role="status" className={`flex items-start gap-2.5 text-sm leading-relaxed ${dark ? 'text-white/80' : 'text-zinc-700'}`}>
         <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden />
         <span>
-          <strong className={dark ? 'text-white' : 'text-ink-950'}>Almost done.</strong> We sent you an email. Click the link inside to confirm your
-          subscription.
+          <strong className={dark ? 'text-white' : 'text-ink-950'}>{t('Almost done.', 'Još samo korak.')}</strong>{' '}
+          {t('We sent you an email. Click the link inside to confirm your subscription.', 'Poslali smo vam email. Kliknite na link u njemu da potvrdite prijavu.')}
         </span>
       </p>
     );
@@ -56,6 +61,7 @@ export function NewsletterForm({ source, dark = false, onDone }: { source: 'popu
   return (
     <form action={action} noValidate>
       <input type="hidden" name="source" value={source} />
+      <input type="hidden" name="lang" value={lang} />
       <div className="hidden" aria-hidden>
         <label>
           Company URL
@@ -74,7 +80,7 @@ export function NewsletterForm({ source, dark = false, onDone }: { source: 'popu
           autoComplete="email"
           inputMode="email"
           enterKeyHint="send"
-          placeholder="you@company.com"
+          placeholder={t('you@company.com', 'vi@firma.rs')}
           aria-invalid={Boolean(state.error)}
           aria-describedby={state.error ? `${id}-error` : undefined}
           className={`min-h-12 w-full min-w-0 flex-1 rounded-full px-4 text-[16px] transition focus:outline-none ${
@@ -91,7 +97,7 @@ export function NewsletterForm({ source, dark = false, onDone }: { source: 'popu
           }`}
         >
           {pending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : null}
-          {pending ? 'Sending…' : 'Subscribe'}
+          {pending ? t('Sending…', 'Šaljem…') : t('Subscribe', 'Prijavi me')}
           {!pending && <ArrowRight className="h-4 w-4" aria-hidden />}
         </button>
       </div>
@@ -101,9 +107,9 @@ export function NewsletterForm({ source, dark = false, onDone }: { source: 'popu
         </p>
       )}
       <p className={`mt-2.5 text-xs leading-relaxed ${dark ? 'text-white/45' : 'text-zinc-500'}`}>
-        About one email a month. Unsubscribe in one click. See our{' '}
-        <Link href="/privacy#newsletter" className="underline underline-offset-2">
-          privacy notice
+        {t('About one email a month. Unsubscribe in one click. See our', 'Otprilike jedan email mesečno. Odjava jednim klikom. Pogledajte naše')}{' '}
+        <Link href={lp('/privacy#newsletter')} className="underline underline-offset-2">
+          {t('privacy notice', 'obaveštenje o privatnosti')}
         </Link>
         .
       </p>
@@ -121,7 +127,8 @@ const QUIET = ['/thank-you', '/privacy', '/terms', '/newsletter', '/demo'];
  * On phones it is a small card above the tab bar instead of a full screen.
  */
 export function NewsletterPopup() {
-  const path = usePathname();
+  const path = splitPath(usePathname()).path;
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [done, setDone] = useState(false);
   const panel = useRef<HTMLDivElement>(null);
@@ -197,7 +204,7 @@ export function NewsletterPopup() {
         <button
           type="button"
           onClick={close}
-          aria-label="Close"
+          aria-label={t('Close', 'Zatvori')}
           className="absolute end-3 top-3 z-10 inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-zinc-500 transition hover:bg-zinc-100 hover:text-ink-950 md:text-white/70 md:hover:bg-white/10 md:hover:text-white"
         >
           <X className="h-4 w-4" aria-hidden />
@@ -210,15 +217,18 @@ export function NewsletterPopup() {
           <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-accent/15 text-accent ring-1 ring-accent/30">
             <Mail className="h-5 w-5" aria-hidden />
           </span>
-          <p className="mt-4 font-mono text-[10px] tracking-[0.14em] text-accent uppercase">The WebTano letter</p>
+          <p className="mt-4 font-mono text-[10px] tracking-[0.14em] text-accent uppercase">{t('The WebTano letter', 'WebTano pismo')}</p>
         </div>
         <div className="md:px-7 md:pt-6 md:pb-7">
           <h2 id="nl-title" className="pe-8 font-display text-lg font-bold tracking-tight md:text-2xl">
-            Get more calls from your website
+            {t('Get more calls from your website', 'Više poziva preko vašeg sajta')}
           </h2>
-          <p className="mt-1 text-sm leading-relaxed text-zinc-600 md:hidden">One short email a month. No spam.</p>
+          <p className="mt-1 text-sm leading-relaxed text-zinc-600 md:hidden">{t('One short email a month. No spam.', 'Jedan kratak email mesečno. Bez spama.')}</p>
           <p className="mt-2 text-[15px] leading-relaxed text-zinc-600 max-md:hidden">
-            One short email a month with practical tips on websites, local SEO and Google Ads for service businesses. No spam.
+            {t(
+              'One short email a month with practical tips on websites, local SEO and Google Ads for service businesses. No spam.',
+              'Jedan kratak email mesečno sa praktičnim savetima o sajtovima, lokalnom SEO-u i Google Ads-u za uslužne firme. Bez spama.',
+            )}
           </p>
           <div className="mt-3.5 md:mt-5">
             <NewsletterForm source="popup" onDone={() => setDone(true)} />

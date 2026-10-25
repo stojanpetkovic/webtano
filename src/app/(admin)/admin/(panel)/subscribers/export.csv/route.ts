@@ -1,4 +1,5 @@
 import { db } from '@/lib/admin/supabase';
+import { getAdminI18n } from '@/lib/admin/i18n';
 import { SOURCES, SUBSCRIBER_STATUS, type Subscriber, type SubscriberStatus } from '@/lib/admin/newsletter';
 
 function cell(value: unknown): string {
@@ -10,6 +11,7 @@ function cell(value: unknown): string {
 
 /** The list as CSV, for importing into Resend, Mailchimp or a spreadsheet. Defaults to confirmed addresses. */
 export async function GET(request: Request) {
+  const { lang, t } = await getAdminI18n();
   const params = new URL(request.url).searchParams;
   const status = params.get('status') ?? 'confirmed';
   let query = db().from('newsletter_subscribers').select('*').order('created_at', { ascending: false }).limit(50_000);
@@ -19,18 +21,26 @@ export async function GET(request: Request) {
   const { data } = await query;
   const rows = ((data ?? []) as Subscriber[]).map((s) => [
     s.email,
-    SUBSCRIBER_STATUS[s.status as SubscriberStatus],
-    SOURCES[s.source] ?? s.source,
+    SUBSCRIBER_STATUS[s.status as SubscriberStatus][lang],
+    SOURCES[s.source]?.[lang] ?? s.source,
     s.created_at,
     s.confirmed_at,
     s.unsubscribed_at,
     s.page_url,
   ]);
-  const header = ['Email', 'Status', 'Izvor', 'Prijavljen', 'Potvrđen', 'Odjavljen', 'Stranica'];
+  const header = [
+    'Email',
+    'Status',
+    t('Source', 'Izvor'),
+    t('Signed up', 'Prijavljen'),
+    t('Confirmed', 'Potvrđen'),
+    t('Unsubscribed', 'Odjavljen'),
+    t('Page', 'Stranica'),
+  ];
   // BOM so Excel opens the UTF-8 file with č, ć, š intact.
   const csv = '﻿' + [header, ...rows].map((r) => r.map(cell).join(',')).join('\r\n');
   const stamp = new Date().toISOString().slice(0, 10);
   return new Response(csv, {
-    headers: { 'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': `attachment; filename="pretplatnici-${stamp}.csv"` },
+    headers: { 'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': `attachment; filename="${t('subscribers', 'pretplatnici')}-${stamp}.csv"` },
   });
 }

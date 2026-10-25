@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { ArrowUp } from 'lucide-react';
+import { useT } from '@/components/i18n/LangProvider';
 
 const R = 20;
 const C = 2 * Math.PI * R;
@@ -10,6 +11,7 @@ const C = 2 * Math.PI * R;
 export function BackToTop() {
   const [progress, setProgress] = useState(0);
   const [visible, setVisible] = useState(false);
+  const t = useT();
 
   useEffect(() => {
     let frame = 0;
@@ -36,7 +38,7 @@ export function BackToTop() {
     <button
       type="button"
       onClick={() => window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })}
-      aria-label="Back to top"
+      aria-label={t('Back to top', 'Nazad na vrh')}
       tabIndex={visible ? 0 : -1}
       className={`group fixed right-4 max-md:hidden bottom-[calc(6.25rem+env(safe-area-inset-bottom))] z-40 flex h-12 w-12 items-center justify-center rounded-full bg-ink-975/90 text-white shadow-[0_10px_30px_-10px_rgb(0_0_0/0.6)] ring-1 ring-white/10 backdrop-blur transition duration-300 hover:bg-ink-950 sm:right-6 md:bottom-6 ${
         visible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-3 opacity-0'

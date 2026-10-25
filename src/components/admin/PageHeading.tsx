@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { Fragment } from 'react';
+import { getAdminI18n } from '@/lib/admin/i18n';
 
 interface Crumb {
   label: string;
@@ -8,7 +9,7 @@ interface Crumb {
 }
 
 /** The trail back to the dashboard, the page title and its description, with room for actions on the right. */
-export function PageHeading({
+export async function PageHeading({
   title,
   crumbs = [],
   description,
@@ -19,10 +20,11 @@ export function PageHeading({
   description?: React.ReactNode;
   children?: React.ReactNode;
 }) {
+  const { t } = await getAdminI18n();
   return (
     <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
       <div className="min-w-0">
-        <nav className="flex flex-wrap items-center gap-1.5 text-xs font-medium text-zinc-500" aria-label="Putanja">
+        <nav className="flex flex-wrap items-center gap-1.5 text-xs font-medium text-zinc-500" aria-label={t('Breadcrumb', 'Putanja')}>
           <Link href="/admin" className="transition hover:text-ink">
             Admin
           </Link>

@@ -4,6 +4,8 @@ import { webtanoSiteId } from '@/lib/admin/crm/data';
 import { leadSource } from '@/lib/admin/leads';
 import { STATUS_LABELS } from '@/lib/admin/format';
 import type { Lead, Site } from '@/lib/admin/types';
+import { channelLabel } from '@/lib/admin/channels';
+import { getAdminI18n } from '@/lib/admin/i18n';
 
 function cell(value: unknown): string {
   let text = value == null ? '' : String(value);
@@ -13,6 +15,7 @@ function cell(value: unknown): string {
 }
 
 export async function GET(request: Request) {
+  const { lang, t } = await getAdminI18n();
   const filters = { ...readFilters(new URL(request.url).searchParams), exclude: await webtanoSiteId() };
   const [{ data: sitesData }, { data: leadsData }] = await Promise.all([
     db().from('sites').select('id, name'),
@@ -22,16 +25,29 @@ export async function GET(request: Request) {
   const leads = (leadsData ?? []) as unknown as Lead[];
 
   const fieldKeys = [...new Set(leads.flatMap((l) => Object.keys(l.data)))];
-  const header = ['Vreme', 'Sajt', 'Forma', 'Status', 'Ime', 'Email', 'Telefon', 'Izvor', 'Kampanja', 'Stranica', ...fieldKeys, 'Beleške'];
+  const header = [
+    t('Time', 'Vreme'),
+    t('Site', 'Sajt'),
+    t('Form', 'Forma'),
+    'Status',
+    t('Name', 'Ime'),
+    'Email',
+    t('Phone', 'Telefon'),
+    t('Source', 'Izvor'),
+    t('Campaign', 'Kampanja'),
+    t('Page', 'Stranica'),
+    ...fieldKeys,
+    t('Notes', 'Beleške'),
+  ];
   const rows = leads.map((l) => [
     l.created_at,
     siteNames.get(l.site_id) ?? '',
     l.form_name,
-    STATUS_LABELS[l.status],
+    STATUS_LABELS[l.status][lang],
     l.visitor_name,
     l.visitor_email,
     l.visitor_phone,
-    leadSource(l),
+    channelLabel(leadSource(l), lang),
     l.utm_campaign,
     l.page_url,
     ...fieldKeys.map((k) => l.data[k] ?? ''),
@@ -44,7 +60,7 @@ export async function GET(request: Request) {
   return new Response(csv, {
     headers: {
       'Content-Type': 'text/csv; charset=utf-8',
-      'Content-Disposition': `attachment; filename="lidovi-${stamp}.csv"`,
+      'Content-Disposition': `attachment; filename="${t('leads', 'lidovi')}-${stamp}.csv"`,
     },
   });
 }

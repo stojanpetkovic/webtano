@@ -1,6 +1,9 @@
 // Case studies shown on the homepage and under /work. Every figure here comes
 // from the client's own tracking (the WebTano lead admin or the Google Ads
-// account) or from a Lighthouse run on the live site.
+// account) or from a Lighthouse run on the live site. The Serbian text is in work.sr.ts.
+
+import type { Lang } from '@/lib/i18n';
+import { caseStudiesSr } from './work.sr';
 
 export interface Stat {
   value: string;
@@ -166,6 +169,15 @@ export const caseStudies: CaseStudy[] = [
   },
 ];
 
-export function findCase(slug: string): CaseStudy | undefined {
-  return caseStudies.find((c) => c.slug === slug);
+/** The case studies in a language: the same figures, links and photos, with the text translated. */
+export function caseStudiesIn(lang: Lang): CaseStudy[] {
+  if (lang === 'en') return caseStudies;
+  return caseStudies.map((c) => {
+    const { shotAlts, ...text } = caseStudiesSr[c.slug];
+    return { ...c, ...text, shots: c.shots.map((s, i) => ({ ...s, alt: shotAlts[i] ?? s.alt })) };
+  });
+}
+
+export function findCase(slug: string, lang: Lang = 'en'): CaseStudy | undefined {
+  return caseStudiesIn(lang).find((c) => c.slug === slug);
 }

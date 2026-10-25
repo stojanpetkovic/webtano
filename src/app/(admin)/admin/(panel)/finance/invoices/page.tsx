@@ -10,13 +10,18 @@ import { toParams } from '@/lib/admin/params';
 import { INVOICE_STATUS, cash, invoiceNumber, invoiceTotals, todayBelgrade } from '@/lib/admin/finance/labels';
 import type { Invoice, InvoiceItem, InvoiceStatus } from '@/lib/admin/finance/types';
 import { Notice } from '../Ledger';
+import { getAdminI18n } from '@/lib/admin/i18n';
 
 export const dynamic = 'force-dynamic';
-export const metadata: Metadata = { title: 'Računi' };
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getAdminI18n();
+  return { title: t('Invoices', 'Računi') };
+}
 
 type Tab = '' | InvoiceStatus | 'overdue';
 
 export default async function InvoicesPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const { lang, t: tr } = await getAdminI18n();
   const query = toParams(await searchParams);
   const tab = (['draft', 'issued', 'overdue', 'paid', 'void'] as Tab[]).find((t) => t === query.get('status')) ?? '';
   const today = todayBelgrade();
@@ -33,19 +38,23 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
   const shown = all.filter((i) => (tab === 'overdue' ? i.late : !tab || i.status === tab));
   const sum = (rows: typeof all) => rows.reduce((n, i) => n + i.total, 0);
   const tabs: { key: Tab; label: string; rows: typeof all }[] = [
-    { key: '', label: 'Svi', rows: all },
-    { key: 'draft', label: 'Nacrti', rows: all.filter((i) => i.status === 'draft') },
-    { key: 'issued', label: 'Čekaju uplatu', rows: all.filter((i) => i.status === 'issued') },
-    { key: 'overdue', label: 'Kasne', rows: all.filter((i) => i.late) },
-    { key: 'paid', label: 'Plaćeni', rows: all.filter((i) => i.status === 'paid') },
-    { key: 'void', label: 'Stornirani', rows: all.filter((i) => i.status === 'void') },
+    { key: '', label: tr('All', 'Svi'), rows: all },
+    { key: 'draft', label: tr('Drafts', 'Nacrti'), rows: all.filter((i) => i.status === 'draft') },
+    { key: 'issued', label: tr('Awaiting payment', 'Čekaju uplatu'), rows: all.filter((i) => i.status === 'issued') },
+    { key: 'overdue', label: tr('Overdue', 'Kasne'), rows: all.filter((i) => i.late) },
+    { key: 'paid', label: tr('Paid', 'Plaćeni'), rows: all.filter((i) => i.status === 'paid') },
+    { key: 'void', label: tr('Void', 'Stornirani'), rows: all.filter((i) => i.status === 'void') },
   ];
 
   return (
     <>
-      <PageHeading title="Računi" crumbs={[{ label: 'Finansije', href: '/admin/finance' }]} description="Računi klijentima, kao PDF za preuzimanje i slanje emailom.">
+      <PageHeading
+        title={tr('Invoices', 'Računi')}
+        crumbs={[{ label: tr('Finance', 'Finansije'), href: '/admin/finance' }]}
+        description={tr('Invoices to clients, as a PDF to download and send by email.', 'Računi klijentima, kao PDF za preuzimanje i slanje emailom.')}
+      >
         <Link href="/admin/finance/invoices/new" className="btn btn-primary">
-          <FilePlus2 className="size-4" /> Novi račun
+          <FilePlus2 className="size-4" /> {tr('New invoice', 'Novi račun')}
         </Link>
       </PageHeading>
       <FinanceTabs active="/admin/finance/invoices" />
@@ -75,26 +84,28 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
             })}
           </nav>
           <div className="flex items-baseline justify-between border-b border-line px-5 py-3 text-[13px]">
-            <span className="text-muted">{shown.length} računa</span>
+            <span className="text-muted">{tr(`${shown.length} invoices`, `${shown.length} računa`)}</span>
             <span>
-              Ukupno <strong className="text-base text-ink tabular-nums">{cash(sum(shown), currency, true)}</strong>
+              {tr('Total', 'Ukupno')} <strong className="text-base text-ink tabular-nums">{cash(sum(shown), currency, true)}</strong>
             </span>
           </div>
           {shown.length === 0 ? (
             <p className="px-5 py-12 text-center text-sm text-muted">
-              {all.length ? 'Nema računa u ovoj grupi.' : 'Još nema računa. Napravi prvi ili označi projekat kao završen.'}
+              {all.length
+                ? tr('No invoices in this group.', 'Nema računa u ovoj grupi.')
+                : tr('No invoices yet. Make the first one or mark a project as done.', 'Još nema računa. Napravi prvi ili označi projekat kao završen.')}
             </p>
           ) : (
             <div className="relative overflow-x-auto">
               <table className="table">
                 <thead>
                   <tr>
-                    <th>Broj</th>
-                    <th>Klijent</th>
-                    <th className="max-md:hidden">Izdat</th>
-                    <th className="max-md:hidden">Rok</th>
+                    <th>{tr('No.', 'Broj')}</th>
+                    <th>{tr('Client', 'Klijent')}</th>
+                    <th className="max-md:hidden">{tr('Issued', 'Izdat')}</th>
+                    <th className="max-md:hidden">{tr('Due', 'Rok')}</th>
                     <th>Status</th>
-                    <th className="text-right">Iznos</th>
+                    <th className="text-right">{tr('Amount', 'Iznos')}</th>
                     <th className="w-10" aria-label="PDF" />
                   </tr>
                 </thead>
@@ -107,14 +118,14 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
                         </Link>
                       </td>
                       <td className="max-w-[26ch] truncate">{i.bill_to?.company || i.bill_to?.name || '—'}</td>
-                      <td className="whitespace-nowrap text-zinc-600 max-md:hidden">{formatDate(i.issue_date)}</td>
-                      <td className={`whitespace-nowrap max-md:hidden ${i.late ? 'font-medium text-rose-600' : 'text-zinc-600'}`}>{i.due_date ? formatDate(i.due_date) : '—'}</td>
+                      <td className="whitespace-nowrap text-zinc-600 max-md:hidden">{formatDate(i.issue_date, lang)}</td>
+                      <td className={`whitespace-nowrap max-md:hidden ${i.late ? 'font-medium text-rose-600' : 'text-zinc-600'}`}>{i.due_date ? formatDate(i.due_date, lang) : '—'}</td>
                       <td>
-                        <span className={`badge ${i.late ? 'badge-spam' : INVOICE_STATUS[i.status].badge}`}>{i.late ? 'Kasni' : INVOICE_STATUS[i.status].label}</span>
+                        <span className={`badge ${i.late ? 'badge-spam' : INVOICE_STATUS[i.status].badge}`}>{i.late ? tr('Overdue', 'Kasni') : INVOICE_STATUS[i.status].label[lang]}</span>
                       </td>
                       <td className="text-right font-semibold whitespace-nowrap text-ink tabular-nums">{cash(i.total, i.currency || currency, true)}</td>
                       <td className="relative z-10">
-                        <a href={`/admin/finance/invoices/${i.id}/pdf?download=1`} className="btn btn-sm btn-light" title="Preuzmi PDF">
+                        <a href={`/admin/finance/invoices/${i.id}/pdf?download=1`} className="btn btn-sm btn-light" title={tr('Download PDF', 'Preuzmi PDF')}>
                           <Download className="size-3.5" />
                         </a>
                       </td>

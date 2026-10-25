@@ -1,7 +1,22 @@
 import type { Metadata } from 'next';
+import { HTML_LANG, LANGS, localePath, type Lang } from '@/lib/i18n';
 
 /** The site's share card, from src/app/og.png. Pages that set openGraph pass it again, as Next does not merge openGraph. */
 export const OG_IMAGE = { url: '/og.png', width: 1200, height: 630, alt: 'WebTano: websites, local SEO and Google Ads that bring calls' };
+
+/** The share card in the page's language (src/app/og-sr.png for Serbian). */
+export const ogImage = (lang: Lang) =>
+  lang === 'sr' ? { ...OG_IMAGE, url: '/og-sr.png', alt: 'WebTano: sajtovi, lokalni SEO i Google Ads koji donose pozive' } : OG_IMAGE;
+
+/**
+ * Canonical address of a page in its language, plus hreflang links to the
+ * other language, so Google shows each searcher the right version.
+ */
+export function alternates(lang: Lang, path: string): NonNullable<Metadata['alternates']> {
+  const languages: Record<string, string> = Object.fromEntries(LANGS.map((l) => [HTML_LANG[l], localePath(l, path)]));
+  languages['x-default'] = path;
+  return { canonical: localePath(lang, path), languages };
+}
 
 const SUFFIX = ' | WebTano';
 

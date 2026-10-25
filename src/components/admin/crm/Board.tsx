@@ -1,6 +1,7 @@
 'use client';
 
 import { useOptimistic, useRef, useState, useTransition } from 'react';
+import { useT } from '@/components/i18n/LangProvider';
 
 export interface BoardItem {
   id: string;
@@ -26,7 +27,7 @@ export function Board<T extends BoardItem>({
   items,
   renderCard,
   onMove,
-  empty = 'Prevuci karticu ovde',
+  empty,
 }: {
   columns: Column[];
   items: T[];
@@ -34,6 +35,7 @@ export function Board<T extends BoardItem>({
   onMove: (id: string, column: string, position: number) => Promise<void>;
   empty?: string;
 }) {
+  const t = useT();
   const [optimistic, apply] = useOptimistic(items, (state: T[], move: { id: string; column: string; position: number }) =>
     state.map((i) => (i.id === move.id ? { ...i, column: move.column, position: move.position } : i)),
   );
@@ -57,7 +59,7 @@ export function Board<T extends BoardItem>({
 
   const picker = (item: T) => (
     <select
-      aria-label="Premesti u kolonu"
+      aria-label={t('Move to column', 'Premesti u kolonu')}
       value={item.column}
       onChange={(e) => move(item.id, e.target.value, 0)}
       onClick={(e) => e.stopPropagation()}
@@ -127,7 +129,7 @@ export function Board<T extends BoardItem>({
               ))}
               {over?.column === col.key && over.index === list.length && <div className="h-1 rounded-full bg-accent" />}
               {list.length === 0 && (
-                <div className="grid h-24 place-items-center rounded-xl border border-dashed border-zinc-300 px-3 text-center text-xs text-zinc-400">{empty}</div>
+                <div className="grid h-24 place-items-center rounded-xl border border-dashed border-zinc-300 px-3 text-center text-xs text-zinc-400">{empty ?? t('Drag a card here', 'Prevuci karticu ovde')}</div>
               )}
             </div>
           </section>

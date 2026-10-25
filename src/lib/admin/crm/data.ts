@@ -1,3 +1,4 @@
+import type { Lang } from '@/lib/i18n';
 import { db } from '../supabase';
 import { leadSource } from '../leads';
 import { site as siteConfig } from '@/content/site';
@@ -74,8 +75,8 @@ export async function syncDeals(): Promise<void> {
 }
 
 /** The CRM customer a client site is linked to, if any. */
-export async function siteCustomer(siteId: string): Promise<{ id: string; name: string } | null> {
+export async function siteCustomer(siteId: string, lang: Lang): Promise<{ id: string; name: string } | null> {
   const { data } = await db().from('crm_customer_sites').select('crm_customers(id, company, contact_name)').eq('site_id', siteId).maybeSingle();
   const c = (data as unknown as { crm_customers: { id: string; company: string | null; contact_name: string | null } | null } | null)?.crm_customers;
-  return c ? { id: c.id, name: customerName(c) } : null;
+  return c ? { id: c.id, name: customerName(c, lang) } : null;
 }

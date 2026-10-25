@@ -1,3 +1,4 @@
+import type { L } from '@/lib/i18n';
 import { randomBytes } from 'node:crypto';
 import { Resend } from 'resend';
 import { db } from './supabase';
@@ -29,13 +30,17 @@ export interface Subscriber {
   updated_at: string;
 }
 
-export const SUBSCRIBER_STATUS: Record<SubscriberStatus, string> = {
-  pending: 'Čeka potvrdu',
-  confirmed: 'Potvrđen',
-  unsubscribed: 'Odjavljen',
+export const SUBSCRIBER_STATUS: Record<SubscriberStatus, L> = {
+  pending: { en: 'Awaiting confirmation', sr: 'Čeka potvrdu' },
+  confirmed: { en: 'Confirmed', sr: 'Potvrđen' },
+  unsubscribed: { en: 'Unsubscribed', sr: 'Odjavljen' },
 };
 
-export const SOURCES: Record<string, string> = { popup: 'Popup', footer: 'Futer', admin: 'Admin' };
+export const SOURCES: Record<string, L> = {
+  popup: { en: 'Popup', sr: 'Popup' },
+  footer: { en: 'Footer', sr: 'Futer' },
+  admin: { en: 'Admin', sr: 'Admin' },
+};
 
 /** What the visitor agrees to, stored with the sign-up as proof of consent. */
 export const CONSENT_TEXT =

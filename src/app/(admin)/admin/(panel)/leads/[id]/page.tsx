@@ -9,17 +9,23 @@ import { db } from '@/lib/admin/supabase';
 import { leadSource } from '@/lib/admin/leads';
 import { STATUS_LABELS, formatDateTime } from '@/lib/admin/format';
 import type { EmailLog, Lead, Site } from '@/lib/admin/types';
+import { channelLabel } from '@/lib/admin/channels';
+import { getAdminI18n } from '@/lib/admin/i18n';
+import type { T } from '@/lib/i18n';
 import { deleteLead, resendLead, toggleSpam, updateLead } from './actions';
 
 export const dynamic = 'force-dynamic';
-export const metadata: Metadata = { title: 'Lid' };
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getAdminI18n();
+  return { title: t('Lead', 'Lid') };
+}
 
-const NOTICES: Record<string, string> = {
-  saved: 'Sačuvano.',
-  resent: 'Email je ponovo poslat. Rezultat je u istoriji ispod.',
-  'not-spam': 'Lid više nije označen kao spam.',
-  spam: 'Lid je označen kao spam i ne ulazi u statistiku.',
-};
+const notices = (t: T): Record<string, string> => ({
+  saved: t('Saved.', 'Sačuvano.'),
+  resent: t('The email was sent again. The result is in the history below.', 'Email je ponovo poslat. Rezultat je u istoriji ispod.'),
+  'not-spam': t('The lead is no longer marked as spam.', 'Lid više nije označen kao spam.'),
+  spam: t('The lead is marked as spam and left out of the stats.', 'Lid je označen kao spam i ne ulazi u statistiku.'),
+});
 
 export default async function LeadPage({
   params,
@@ -28,8 +34,9 @@ export default async function LeadPage({
   params: Promise<{ id: string }>;
   searchParams: Promise<{ notice?: string }>;
 }) {
+  const { lang, t } = await getAdminI18n();
   const { id } = await params;
-  const notice = NOTICES[(await searchParams).notice ?? ''] ?? '';
+  const notice = notices(t)[(await searchParams).notice ?? ''] ?? '';
   if (!/^[0-9a-f-]{36}$/.test(id)) redirect('/admin/leads');
 
   const { data: lead } = await db().from('leads').select('*').eq('id', id).maybeSingle<Lead>();
@@ -40,26 +47,28 @@ export default async function LeadPage({
   ]);
   const emails = (logData ?? []) as EmailLog[];
   const tz = site?.timezone ?? 'Europe/Belgrade';
-  const title = lead.visitor_name || lead.visitor_email || 'Lid';
+  const title = lead.visitor_name || lead.visitor_email || t('Lead', 'Lid');
 
   const meta: [string, string | null][] = [
-    ['Sajt', site?.name ?? '—'],
-    ['Forma', lead.form_name],
+    [t('Site', 'Sajt'), site?.name ?? '—'],
+    [t('Form', 'Forma'), lead.form_name],
     [
-      'Vreme',
-      `${formatDateTime(lead.created_at)} (Beograd)${tz !== 'Europe/Belgrade' ? ` · ${formatDateTime(lead.created_at, tz)} (klijent)` : ''}`,
+      t('Time', 'Vreme'),
+      `${formatDateTime(lead.created_at, lang)} (${t('Belgrade', 'Beograd')})${
+        tz !== 'Europe/Belgrade' ? ` · ${formatDateTime(lead.created_at, lang, tz)} (${t('client', 'klijent')})` : ''
+      }`,
     ],
-    ['Izvor', leadSource(lead)],
-    ['Kampanja', [lead.utm_campaign, lead.utm_content, lead.utm_term].filter(Boolean).join(' · ') || null],
-    ['Stranica', lead.page_url],
-    ['Došao sa', lead.referrer],
-    ['Uređaj', lead.user_agent],
+    [t('Source', 'Izvor'), channelLabel(leadSource(lead), lang)],
+    [t('Campaign', 'Kampanja'), [lead.utm_campaign, lead.utm_content, lead.utm_term].filter(Boolean).join(' · ') || null],
+    [t('Page', 'Stranica'), lead.page_url],
+    [t('Came from', 'Došao sa'), lead.referrer],
+    [t('Device', 'Uređaj'), lead.user_agent],
   ];
 
   return (
     <>
       {(await unseenLeadCount('sites')) > 0 && <MarkLeadsSeen scope="sites" />}
-      <PageHeading title={title} crumbs={[{ label: 'Lidovi', href: '/admin/leads' }]} />
+      <PageHeading title={title} crumbs={[{ label: t('Leads', 'Lidovi'), href: '/admin/leads' }]} />
       {notice && (
         <div className="alert alert-success" role="status">
           {notice}
@@ -68,22 +77,22 @@ export default async function LeadPage({
 
       <div className="flex flex-wrap items-center gap-2">
         <Link href="/admin/leads" className="btn btn-light btn-sm">
-          ← Svi lidovi
+          ← {t('All leads', 'Svi lidovi')}
         </Link>
         {lead.is_spam ? (
           <span className="badge badge-spam">Spam</span>
         ) : (
-          <span className={`badge badge-${lead.status}`}>{STATUS_LABELS[lead.status]}</span>
+          <span className={`badge badge-${lead.status}`}>{STATUS_LABELS[lead.status][lang]}</span>
         )}
         <div className="ml-auto flex flex-wrap gap-2">
           {lead.visitor_email && (
             <a className="btn btn-primary btn-sm" href={`mailto:${lead.visitor_email}`}>
-              Odgovori emailom
+              {t('Reply by email', 'Odgovori emailom')}
             </a>
           )}
           {lead.visitor_phone && (
             <a className="btn btn-outline btn-sm" href={`tel:${lead.visitor_phone.replace(/[^\d+]/g, '')}`}>
-              Pozovi
+              {t('Call', 'Pozovi')}
             </a>
           )}
         </div>
@@ -93,7 +102,7 @@ export default async function LeadPage({
         <div className="lg:col-span-2 space-y-6">
           <div className="card">
             <div className="card-header">
-              <h2 className="card-title">Podaci iz forme</h2>
+              <h2 className="card-title">{t('Form details', 'Podaci iz forme')}</h2>
             </div>
             <table className="table">
               <tbody>
@@ -109,7 +118,7 @@ export default async function LeadPage({
 
           <div className="card">
             <div className="card-header">
-              <h2 className="card-title">Odakle je došao</h2>
+              <h2 className="card-title">{t('Where they came from', 'Odakle je došao')}</h2>
             </div>
             <table className="table">
               <tbody>
@@ -130,7 +139,7 @@ export default async function LeadPage({
           <form action={updateLead} className="card">
             <input type="hidden" name="id" value={lead.id} />
             <div className="card-header">
-              <h2 className="card-title">Praćenje</h2>
+              <h2 className="card-title">{t('Follow-up', 'Praćenje')}</h2>
             </div>
             <div className="card-body space-y-4">
               <div>
@@ -138,37 +147,42 @@ export default async function LeadPage({
                 <select className="form-input" id="status" name="status" defaultValue={lead.status}>
                   {Object.entries(STATUS_LABELS).map(([value, label]) => (
                     <option key={value} value={value}>
-                      {label}
+                      {label[lang]}
                     </option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="form-label" htmlFor="notes">Beleške</label>
+                <label className="form-label" htmlFor="notes">
+                  {t('Notes', 'Beleške')}
+                </label>
                 <textarea className="form-input" id="notes" name="notes" rows={4} defaultValue={lead.notes ?? ''} />
               </div>
               <button className="btn btn-primary" type="submit">
-                Sačuvaj
+                {t('Save', 'Sačuvaj')}
               </button>
             </div>
           </form>
 
           <div className="card">
             <div className="card-header">
-              <h2 className="card-title">Poslati emailovi</h2>
+              <h2 className="card-title">{t('Emails sent', 'Poslati emailovi')}</h2>
             </div>
             <div className="card-body space-y-3">
               {emails.length === 0 && (
-                <p className="text-muted">Nijedan email nije poslat{lead.is_spam ? ' (spam se ne šalje)' : ''}.</p>
+                <p className="text-muted">
+                  {t('No email was sent', 'Nijedan email nije poslat')}
+                  {lead.is_spam ? t(' (spam is not sent)', ' (spam se ne šalje)') : ''}.
+                </p>
               )}
               {emails.map((e) => (
                 <div key={e.id} className="text-[13px]">
                   <div className="flex items-center gap-2">
-                    <span className={`badge ${e.status === 'sent' ? 'badge-won' : 'badge-spam'}`}>{e.status === 'sent' ? 'Poslato' : 'Greška'}</span>
+                    <span className={`badge ${e.status === 'sent' ? 'badge-won' : 'badge-spam'}`}>{e.status === 'sent' ? t('Sent', 'Poslato') : t('Error', 'Greška')}</span>
                     <span className="text-ink truncate">{e.recipient}</span>
                   </div>
                   <div className="text-xs text-muted mt-0.5">
-                    {e.kind === 'client' ? 'Klijent' : 'Ti'} · {formatDateTime(e.created_at)}
+                    {e.kind === 'client' ? t('Client', 'Klijent') : t('You', 'Ti')} · {formatDateTime(e.created_at, lang)}
                   </div>
                   {e.error && <div className="text-xs text-orange-700 mt-0.5">{e.error}</div>}
                 </div>
@@ -178,14 +192,14 @@ export default async function LeadPage({
                   <input type="hidden" name="id" value={lead.id} />
                   <input type="hidden" name="to" value="client" />
                   <button className="btn btn-outline btn-sm" type="submit" disabled={!site?.client_emails.length}>
-                    Pošalji klijentu
+                    {t('Send to client', 'Pošalji klijentu')}
                   </button>
                 </form>
                 <form action={resendLead}>
                   <input type="hidden" name="id" value={lead.id} />
                   <input type="hidden" name="to" value="owner" />
                   <button className="btn btn-outline btn-sm" type="submit">
-                    Pošalji meni
+                    {t('Send to me', 'Pošalji meni')}
                   </button>
                 </form>
               </div>
@@ -196,13 +210,13 @@ export default async function LeadPage({
             <form action={toggleSpam}>
               <input type="hidden" name="id" value={lead.id} />
               <button className="btn btn-light btn-sm" type="submit">
-                {lead.is_spam ? 'Nije spam' : 'Označi kao spam'}
+                {lead.is_spam ? t('Not spam', 'Nije spam') : t('Mark as spam', 'Označi kao spam')}
               </button>
             </form>
             <form action={deleteLead}>
               <input type="hidden" name="id" value={lead.id} />
-              <ConfirmSubmit className="btn btn-danger btn-sm" message="Trajno obrisati ovaj lid?">
-                Obriši lid
+              <ConfirmSubmit className="btn btn-danger btn-sm" message={t('Delete this lead for good?', 'Trajno obrisati ovaj lid?')}>
+                {t('Delete lead', 'Obriši lid')}
               </ConfirmSubmit>
             </form>
           </div>

@@ -27,14 +27,19 @@ import {
   todayBelgrade,
   type Period,
 } from '@/lib/admin/finance/labels';
+import { getAdminI18n } from '@/lib/admin/i18n';
 import type { Expense, Income, Invoice, InvoiceItem } from '@/lib/admin/finance/types';
 
 export const dynamic = 'force-dynamic';
-export const metadata: Metadata = { title: 'Finansije' };
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getAdminI18n();
+  return { title: t('Finance', 'Finansije') };
+}
 
 const pctOf = (part: number, whole: number) => (whole ? Math.round((part / whole) * 100) : 0);
 
 export default async function FinancePage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const { lang, t } = await getAdminI18n();
   const query = toParams(await searchParams);
   const period = (Object.keys(PERIODS) as Period[]).find((p) => p === query.get('period')) ?? '12m';
   const today = todayBelgrade();
@@ -46,7 +51,7 @@ export default async function FinancePage({ searchParams }: { searchParams: Prom
 
   const [settings, options, incomeRes, expenseRes, openRes] = await Promise.all([
     appSettings(),
-    financeOptions(),
+    financeOptions(lang),
     db().from('fin_income').select('*').gte('date', from).lte('date', to).order('date', { ascending: false }).limit(20_000),
     db().from('fin_expenses').select('*').gte('date', from).lte('date', to).order('date', { ascending: false }).limit(20_000),
     db().from('fin_invoices').select('*, fin_invoice_items(*)').eq('status', 'issued').order('due_date'),
@@ -56,7 +61,7 @@ export default async function FinancePage({ searchParams }: { searchParams: Prom
   if (incomeRes.error || expenseRes.error)
     return (
       <>
-        <PageHeading title="Finansije" crumbs={[{ label: 'Finansije' }]} />
+        <PageHeading title={t('Finance', 'Finansije')} crumbs={[{ label: t('Finance', 'Finansije') }]} />
         <FinanceTabs active="/admin/finance" />
         <FinanceSetup />
       </>
@@ -96,47 +101,54 @@ export default async function FinancePage({ searchParams }: { searchParams: Prom
     for (const r of rows) m.set(key(r), (m.get(key(r)) ?? 0) + amount(r));
     return [...m.entries()].map(([label, count]) => ({ label, count: Math.round(count) })).sort((a, b) => b.count - a.count);
   };
-  const expenseSlices = group(expenses, (e) => EXPENSE_CATEGORIES[e.category]?.label ?? 'Ostalo', (e) => Number(e.amount)).slice(0, 7);
-  const byCustomer = group(income, (i) => (i.customer_id && options.customerById.get(i.customer_id)) || 'Bez klijenta', (i) => Number(i.amount)).slice(0, 8);
-  const byCategory = group(income, (i) => INCOME_CATEGORIES[i.category] ?? 'Ostalo', (i) => Number(i.amount));
+  const expenseSlices = group(expenses, (e) => EXPENSE_CATEGORIES[e.category]?.label[lang] ?? t('Other', 'Ostalo'), (e) => Number(e.amount)).slice(0, 7);
+  const byCustomer = group(income, (i) => (i.customer_id && options.customerById.get(i.customer_id)) || t('No client', 'Bez klijenta'), (i) => Number(i.amount)).slice(0, 8);
+  const byCategory = group(income, (i) => INCOME_CATEGORIES[i.category]?.[lang] ?? t('Other', 'Ostalo'), (i) => Number(i.amount));
 
   const recent = [
-    ...income.map((i) => ({ kind: 'in' as const, id: i.id, date: i.date, amount: Number(i.amount), title: i.description || INCOME_CATEGORIES[i.category], sub: i.customer_id ? options.customerById.get(i.customer_id) : null })),
-    ...expenses.map((e) => ({ kind: 'out' as const, id: e.id, date: e.date, amount: Number(e.amount), title: e.vendor || e.description || EXPENSE_CATEGORIES[e.category]?.label, sub: EXPENSE_CATEGORIES[e.category]?.label })),
+    ...income.map((i) => ({ kind: 'in' as const, id: i.id, date: i.date, amount: Number(i.amount), title: i.description || INCOME_CATEGORIES[i.category]?.[lang], sub: i.customer_id ? options.customerById.get(i.customer_id) : null })),
+    ...expenses.map((e) => ({ kind: 'out' as const, id: e.id, date: e.date, amount: Number(e.amount), title: e.vendor || e.description || EXPENSE_CATEGORIES[e.category]?.label[lang], sub: EXPENSE_CATEGORIES[e.category]?.label[lang] })),
   ]
     .sort((a, b) => (a.date < b.date ? 1 : -1))
     .slice(0, 8);
 
-  const label = PERIODS[period].toLowerCase();
+  const label = PERIODS[period][lang].toLowerCase();
   return (
     <>
-      <PageHeading title="Finansije" crumbs={[{ label: 'Finansije' }]} description={`Prihodi, rashodi i EBITDA za ${label}, u ${currency}. Prihod se knjiži kad je novac stigao.`}>
+      <PageHeading
+        title={t('Finance', 'Finansije')}
+        crumbs={[{ label: t('Finance', 'Finansije') }]}
+        description={t(
+          `Income, expenses and EBITDA for ${label}, in ${currency}. Income is recorded when the money arrives.`,
+          `Prihodi, rashodi i EBITDA za ${label}, u ${currency}. Prihod se knjiži kad je novac stigao.`,
+        )}
+      >
         <Modal
           label={
             <>
-              <Plus className="size-4" /> Rashod
+              <Plus className="size-4" /> {t('Expense', 'Rashod')}
             </>
           }
           buttonClassName="btn btn-outline"
-          title="Novi rashod"
-          description="Trošak ulazi u rashode i, ako je operativni, smanjuje EBITDA."
+          title={t('New expense', 'Novi rashod')}
+          description={t('The cost is added to expenses and, if it is operating, lowers EBITDA.', 'Trošak ulazi u rashode i, ako je operativni, smanjuje EBITDA.')}
         >
           <ExpenseForm projects={options.projects} currency={currency} today={today} returnTo="/admin/finance" />
         </Modal>
         <Modal
           label={
             <>
-              <Plus className="size-4" /> Prihod
+              <Plus className="size-4" /> {t('Income', 'Prihod')}
             </>
           }
           buttonClassName="btn btn-outline"
-          title="Novi prihod"
-          description="Uplata koja nije stigla preko računa. Plaćeni računi se knjiže sami."
+          title={t('New income', 'Novi prihod')}
+          description={t('A payment that did not come through an invoice. Paid invoices are recorded on their own.', 'Uplata koja nije stigla preko računa. Plaćeni računi se knjiže sami.')}
         >
           <IncomeForm customers={options.customers} projects={options.projects} currency={currency} today={today} returnTo="/admin/finance" />
         </Modal>
         <Link href="/admin/finance/invoices/new" className="btn btn-primary">
-          <FilePlus2 className="size-4" /> Novi račun
+          <FilePlus2 className="size-4" /> {t('New invoice', 'Novi račun')}
         </Link>
       </PageHeading>
 
@@ -150,30 +162,36 @@ export default async function FinancePage({ searchParams }: { searchParams: Prom
             aria-current={p === period ? 'page' : undefined}
             className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${p === period ? 'bg-ink text-white' : 'bg-zinc-100 text-zinc-600 hover:text-ink'}`}
           >
-            {PERIODS[p]}
+            {PERIODS[p][lang]}
           </Link>
         ))}
       </nav>
 
       <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 2xl:grid-cols-5">
-        <StatCard label="Prihodi" value={cash(revenue, currency)} icon={Banknote} color="success" note={`${income.length} uplata`} trend={chartIncome} />
-        <StatCard label="Rashodi" value={cash(spent, currency)} icon={Receipt} color="danger" note={`${expenses.length} troškova`} trend={chartExpenses} />
+        <StatCard label={t('Income', 'Prihodi')} value={cash(revenue, currency)} icon={Banknote} color="success" note={t(`${income.length} payments`, `${income.length} uplata`)} trend={chartIncome} />
+        <StatCard label={t('Expenses', 'Rashodi')} value={cash(spent, currency)} icon={Receipt} color="danger" note={t(`${expenses.length} costs`, `${expenses.length} troškova`)} trend={chartExpenses} />
         <StatCard
           label="EBITDA"
           value={cash(ebitda, currency)}
           icon={Landmark}
           color="primary"
           tone={ebitda < 0 ? 'down' : 'up'}
-          note={revenue ? `${pctOf(ebitda, revenue)}% marža` : 'nema prihoda'}
+          note={revenue ? t(`${pctOf(ebitda, revenue)}% margin`, `${pctOf(ebitda, revenue)}% marža`) : t('no income', 'nema prihoda')}
           trend={chartEbitda}
         />
-        <StatCard label="Neto dobit" value={cash(net, currency)} icon={Wallet} color="secondary" note={revenue ? `${pctOf(net, revenue)}% posle poreza i kamata` : 'posle poreza i kamata'} />
         <StatCard
-          label="Nenaplaćeno"
+          label={t('Net profit', 'Neto dobit')}
+          value={cash(net, currency)}
+          icon={Wallet}
+          color="secondary"
+          note={revenue ? t(`${pctOf(net, revenue)}% after tax and interest`, `${pctOf(net, revenue)}% posle poreza i kamata`) : t('after tax and interest', 'posle poreza i kamata')}
+        />
+        <StatCard
+          label={t('Unpaid', 'Nenaplaćeno')}
           value={cash(outstanding, currency)}
           icon={Hourglass}
           color="warning"
-          note={overdue.length ? `${overdue.length} kasni sa uplatom` : `${open.length} otvorenih računa`}
+          note={overdue.length ? t(`${overdue.length} overdue`, `${overdue.length} kasni sa uplatom`) : t(`${open.length} open invoices`, `${open.length} otvorenih računa`)}
           className="max-2xl:col-span-2 max-lg:col-span-2 lg:max-2xl:col-span-1"
         />
       </div>
@@ -181,32 +199,32 @@ export default async function FinancePage({ searchParams }: { searchParams: Prom
       <div className="card">
         <div className="card-header border-b-0 pb-0">
           <div>
-            <h2 className="card-title">Prihodi, rashodi i EBITDA</h2>
-            <p className="card-sub">Po mesecima, {shortMonth(months[0])} – {shortMonth(months[months.length - 1])}</p>
+            <h2 className="card-title">{t('Income, expenses and EBITDA', 'Prihodi, rashodi i EBITDA')}</h2>
+            <p className="card-sub">{t('By month', 'Po mesecima')}, {shortMonth(months[0], lang)} – {shortMonth(months[months.length - 1], lang)}</p>
           </div>
         </div>
         <div className="card-body">
           <div className="h-64 sm:h-80">
-            <FinanceChart labels={months.map(shortMonth)} income={chartIncome} expenses={chartExpenses} ebitda={chartEbitda} currency={currency} />
+            <FinanceChart labels={months.map((m) => shortMonth(m, lang))} income={chartIncome} expenses={chartExpenses} ebitda={chartEbitda} currency={currency} />
           </div>
         </div>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
-        <DonutChart title="Rashodi po kategoriji" sub={PERIODS[period]} items={expenseSlices} currency={currency} empty="Nema rashoda u ovom periodu." />
-        <BarList title="Prihodi po klijentu" sub={PERIODS[period]} items={byCustomer} currency={currency} empty="Nema prihoda u ovom periodu." />
+        <DonutChart title={t('Expenses by category', 'Rashodi po kategoriji')} sub={PERIODS[period][lang]} items={expenseSlices} currency={currency} empty={t('No expenses in this period.', 'Nema rashoda u ovom periodu.')} />
+        <BarList title={t('Income by client', 'Prihodi po klijentu')} sub={PERIODS[period][lang]} items={byCustomer} currency={currency} empty={t('No income in this period.', 'Nema prihoda u ovom periodu.')} />
         <div className="card lg:col-span-2 xl:col-span-1">
           <div className="card-header">
             <div>
-              <h2 className="card-title">Otvoreni računi</h2>
-              <p className="card-sub">Izdati, a još nisu plaćeni</p>
+              <h2 className="card-title">{t('Open invoices', 'Otvoreni računi')}</h2>
+              <p className="card-sub">{t('Issued but not paid yet', 'Izdati, a još nisu plaćeni')}</p>
             </div>
             <Link href="/admin/finance/invoices?status=issued" className="text-xs font-medium text-primary hover:underline">
-              Svi
+              {t('All', 'Svi')}
             </Link>
           </div>
           <ul className="divide-y divide-line">
-            {open.length === 0 && <li className="px-5 py-6 text-center text-sm text-muted">Sve je naplaćeno.</li>}
+            {open.length === 0 && <li className="px-5 py-6 text-center text-sm text-muted">{t('Everything is paid.', 'Sve je naplaćeno.')}</li>}
             {open.slice(0, 6).map((i) => {
               const late = i.due_date && i.due_date < today;
               return (
@@ -215,9 +233,9 @@ export default async function FinancePage({ searchParams }: { searchParams: Prom
                     {late ? <AlertTriangle className="size-4 shrink-0 text-rose-500" /> : <Hourglass className="size-4 shrink-0 text-amber-500" />}
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-[13.5px] font-medium text-ink">
-                        {invoiceNumber(settings.invoices.prefix, i.number)} · {i.bill_to?.company || i.bill_to?.name || 'Bez klijenta'}
+                        {invoiceNumber(settings.invoices.prefix, i.number)} · {i.bill_to?.company || i.bill_to?.name || t('No client', 'Bez klijenta')}
                       </span>
-                      <span className={`text-xs ${late ? 'text-rose-600' : 'text-muted'}`}>{i.due_date ? `${late ? 'Kasni od' : 'Rok'} ${formatDate(i.due_date)}` : 'Bez roka'}</span>
+                      <span className={`text-xs ${late ? 'text-rose-600' : 'text-muted'}`}>{i.due_date ? `${late ? t('Overdue since', 'Kasni od') : t('Due', 'Rok')} ${formatDate(i.due_date, lang)}` : t('No due date', 'Bez roka')}</span>
                     </span>
                     <span className="font-semibold text-ink tabular-nums">{cash(i.total, currency)}</span>
                   </Link>
@@ -232,12 +250,12 @@ export default async function FinancePage({ searchParams }: { searchParams: Prom
         <div className="card xl:col-span-2">
           <div className="card-header">
             <div>
-              <h2 className="card-title">Poslednje promene</h2>
-              <p className="card-sub">Uplate i troškovi u periodu</p>
+              <h2 className="card-title">{t('Latest entries', 'Poslednje promene')}</h2>
+              <p className="card-sub">{t('Payments and costs in the period', 'Uplate i troškovi u periodu')}</p>
             </div>
           </div>
           <ul className="divide-y divide-line">
-            {recent.length === 0 && <li className="px-5 py-6 text-center text-sm text-muted">Još nema unosa. Dodaj prvi prihod ili rashod gore desno.</li>}
+            {recent.length === 0 && <li className="px-5 py-6 text-center text-sm text-muted">{t('No entries yet. Add the first income or expense at the top right.', 'Još nema unosa. Dodaj prvi prihod ili rashod gore desno.')}</li>}
             {recent.map((r) => (
               <li key={`${r.kind}-${r.id}`} className="flex items-center gap-3 px-5 py-3">
                 <span className={`grid size-9 shrink-0 place-items-center rounded-full ${r.kind === 'in' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
@@ -246,7 +264,7 @@ export default async function FinancePage({ searchParams }: { searchParams: Prom
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-[13.5px] font-medium text-ink">{r.title}</span>
                   <span className="text-xs text-muted">
-                    {formatDate(r.date)}
+                    {formatDate(r.date, lang)}
                     {r.sub ? ` · ${r.sub}` : ''}
                   </span>
                 </span>
@@ -258,7 +276,7 @@ export default async function FinancePage({ searchParams }: { searchParams: Prom
             ))}
           </ul>
         </div>
-        <BarList title="Prihodi po usluzi" sub={PERIODS[period]} items={byCategory} currency={currency} empty="Nema prihoda u ovom periodu." />
+        <BarList title={t('Income by service', 'Prihodi po usluzi')} sub={PERIODS[period][lang]} items={byCategory} currency={currency} empty={t('No income in this period.', 'Nema prihoda u ovom periodu.')} />
       </div>
     </>
   );

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { useLocalePath, useT } from '@/components/i18n/LangProvider';
 
 /** The IDs from Podešavanja → Praćenje. Empty strings are tools that are not used. */
 export interface TrackingConfig {
@@ -282,42 +283,52 @@ const btn =
   'inline-flex min-h-11 flex-1 cursor-pointer items-center justify-center rounded-full px-5 text-sm font-semibold transition sm:flex-none';
 
 function Banner({ onAccept, onReject, onCustomize, gpc }: { onAccept: () => void; onReject: () => void; onCustomize: () => void; gpc: boolean }) {
+  const t = useT();
+  const lp = useLocalePath();
   return (
     <div
       role="region"
+      // The newsletter popup looks for this label to stay out of the banner's way, so it is not translated.
       aria-label="Cookie consent"
       className="fixed inset-x-3 bottom-[calc(5.75rem+env(safe-area-inset-bottom))] z-50 mx-auto max-w-2xl rounded-[22px] bg-ink-975 p-4 text-white shadow-float ring-1 ring-white/10 sm:p-6 md:bottom-6"
     >
-      <p className="font-display text-base font-bold max-md:text-[15px]">Your privacy, your choice</p>
+      <p className="font-display text-base font-bold max-md:text-[15px]">{t('Your privacy, your choice', 'Vaša privatnost, vaš izbor')}</p>
       <p className="mt-1.5 text-sm leading-relaxed text-white/75 md:hidden">
-        Analytics and ad cookies run only if you allow them. We never sell your data.{' '}
-        <Link href="/privacy#cookies" className="font-medium text-accent">
-          Details
+        {t('Analytics and ad cookies run only if you allow them. We never sell your data.', 'Kolačići za analitiku i oglase rade samo ako ih dozvolite. Vaše podatke nikad ne prodajemo.')}{' '}
+        <Link href={lp('/privacy#cookies')} className="font-medium text-accent">
+          {t('Details', 'Detalji')}
         </Link>
       </p>
       <p className="mt-2 text-sm leading-relaxed text-white/75 max-md:hidden">
-        We use necessary storage to run this site. With your permission we also use analytics and advertising cookies to see which pages and ads
-        bring enquiries. We never sell your data. You can change your choice at any time under Cookie settings.{' '}
-        <Link href="/privacy#cookies" className="font-medium text-accent underline-offset-2 hover:underline">
-          Cookie details
+        {t(
+          'We use necessary storage to run this site. With your permission we also use analytics and advertising cookies to see which pages and ads bring enquiries. We never sell your data. You can change your choice at any time under Cookie settings.',
+          'Za rad sajta koristimo neophodno skladištenje. Uz vašu dozvolu koristimo i kolačiće za analitiku i oglašavanje, da vidimo koje stranice i oglasi donose upite. Vaše podatke nikad ne prodajemo. Izbor možete promeniti bilo kada u Podešavanjima kolačića.',
+        )}{' '}
+        <Link href={lp('/privacy#cookies')} className="font-medium text-accent underline-offset-2 hover:underline">
+          {t('Cookie details', 'Detalji o kolačićima')}
         </Link>
       </p>
       {gpc && (
-        <p className="mt-2 text-xs leading-relaxed text-white/60">Your browser sends a Global Privacy Control signal, so advertising cookies stay off.</p>
+        <p className="mt-2 text-xs leading-relaxed text-white/60">
+          {t(
+            'Your browser sends a Global Privacy Control signal, so advertising cookies stay off.',
+            'Vaš pregledač šalje Global Privacy Control signal, pa kolačići za oglašavanje ostaju isključeni.',
+          )}
+        </p>
       )}
       <div className="mt-3.5 flex flex-wrap items-center gap-2 sm:mt-4">
         <button type="button" onClick={onAccept} className={`${btn} bg-accent text-ink-975 hover:bg-white`}>
-          Accept all
+          {t('Accept all', 'Prihvati sve')}
         </button>
         <button type="button" onClick={onReject} className={`${btn} bg-white/10 text-white ring-1 ring-white/20 hover:bg-white/20`}>
-          Reject all
+          {t('Reject all', 'Odbij sve')}
         </button>
         <button
           type="button"
           onClick={onCustomize}
           className="min-h-9 w-full cursor-pointer px-3 text-sm font-medium text-white/75 underline-offset-2 transition hover:text-white hover:underline sm:ms-auto sm:w-auto"
         >
-          Customize
+          {t('Customize', 'Prilagodi')}
         </button>
       </div>
     </div>
@@ -361,6 +372,8 @@ function Preferences({
 }) {
   const [value, setValue] = useState(initial);
   const panel = useRef<HTMLDivElement>(null);
+  const t = useT();
+  const lp = useLocalePath();
 
   useEffect(() => {
     panel.current?.focus();
@@ -381,20 +394,29 @@ function Preferences({
   const rows = [
     {
       key: 'necessary' as const,
-      title: 'Necessary',
-      text: 'Keeps the site working and secure, remembers this cookie choice, and links a form you send to the page and campaign you came from. Set by us, never used for ads.',
-      tools: 'WebTano (first party), Cloudflare',
+      title: t('Necessary', 'Neophodni'),
+      text: t(
+        'Keeps the site working and secure, remembers this cookie choice, and links a form you send to the page and campaign you came from. Set by us, never used for ads.',
+        'Održava sajt ispravnim i bezbednim, pamti ovaj izbor kolačića i povezuje poslatu formu sa stranicom i kampanjom sa koje ste došli. Postavljamo ih mi, nikad se ne koriste za oglase.',
+      ),
+      tools: t('WebTano (first party), Cloudflare', 'WebTano (prva strana), Cloudflare'),
     },
     hasAnalytics && {
       key: 'analytics' as const,
-      title: 'Analytics',
-      text: 'Counts visits and shows which pages are used, so we can improve the site. Data is aggregated.',
+      title: t('Analytics', 'Analitika'),
+      text: t(
+        'Counts visits and shows which pages are used, so we can improve the site. Data is aggregated.',
+        'Broji posete i pokazuje koje se stranice koriste, da bismo poboljšali sajt. Podaci su zbirni.',
+      ),
       tools: analyticsTools,
     },
     hasMarketing && {
       key: 'marketing' as const,
-      title: 'Advertising',
-      text: 'Measures which ads bring enquiries and lets ad platforms show relevant ads. Data is shared with the platforms named here.',
+      title: t('Advertising', 'Oglašavanje'),
+      text: t(
+        'Measures which ads bring enquiries and lets ad platforms show relevant ads. Data is shared with the platforms named here.',
+        'Meri koji oglasi donose upite i omogućava platformama da prikazuju relevantne oglase. Podaci se dele sa ovde navedenim platformama.',
+      ),
       tools: marketingTools,
     },
   ].filter(Boolean) as { key: 'necessary' | 'analytics' | 'marketing'; title: string; text: string; tools: string }[];
@@ -412,23 +434,26 @@ function Preferences({
       >
         <div className="flex items-start justify-between gap-4">
           <h2 id="cookie-prefs-title" className="font-display text-xl font-bold">
-            Cookie settings
+            {t('Cookie settings', 'Podešavanja kolačića')}
           </h2>
           <button
             type="button"
             onClick={onClose}
-            aria-label={canClose ? 'Close' : 'Back'}
+            aria-label={canClose ? t('Close', 'Zatvori') : t('Back', 'Nazad')}
             className="-me-2 -mt-1 inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-zinc-500 transition hover:bg-zinc-100 hover:text-ink-950"
           >
             <span aria-hidden className="text-xl leading-none">×</span>
           </button>
         </div>
         <p className="mt-2 text-sm leading-relaxed text-zinc-600">
-          Choose what you allow. Nothing beyond necessary storage runs until you agree, and you can change this at any time from the footer. See the{' '}
-          <Link href="/privacy#cookies" className="font-medium text-ink-950 underline underline-offset-2" onClick={onClose}>
-            privacy notice
-          </Link>{' '}
-          for details.
+          {t(
+            'Choose what you allow. Nothing beyond necessary storage runs until you agree, and you can change this at any time from the footer. See the',
+            'Izaberite šta dozvoljavate. Ništa osim neophodnog skladištenja ne radi dok se ne složite, a izbor možete promeniti bilo kada iz podnožja. Detalje potražite u',
+          )}{' '}
+          <Link href={lp('/privacy#cookies')} className="font-medium text-ink-950 underline underline-offset-2" onClick={onClose}>
+            {t('privacy notice', 'obaveštenju o privatnosti')}
+          </Link>
+          {t(' for details.', '.')}
         </p>
         <ul className="mt-5 divide-y divide-zinc-200 rounded-2xl bg-zinc-50 ring-1 ring-zinc-200">
           {rows.map((r) => (
@@ -436,10 +461,10 @@ function Preferences({
               <div className="min-w-0 flex-1">
                 <p className="font-semibold">{r.title}</p>
                 <p className="mt-1 text-sm leading-relaxed text-zinc-600">{r.text}</p>
-                {r.tools && <p className="mt-1.5 text-xs text-zinc-500">Tools: {r.tools}</p>}
+                {r.tools && <p className="mt-1.5 text-xs text-zinc-500">{t('Tools:', 'Alati:')} {r.tools}</p>}
               </div>
               {r.key === 'necessary' ? (
-                <span className="shrink-0 pt-0.5 text-xs font-semibold text-zinc-500">Always on</span>
+                <span className="shrink-0 pt-0.5 text-xs font-semibold text-zinc-500">{t('Always on', 'Uvek uključeni')}</span>
               ) : (
                 <Toggle
                   label={r.title}
@@ -452,13 +477,13 @@ function Preferences({
         </ul>
         <div className="mt-5 grid gap-2 sm:grid-cols-3">
           <button type="button" onClick={() => onSave(NONE)} className={`${btn} bg-zinc-100 text-ink-950 hover:bg-zinc-200`}>
-            Reject all
+            {t('Reject all', 'Odbij sve')}
           </button>
           <button type="button" onClick={() => onSave(value)} className={`${btn} bg-zinc-100 text-ink-950 hover:bg-zinc-200`}>
-            Save choices
+            {t('Save choices', 'Sačuvaj izbor')}
           </button>
           <button type="button" onClick={() => onSave(ALL)} className={`${btn} bg-ink-950 text-white hover:bg-ink-800`}>
-            Accept all
+            {t('Accept all', 'Prihvati sve')}
           </button>
         </div>
       </div>
@@ -468,6 +493,7 @@ function Preferences({
 
 /** "Cookie settings" in the footer, shown only when the site asks for consent. */
 export function CookieSettingsLink({ className }: { className?: string }) {
+  const t = useT();
   const show = useSyncExternalStore(
     subscribe,
     () => askable,
@@ -476,7 +502,7 @@ export function CookieSettingsLink({ className }: { className?: string }) {
   if (!show) return null;
   return (
     <button type="button" onClick={openPrefs} className={`cursor-pointer ${className ?? ''}`}>
-      Cookie settings
+      {t('Cookie settings', 'Podešavanja kolačića')}
     </button>
   );
 }

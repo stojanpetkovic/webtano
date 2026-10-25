@@ -8,13 +8,15 @@ import { webtanoSiteId } from '@/lib/admin/crm/data';
 import { daysAgo } from '@/lib/admin/stats';
 import type { CustomerSite } from '@/lib/admin/crm/types';
 import type { Site } from '@/lib/admin/types';
+import { getAdminI18n } from '@/lib/admin/i18n';
 
 /** The customer's websites, with their last 30 days, and a picker to link another one. */
 export async function CustomerSites({ customerId, customerName }: { customerId: string; customerName: string }) {
-  const [{ data: links }, { data: sitesData }, webtano] = await Promise.all([
+  const [{ data: links }, { data: sitesData }, webtano, { t }] = await Promise.all([
     db().from('crm_customer_sites').select('*'),
     db().from('sites').select('*').order('name'),
     webtanoSiteId(),
+    getAdminI18n(),
   ]);
   const linked = (links ?? []) as CustomerSite[];
   const sites = (sitesData ?? []) as Site[];
@@ -39,23 +41,23 @@ export async function CustomerSites({ customerId, customerName }: { customerId: 
   return (
     <div className="card">
       <div className="card-header">
-        <h2 className="card-title">Sajtovi</h2>
+        <h2 className="card-title">{t('Websites', 'Sajtovi')}</h2>
         <Modal
           label={
             <>
-              <Plus className="size-3.5" /> Novi sajt
+              <Plus className="size-3.5" /> {t('New site', 'Novi sajt')}
             </>
           }
           buttonClassName="btn btn-sm btn-light"
-          title="Novi sajt"
-          description={`Sajt se odmah vezuje za klijenta ${customerName}.`}
+          title={t('New site', 'Novi sajt')}
+          description={t(`The site is linked to ${customerName} right away.`, `Sajt se odmah vezuje za klijenta ${customerName}.`)}
         >
           <NewSiteForm customerId={customerId} clientName={customerName} />
         </Modal>
       </div>
-      {mine.length > 0 && <p className="-mt-1 px-5 pb-1 text-right text-xs text-muted">Lidovi u 30 dana</p>}
+      {mine.length > 0 && <p className="-mt-1 px-5 pb-1 text-right text-xs text-muted">{t('Leads in 30 days', 'Lidovi u 30 dana')}</p>}
       <ul className="divide-y divide-line">
-        {mine.length === 0 && <li className="px-5 py-4 text-muted">Nijedan sajt nije povezan.</li>}
+        {mine.length === 0 && <li className="px-5 py-4 text-muted">{t('No site is linked.', 'Nijedan sajt nije povezan.')}</li>}
         {mine.map((s) => (
           <li key={s.id} className="flex items-center gap-3 px-5 py-3">
             <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-ink-900 to-ink-975 text-accent">
@@ -73,8 +75,8 @@ export async function CustomerSites({ customerId, customerName }: { customerId: 
             <Link
               href={`/admin/sites/${s.id}/report`}
               className="grid size-8 place-items-center rounded-lg text-zinc-400 transition hover:bg-zinc-100 hover:text-ink"
-              title="Izveštaj (PDF)"
-              aria-label="Izveštaj (PDF)"
+              title={t('Report (PDF)', 'Izveštaj (PDF)')}
+              aria-label={t('Report (PDF)', 'Izveštaj (PDF)')}
             >
               <FileText className="size-4" />
             </Link>
@@ -83,8 +85,8 @@ export async function CustomerSites({ customerId, customerName }: { customerId: 
               <button
                 type="submit"
                 className="grid size-8 cursor-pointer place-items-center rounded-lg text-zinc-400 transition hover:bg-rose-50 hover:text-rose-600"
-                title="Odvoji sajt od klijenta"
-                aria-label="Odvoji sajt od klijenta"
+                title={t('Unlink site from customer', 'Odvoji sajt od klijenta')}
+                aria-label={t('Unlink site from customer', 'Odvoji sajt od klijenta')}
               >
                 <Unlink className="size-4" />
               </button>
@@ -95,9 +97,9 @@ export async function CustomerSites({ customerId, customerName }: { customerId: 
       {free.length > 0 && (
         <form action={linkSite} className="flex gap-2 border-t border-line p-4">
           <input type="hidden" name="customer_id" value={customerId} />
-          <select name="site_id" className="form-input py-1.5 text-[13px]" aria-label="Sajt za povezivanje" required defaultValue="">
+          <select name="site_id" className="form-input py-1.5 text-[13px]" aria-label={t('Site to link', 'Sajt za povezivanje')} required defaultValue="">
             <option value="" disabled>
-              Poveži sajt…
+              {t('Link a site…', 'Poveži sajt…')}
             </option>
             {free.map((s) => (
               <option key={s.id} value={s.id}>
@@ -106,7 +108,7 @@ export async function CustomerSites({ customerId, customerName }: { customerId: 
             ))}
           </select>
           <button type="submit" className="btn btn-outline shrink-0">
-            <Link2 className="size-4" /> Poveži
+            <Link2 className="size-4" /> {t('Link', 'Poveži')}
           </button>
         </form>
       )}

@@ -3,6 +3,7 @@
 import { useActionState, type ReactNode } from 'react';
 import { SiteFields } from '@/components/admin/SiteFields';
 import type { Site } from '@/lib/admin/types';
+import { useT } from '@/components/i18n/LangProvider';
 import { createSite, deleteSite, saveSite, type SiteFormState } from './actions';
 
 function Errors({ errors }: { errors: string[] }) {
@@ -18,6 +19,7 @@ function Errors({ errors }: { errors: string[] }) {
 
 /** Adds a site for one customer, inside the pop-up on the customer's page. */
 export function NewSiteForm({ customerId, clientName }: { customerId: string; clientName: string }) {
+  const t = useT();
   const [state, action, pending] = useActionState(createSite, { errors: [] } as SiteFormState);
   return (
     // The pop-up stays open, so a refused domain shows its error; a saved site opens its settings.
@@ -28,7 +30,7 @@ export function NewSiteForm({ customerId, clientName }: { customerId: string; cl
       <SiteFields key={JSON.stringify(state.draft ?? {})} site={state.draft ?? { client_name: clientName }} idPrefix="site-" />
       <div className="flex justify-end border-t border-line pt-4">
         <button className="btn btn-primary" type="submit" disabled={pending}>
-          {pending ? 'Dodajem…' : 'Dodaj sajt'}
+          {pending ? t('Adding…', 'Dodajem…') : t('Add site', 'Dodaj sajt')}
         </button>
       </div>
     </form>
@@ -36,6 +38,7 @@ export function NewSiteForm({ customerId, clientName }: { customerId: string; cl
 }
 
 export function EditSiteForm({ site }: { site: Site }) {
+  const t = useT();
   const [state, action, pending] = useActionState(saveSite, { errors: [] } as SiteFormState);
   return (
     <form action={action} className="card lg:col-span-2">
@@ -46,7 +49,7 @@ export function EditSiteForm({ site }: { site: Site }) {
       </div>
       <div className="flex justify-end border-t border-zinc-200 px-5 py-3">
         <button className="btn btn-primary" type="submit" disabled={pending}>
-          Sačuvaj promene
+          {t('Save changes', 'Sačuvaj promene')}
         </button>
       </div>
     </form>
@@ -54,6 +57,7 @@ export function EditSiteForm({ site }: { site: Site }) {
 }
 
 export function DeleteSiteForm({ site, children }: { site: Site; children: ReactNode }) {
+  const t = useT();
   const [state, action] = useActionState(deleteSite, { errors: [] } as SiteFormState);
   return (
     <form action={action} className="space-y-3 p-5">
@@ -61,9 +65,9 @@ export function DeleteSiteForm({ site, children }: { site: Site; children: React
       {children}
       <Errors errors={state.errors} />
       <div className="flex gap-2">
-        <input className="form-input" name="confirm" placeholder={site.domain} autoComplete="off" aria-label="Domen za potvrdu brisanja" />
+        <input className="form-input" name="confirm" placeholder={site.domain} autoComplete="off" aria-label={t('Domain to confirm deletion', 'Domen za potvrdu brisanja')} />
         <button className="btn btn-danger btn-sm" type="submit">
-          Obriši sajt
+          {t('Delete site', 'Obriši sajt')}
         </button>
       </div>
     </form>

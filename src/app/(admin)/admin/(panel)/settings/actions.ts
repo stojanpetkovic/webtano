@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { db } from '@/lib/admin/supabase';
 import { SETTINGS, readSection, type Section } from '@/lib/admin/settings';
 
-/** Saves one section of Podešavanja. */
+/** Saves one section of Settings. */
 export async function saveSettings(form: FormData) {
   const section = String(form.get('section') ?? '');
   if (!(section in SETTINGS)) redirect('/admin/settings');

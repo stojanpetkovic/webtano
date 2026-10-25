@@ -3,6 +3,7 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { X } from 'lucide-react';
+import { useT } from '@/components/i18n/LangProvider';
 
 // Short forms sit on white; the proposal editor keeps its cards on the page grey.
 const WIDTH = {
@@ -36,6 +37,7 @@ export function Modal({
   closeHref?: string;
   children: ReactNode;
 }) {
+  const t = useT();
   const dialog = useRef<HTMLDialogElement>(null);
   const router = useRouter();
   // After a send the server action decides where to go, so closeHref is skipped.
@@ -77,7 +79,7 @@ export function Modal({
             type="button"
             onClick={() => dialog.current?.close()}
             className="-me-1.5 grid size-8 shrink-0 cursor-pointer place-items-center rounded-lg text-zinc-400 transition hover:bg-zinc-100 hover:text-ink"
-            aria-label="Zatvori"
+            aria-label={t('Close', 'Zatvori')}
           >
             <X className="size-4" />
           </button>

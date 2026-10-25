@@ -19,10 +19,14 @@ import { customerName } from '@/lib/admin/crm/labels';
 import { PROJECT_STATUS, money } from '@/lib/admin/crm/labels';
 import { formatDate } from '@/lib/admin/format';
 import { toParams } from '@/lib/admin/params';
+import { getAdminI18n } from '@/lib/admin/i18n';
 import type { Activity, CustomerOption, Project, Task } from '@/lib/admin/crm/types';
 
 export const dynamic = 'force-dynamic';
-export const metadata: Metadata = { title: 'Projekat' };
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getAdminI18n();
+  return { title: t('Project', 'Projekat') };
+}
 
 export default async function ProjectPage({
   params,
@@ -32,6 +36,7 @@ export default async function ProjectPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { id } = await params;
+  const { lang, t: tr } = await getAdminI18n();
   const notice = toParams(await searchParams).get('notice');
   if (!/^[0-9a-f-]{36}$/.test(id)) redirect('/admin/crm/projects');
   const { data: project } = await db().from('crm_projects').select('*').eq('id', id).maybeSingle<Project>();
@@ -65,11 +70,11 @@ export default async function ProjectPage({
     <>
       <PageHeading
         title={project.name}
-        crumbs={[{ label: 'WebTano CRM' }, { label: 'Projekti', href: '/admin/crm/projects' }]}
+        crumbs={[{ label: 'WebTano CRM' }, { label: tr('Projects', 'Projekti'), href: '/admin/crm/projects' }]}
         description={
           <>
-            {customer ? <Link href={`/admin/crm/customers/${customer.id}`} className="text-primary hover:underline">{customerName(customer)}</Link> : 'Bez klijenta'}
-            {project.deadline && ` · rok ${formatDate(project.deadline)}`}
+            {customer ? <Link href={`/admin/crm/customers/${customer.id}`} className="text-primary hover:underline">{customerName(customer, lang)}</Link> : tr('No client', 'Bez klijenta')}
+            {project.deadline && ` · ${tr('due', 'rok')} ${formatDate(project.deadline, lang)}`}
             {project.budget != null && ` · ${money(Number(project.budget))}`}
           </>
         }
@@ -78,12 +83,12 @@ export default async function ProjectPage({
           <Modal
             label={
               <>
-                <CheckCircle2 className="size-4" /> Projekat završen
+                <CheckCircle2 className="size-4" /> {tr('Project done', 'Projekat završen')}
               </>
             }
             buttonClassName="btn btn-primary"
-            title="Projekat je završen"
-            description="Projekat se zatvara, a zarada se upisuje u Finansije."
+            title={tr('The project is done', 'Projekat je završen')}
+            description={tr('The project is closed and the earnings are recorded in Finance.', 'Projekat se zatvara, a zarada se upisuje u Finansije.')}
           >
             <CompleteProjectForm
               projectId={project.id}
@@ -97,17 +102,17 @@ export default async function ProjectPage({
           </Modal>
         )}
         <ServicePills services={project.services} />
-        <span className={`badge ${PROJECT_STATUS[project.status].badge}`}>{PROJECT_STATUS[project.status].label}</span>
+        <span className={`badge ${PROJECT_STATUS[project.status].badge}`}>{PROJECT_STATUS[project.status].label[lang]}</span>
       </PageHeading>
 
-      {notice === 'created' && <div className="alert alert-success">Projekat je otvoren, sa po jednim zadatkom za svaku stavku ponude.</div>}
-      {notice === 'saved' && <div className="alert alert-success">Sačuvano.</div>}
-      {notice === 'completed' && <div className="alert alert-success">Projekat je završen, a iznos je upisan u prihode.</div>}
+      {notice === 'created' && <div className="alert alert-success">{tr('Project opened, with one task for each proposal item.', 'Projekat je otvoren, sa po jednim zadatkom za svaku stavku ponude.')}</div>}
+      {notice === 'saved' && <div className="alert alert-success">{tr('Saved.', 'Sačuvano.')}</div>}
+      {notice === 'completed' && <div className="alert alert-success">{tr('Project done, and the amount is recorded as income.', 'Projekat je završen, a iznos je upisan u prihode.')}</div>}
 
       <div className="card card-body">
         <div className="flex items-center justify-between text-[13px]">
-          <span className="font-medium text-ink">Napredak</span>
-          <span className="text-zinc-500 tabular-nums">{done} od {list.length} zadataka · {pct}%</span>
+          <span className="font-medium text-ink">{tr('Progress', 'Napredak')}</span>
+          <span className="text-zinc-500 tabular-nums">{tr(`${done} of ${list.length} tasks`, `${done} od ${list.length} zadataka`)} · {pct}%</span>
         </div>
         <div className="mt-2 h-2 overflow-hidden rounded-full bg-zinc-100">
           <div className="h-full rounded-full bg-gradient-to-r from-accent to-primary transition-all" style={{ width: `${pct}%` }} />
@@ -124,16 +129,16 @@ export default async function ProjectPage({
           {finance && (
             <div className="card">
               <div className="card-header">
-                <h2 className="card-title">Finansije projekta</h2>
+                <h2 className="card-title">{tr('Project finances', 'Finansije projekta')}</h2>
                 <Link href={`/admin/finance/invoices/new?project=${project.id}${project.customer_id ? `&customer=${project.customer_id}` : ''}`} className="btn btn-sm btn-light">
-                  <FilePlus2 className="size-3.5" /> Račun
+                  <FilePlus2 className="size-3.5" /> {tr('Invoice', 'Račun')}
                 </Link>
               </div>
               <div className="grid grid-cols-3 divide-x divide-line border-b border-line text-center">
                 {[
-                  ['Prihod', earned, 'text-emerald-600'],
-                  ['Troškovi', costs, 'text-ink'],
-                  ['Zarada', earned - costs, earned - costs < 0 ? 'text-rose-600' : 'text-ink'],
+                  [tr('Income', 'Prihod'), earned, 'text-emerald-600'],
+                  [tr('Costs', 'Troškovi'), costs, 'text-ink'],
+                  [tr('Profit', 'Zarada'), earned - costs, earned - costs < 0 ? 'text-rose-600' : 'text-ink'],
                 ].map(([label, value, color]) => (
                   <div key={label as string} className="px-2 py-3">
                     <div className="text-[11px] text-muted">{label}</div>
@@ -142,12 +147,12 @@ export default async function ProjectPage({
                 ))}
               </div>
               <ul className="divide-y divide-line">
-                {invoices.length === 0 && <li className="px-5 py-3 text-[13px] text-muted">Još nema računa za ovaj projekat.</li>}
+                {invoices.length === 0 && <li className="px-5 py-3 text-[13px] text-muted">{tr('No invoices for this project yet.', 'Još nema računa za ovaj projekat.')}</li>}
                 {invoices.map((i) => (
                   <li key={i.id}>
                     <Link href={`/admin/finance/invoices/${i.id}`} className="flex items-center justify-between gap-3 px-5 py-2.5 text-[13px] transition hover:bg-zinc-50">
                       <span className="font-mono font-medium text-ink">{invoiceNumber(settings.invoices.prefix, i.number)}</span>
-                      <span className={`badge ${INVOICE_STATUS[i.status].badge}`}>{INVOICE_STATUS[i.status].label}</span>
+                      <span className={`badge ${INVOICE_STATUS[i.status].badge}`}>{INVOICE_STATUS[i.status].label[lang]}</span>
                       <span className="ms-auto font-semibold tabular-nums">{cash(i.total, currency, true)}</span>
                     </Link>
                   </li>
@@ -157,8 +162,8 @@ export default async function ProjectPage({
           )}
           <details className="card group">
             <summary className="card-header cursor-pointer list-none border-b-0 group-open:border-b">
-              <h2 className="card-title">Izmeni projekat</h2>
-              <span className="text-xs text-muted group-open:hidden">Otvori</span>
+              <h2 className="card-title">{tr('Edit project', 'Izmeni projekat')}</h2>
+              <span className="text-xs text-muted group-open:hidden">{tr('Open', 'Otvori')}</span>
             </summary>
             <div className="card-body">
               <ProjectForm project={project} customers={(customers ?? []) as CustomerOption[]} />
@@ -166,8 +171,8 @@ export default async function ProjectPage({
           </details>
           <form action={deleteProject} className="text-right">
             <input type="hidden" name="id" value={project.id} />
-            <ConfirmSubmit className="btn btn-sm btn-danger" message="Obrisati projekat i sve njegove zadatke?">
-              <Trash2 className="size-4" /> Obriši projekat
+            <ConfirmSubmit className="btn btn-sm btn-danger" message={tr('Delete the project and all its tasks?', 'Obrisati projekat i sve njegove zadatke?')}>
+              <Trash2 className="size-4" /> {tr('Delete project', 'Obriši projekat')}
             </ConfirmSubmit>
           </form>
         </div>

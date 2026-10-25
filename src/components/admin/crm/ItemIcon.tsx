@@ -42,8 +42,8 @@ export function itemIcon(name: string): LucideIcon {
 
 /** How each billing type looks, so one-time and monthly items never get mixed up. */
 export const BILLING = {
-  once: { label: 'Jednokratno', tile: 'bg-blue-50 text-blue-600 ring-blue-100', pill: 'bg-blue-50 text-blue-700 ring-blue-200/70', bar: 'bg-blue-500' },
-  monthly: { label: 'Mesečno', tile: 'bg-emerald-50 text-emerald-600 ring-emerald-100', pill: 'bg-emerald-50 text-emerald-700 ring-emerald-200/70', bar: 'bg-emerald-500' },
+  once: { label: { en: 'One-time', sr: 'Jednokratno' }, tile: 'bg-blue-50 text-blue-600 ring-blue-100', pill: 'bg-blue-50 text-blue-700 ring-blue-200/70', bar: 'bg-blue-500' },
+  monthly: { label: { en: 'Monthly', sr: 'Mesečno' }, tile: 'bg-emerald-50 text-emerald-600 ring-emerald-100', pill: 'bg-emerald-50 text-emerald-700 ring-emerald-200/70', bar: 'bg-emerald-500' },
 } as const;
 
 export function ItemIcon({ name, recurring, className = 'size-10' }: { name: string; recurring: boolean; className?: string }) {

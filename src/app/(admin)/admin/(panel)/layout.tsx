@@ -2,16 +2,18 @@ import Link from 'next/link';
 import { Bell, ExternalLink, Menu, Search } from 'lucide-react';
 import { unseenLeadCount } from '@/lib/admin/seen';
 import { adminEmail } from '@/lib/admin/session';
+import { getAdminI18n } from '@/lib/admin/i18n';
 import { Logo } from '@/components/admin/Logo';
 import { NavLinks } from '@/components/admin/NavLinks';
 import { ProfileMenu } from '@/components/admin/ProfileMenu';
+import { LangSwitch } from '@/components/admin/LangSwitch';
 import { SearchShortcut } from '@/components/admin/SearchShortcut';
 
 export default async function PanelLayout({ children }: { children: React.ReactNode }) {
-  const email = await adminEmail();
+  const [email, { t }] = await Promise.all([adminEmail(), getAdminI18n()]);
   const initial = email.charAt(0).toUpperCase() || 'W';
 
-  // Leads that came in since the lead list was last opened, on the bell and beside "Lidovi".
+  // Leads that came in since the lead list was last opened, on the bell and beside "Leads".
   const [newLeads, crmNew] = await Promise.all([unseenLeadCount('sites'), unseenLeadCount('crm')]);
   const unseen = newLeads + crmNew;
 
@@ -35,11 +37,18 @@ export default async function PanelLayout({ children }: { children: React.ReactN
 
         {/* Hidden on short screens, so the menu keeps room for every item. */}
         <div className="relative m-4 hidden overflow-hidden rounded-2xl bg-white/[0.04] p-4 ring-1 ring-white/[0.08] [@media(min-height:960px)]:block">
-          <p className="text-[13px] font-semibold text-white">Kod za sajtove</p>
-          <p className="mt-1 text-xs leading-relaxed text-white/50">Jedna linija iz podešavanja sajta hvata forme i broji posete.</p>
+          <p className="text-[13px] font-semibold text-white">{t('Site code', 'Kod za sajtove')}</p>
+          <p className="mt-1 text-xs leading-relaxed text-white/50">
+            {t('One line from the site settings captures forms and counts visits.', 'Jedna linija iz podešavanja sajta hvata forme i broji posete.')}
+          </p>
           <Link href="/admin/sites" className="btn btn-sm btn-accent mt-3 w-full">
-            Otvori sajtove
+            {t('Open sites', 'Otvori sajtove')}
           </Link>
+        </div>
+
+        <div className="relative mt-auto flex items-center justify-between gap-3 border-t border-white/[0.08] px-6 py-4">
+          <span className="text-[13px] text-white/60">{t('Language', 'Jezik')}</span>
+          <LangSwitch tone="dark" />
         </div>
       </aside>
       <label
@@ -55,11 +64,11 @@ export default async function PanelLayout({ children }: { children: React.ReactN
               <label
                 htmlFor="nav-toggle"
                 className="btn btn-outline size-9 shrink-0 cursor-pointer p-0 lg:hidden"
-                aria-label="Otvori meni"
+                aria-label={t('Open menu', 'Otvori meni')}
               >
                 <Menu className="size-[18px]" />
               </label>
-              <Link href="/admin" className="flex items-center gap-2 lg:hidden" aria-label="Kontrolna tabla">
+              <Link href="/admin" className="flex items-center gap-2 lg:hidden" aria-label={t('Dashboard', 'Kontrolna tabla')}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/brand/webtano-mark.svg" alt="" width={28} height={28} className="size-7 rounded-lg" />
               </Link>
@@ -69,9 +78,9 @@ export default async function PanelLayout({ children }: { children: React.ReactN
                   id="admin-search"
                   type="search"
                   name="q"
-                  placeholder="Pretraži lidove…"
+                  placeholder={t('Search leads…', 'Pretraži lidove…')}
                   className="form-input ps-10 pe-14"
-                  aria-label="Pretraži lidove po imenu, emailu ili telefonu"
+                  aria-label={t('Search leads by name, email or phone', 'Pretraži lidove po imenu, emailu ili telefonu')}
                 />
                 <kbd className="pointer-events-none absolute end-2.5 rounded-md border border-line bg-zinc-50 px-1.5 py-0.5 font-mono text-[10.5px] text-zinc-500">
                   ⌘K
@@ -86,8 +95,8 @@ export default async function PanelLayout({ children }: { children: React.ReactN
               <Link
                 href={crmNew > 0 ? '/admin/crm/leads' : '/admin/leads'}
                 className="btn btn-outline relative size-9 p-0"
-                aria-label={`Novi lidovi od poslednjeg pregleda: ${unseen}`}
-                title={`Novi lidovi od poslednjeg pregleda: ${unseen}`}
+                aria-label={`${t('New leads since you last looked', 'Novi lidovi od poslednjeg pregleda')}: ${unseen}`}
+                title={`${t('New leads since you last looked', 'Novi lidovi od poslednjeg pregleda')}: ${unseen}`}
               >
                 <Bell className="size-[18px]" />
                 {unseen > 0 && (
@@ -105,7 +114,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
 
         <footer className="flex flex-wrap items-center justify-between gap-2 border-t border-line px-4 py-4 text-xs text-zinc-500 lg:px-8 print:hidden">
           <span>© {new Date().getFullYear()} WebTano</span>
-          <span>Lidovi i analitika za sve sajtove</span>
+          <span>{t('Leads and analytics for every site', 'Lidovi i analitika za sve sajtove')}</span>
         </footer>
       </div>
       <SearchShortcut />

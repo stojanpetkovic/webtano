@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { getI18n } from '@/lib/i18n-site';
 
 export interface LegalSection {
   id: string;
@@ -7,16 +8,19 @@ export interface LegalSection {
 }
 
 /** The shared page for the privacy notice and the terms: title, date, contents and numbered sections. */
-export function LegalPage({ title, updated, intro, sections }: { title: string; updated: string; intro: ReactNode; sections: LegalSection[] }) {
+export async function LegalPage({ title, updated, intro, sections }: { title: string; updated: string; intro: ReactNode; sections: LegalSection[] }) {
+  const { t } = await getI18n();
   return (
     <section className="bg-white py-16 sm:py-20">
       <div className="mx-auto max-w-3xl px-4 sm:px-6">
         <h1 className="font-display text-4xl font-bold tracking-tight text-ink-950">{title}</h1>
-        <p className="mt-3 text-sm text-zinc-500">Last updated {updated}</p>
+        <p className="mt-3 text-sm text-zinc-500">
+          {t('Last updated', 'Poslednja izmena')} {updated}
+        </p>
         <div className="mt-6 text-lg leading-relaxed text-zinc-700">{intro}</div>
 
-        <nav aria-label="Contents" className="mt-8 rounded-2xl bg-zinc-50 p-5 ring-1 ring-zinc-200 max-md:hidden">
-          <p className="font-mono text-[10px] tracking-[0.14em] text-zinc-500 uppercase">Contents</p>
+        <nav aria-label={t('Contents', 'Sadržaj')} className="mt-8 rounded-2xl bg-zinc-50 p-5 ring-1 ring-zinc-200 max-md:hidden">
+          <p className="font-mono text-[10px] tracking-[0.14em] text-zinc-500 uppercase">{t('Contents', 'Sadržaj')}</p>
           <ol className="mt-3 grid gap-x-6 gap-y-1.5 text-sm sm:grid-cols-2">
             {sections.map((s, i) => (
               <li key={s.id}>

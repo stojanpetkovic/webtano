@@ -3,9 +3,12 @@
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { LogOut, Settings } from 'lucide-react';
+import { useT } from '@/components/i18n/LangProvider';
+import { LangSwitch } from './LangSwitch';
 
 /** The avatar in the top right corner: who is signed in, settings and sign out. Closes on an outside click or Escape. */
 export function ProfileMenu({ email, initial }: { email: string; initial: string }) {
+  const t = useT();
   const ref = useRef<HTMLDetailsElement>(null);
   useEffect(() => {
     const close = (e: Event) => {
@@ -25,7 +28,7 @@ export function ProfileMenu({ email, initial }: { email: string; initial: string
     <details ref={ref} className="group relative">
       <summary
         className="grid size-9 cursor-pointer list-none place-items-center rounded-full bg-gradient-to-br from-accent to-primary text-sm font-semibold text-white ring-offset-2 ring-offset-body transition group-open:ring-2 group-open:ring-accent/40 [&::-webkit-details-marker]:hidden"
-        aria-label="Profil"
+        aria-label={t('Profile', 'Profil')}
         title={email}
       >
         {initial}
@@ -38,20 +41,24 @@ export function ProfileMenu({ email, initial }: { email: string; initial: string
             <div className="truncate text-xs text-muted">{email}</div>
           </div>
         </div>
+        <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-3">
+          <span className="text-[13px] text-zinc-600">{t('Language', 'Jezik')}</span>
+          <LangSwitch />
+        </div>
         <div className="p-1.5">
           <Link
             href="/admin/settings"
             onClick={() => ref.current && (ref.current.open = false)}
             className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13.5px] text-zinc-700 transition hover:bg-zinc-50 hover:text-ink"
           >
-            <Settings className="size-4 text-zinc-400" /> Podešavanja
+            <Settings className="size-4 text-zinc-400" /> {t('Settings', 'Podešavanja')}
           </Link>
           <form method="post" action="/admin/logout">
             <button
               type="submit"
               className="flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-[13.5px] text-zinc-700 transition hover:bg-rose-50 hover:text-rose-600"
             >
-              <LogOut className="size-4 text-zinc-400" /> Odjava
+              <LogOut className="size-4 text-zinc-400" /> {t('Sign out', 'Odjava')}
             </button>
           </form>
         </div>

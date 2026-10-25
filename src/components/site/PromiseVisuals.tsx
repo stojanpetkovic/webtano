@@ -1,10 +1,12 @@
 import { BellRing, Code2, FileText, Globe, Lock, MapPin, Megaphone, Phone, Server } from 'lucide-react';
+import { getI18n } from '@/lib/i18n-site';
 
 // Small illustrations for the three rules in "How we work". They play once
 // their card is revealed, like the service visuals.
 
 /** A service area map with one area reserved and the rest locked. */
-export function AreaVisual() {
+export async function AreaVisual() {
+  const { t } = await getI18n();
   const cells = Array.from({ length: 12 }, (_, i) => i);
   const yours = 5;
   return (
@@ -23,20 +25,21 @@ export function AreaVisual() {
         ))}
       </ul>
       <p className="mx-auto mt-3 flex max-w-[13rem] items-center justify-between gap-3 font-mono text-[10px] tracking-wide text-white/45 uppercase">
-        <span className="text-accent">Your area</span>
-        <span>Closed to others</span>
+        <span className="text-accent">{t('Your area', 'Vaša oblast')}</span>
+        <span>{t('Closed to others', 'Zatvoreno za druge')}</span>
       </p>
     </div>
   );
 }
 
 /** Everything the client owns, each row marked as theirs. */
-export function OwnershipVisual() {
+export async function OwnershipVisual() {
+  const { t } = await getI18n();
   const rows = [
-    { icon: Globe, label: 'Domain' },
-    { icon: Code2, label: 'Website code' },
+    { icon: Globe, label: t('Domain', 'Domen') },
+    { icon: Code2, label: t('Website code', 'Kod sajta') },
     { icon: Server, label: 'Hosting' },
-    { icon: Megaphone, label: 'Google Ads account' },
+    { icon: Megaphone, label: t('Google Ads account', 'Google Ads nalog') },
   ];
   return (
     <ul className="space-y-1.5">
@@ -49,7 +52,7 @@ export function OwnershipVisual() {
           <row.icon className="h-3.5 w-3.5 text-white/50" aria-hidden />
           <span className="flex-1 text-xs text-white/80">{row.label}</span>
           <span className="rounded-full bg-accent/15 px-2 py-0.5 font-mono text-[9px] tracking-wide text-accent uppercase ring-1 ring-accent/25">
-            Yours
+            {t('Yours', 'Vaše')}
           </span>
         </li>
       ))}
@@ -58,11 +61,12 @@ export function OwnershipVisual() {
 }
 
 /** Leads arriving as they happen, then one report a month. */
-export function NumbersVisual() {
+export async function NumbersVisual() {
+  const { t } = await getI18n();
   const rows = [
-    { icon: Phone, title: 'New call', meta: 'Google Ads · just now', hot: true },
-    { icon: BellRing, title: 'New form', meta: 'Tree removal page · 4 min', hot: false },
-    { icon: FileText, title: 'Monthly report', meta: 'Sent on the 1st', hot: false },
+    { icon: Phone, title: t('New call', 'Nov poziv'), meta: t('Google Ads · just now', 'Google Ads · upravo'), hot: true },
+    { icon: BellRing, title: t('New form', 'Nova forma'), meta: t('Tree removal page · 4 min', 'Stranica uklanjanja drveća · 4 min'), hot: false },
+    { icon: FileText, title: t('Monthly report', 'Mesečni izveštaj'), meta: t('Sent on the 1st', 'Stiže 1. u mesecu'), hot: false },
   ];
   return (
     <ul className="space-y-1.5">

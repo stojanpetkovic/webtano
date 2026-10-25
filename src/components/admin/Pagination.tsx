@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { getAdminI18n } from '@/lib/admin/i18n';
+import { HTML_LANG } from '@/lib/i18n';
 
 /** Page numbers to show: the first, the last and two around the current one, with gaps as null. */
 export function pageList(page: number, pages: number): (number | null)[] {
@@ -16,16 +18,16 @@ export function pageList(page: number, pages: number): (number | null)[] {
 }
 
 /**
- * The footer under a paged table: "Prikaz 1–25 od 186", the page size and the
+ * The footer under a paged table: "Showing 1–25 of 186", the page size and the
  * numbered pages. Plain links, so it works without JavaScript.
  */
-export function Pagination({
+export async function Pagination({
   page,
   pageSize,
   total,
   href,
   sizes = [25, 50, 100],
-  noun = 'stavki',
+  noun,
 }: {
   page: number;
   pageSize: number;
@@ -35,6 +37,7 @@ export function Pagination({
   sizes?: number[];
   noun?: string;
 }) {
+  const { lang, t } = await getAdminI18n();
   const pages = Math.max(1, Math.ceil(total / pageSize));
   const first = total === 0 ? 0 : (page - 1) * pageSize + 1;
   const last = Math.min(total, page * pageSize);
@@ -44,12 +47,12 @@ export function Pagination({
     <div className="flex flex-col gap-3 border-t border-line px-5 py-3.5 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] text-zinc-500">
         <span>
-          Prikaz <span className="font-medium text-ink tabular-nums">{first}–{last}</span> od{' '}
-          <span className="font-medium text-ink tabular-nums">{total.toLocaleString('sr-Latn-RS')}</span> {noun}
+          {t('Showing', 'Prikaz')} <span className="font-medium text-ink tabular-nums">{first}–{last}</span> {t('of', 'od')}{' '}
+          <span className="font-medium text-ink tabular-nums">{total.toLocaleString(HTML_LANG[lang])}</span> {noun ?? t('items', 'stavki')}
         </span>
         {sizes.length > 1 && (
           <span className="flex items-center gap-1.5">
-            Po strani:
+            {t('Per page:', 'Po strani:')}
             <span className="segmented p-0.5">
               {sizes.map((s) => (
                 <Link key={s} href={href(1, s)} aria-current={s === pageSize ? 'true' : undefined} className="!px-2 !py-1">
@@ -62,9 +65,9 @@ export function Pagination({
       </div>
 
       {pages > 1 && (
-        <nav className="flex items-center gap-1" aria-label="Strane">
+        <nav className="flex items-center gap-1" aria-label={t('Pages', 'Strane')}>
           {page > 1 ? (
-            <Link href={href(page - 1)} className={`${base} text-zinc-600 hover:bg-zinc-100`} aria-label="Prethodna strana">
+            <Link href={href(page - 1)} className={`${base} text-zinc-600 hover:bg-zinc-100`} aria-label={t('Previous page', 'Prethodna strana')}>
               <ChevronLeft className="size-4" />
             </Link>
           ) : (
@@ -88,7 +91,7 @@ export function Pagination({
             ),
           )}
           {page < pages ? (
-            <Link href={href(page + 1)} className={`${base} text-zinc-600 hover:bg-zinc-100`} aria-label="Sledeća strana">
+            <Link href={href(page + 1)} className={`${base} text-zinc-600 hover:bg-zinc-100`} aria-label={t('Next page', 'Sledeća strana')}>
               <ChevronRight className="size-4" />
             </Link>
           ) : (

@@ -5,6 +5,7 @@ import { refresh, revalidatePath } from 'next/cache';
 import { db } from '@/lib/admin/supabase';
 import { PROPOSAL_STATUS, SERVICES, STAGE_LABEL, dealServices } from '@/lib/admin/crm/labels';
 import { PRICED_PATHS } from '@/lib/pricing';
+import { getAdminI18n } from '@/lib/admin/i18n';
 import type { DealStage, TaskStatus } from '@/lib/admin/crm/types';
 
 const UUID = /^[0-9a-f-]{36}$/;
@@ -29,13 +30,19 @@ async function log(row: { deal_id?: string | null; customer_id?: string | null; 
   await db().from('crm_activity').insert({ kind: 'system', ...row });
 }
 
+/** Activity notes are written in the admin language of whoever made the change. */
+async function stageChange(from: DealStage, to: DealStage) {
+  const { lang, t } = await getAdminI18n();
+  return `${t('Stage', 'Faza')}: ${STAGE_LABEL[from][lang]} → ${STAGE_LABEL[to][lang]}`;
+}
+
 /* ── Deals ─────────────────────────────────────────────────────────────── */
 
 export async function moveDeal(dealId: string, stage: string, position: number) {
   if (!UUID.test(dealId) || !STAGES.includes(stage as DealStage) || !Number.isFinite(position)) return;
   const { data: before } = await db().from('crm_deals').select('stage').eq('id', dealId).single<{ stage: DealStage }>();
   await db().from('crm_deals').update({ stage, position, updated_at: new Date().toISOString() }).eq('id', dealId);
-  if (before && before.stage !== stage) await log({ deal_id: dealId, body: `Faza: ${STAGE_LABEL[before.stage]} → ${STAGE_LABEL[stage as DealStage]}` });
+  if (before && before.stage !== stage) await log({ deal_id: dealId, body: await stageChange(before.stage, stage as DealStage) });
   refresh();
 }
 
@@ -46,14 +53,15 @@ export async function setDealStage(form: FormData) {
   const { data: before } = await db().from('crm_deals').select('stage').eq('id', dealId).single<{ stage: DealStage }>();
   if (!before || before.stage === stage) return;
   await db().from('crm_deals').update({ stage, updated_at: new Date().toISOString() }).eq('id', dealId);
-  await log({ deal_id: dealId, body: `Faza: ${STAGE_LABEL[before.stage]} → ${STAGE_LABEL[stage]}` });
+  await log({ deal_id: dealId, body: await stageChange(before.stage, stage) });
   refresh();
 }
 
 export async function saveDeal(form: FormData) {
   const dealId = id(form);
+  const { t } = await getAdminI18n();
   const values = {
-    name: str(form, 'name', 200) ?? 'Bez imena',
+    name: str(form, 'name', 200) ?? t('No name', 'Bez imena'),
     company: str(form, 'company', 200),
     email: str(form, 'email', 200),
     phone: str(form, 'phone', 60),
@@ -77,7 +85,7 @@ export async function saveDeal(form: FormData) {
     .insert({ ...values, position: -Date.now() / 1000 })
     .select('id')
     .single<{ id: string }>();
-  if (data) await log({ deal_id: data.id, body: 'Lid dodat ručno.' });
+  if (data) await log({ deal_id: data.id, body: t('Lead added by hand.', 'Lid dodat ručno.') });
   redirect(data ? `/admin/crm/leads/${data.id}` : '/admin/crm/leads');
 }
 
@@ -122,7 +130,8 @@ export async function convertDeal(form: FormData) {
   }
   if (!customerId) redirect(`/admin/crm/leads/${dealId}`);
   await db().from('crm_deals').update({ customer_id: customerId, updated_at: new Date().toISOString() }).eq('id', dealId);
-  await log({ deal_id: dealId, customer_id: customerId, body: `Lid pretvoren u klijenta: ${deal.name}` });
+  const { t } = await getAdminI18n();
+  await log({ deal_id: dealId, customer_id: customerId, body: `${t('Lead turned into a client', 'Lid pretvoren u klijenta')}: ${deal.name}` });
   redirect(`/admin/crm/customers/${customerId}?notice=converted`);
 }
 
@@ -141,7 +150,7 @@ export async function addActivity(form: FormData) {
 export async function saveCustomer(form: FormData) {
   const customerId = id(form);
   const values = {
-    contact_name: str(form, 'contact_name', 200) ?? 'Bez imena',
+    contact_name: str(form, 'contact_name', 200) ?? (await getAdminI18n()).t('No name', 'Bez imena'),
     company: str(form, 'company', 200),
     email: str(form, 'email', 200),
     phone: str(form, 'phone', 60),
@@ -189,7 +198,8 @@ export async function saveProposal(form: FormData) {
     // Keep the items as they were if the editor sent something unreadable.
   }
   const values = {
-    title: str(form, 'title', 200) ?? 'Ponuda',
+    // Proposals go to clients, so the fallback title is English like the PDF.
+    title: str(form, 'title', 200) ?? 'Proposal',
     customer_id: id(form, 'customer_id'),
     deal_id: id(form, 'deal_id'),
     status: oneOf(form.get('status'), ['draft', 'sent', 'accepted', 'declined'] as const, 'draft'),
@@ -208,7 +218,8 @@ export async function saveProposal(form: FormData) {
   } else {
     const { data } = await db().from('crm_proposals').insert(values).select('id, number').single<{ id: string; number: number }>();
     target = data?.id ?? null;
-    if (data && values.deal_id) await log({ deal_id: values.deal_id, body: `Napravljena ponuda #${data.number}: ${values.title}` });
+    const { t } = await getAdminI18n();
+    if (data && values.deal_id) await log({ deal_id: values.deal_id, body: `${t('Proposal created', 'Napravljena ponuda')} #${data.number}: ${values.title}` });
   }
   if (!target) redirect('/admin/crm/proposals');
 
@@ -242,7 +253,8 @@ export async function setProposalStatus(form: FormData) {
   if (data?.deal_id) {
     if (status === 'sent') await db().from('crm_deals').update({ stage: 'proposal' }).eq('id', data.deal_id).in('stage', ['new', 'contacted', 'qualified']);
     if (status === 'accepted') await db().from('crm_deals').update({ stage: 'won' }).eq('id', data.deal_id);
-    await log({ deal_id: data.deal_id, body: `Ponuda #${data.number}: ${PROPOSAL_STATUS[status].label.toLowerCase()}` });
+    const { lang, t } = await getAdminI18n();
+    await log({ deal_id: data.deal_id, body: `${t('Proposal', 'Ponuda')} #${data.number}: ${PROPOSAL_STATUS[status].label[lang].toLowerCase()}` });
   }
   refresh();
 }
@@ -281,7 +293,8 @@ export async function projectFromProposal(form: FormData) {
     await db()
       .from('crm_tasks')
       .insert(items.map((i: { description: string }, n: number) => ({ project_id: project.id, title: i.description, position: n })));
-  await log({ project_id: project.id, customer_id: p.customer_id, body: `Projekat otvoren iz ponude #${p.number}.` });
+  const { t } = await getAdminI18n();
+  await log({ project_id: project.id, customer_id: p.customer_id, body: t(`Project opened from proposal #${p.number}.`, `Projekat otvoren iz ponude #${p.number}.`) });
   redirect(`/admin/crm/projects/${project.id}?notice=created`);
 }
 
@@ -290,7 +303,7 @@ export async function projectFromProposal(form: FormData) {
 export async function saveProject(form: FormData) {
   const projectId = id(form);
   const values = {
-    name: str(form, 'name', 200) ?? 'Projekat',
+    name: str(form, 'name', 200) ?? (await getAdminI18n()).t('Project', 'Projekat'),
     customer_id: id(form, 'customer_id'),
     status: oneOf(form.get('status'), ['not_started', 'in_progress', 'on_hold', 'done', 'cancelled'] as const, 'not_started'),
     start_date: date(form, 'start_date'),
@@ -317,7 +330,7 @@ export async function saveTask(form: FormData) {
   const taskId = id(form);
   const status = oneOf(form.get('status'), TASK_STATUSES, 'todo');
   const values = {
-    title: str(form, 'title', 300) ?? 'Zadatak',
+    title: str(form, 'title', 300) ?? (await getAdminI18n()).t('Task', 'Zadatak'),
     description: str(form, 'description', 5000),
     project_id: id(form, 'project_id'),
     status,
@@ -348,7 +361,7 @@ export async function deleteTask(form: FormData) {
 /* ── Price list ────────────────────────────────────────────────────────── */
 
 // The site shows prices from the price list, so it is rebuilt after each change.
-const refreshSitePrices = () => PRICED_PATHS.forEach((path) => revalidatePath(path));
+const refreshSitePrices = () => PRICED_PATHS.forEach((path) => revalidatePath(path, 'page'));
 
 async function lastItemPosition() {
   const { data } = await db().from('crm_items').select('position').order('position', { ascending: false }).limit(1).maybeSingle<{ position: number }>();
@@ -359,7 +372,7 @@ export async function saveItem(form: FormData) {
   const itemId = id(form);
   const values = {
     group_name: str(form, 'group_name', 80) ?? 'Ostalo',
-    name: str(form, 'name', 300) ?? 'Stavka',
+    name: str(form, 'name', 300) ?? 'Item',
     details: str(form, 'details', 2000),
     unit_price: Math.max(0, num(form, 'unit_price')),
     recurring: form.get('recurring') === 'on',

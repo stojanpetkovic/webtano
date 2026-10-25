@@ -1,6 +1,5 @@
 import { daysBetween, type ReportLocale, type SiteAnalytics } from './analytics';
 import { dayKey } from './stats';
-import type { Channel } from './channels';
 import type { Site } from './types';
 
 /*
@@ -235,23 +234,8 @@ export function spendMetrics(a: SiteAnalytics, spend: Spend, won: number): Spend
   };
 }
 
-const CHANNEL_EN: Record<Channel, string> = {
-  'Google pretraga': 'Google Search',
-  'Google oglasi': 'Google Ads',
-  'Facebook/Instagram oglasi': 'Facebook/Instagram Ads',
-  'Facebook/Instagram': 'Facebook/Instagram',
-  'Druge društvene mreže': 'Other social networks',
-  'Google Business profil': 'Google Business Profile',
-  'Bing pretraga': 'Bing Search',
-  'Drugi sajtovi': 'Other websites',
-  Email: 'Email',
-  'Kampanja (ostalo)': 'Other campaigns',
-  Direktno: 'Direct',
-};
-
-export function channelLabel(channel: string, locale: ReportLocale): string {
-  return locale === 'en' ? (CHANNEL_EN[channel as Channel] ?? channel) : channel;
-}
+import { channelLabel } from './channels';
+export { channelLabel };
 
 export const T = {
   sr: {

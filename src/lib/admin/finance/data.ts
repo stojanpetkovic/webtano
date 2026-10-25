@@ -6,6 +6,7 @@ import { button, buttons, escape, facts, shell } from '../mail';
 import type { Customer } from '../crm/types';
 import { addDays, invoiceNumber, invoiceTotals, todayBelgrade } from './labels';
 import { invoicePdf } from './pdf';
+import { getAdminI18n } from '../i18n';
 import type { BillTo, Invoice, InvoiceItem } from './types';
 
 export const UUID = /^[0-9a-f-]{36}$/;
@@ -88,7 +89,7 @@ export async function saveItems(invoiceId: string, items: NewInvoice['items']) {
 export async function markPaid(invoice: Invoice, items: InvoiceItem[], paidOn: string) {
   const { total } = invoiceTotals(items, invoice.discount_pct, invoice.tax_pct);
   await db().from('fin_invoices').update({ status: 'paid', paid_at: paidOn, updated_at: new Date().toISOString() }).eq('id', invoice.id);
-  const settings = await appSettings();
+  const [settings, { t }] = await Promise.all([appSettings(), getAdminI18n()]);
   const { error } = await db().from('fin_income').upsert(
     {
       invoice_id: invoice.id,
@@ -96,7 +97,7 @@ export async function markPaid(invoice: Invoice, items: InvoiceItem[], paidOn: s
       amount: total,
       currency: invoice.currency,
       category: invoice.category,
-      description: `Račun ${invoiceNumber(settings.invoices.prefix, invoice.number)}`,
+      description: `${t('Invoice', 'Račun')} ${invoiceNumber(settings.invoices.prefix, invoice.number)}`,
       customer_id: invoice.customer_id,
       project_id: invoice.project_id,
       source: 'invoice',
@@ -108,7 +109,7 @@ export async function markPaid(invoice: Invoice, items: InvoiceItem[], paidOn: s
 
 /** Emails the invoice PDF to the customer, with an optional note, and records when and to whom. */
 export async function sendInvoice(invoice: Invoice, items: InvoiceItem[], to: string, note: string | null, copyMe: boolean) {
-  if (!env.resendApiKey || !env.invoicesFromEmail) throw new Error('RESEND_API_KEY ili LEADS_FROM_EMAIL nije podešen na serveru.');
+  if (!env.resendApiKey || !env.invoicesFromEmail) throw new Error((await getAdminI18n()).t('RESEND_API_KEY or LEADS_FROM_EMAIL is not set on the server.', 'RESEND_API_KEY ili LEADS_FROM_EMAIL nije podešen na serveru.'));
   const settings = await appSettings();
   const number = invoiceNumber(settings.invoices.prefix, invoice.number);
   const { total } = invoiceTotals(items, invoice.discount_pct, invoice.tax_pct);

@@ -1,6 +1,10 @@
 // Plans shown on /pricing, in US dollars. The prices here are the fallback: the
 // live prices come from the admin price list (Cenovnik) through livePricing() in
-// src/lib/pricing.ts, matched by id. Names, features and notes stay here.
+// src/lib/pricing.ts, matched by id. Names, features and notes stay here, and
+// their Serbian text in pricing.sr.ts.
+
+import type { Lang } from '@/lib/i18n';
+import { addOnsSr, comparisonSr, includedSr, plansSr, pricingFaqsSr } from './pricing.sr';
 
 export interface Plan {
   id: string;
@@ -166,6 +170,13 @@ export const comparison: { label: string; values: [boolean | string, boolean | s
   { label: 'Monthly report and call', values: [true, true, true] },
   { label: 'Support reply time', values: ['1 business day', 'Priority, 1 business day', '1 business day'] },
 ];
+
+/** A plan's text in a language; the price stays the same. */
+export const planIn = (lang: Lang) => (p: Plan): Plan => (lang === 'sr' && plansSr[p.id] ? { ...p, ...plansSr[p.id] } : p);
+export const addOnIn = (lang: Lang) => (a: AddOn): AddOn => (lang === 'sr' && addOnsSr[a.id] ? { ...a, ...addOnsSr[a.id] } : a);
+export const includedIn = (lang: Lang) => (lang === 'sr' ? includedSr : included);
+export const comparisonIn = (lang: Lang) => (lang === 'sr' ? comparisonSr : comparison);
+export const pricingFaqsIn = (lang: Lang) => (lang === 'sr' ? pricingFaqsSr : pricingFaqs);
 
 export const pricingFaqs = [
   {

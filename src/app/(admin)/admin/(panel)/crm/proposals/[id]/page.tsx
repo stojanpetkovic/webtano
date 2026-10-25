@@ -10,10 +10,14 @@ import { db } from '@/lib/admin/supabase';
 import { PROPOSAL_STATUS } from '@/lib/admin/crm/labels';
 import { priceList } from '@/lib/admin/crm/priceList';
 import { toParams } from '@/lib/admin/params';
+import { getAdminI18n } from '@/lib/admin/i18n';
 import type { CustomerOption, Deal, Proposal, ProposalItem } from '@/lib/admin/crm/types';
 
 export const dynamic = 'force-dynamic';
-export const metadata: Metadata = { title: 'Ponuda' };
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getAdminI18n();
+  return { title: t('Proposal', 'Ponuda') };
+}
 
 function StatusButton({ id, status, children, className }: { id: string; status: string; children: React.ReactNode; className: string }) {
   return (
@@ -33,6 +37,7 @@ export default async function ProposalPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { id } = await params;
+  const { lang, t } = await getAdminI18n();
   const notice = toParams(await searchParams).get('notice');
   if (!/^[0-9a-f-]{36}$/.test(id)) redirect('/admin/crm/proposals');
   const [{ data: proposal }, { data: items }, { data: customers }, { data: deals }, { data: project }] = await Promise.all([
@@ -49,33 +54,33 @@ export default async function ProposalPage({
     <>
       <PageHeading
         title={`#${String(proposal.number).padStart(4, '0')} ${proposal.title}`}
-        crumbs={[{ label: 'WebTano CRM' }, { label: 'Ponude', href: '/admin/crm/proposals' }]}
-        description={<span className={`badge ${st.badge}`}>{st.label}</span>}
+        crumbs={[{ label: 'WebTano CRM' }, { label: t('Proposals', 'Ponude'), href: '/admin/crm/proposals' }]}
+        description={<span className={`badge ${st.badge}`}>{st.label[lang]}</span>}
       >
         <Link href={`/admin/crm/proposals/${proposal.id}/pdf`} className="btn btn-outline">
           <FileDown className="size-4" /> PDF
         </Link>
         {proposal.status === 'draft' && (
-          <StatusButton id={proposal.id} status="sent" className="btn btn-primary"><Send className="size-4" /> Označi kao poslatu</StatusButton>
+          <StatusButton id={proposal.id} status="sent" className="btn btn-primary"><Send className="size-4" /> {t('Mark as sent', 'Označi kao poslatu')}</StatusButton>
         )}
         {proposal.status === 'sent' && (
           <>
-            <StatusButton id={proposal.id} status="declined" className="btn btn-light"><X className="size-4" /> Odbijena</StatusButton>
-            <StatusButton id={proposal.id} status="accepted" className="btn btn-accent"><Check className="size-4" /> Prihvaćena</StatusButton>
+            <StatusButton id={proposal.id} status="declined" className="btn btn-light"><X className="size-4" /> {t('Declined', 'Odbijena')}</StatusButton>
+            <StatusButton id={proposal.id} status="accepted" className="btn btn-accent"><Check className="size-4" /> {t('Accepted', 'Prihvaćena')}</StatusButton>
           </>
         )}
         {proposal.status === 'accepted' &&
           (project ? (
-            <Link href={`/admin/crm/projects/${project.id}`} className="btn btn-primary"><FolderKanban className="size-4" /> Otvori projekat</Link>
+            <Link href={`/admin/crm/projects/${project.id}`} className="btn btn-primary"><FolderKanban className="size-4" /> {t('Open project', 'Otvori projekat')}</Link>
           ) : (
             <form action={projectFromProposal}>
               <input type="hidden" name="id" value={proposal.id} />
-              <button className="btn btn-primary" type="submit"><FolderKanban className="size-4" /> Pokreni projekat</button>
+              <button className="btn btn-primary" type="submit"><FolderKanban className="size-4" /> {t('Start project', 'Pokreni projekat')}</button>
             </form>
           ))}
       </PageHeading>
 
-      {notice === 'saved' && <div className="alert alert-success">Ponuda je sačuvana. PDF otvaraš dugmetom gore desno.</div>}
+      {notice === 'saved' && <div className="alert alert-success">{t('Proposal saved. Open the PDF with the button at the top right.', 'Ponuda je sačuvana. PDF otvaraš dugmetom gore desno.')}</div>}
 
       <ProposalForm
         proposal={proposal}
@@ -87,8 +92,8 @@ export default async function ProposalPage({
 
       <form action={deleteProposal} className="text-right">
         <input type="hidden" name="id" value={proposal.id} />
-        <ConfirmSubmit className="btn btn-sm btn-danger" message="Obrisati ovu ponudu?">
-          <Trash2 className="size-4" /> Obriši ponudu
+        <ConfirmSubmit className="btn btn-sm btn-danger" message={t('Delete this proposal?', 'Obrisati ovu ponudu?')}>
+          <Trash2 className="size-4" /> {t('Delete proposal', 'Obriši ponudu')}
         </ConfirmSubmit>
       </form>
     </>

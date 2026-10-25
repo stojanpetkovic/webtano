@@ -4,15 +4,18 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useId, useRef, useState } from 'react';
 import { ArrowRight, ArrowUpRight, Check, Database, MapPin, ShieldCheck, Star } from 'lucide-react';
+import { useLang, useLocalePath, useT } from '@/components/i18n/LangProvider';
 import type { CaseStudy } from '@/content/work';
+import type { T } from '@/lib/i18n';
 import { CountUp } from './CountUp';
 
-const SCORES = [
-  ['performance', 'Speed'],
-  ['accessibility', 'Accessibility'],
-  ['bestPractices', 'Best practices'],
-  ['seo', 'SEO'],
-] as const;
+const scores = (t: T) =>
+  [
+    ['performance', t('Speed', 'Brzina')],
+    ['accessibility', t('Accessibility', 'Pristupačnost')],
+    ['bestPractices', 'Best practices'],
+    ['seo', 'SEO'],
+  ] as const;
 
 /**
  * The homepage case studies as tabs: one client at a time with every figure,
@@ -23,6 +26,7 @@ export function CaseTabs({ cases }: { cases: CaseStudy[] }) {
   const [active, setActive] = useState(0);
   const base = useId();
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
+  const t = useT();
 
   const select = (i: number) => {
     const next = (i + cases.length) % cases.length;
@@ -34,7 +38,7 @@ export function CaseTabs({ cases }: { cases: CaseStudy[] }) {
     <div>
       <div
         role="tablist"
-        aria-label="Case studies"
+        aria-label={t('Case studies', 'Studije slučaja')}
         className="grid grid-cols-2 gap-2 sm:grid-cols-4"
       >
         {cases.map((c, i) => {
@@ -85,6 +89,9 @@ export function CaseTabs({ cases }: { cases: CaseStudy[] }) {
 
 function CasePanel({ c, id, labelledBy, hidden }: { c: CaseStudy; id: string; labelledBy: string; hidden: boolean }) {
   const [shot, setShot] = useState(0);
+  const lang = useLang();
+  const t = useT();
+  const lp = useLocalePath();
   const rating = c.stats.find((s) => s.value.endsWith('★'));
   const stats = c.stats.filter((s) => s !== rating);
   const host = c.url.replace(/^https?:\/\//, '').replace(/\/$/, '');
@@ -111,7 +118,15 @@ function CasePanel({ c, id, labelledBy, hidden }: { c: CaseStudy; id: string; la
               <span className="inline-flex items-center gap-1 text-ink-950">
                 <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" aria-hidden />
                 <span className="font-semibold">{rating.value.replace('★', '')}</span>
-                <span className="text-zinc-500">{rating.label.startsWith('across') ? rating.label.replace('across', 'from') : 'on Google'}</span>
+                <span className="text-zinc-500">
+                  {lang === 'sr'
+                    ? rating.label.startsWith('iz ')
+                      ? rating.label
+                      : 'na Google-u'
+                    : rating.label.startsWith('across')
+                      ? rating.label.replace('across', 'from')
+                      : 'on Google'}
+                </span>
               </span>
             )}
           </p>
@@ -157,13 +172,13 @@ function CasePanel({ c, id, labelledBy, hidden }: { c: CaseStudy; id: string; la
               ))}
             </div>
           </div>
-          <div className="mt-3 flex gap-2" role="group" aria-label={`${c.client} screenshots`}>
+          <div className="mt-3 flex gap-2" role="group" aria-label={t(`${c.client} screenshots`, `${c.client} snimci ekrana`)}>
             {c.shots.map((s, k) => (
               <button
                 key={s.src}
                 type="button"
                 onClick={() => setShot(k)}
-                aria-label={`Show screenshot ${k + 1}`}
+                aria-label={t(`Show screenshot ${k + 1}`, `Prikaži snimak ${k + 1}`)}
                 aria-pressed={k === shot}
                 className={`relative aspect-[16/10] w-20 overflow-hidden rounded-lg ring-1 transition sm:w-24 ${
                   k === shot ? 'ring-2 ring-accent' : 'opacity-70 ring-zinc-200 hover:opacity-100'
@@ -175,9 +190,9 @@ function CasePanel({ c, id, labelledBy, hidden }: { c: CaseStudy; id: string; la
           </div>
 
           <div className="mt-6">
-            <p className="font-mono text-[10px] tracking-[0.14em] text-zinc-500 uppercase">Lighthouse · live site, mobile</p>
+            <p className="font-mono text-[10px] tracking-[0.14em] text-zinc-500 uppercase">{t('Lighthouse · live site, mobile', 'Lighthouse · živ sajt, telefon')}</p>
             <ul className="mt-3 grid grid-cols-4 gap-2">
-              {SCORES.map(([key, label]) => {
+              {scores(t).map(([key, label]) => {
                 const v = c.lighthouse[key];
                 const good = v >= 90;
                 return (
@@ -191,14 +206,14 @@ function CasePanel({ c, id, labelledBy, hidden }: { c: CaseStudy; id: string; la
           </div>
 
           <div className="mt-6 rounded-2xl bg-white p-4 ring-1 ring-zinc-200/80">
-            <p className="font-mono text-[10px] tracking-[0.14em] text-zinc-500 uppercase">The problem</p>
+            <p className="font-mono text-[10px] tracking-[0.14em] text-zinc-500 uppercase">{t('The problem', 'Problem')}</p>
             <p className="mt-2 text-sm leading-relaxed text-zinc-600">{c.challenge.at(-1)}</p>
           </div>
         </div>
 
         {/* The numbers, the problem and what we did about it. */}
         <div className="flex flex-col p-6 max-md:p-4 sm:p-8">
-          <p className="font-mono text-[10px] tracking-[0.14em] text-zinc-500 uppercase max-md:hidden">Results</p>
+          <p className="font-mono text-[10px] tracking-[0.14em] text-zinc-500 uppercase max-md:hidden">{t('Results', 'Rezultati')}</p>
           <div className="mt-3 rounded-2xl bg-ink-950 p-5 text-white max-md:mt-0 max-md:p-4">
             <p className="font-display text-5xl leading-none text-accent sm:text-[3.25rem]">
               <CountUp value={c.headline.value} />
@@ -218,7 +233,7 @@ function CasePanel({ c, id, labelledBy, hidden }: { c: CaseStudy; id: string; la
 
           <div className="mt-7 max-md:hidden">
             <div>
-              <p className="font-mono text-[10px] tracking-[0.14em] text-zinc-500 uppercase">What we did</p>
+              <p className="font-mono text-[10px] tracking-[0.14em] text-zinc-500 uppercase">{t('What we did', 'Šta smo uradili')}</p>
               <ul className="mt-2 space-y-2">
                 {c.work.map((w) => (
                   <li key={w.title} className="flex gap-2 text-sm leading-snug">
@@ -235,13 +250,15 @@ function CasePanel({ c, id, labelledBy, hidden }: { c: CaseStudy; id: string; la
           <div className="mt-auto flex flex-wrap items-center justify-between gap-4 border-t border-zinc-200/80 pt-5 max-md:mt-4 max-md:border-0 max-md:pt-0 max-md:[&>a]:w-full max-md:[&>a]:justify-center lg:mt-8">
             <p className="flex max-w-xs items-start gap-1.5 text-[11px] leading-snug text-zinc-500 max-md:hidden">
               <Database className="mt-px h-3.5 w-3.5 shrink-0" aria-hidden />
-              <span>Source: {c.source}</span>
+              <span>
+                {t('Source:', 'Izvor:')} {c.source}
+              </span>
             </p>
             <Link
-              href={`/work/${c.slug}`}
+              href={lp(`/work/${c.slug}`)}
               className="group inline-flex items-center gap-2 rounded-full bg-ink-950 px-5 py-3 text-sm font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-ink-800"
             >
-              Full case study
+              {t('Full case study', 'Cela studija slučaja')}
               <ArrowRight className="h-4 w-4 text-accent transition-transform group-hover:translate-x-1" aria-hidden />
             </Link>
           </div>

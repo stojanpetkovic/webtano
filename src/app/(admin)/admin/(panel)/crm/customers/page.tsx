@@ -19,13 +19,18 @@ const initials = (name: string) =>
 import { formatDate } from '@/lib/admin/format';
 import { toParams } from '@/lib/admin/params';
 import type { Customer } from '@/lib/admin/crm/types';
+import { getAdminI18n } from '@/lib/admin/i18n';
 
 export const dynamic = 'force-dynamic';
-export const metadata: Metadata = { title: 'Klijenti' };
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getAdminI18n();
+  return { title: t('Customers', 'Klijenti') };
+}
 
 const PAGE_SIZE = 25;
 
 export default async function CustomersPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const { lang, t } = await getAdminI18n();
   const query = toParams(await searchParams);
   const q = (query.get('q') ?? '').trim().slice(0, 100).replace(/[%,()*\\]/g, ' ').trim();
   const requested = Math.max(1, Math.floor(Number(query.get('page')) || 1));
@@ -66,14 +71,18 @@ export default async function CustomersPage({ searchParams }: { searchParams: Pr
 
   return (
     <>
-      <PageHeading title="Klijenti" crumbs={[{ label: 'WebTano CRM' }]} description="Ljudi sa kojima radiš. Firme i sajtovi se vezuju za svakog klijenta.">
+      <PageHeading
+        title={t('Customers', 'Klijenti')}
+        crumbs={[{ label: 'WebTano CRM' }]}
+        description={t('The people you work with. Companies and sites are linked to each customer.', 'Ljudi sa kojima radiš. Firme i sajtovi se vezuju za svakog klijenta.')}
+      >
         <Modal
           label={
             <>
-              <Plus className="size-4" /> Novi klijent
+              <Plus className="size-4" /> {t('New customer', 'Novi klijent')}
             </>
           }
-          title="Novi klijent"
+          title={t('New customer', 'Novi klijent')}
           defaultOpen={query.get('new') === '1'}
           closeHref="/admin/crm/customers"
         >
@@ -85,27 +94,33 @@ export default async function CustomersPage({ searchParams }: { searchParams: Pr
         <form method="get" className="flex gap-2 border-b border-line p-4">
           <div className="relative flex-1 sm:max-w-sm">
             <Search className="pointer-events-none absolute start-3.5 top-1/2 size-4 -translate-y-1/2 text-zinc-400" />
-            <input className="form-input ps-10" name="q" type="search" defaultValue={q} placeholder="Ime, firma ili email" aria-label="Pretraga klijenata" />
+            <input className="form-input ps-10" name="q" type="search" defaultValue={q} placeholder={t('Name, company or email', 'Ime, firma ili email')}
+              aria-label={t('Search customers', 'Pretraga klijenata')}
+            />
           </div>
-          <button className="btn btn-outline" type="submit">Traži</button>
+          <button className="btn btn-outline" type="submit">
+            {t('Search', 'Traži')}
+          </button>
         </form>
 
         {customers.length === 0 ? (
           <div className="px-5 py-14 text-center text-muted">
-            {q ? 'Nema klijenata za ovu pretragu.' : 'Još nema klijenata. Pretvori lid u klijenta ili dodaj novog.'}
+            {q
+              ? t('No customers match this search.', 'Nema klijenata za ovu pretragu.')
+              : t('No customers yet. Convert a lead into a customer or add a new one.', 'Još nema klijenata. Pretvori lid u klijenta ili dodaj novog.')}
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="table">
               <thead>
                 <tr>
-                  <th>Klijent</th>
-                  <th>Usluge</th>
-                  <th>Firma i kontakt</th>
-                  <th className="text-right">Prihvaćene ponude</th>
-                  <th className="text-right">Aktivni projekti</th>
+                  <th>{t('Customer', 'Klijent')}</th>
+                  <th>{t('Services', 'Usluge')}</th>
+                  <th>{t('Company and contact', 'Firma i kontakt')}</th>
+                  <th className="text-right">{t('Accepted proposals', 'Prihvaćene ponude')}</th>
+                  <th className="text-right">{t('Active projects', 'Aktivni projekti')}</th>
                   <th>Status</th>
-                  <th className="text-right">Od</th>
+                  <th className="text-right">{t('Since', 'Od')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -114,11 +129,11 @@ export default async function CustomersPage({ searchParams }: { searchParams: Pr
                     <td>
                       <div className="flex items-center gap-3">
                         <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-ink-800 to-ink-975 text-xs font-semibold text-white">
-                          {initials(customerName(c))}
+                          {initials(customerName(c, lang))}
                         </span>
                         <div className="min-w-0">
                           <Link href={`/admin/crm/customers/${c.id}`} className="font-medium text-ink after:absolute after:inset-0 hover:text-primary">
-                            {customerName(c)}
+                            {customerName(c, lang)}
                           </Link>
                           <div className="text-xs text-muted">
                             {domains.get(c.id)?.length ? (
@@ -141,15 +156,15 @@ export default async function CustomersPage({ searchParams }: { searchParams: Pr
                     </td>
                     <td className="text-right font-semibold text-ink tabular-nums">{revenue.get(c.id) ? money(revenue.get(c.id)!) : '—'}</td>
                     <td className="text-right tabular-nums">{openProjects.get(c.id) ?? 0}</td>
-                    <td>{c.status === 'active' ? <span className="badge badge-won">Aktivan</span> : <span className="badge badge-lost">Neaktivan</span>}</td>
-                    <td className="text-right whitespace-nowrap text-muted">{formatDate(c.created_at)}</td>
+                    <td>{c.status === 'active' ? <span className="badge badge-won">{t('Active', 'Aktivan')}</span> : <span className="badge badge-lost">{t('Inactive', 'Neaktivan')}</span>}</td>
+                    <td className="text-right whitespace-nowrap text-muted">{formatDate(c.created_at, lang)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         )}
-        {total > 0 && <Pagination page={requested} pageSize={PAGE_SIZE} total={total} href={href} sizes={[]} noun="klijenata" />}
+        {total > 0 && <Pagination page={requested} pageSize={PAGE_SIZE} total={total} href={href} sizes={[]} noun={t('customers', 'klijenata')} />}
       </div>
     </>
   );

@@ -1,5 +1,6 @@
-import { addOns, monthlyPlans, websitePlans, type AddOn, type Plan } from '@/content/pricing';
+import { addOnIn, addOns, monthlyPlans, planIn, websitePlans, type AddOn, type Plan } from '@/content/pricing';
 import { db } from '@/lib/admin/supabase';
+import type { Lang } from '@/lib/i18n';
 
 export interface Pricing {
   monthlyPlans: Plan[];
@@ -12,7 +13,7 @@ export interface Pricing {
  * slug. A plan without a matching item, or a database that cannot be reached, keeps
  * the price from src/content/pricing.ts, so the page never shows an empty price.
  */
-export async function livePricing(): Promise<Pricing> {
+export async function livePricing(lang: Lang = 'en'): Promise<Pricing> {
   let prices = new Map<string, number>();
   try {
     const { data } = await db().from('crm_items').select('slug, unit_price').not('slug', 'is', null);
@@ -24,8 +25,12 @@ export async function livePricing(): Promise<Pricing> {
     const live = prices.get(p.id);
     return live !== undefined && Number.isFinite(live) && live > 0 ? { ...p, price: live } : p;
   };
-  return { monthlyPlans: monthlyPlans.map(price), websitePlans: websitePlans.map(price), addOns: addOns.map(price) };
+  return {
+    monthlyPlans: monthlyPlans.map(price).map(planIn(lang)),
+    websitePlans: websitePlans.map(price).map(planIn(lang)),
+    addOns: addOns.map(price).map(addOnIn(lang)),
+  };
 }
 
-/** Pages that show prices, refreshed whenever the price list changes. */
-export const PRICED_PATHS = ['/', '/pricing'];
+/** Pages that show prices, in both languages, refreshed whenever the price list changes (routes under app/(site)/[lang]). */
+export const PRICED_PATHS = ['/[lang]', '/[lang]/pricing'];
