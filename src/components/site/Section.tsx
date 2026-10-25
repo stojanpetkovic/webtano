@@ -24,7 +24,8 @@ export function SectionHeading({
       >
         {title}
       </h2>
-      {lead && <p className={`mt-4 text-lg text-pretty ${light ? 'text-white/75' : 'text-zinc-600'}`}>{lead}</p>}
+      {/* Phones show the title only; the lead is desktop detail. */}
+      {lead && <p className={`mt-4 text-lg text-pretty max-md:hidden ${light ? 'text-white/75' : 'text-zinc-600'}`}>{lead}</p>}
     </div>
   );
 }

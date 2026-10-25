@@ -35,7 +35,7 @@ export function CaseTabs({ cases }: { cases: CaseStudy[] }) {
       <div
         role="tablist"
         aria-label="Case studies"
-        className="-mx-4 flex snap-x gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:grid sm:grid-cols-4 sm:overflow-visible sm:px-0"
+        className="grid grid-cols-2 gap-2 sm:grid-cols-4"
       >
         {cases.map((c, i) => {
           const on = i === active;
@@ -56,16 +56,16 @@ export function CaseTabs({ cases }: { cases: CaseStudy[] }) {
                 if (e.key === 'ArrowRight') select(i + 1);
                 if (e.key === 'ArrowLeft') select(i - 1);
               }}
-              className={`group relative flex min-w-[13.5rem] shrink-0 snap-start items-center gap-3 rounded-2xl bg-white p-3 text-left ring-1 transition duration-300 sm:min-w-0 ${
+              className={`group relative flex min-w-0 items-center gap-3 rounded-2xl bg-white p-3 text-left ring-1 transition duration-300 max-md:gap-2 max-md:p-2.5 ${
                 on ? 'shadow-soft ring-accent' : 'ring-zinc-200 hover:ring-zinc-300'
               }`}
             >
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-zinc-50 p-1.5 ring-1 ring-zinc-100">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-zinc-50 p-1.5 ring-1 ring-zinc-100 max-md:h-9 max-md:w-9 max-md:p-1">
                 <Image src={`/clients/${c.slug}.webp`} alt="" width={96} height={96} className="h-full w-full object-contain" />
               </span>
               <span className="min-w-0">
-                <span className="block truncate font-display text-[15px] text-ink-950">{c.client}</span>
-                <span className="block truncate text-xs text-zinc-500">{c.sector}</span>
+                <span className="block truncate font-display text-[15px] text-ink-950 max-md:text-sm">{c.client}</span>
+                <span className="block truncate text-xs text-zinc-500 max-md:hidden">{c.sector}</span>
               </span>
               <span
                 className={`absolute inset-x-4 -bottom-px h-0.5 rounded-full bg-gradient-to-r from-accent to-azure-600 transition duration-300 ${on ? 'opacity-100' : 'opacity-0'}`}
@@ -98,7 +98,7 @@ function CasePanel({ c, id, labelledBy, hidden }: { c: CaseStudy; id: string; la
       className="case-panel mt-5 overflow-hidden rounded-[1.75rem] bg-white shadow-[0_1px_2px_rgb(10_14_30/0.04),0_8px_24px_-12px_rgb(10_14_30/0.10)] ring-1 ring-zinc-200/80"
     >
       {/* Client header: who, where, what we did and the live site. */}
-      <header className="flex flex-wrap items-center gap-x-6 gap-y-3 border-b border-zinc-200/80 px-6 py-5 sm:px-8">
+      <header className="flex flex-wrap items-center gap-x-6 gap-y-3 border-b border-zinc-200/80 px-6 py-5 max-md:px-4 max-md:py-4 sm:px-8">
         <div className="min-w-0 flex-1 basis-full sm:basis-auto">
           <h3 className="font-display text-2xl text-ink-950 sm:text-[1.75rem]">{c.client}</h3>
           <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-zinc-500">
@@ -116,7 +116,7 @@ function CasePanel({ c, id, labelledBy, hidden }: { c: CaseStudy; id: string; la
             )}
           </p>
         </div>
-        <ul className="flex flex-wrap gap-1.5">
+        <ul className="flex flex-wrap gap-1.5 max-md:hidden">
           {c.services.map((s) => (
             <li key={s} className="rounded-full bg-azure-50 px-2.5 py-1 text-xs font-medium text-azure-700 ring-1 ring-azure-100">
               {s}
@@ -127,7 +127,7 @@ function CasePanel({ c, id, labelledBy, hidden }: { c: CaseStudy; id: string; la
 
       <div className="grid lg:grid-cols-[1.05fr_1fr]">
         {/* The site: screenshots to flip through and its live Lighthouse scores. */}
-        <div className="border-b border-zinc-200/80 bg-zinc-50/70 p-5 sm:p-8 lg:border-r lg:border-b-0">
+        <div className="border-b border-zinc-200/80 bg-zinc-50/70 p-5 max-md:hidden sm:p-8 lg:border-r lg:border-b-0">
           <div className="overflow-hidden rounded-xl bg-white ring-1 ring-zinc-200 shadow-[0_1px_2px_rgb(10_14_30/0.04),0_6px_16px_-8px_rgb(10_14_30/0.12)]">
             <div className="flex items-center gap-1.5 border-b border-zinc-200 bg-zinc-50 px-3.5 py-2">
               <span className="h-2 w-2 rounded-full bg-zinc-300" aria-hidden />
@@ -197,9 +197,9 @@ function CasePanel({ c, id, labelledBy, hidden }: { c: CaseStudy; id: string; la
         </div>
 
         {/* The numbers, the problem and what we did about it. */}
-        <div className="flex flex-col p-6 sm:p-8">
-          <p className="font-mono text-[10px] tracking-[0.14em] text-zinc-500 uppercase">Results</p>
-          <div className="mt-3 rounded-2xl bg-ink-950 p-5 text-white">
+        <div className="flex flex-col p-6 max-md:p-4 sm:p-8">
+          <p className="font-mono text-[10px] tracking-[0.14em] text-zinc-500 uppercase max-md:hidden">Results</p>
+          <div className="mt-3 rounded-2xl bg-ink-950 p-5 text-white max-md:mt-0 max-md:p-4">
             <p className="font-display text-5xl leading-none text-accent sm:text-[3.25rem]">
               <CountUp value={c.headline.value} />
             </p>
@@ -216,7 +216,7 @@ function CasePanel({ c, id, labelledBy, hidden }: { c: CaseStudy; id: string; la
             ))}
           </dl>
 
-          <div className="mt-7">
+          <div className="mt-7 max-md:hidden">
             <div>
               <p className="font-mono text-[10px] tracking-[0.14em] text-zinc-500 uppercase">What we did</p>
               <ul className="mt-2 space-y-2">
@@ -232,8 +232,8 @@ function CasePanel({ c, id, labelledBy, hidden }: { c: CaseStudy; id: string; la
             </div>
           </div>
 
-          <div className="mt-auto flex flex-wrap items-center justify-between gap-4 border-t border-zinc-200/80 pt-5 lg:mt-8">
-            <p className="flex max-w-xs items-start gap-1.5 text-[11px] leading-snug text-zinc-500">
+          <div className="mt-auto flex flex-wrap items-center justify-between gap-4 border-t border-zinc-200/80 pt-5 max-md:mt-4 max-md:border-0 max-md:pt-0 max-md:[&>a]:w-full max-md:[&>a]:justify-center lg:mt-8">
+            <p className="flex max-w-xs items-start gap-1.5 text-[11px] leading-snug text-zinc-500 max-md:hidden">
               <Database className="mt-px h-3.5 w-3.5 shrink-0" aria-hidden />
               <span>Source: {c.source}</span>
             </p>

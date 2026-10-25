@@ -581,15 +581,6 @@ html {
   }
 }
 
-@media (max-width: 767px) {
-  /* Cards waiting to the right of a swipe row are off screen sideways, so they would never
-     reveal; show them as they are, so the peeking card invites the swipe. */
-  .js .swipe-row [data-reveal] {
-    opacity: 1;
-    transform: none;
-  }
-}
-
 /* ---------- Phones: the site as an app ----------
    Under 768px the page becomes an iOS style inset grouped layout: a soft grey canvas,
    every section a rounded card with a small gap around it, flat surfaces and no drop
@@ -664,19 +655,6 @@ html {
   body > footer *,
   main section {
     --tw-shadow: 0 0 #0000 !important;
-  }
-
-  /* Tighter vertical rhythm inside the cards. */
-  main section.py-24:not(section section),
-  main section.py-20:not(section section) {
-    padding-top: 3.25rem;
-    padding-bottom: 3.5rem;
-  }
-  main section.pb-24:not(section section) {
-    padding-bottom: 3.5rem;
-  }
-  main section.pt-14:not(section section) {
-    padding-top: 2.75rem;
   }
 
   /* Rounder inner cards, closer to iOS. */
