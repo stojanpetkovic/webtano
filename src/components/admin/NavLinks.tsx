@@ -54,7 +54,7 @@ export function NavLinks({ newLeads, crmNew }: { newLeads: number; crmNew: numbe
   ];
 
   return (
-    <nav className="flex-1 overflow-y-auto px-4 py-2" aria-label="Glavni meni">
+    <nav className="flex-1 overflow-y-auto px-4 py-2 lg:flex-none lg:overflow-visible" aria-label="Glavni meni">
       {sections.map((section) => (
         <div key={section.title} className="mb-3">
           <div className="menu-title">{section.title}</div>

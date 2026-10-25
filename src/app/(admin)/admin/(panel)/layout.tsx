@@ -1,9 +1,10 @@
 import Link from 'next/link';
-import { Bell, ExternalLink, LogOut, Menu, Search } from 'lucide-react';
+import { Bell, ExternalLink, Menu, Search } from 'lucide-react';
 import { unseenLeadCount } from '@/lib/admin/seen';
 import { adminEmail } from '@/lib/admin/session';
 import { Logo } from '@/components/admin/Logo';
 import { NavLinks } from '@/components/admin/NavLinks';
+import { ProfileMenu } from '@/components/admin/ProfileMenu';
 import { SearchShortcut } from '@/components/admin/SearchShortcut';
 
 export default async function PanelLayout({ children }: { children: React.ReactNode }) {
@@ -15,10 +16,11 @@ export default async function PanelLayout({ children }: { children: React.ReactN
   const unseen = newLeads + crmNew;
 
   return (
-    <>
+    // On desktop the menu is a full-height column that scrolls away with the page; on phones it stays a fixed drawer.
+    <div className="relative">
       <input type="checkbox" id="nav-toggle" className="peer hidden" />
 
-      <aside className="fixed inset-y-0 start-0 z-40 flex w-sidenav -translate-x-full flex-col bg-ink-975 text-white transition-transform duration-300 ease-out peer-checked:translate-x-0 lg:translate-x-0 print:hidden">
+      <aside className="fixed inset-y-0 start-0 z-40 flex w-sidenav -translate-x-full flex-col bg-ink-975 text-white transition-transform duration-300 ease-out peer-checked:translate-x-0 lg:absolute lg:translate-x-0 print:hidden">
         {/* A faint cyan glow behind the logo, as on webtano.com. */}
         <div
           className="pointer-events-none absolute inset-x-0 top-0 h-56 opacity-70"
@@ -38,26 +40,6 @@ export default async function PanelLayout({ children }: { children: React.ReactN
           <Link href="/admin/sites" className="btn btn-sm btn-accent mt-3 w-full">
             Otvori sajtove
           </Link>
-        </div>
-
-        <div className="relative flex items-center gap-3 border-t border-white/[0.07] px-5 py-4">
-          <span className="grid size-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-accent to-primary text-sm font-semibold text-white">
-            {initial}
-          </span>
-          <div className="min-w-0 flex-1 leading-tight">
-            <div className="text-[13px] font-medium text-white">WebTano</div>
-            <div className="truncate text-xs text-white/45">{email}</div>
-          </div>
-          <form method="post" action="/admin/logout">
-            <button
-              className="grid size-8 cursor-pointer place-items-center rounded-lg text-white/50 transition hover:bg-white/[0.06] hover:text-rose-400"
-              type="submit"
-              aria-label="Odjava"
-              title="Odjava"
-            >
-              <LogOut className="size-4" />
-            </button>
-          </form>
         </div>
       </aside>
       <label
@@ -114,6 +96,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
                   </span>
                 )}
               </Link>
+              <ProfileMenu email={email} initial={initial} />
             </div>
           </div>
         </header>
@@ -126,6 +109,6 @@ export default async function PanelLayout({ children }: { children: React.ReactN
         </footer>
       </div>
       <SearchShortcut />
-    </>
+    </div>
   );
 }
