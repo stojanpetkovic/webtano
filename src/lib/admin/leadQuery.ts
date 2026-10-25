@@ -8,6 +8,8 @@ export interface LeadFilters {
   spam: boolean;
   from: string;
   to: string;
+  /** A site left out unless asked for by name: WebTano's own, which lives in the CRM. */
+  exclude?: string | null;
 }
 
 export function readFilters(params: URLSearchParams): LeadFilters {
@@ -29,6 +31,7 @@ export function leadQuery(f: LeadFilters, columns = '*', count = false) {
     .eq('is_spam', f.spam)
     .order('created_at', { ascending: false });
   if (/^[0-9a-f-]{36}$/.test(f.site)) query = query.eq('site_id', f.site);
+  else if (f.exclude) query = query.neq('site_id', f.exclude);
   if (f.status) query = query.eq('status', f.status);
   if (f.from) query = query.gte('created_at', `${f.from}T00:00:00Z`);
   if (f.to) query = query.lte('created_at', `${f.to}T23:59:59Z`);

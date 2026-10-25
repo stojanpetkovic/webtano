@@ -13,11 +13,15 @@ export interface SiteFormState {
 const duplicate = (code: string | undefined, message: string) =>
   code === '23505' ? 'Sajt sa tim domenom već postoji.' : message;
 
+/** A new site always belongs to a customer, so it is only added from the customer's page. */
 export async function createSite(_prev: SiteFormState, form: FormData): Promise<SiteFormState> {
+  const customerId = String(form.get('customer_id') ?? '');
+  if (!/^[0-9a-f-]{36}$/.test(customerId)) return { errors: ['Sajt se dodaje kod klijenta.'] };
   const { errors, values } = readSiteForm(form);
   if (errors.length) return { errors, draft: values as Partial<Site> };
   const { data, error } = await db().from('sites').insert(values).select('id').single();
   if (error) return { errors: [duplicate(error.code, error.message)], draft: values as Partial<Site> };
+  await db().from('crm_customer_sites').insert({ site_id: data.id, customer_id: customerId });
   redirect(`/admin/sites/${data.id}/settings?notice=created`);
 }
 

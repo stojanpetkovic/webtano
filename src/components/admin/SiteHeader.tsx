@@ -1,10 +1,19 @@
 import Link from 'next/link';
-import { ChartColumn, ExternalLink, FileText, Globe, MoveRight, Settings } from 'lucide-react';
+import { ChartColumn, ExternalLink, FileText, Globe, MoveRight, Settings, Users } from 'lucide-react';
 import type { Site } from '@/lib/admin/types';
 
 // The strip above every page of one site: its address, client and status,
 // then the tabs that split the site into its overview and its settings.
-export function SiteHeader({ site, current }: { site: Site; current: 'overview' | 'settings' | 'report' }) {
+export function SiteHeader({
+  site,
+  current,
+  customer,
+}: {
+  site: Site;
+  current: 'overview' | 'settings' | 'report';
+  /** The CRM customer this site belongs to, when it is linked. */
+  customer?: { id: string; name: string } | null;
+}) {
   const tabs = [
     { key: 'overview', label: 'Pregled', icon: ChartColumn, href: `/admin/sites/${site.id}` },
     { key: 'report', label: 'Izveštaj (PDF)', icon: FileText, href: `/admin/sites/${site.id}/report` },
@@ -14,7 +23,7 @@ export function SiteHeader({ site, current }: { site: Site; current: 'overview' 
   return (
     <div className="card">
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 px-5 pt-5">
-        <span className="grid size-11 place-items-center rounded bg-primary/10 text-primary">
+        <span className="grid size-11 place-items-center rounded-xl bg-gradient-to-br from-ink-900 to-ink-975 text-accent shadow-sm">
           <Globe className="size-5" />
         </span>
         <div className="min-w-0">
@@ -22,31 +31,36 @@ export function SiteHeader({ site, current }: { site: Site; current: 'overview' 
             href={`https://${site.domain}`}
             target="_blank"
             rel="noopener"
-            className="inline-flex items-center gap-1.5 font-semibold text-zinc-800 hover:text-primary"
+            className="inline-flex items-center gap-1.5 text-[15px] font-semibold text-ink hover:text-primary"
           >
             {site.domain}
             <ExternalLink className="size-3.5 text-zinc-400" />
           </a>
-          <div className="text-xs text-zinc-500">
-            {site.client_name ?? 'Bez imena klijenta'}
-            {' · '}
-            {site.active ? <span className="text-green-600">aktivan</span> : <span className="text-orange-600">pauziran</span>}
+          <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-zinc-500">
+            {customer ? (
+              <Link href={`/admin/crm/customers/${customer.id}`} className="inline-flex items-center gap-1 font-medium text-primary hover:underline">
+                <Users className="size-3.5" /> {customer.name}
+              </Link>
+            ) : (
+              (site.client_name ?? 'Bez imena klijenta')
+            )}
+            {site.active ? <span className="badge badge-won">Aktivan</span> : <span className="badge badge-lost">Pauziran</span>}
           </div>
         </div>
-        <Link href={`/admin/leads?site=${site.id}`} className="btn btn-sm btn-soft ms-auto">
+        <Link href={`/admin/leads?site=${site.id}`} className="btn btn-sm btn-outline ms-auto">
           Svi lidovi <MoveRight className="size-4" />
         </Link>
       </div>
 
-      <nav className="mt-4 flex gap-6 border-t border-zinc-200 px-5" aria-label="Sajt">
+      <nav className="mt-4 flex gap-6 overflow-x-auto border-t border-line px-5" aria-label="Sajt">
         {tabs.map((tab) => (
           <Link
             key={tab.key}
             href={tab.href}
-            className={`-mb-px inline-flex items-center gap-2 border-b-2 py-3 text-sm font-medium transition-colors ${
+            className={`-mb-px inline-flex shrink-0 items-center gap-2 border-b-2 py-3 text-[13px] font-medium transition-colors ${
               tab.key === current
-                ? 'border-primary text-primary'
-                : 'border-transparent text-zinc-600 hover:border-zinc-300 hover:text-zinc-800'
+                ? 'border-ink text-ink'
+                : 'border-transparent text-zinc-500 hover:border-zinc-300 hover:text-ink'
             }`}
             aria-current={tab.key === current ? 'page' : undefined}
           >

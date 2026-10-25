@@ -4,22 +4,49 @@ import { ArrowRight } from 'lucide-react';
 import { CaseCard } from '@/components/site/CaseCard';
 import { Reveal } from '@/components/site/Reveal';
 import { caseStudies } from '@/content/work';
+import { site } from '@/content/site';
+import { jsonLd, OG_IMAGE } from '@/lib/seo';
 
 export const metadata: Metadata = {
   title: 'Case studies',
   description: 'Websites, local SEO and Google Ads for tree services, a dental practice and a medical transport company, with the numbers from their own lead tracking.',
   alternates: { canonical: '/work' },
+  openGraph: { url: '/work', images: [OG_IMAGE] },
+};
+
+const structured = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'CollectionPage',
+      '@id': `${site.url}/work#page`,
+      name: 'Case studies',
+      url: `${site.url}/work`,
+      isPartOf: { '@id': `${site.url}/#website` },
+      mainEntity: {
+        '@type': 'ItemList',
+        itemListElement: caseStudies.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: `${c.client} case study`, url: `${site.url}/work/${c.slug}` })),
+      },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: site.url },
+        { '@type': 'ListItem', position: 2, name: 'Case studies', item: `${site.url}/work` },
+      ],
+    },
+  ],
 };
 
 export default function WorkPage() {
   return (
     <>
-      <section className="relative overflow-hidden bg-forest-950 py-16 text-white sm:py-24">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(structured) }} />
+      <section className="bg-spotlight relative overflow-hidden py-16 text-white sm:py-24">
         <div className="grid-lines pointer-events-none absolute inset-0 opacity-60" aria-hidden />
-        <div className="pointer-events-none absolute -top-32 right-0 h-80 w-80 rounded-full bg-lime/15 blur-3xl" aria-hidden />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal>
-            <p className="text-sm font-semibold tracking-widest text-lime uppercase">Case studies</p>
+            <p className="text-sm font-semibold tracking-widest text-accent uppercase">Case studies</p>
           </Reveal>
           <Reveal delay={80}>
             <h1 className="mt-3 max-w-3xl font-display text-4xl font-bold tracking-tight text-balance sm:text-6xl">
@@ -43,8 +70,8 @@ export default function WorkPage() {
         </div>
         <div className="mt-12 text-center">
           <Link
-            href="/#check"
-            className="group inline-flex items-center gap-2 rounded-full bg-forest-700 px-6 py-3.5 font-semibold text-white shadow-[0_10px_24px_-10px_rgb(31_117_82/0.7)] transition hover:-translate-y-px hover:bg-forest-800"
+            href="/#hero-form"
+            className="group inline-flex items-center gap-2 rounded-full bg-azure-700 px-6 py-3.5 font-semibold text-white shadow-[0_10px_24px_-10px_rgb(37_99_235/0.7)] transition hover:-translate-y-px hover:bg-ink-800"
           >
             Get a free website check
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />

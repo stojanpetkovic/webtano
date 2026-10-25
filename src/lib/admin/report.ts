@@ -1,6 +1,7 @@
 import { daysBetween, type ReportLocale, type SiteAnalytics } from './analytics';
 import { dayKey } from './stats';
 import type { Channel } from './channels';
+import type { Site } from './types';
 
 /*
  * The client report: a printable page per site and period, in the client's
@@ -131,6 +132,22 @@ export function pickPeriod(
  * analytics can attribute contacts to, plus everything else (SEO, content,
  * print), which counts toward the totals only.
  */
+/** The report's language and period from the page's query, with the client's language as the default. */
+export function reportPeriod(site: Pick<Site, 'email_language' | 'timezone'>, params: URLSearchParams) {
+  const langParam = params.get('lang');
+  const locale: ReportLocale = langParam === 'en' || langParam === 'sr' ? langParam : site.email_language;
+  const all = periods(site.timezone, locale);
+  const period = pickPeriod(all, params.get('period'), {
+    from: params.get('from'),
+    to: params.get('to'),
+    timeZone: site.timezone,
+    locale,
+  });
+  // Asked for a custom period, got the default: the dates were not usable.
+  const customRejected = params.get('period') === 'custom' && period.key !== 'custom';
+  return { locale, all, period, customRejected };
+}
+
 export const CURRENCIES = ['EUR', 'USD', 'RSD'] as const;
 export type Currency = (typeof CURRENCIES)[number];
 

@@ -1,27 +1,27 @@
 import { TIMEZONES } from '@/lib/admin/siteForm';
 import type { Site } from '@/lib/admin/types';
 
-export function SiteFields({ site = {}, showActive = false }: { site?: Partial<Site>; showActive?: boolean }) {
+export function SiteFields({ site = {}, showActive = false, idPrefix = '' }: { site?: Partial<Site>; showActive?: boolean; idPrefix?: string }) {
   return (
     <div className="grid sm:grid-cols-2 gap-4">
       <div>
-        <label className="form-label" htmlFor="name">Naziv sajta</label>
-        <input className="form-input" id="name" name="name" required defaultValue={site.name ?? ''} placeholder="Valena Apartmani" />
+        <label className="form-label" htmlFor={`${idPrefix}name`}>Naziv sajta</label>
+        <input className="form-input" id={`${idPrefix}name`} name="name" required defaultValue={site.name ?? ''} placeholder="Valena Apartmani" />
       </div>
       <div>
-        <label className="form-label" htmlFor="domain">Domen</label>
-        <input className="form-input" id="domain" name="domain" required defaultValue={site.domain ?? ''} placeholder="valenaapartmani.com" />
+        <label className="form-label" htmlFor={`${idPrefix}domain`}>Domen</label>
+        <input className="form-input" id={`${idPrefix}domain`} name="domain" required defaultValue={site.domain ?? ''} placeholder="valenaapartmani.com" />
         <p className="form-hint">Forme se primaju samo sa ovog domena i njegovih poddomena.</p>
       </div>
       <div>
-        <label className="form-label" htmlFor="client_name">Klijent</label>
-        <input className="form-input" id="client_name" name="client_name" defaultValue={site.client_name ?? ''} placeholder="Ime i prezime ili firma" />
+        <label className="form-label" htmlFor={`${idPrefix}client_name`}>Klijent</label>
+        <input className="form-input" id={`${idPrefix}client_name`} name="client_name" defaultValue={site.client_name ?? ''} placeholder="Ime i prezime ili firma" />
       </div>
       <div>
-        <label className="form-label" htmlFor="client_emails">Emailovi klijenta</label>
+        <label className="form-label" htmlFor={`${idPrefix}client_emails`}>Emailovi klijenta</label>
         <input
           className="form-input"
-          id="client_emails"
+          id={`${idPrefix}client_emails`}
           name="client_emails"
           defaultValue={(site.client_emails ?? []).join(', ')}
           placeholder="vlasnik@firma.com, prodaja@firma.com"
@@ -29,15 +29,15 @@ export function SiteFields({ site = {}, showActive = false }: { site?: Partial<S
         <p className="form-hint">Svaki lid ide na sve ove adrese. Odvoji zarezom.</p>
       </div>
       <div>
-        <label className="form-label" htmlFor="email_language">Jezik emaila klijentu</label>
-        <select className="form-input" id="email_language" name="email_language" defaultValue={site.email_language === 'en' ? 'en' : 'sr'}>
+        <label className="form-label" htmlFor={`${idPrefix}email_language`}>Jezik emaila klijentu</label>
+        <select className="form-input" id={`${idPrefix}email_language`} name="email_language" defaultValue={site.email_language === 'en' ? 'en' : 'sr'}>
           <option value="sr">Srpski</option>
           <option value="en">Engleski</option>
         </select>
       </div>
       <div>
-        <label className="form-label" htmlFor="timezone">Vremenska zona klijenta</label>
-        <select className="form-input" id="timezone" name="timezone" defaultValue={site.timezone ?? 'Europe/Belgrade'}>
+        <label className="form-label" htmlFor={`${idPrefix}timezone`}>Vremenska zona klijenta</label>
+        <select className="form-input" id={`${idPrefix}timezone`} name="timezone" defaultValue={site.timezone ?? 'Europe/Belgrade'}>
           {TIMEZONES.map((tz) => (
             <option key={tz.value} value={tz.value}>
               {tz.label}

@@ -1,5 +1,6 @@
 import { db } from '@/lib/admin/supabase';
 import { readFilters, leadQuery } from '@/lib/admin/leadQuery';
+import { webtanoSiteId } from '@/lib/admin/crm/data';
 import { leadSource } from '@/lib/admin/leads';
 import { STATUS_LABELS } from '@/lib/admin/format';
 import type { Lead, Site } from '@/lib/admin/types';
@@ -12,7 +13,7 @@ function cell(value: unknown): string {
 }
 
 export async function GET(request: Request) {
-  const filters = readFilters(new URL(request.url).searchParams);
+  const filters = { ...readFilters(new URL(request.url).searchParams), exclude: await webtanoSiteId() };
   const [{ data: sitesData }, { data: leadsData }] = await Promise.all([
     db().from('sites').select('id, name'),
     leadQuery(filters).limit(10_000),

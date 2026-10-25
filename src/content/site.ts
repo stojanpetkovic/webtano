@@ -7,7 +7,8 @@ export const site = {
   nav: [
     { href: '/#services', label: 'Services' },
     { href: '/work', label: 'Work' },
-    { href: '/#process', label: 'How it works' },
+    { href: '/pricing', label: 'Pricing' },
+    { href: '/blog', label: 'Blog' },
     { href: '/#faq', label: 'FAQ' },
   ],
 };

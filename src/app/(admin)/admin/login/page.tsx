@@ -1,63 +1,125 @@
 import type { Metadata } from 'next';
-import { ChartColumn, FileText, Inbox } from 'lucide-react';
+import { ChartColumn, FileText, Inbox, ShieldCheck } from 'lucide-react';
 import { Logo } from '@/components/admin/Logo';
 import { LoginForm } from './LoginForm';
 
 export const metadata: Metadata = { title: 'Prijava' };
 
-const background =
-  'radial-gradient(circle at 15% 20%, #c7d2fe 0, transparent 40%), radial-gradient(circle at 85% 15%, #fbcfe8 0, transparent 38%), radial-gradient(circle at 80% 85%, #bae6fd 0, transparent 40%), radial-gradient(circle at 20% 85%, #ddd6fe 0, transparent 40%), #f4f4f5';
+// A small, illustrative dashboard for the brand panel. Made-up shapes, no real data.
+const bars = [38, 52, 44, 61, 57, 72, 66, 80, 74, 91, 84, 97];
+
+function Preview() {
+  return (
+    <div className="relative mx-auto w-full max-w-md" aria-hidden="true">
+      <div className="absolute -inset-10 rounded-full bg-accent/20 blur-3xl" />
+      <div className="relative rounded-2xl bg-white/[0.04] p-5 ring-1 ring-white/10 backdrop-blur-sm">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="font-mono text-[10px] tracking-[0.14em] text-white/40 uppercase">Lidovi, 30 dana</div>
+            <div className="mt-1.5 text-3xl font-semibold tracking-tight text-white">
+              186 <span className="ms-1 rounded-md bg-emerald-400/15 px-1.5 py-0.5 align-middle text-xs font-medium text-emerald-300">+24%</span>
+            </div>
+          </div>
+          <div className="flex -space-x-2">
+            {['bg-sky-400', 'bg-violet-400', 'bg-emerald-400'].map((c) => (
+              <span key={c} className={`size-7 rounded-full ring-2 ring-ink-975 ${c}`} />
+            ))}
+          </div>
+        </div>
+        <div className="mt-6 flex h-28 items-end gap-1.5">
+          {bars.map((h, i) => (
+            <span
+              key={i}
+              className="flex-1 rounded-t-[4px] bg-gradient-to-t from-accent/30 to-accent animate-rise"
+              style={{ height: `${h}%`, animationDelay: `${i * 40}ms` }}
+            />
+          ))}
+        </div>
+        <div className="mt-4 grid grid-cols-3 gap-2">
+          {[
+            ['Posetioci', '4.812'],
+            ['Pozivi', '73'],
+            ['Stopa', '5,4%'],
+          ].map(([k, v]) => (
+            <div key={k} className="rounded-xl bg-white/[0.04] px-3 py-2.5 ring-1 ring-white/[0.06]">
+              <div className="text-[11px] text-white/40">{k}</div>
+              <div className="mt-0.5 text-sm font-semibold text-white tabular-nums">{v}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="absolute -right-6 -bottom-16 flex items-center gap-3 rounded-xl bg-white p-3 pe-4 shadow-pop ring-1 ring-zinc-900/5 animate-rise [animation-delay:500ms]">
+        <span className="grid size-9 place-items-center rounded-lg bg-sky-50 text-primary">
+          <Inbox className="size-4" />
+        </span>
+        <div className="leading-tight">
+          <div className="text-[13px] font-semibold text-ink">Novi lid</div>
+          <div className="text-[11px] text-zinc-500">Forma za procenu · upravo</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const features = [
+  { icon: Inbox, title: 'Lidovi sa svih sajtova', text: 'Svaka forma stiže ovde i na email klijenta.' },
+  { icon: ChartColumn, title: 'Posete bez kolačića', text: 'Odakle dolaze posetioci i koliko ih postane upit.' },
+  { icon: FileText, title: 'Izveštaji za klijente', text: 'Jasne brojke koje klijent razume.' },
+];
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center p-4" style={{ background }}>
-      <div className="w-full max-w-4xl rounded-[0.3rem] bg-white/60 p-3 shadow-sm backdrop-blur-xl">
-        <div className="grid gap-3 lg:grid-cols-2">
-          <div className="flex flex-col justify-center px-6 py-10 sm:px-10">
-            <div className="mb-8 text-center">
-              <h1 className="text-lg font-semibold text-primary">Dobro došao nazad!</h1>
-              <p className="mt-2 text-sm text-zinc-600">Prijavi se u WebTano Admin.</p>
-            </div>
-            <LoginForm />
-            <p className="mt-8 text-center text-xs text-zinc-500">Pristup ima samo vlasnik naloga.</p>
-          </div>
-
-          <div className="hidden flex-col justify-between rounded-[0.3rem] bg-white/70 p-8 lg:flex">
-            <div className="flex items-center gap-2.5">
-              <Logo />
-            </div>
-            <ul className="my-10 space-y-5">
-              <li className="flex items-start gap-3">
-                <span className="grid size-10 shrink-0 place-items-center rounded bg-success/15 text-success">
-                  <Inbox className="size-5" />
-                </span>
-                <span>
-                  <span className="block text-sm font-semibold text-zinc-800">Lidovi sa svih sajtova</span>
-                  <span className="text-xs text-zinc-600">Svaka forma stiže ovde i na email klijentu.</span>
-                </span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="grid size-10 shrink-0 place-items-center rounded bg-info/15 text-info">
-                  <ChartColumn className="size-5" />
-                </span>
-                <span>
-                  <span className="block text-sm font-semibold text-zinc-800">Posete bez kolačića</span>
-                  <span className="text-xs text-zinc-600">Odakle dolaze posetioci i koliko ih postane upit.</span>
-                </span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="grid size-10 shrink-0 place-items-center rounded bg-secondary/15 text-secondary">
-                  <FileText className="size-5" />
-                </span>
-                <span>
-                  <span className="block text-sm font-semibold text-zinc-800">Izveštaji za klijente</span>
-                  <span className="text-xs text-zinc-600">Jasne brojke koje klijent razume.</span>
-                </span>
-              </li>
-            </ul>
-            <p className="text-xs text-zinc-500">© {new Date().getFullYear()} WebTano</p>
-          </div>
+    <div className="grid min-h-screen bg-white lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
+      <div className="relative flex flex-col px-6 py-8 sm:px-12">
+        <div className="flex items-center gap-2.5">
+          <Logo tone="light" />
         </div>
+
+        <div className="mx-auto flex w-full max-w-[380px] flex-1 flex-col justify-center py-12">
+          <h1 className="text-[28px] leading-tight font-semibold tracking-tight">Dobro došao nazad</h1>
+          <p className="mt-2 text-[14px] text-zinc-500">Prijavi se da vidiš lidove i analitiku svih sajtova.</p>
+          <div className="mt-8">
+            <LoginForm />
+          </div>
+          <p className="mt-8 flex items-center gap-2 text-xs text-zinc-500">
+            <ShieldCheck className="size-4 text-emerald-500" />
+            Pristup ima samo vlasnik naloga. Veza je šifrovana.
+          </p>
+        </div>
+
+        <p className="text-xs text-zinc-400">© {new Date().getFullYear()} WebTano</p>
+      </div>
+
+      <div className="relative hidden overflow-hidden bg-ink-975 p-12 lg:flex lg:flex-col">
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(60% 50% at 80% 0%, rgb(1 175 233 / 0.22), transparent 70%), radial-gradient(50% 40% at 0% 100%, rgb(37 99 235 / 0.18), transparent 70%)',
+          }}
+        />
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.15]"
+          style={{
+            backgroundImage: 'linear-gradient(rgb(255 255 255 / 0.07) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / 0.07) 1px, transparent 1px)',
+            backgroundSize: '44px 44px',
+            maskImage: 'radial-gradient(70% 60% at 50% 40%, #000, transparent)',
+          }}
+        />
+        <div className="relative flex flex-1 items-center">
+          <Preview />
+        </div>
+        <ul className="relative mt-14 grid gap-5 xl:grid-cols-3">
+          {features.map((f) => (
+            <li key={f.title}>
+              <span className="grid size-9 place-items-center rounded-lg bg-white/[0.06] text-accent ring-1 ring-white/10">
+                <f.icon className="size-4" />
+              </span>
+              <div className="mt-3 text-[13.5px] font-semibold text-white">{f.title}</div>
+              <div className="mt-1 text-xs leading-relaxed text-white/50">{f.text}</div>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

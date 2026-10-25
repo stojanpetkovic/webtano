@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { PageHeading } from '@/components/admin/PageHeading';
 import { SiteHeader } from '@/components/admin/SiteHeader';
+import { siteCustomer } from '@/lib/admin/crm/data';
 import { CopyButton } from '@/components/admin/CopyButton';
 import { db } from '@/lib/admin/supabase';
 import { env } from '@/lib/admin/env';
@@ -43,7 +44,7 @@ export default async function SiteSettingsPage({
           { label: site.name, href: `/admin/sites/${site.id}` },
         ]}
       />
-      <SiteHeader site={site} current="settings" />
+      <SiteHeader site={site} customer={await siteCustomer(site.id)} current="settings" />
 
       {notice && (
         <div className="alert alert-success" role="status">

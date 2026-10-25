@@ -1,27 +1,29 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-bricolage), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
 
-  /* Forest green for surfaces and text, lime for the one action on screen. */
-  --color-forest-950: #06231a;
-  --color-forest-900: #0b3326;
-  --color-forest-800: #114632;
-  --color-forest-700: #175c41;
-  --color-forest-600: #1f7552;
-  --color-forest-200: #c9dfd2;
-  --color-forest-100: #e3efe8;
-  --color-forest-50: #f3f8f4;
-  --color-lime: #c5f24a;
-  --color-lime-dark: #a8d82c;
-  --color-brand: var(--color-forest-700);
+  /* Near-black ink for surfaces and text, Digital Silk style cyan for the one action on screen. */
+  --color-ink-975: #05060a;
+  --color-ink-950: #0b0d14;
+  --color-ink-900: #151926;
+  --color-ink-800: #222838;
+  --color-azure-700: #0279b0;
+  --color-azure-600: #2563eb;
+  --color-azure-200: #b3e4f7;
+  --color-azure-100: #dcf3fc;
+  --color-azure-50: #f0f9fe;
+  --color-accent: #01afe9;
+  --color-accent-dark: #0097cb;
+  --color-brand: var(--color-azure-700);
 
-  /* Layered, green-tinted shadows: soft at rest, a little deeper on hover. */
-  --shadow-soft: 0 1px 2px rgb(6 35 26 / 0.04), 0 4px 16px -6px rgb(6 35 26 / 0.08);
-  --shadow-lift: 0 2px 4px rgb(6 35 26 / 0.04), 0 18px 40px -16px rgb(6 35 26 / 0.22);
-  --shadow-float: 0 4px 8px rgb(6 35 26 / 0.06), 0 30px 60px -20px rgb(6 35 26 / 0.35);
-  --shadow-glow: 0 0 0 1px rgb(197 242 74 / 0.4), 0 10px 30px -10px rgb(197 242 74 / 0.55);
+  /* Layered, navy-tinted shadows: soft at rest, a little deeper on hover. */
+  --shadow-soft: 0 1px 2px rgb(10 14 30 / 0.04), 0 4px 16px -6px rgb(10 14 30 / 0.08);
+  --shadow-lift: 0 2px 4px rgb(10 14 30 / 0.04), 0 18px 40px -16px rgb(10 14 30 / 0.22);
+  --shadow-float: 0 4px 8px rgb(10 14 30 / 0.06), 0 30px 60px -20px rgb(10 14 30 / 0.35);
+  --shadow-glow: 0 0 0 1px rgb(1 175 233 / 0.4), 0 10px 30px -10px rgb(1 175 233 / 0.55);
 
   --animate-float: float 6s ease-in-out infinite;
   --animate-float-slow: float 9s ease-in-out infinite;
@@ -41,10 +43,10 @@
 
 @keyframes pulse-dot {
   0% {
-    box-shadow: 0 0 0 0 rgb(197 242 74 / 0.6);
+    box-shadow: 0 0 0 0 rgb(1 175 233 / 0.6);
   }
   100% {
-    box-shadow: 0 0 0 10px rgb(197 242 74 / 0);
+    box-shadow: 0 0 0 10px rgb(1 175 233 / 0);
   }
 }
 
@@ -59,25 +61,109 @@ html {
 }
 
 body {
-  @apply bg-white text-zinc-800 antialiased;
+  @apply bg-white text-zinc-700 antialiased;
+  font-feature-settings: "ss01", "cv11";
+}
+
+/* Tight, even headings read as a product site rather than a brochure. */
+.font-display {
+  letter-spacing: -0.035em;
+  font-weight: 600;
+}
+
+/* Dark sections: a soft spotlight from above instead of loose colour blobs. */
+.bg-spotlight {
+  background:
+    radial-gradient(70% 55% at 50% -10%, rgb(37 99 235 / 0.55), transparent 70%),
+    radial-gradient(35% 35% at 88% 18%, rgb(1 175 233 / 0.07), transparent 70%),
+    radial-gradient(40% 40% at 8% 90%, rgb(30 64 175 / 0.25), transparent 70%),
+    var(--color-ink-975);
+}
+.bg-spotlight-center {
+  background:
+    radial-gradient(55% 60% at 50% 50%, rgb(37 99 235 / 0.38), transparent 75%),
+    var(--color-ink-975);
+}
+
+/* Light sections: near-white with a faint cool wash at the top. */
+.bg-paper {
+  background:
+    radial-gradient(80% 60% at 50% 0%, rgb(30 64 175 / 0.045), transparent 70%),
+    #f7f9fc;
+}
+
+/* Client band under the hero: a soft wash coming off the dark hero, light
+   pooling behind the cards and a fine grid that fades out at the edges. */
+.bg-clients {
+  background:
+    linear-gradient(180deg, rgb(5 6 10 / 0.06), transparent 9rem),
+    radial-gradient(60% 55% at 50% 62%, rgb(1 175 233 / 0.16), transparent 70%),
+    radial-gradient(45% 50% at 15% 80%, rgb(37 99 235 / 0.08), transparent 70%),
+    radial-gradient(45% 50% at 85% 75%, rgb(37 99 235 / 0.08), transparent 70%),
+    linear-gradient(180deg, #eef5fb 0%, #f7f9fc 22%, #ffffff 100%);
+}
+.grid-lines-light {
+  background-image:
+    linear-gradient(to right, rgb(10 14 30 / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(10 14 30 / 0.05) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 75% 70% at 50% 45%, #000 30%, transparent 80%);
+}
+
+/* "What it costs you": a faint warning tint where the leaks are, easing into
+   blue where the fixes are, so the background tells the same story. */
+.bg-leaks {
+  background:
+    radial-gradient(50% 45% at 8% 12%, rgb(239 68 68 / 0.07), transparent 70%),
+    radial-gradient(40% 40% at 92% 30%, rgb(245 158 11 / 0.045), transparent 70%),
+    radial-gradient(55% 50% at 85% 95%, rgb(37 99 235 / 0.1), transparent 70%),
+    radial-gradient(40% 40% at 20% 100%, rgb(1 175 233 / 0.1), transparent 70%),
+    linear-gradient(0deg, rgb(5 6 10 / 0.035), transparent 9rem),
+    linear-gradient(180deg, #ffffff, #f7f9fc 60%, #f3f6fa);
+}
+
+/* A hairline that fades out at both ends, for section edges. */
+.hairline-top,
+.hairline-bottom {
+  position: relative;
+}
+.hairline-top::before,
+.hairline-bottom::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(10 14 30 / 0.12) 20%, rgb(10 14 30 / 0.12) 80%, transparent);
+  pointer-events: none;
+}
+.hairline-top::before {
+  top: 0;
+}
+.hairline-bottom::after {
+  bottom: 0;
+}
+.dark-hairline::before,
+.dark-hairline::after {
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.14) 20%, rgb(255 255 255 / 0.14) 80%, transparent);
 }
 
 ::selection {
-  background: var(--color-lime);
-  color: var(--color-forest-950);
+  background: var(--color-accent);
+  color: var(--color-ink-950);
 }
 
 .grid-lines {
   background-image:
-    linear-gradient(to right, rgb(255 255 255 / 0.06) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(255 255 255 / 0.06) 1px, transparent 1px);
-  background-size: 56px 56px;
-  mask-image: radial-gradient(ellipse at 30% 30%, #000 25%, transparent 75%);
+    linear-gradient(to right, rgb(255 255 255 / 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.045) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 30%, transparent 80%);
 }
 
 .dot-grid {
-  background-image: radial-gradient(rgb(23 92 65 / 0.12) 1px, transparent 1px);
-  background-size: 22px 22px;
+  background-image: radial-gradient(rgb(10 14 30 / 0.09) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
 /* A thin gradient frame that brightens on hover. */
@@ -90,7 +176,7 @@ body {
   inset: 0;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(140deg, rgb(197 242 74 / 0.55), rgb(255 255 255 / 0.06) 40%, rgb(255 255 255 / 0.06) 60%, rgb(197 242 74 / 0.25));
+  background: linear-gradient(140deg, rgb(1 175 233 / 0.55), rgb(255 255 255 / 0.06) 40%, rgb(255 255 255 / 0.06) 60%, rgb(1 175 233 / 0.25));
   mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
@@ -99,10 +185,315 @@ body {
 }
 
 .text-gradient {
-  background: linear-gradient(100deg, #d9fb6e, var(--color-lime) 45%, #8fd14f);
+  background: linear-gradient(100deg, #8fe3ff, var(--color-accent) 45%, #6d7bff);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+/* Hero backdrop: slow aurora, signals on the grid, pointer spotlight. */
+.hero-aurora {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(70px);
+  will-change: transform;
+}
+.hero-aurora-a {
+  top: -18rem;
+  left: 10%;
+  width: 44rem;
+  height: 30rem;
+  background: radial-gradient(closest-side, rgb(37 99 235 / 0.55), transparent);
+  animation: aurora-a 22s ease-in-out infinite alternate;
+}
+.hero-aurora-b {
+  top: 4rem;
+  right: -10rem;
+  width: 34rem;
+  height: 26rem;
+  background: radial-gradient(closest-side, rgb(1 175 233 / 0.12), transparent);
+  animation: aurora-b 28s ease-in-out infinite alternate;
+}
+@keyframes aurora-a {
+  to {
+    transform: translate(18rem, 6rem) scale(1.15);
+  }
+}
+@keyframes aurora-b {
+  to {
+    transform: translate(-22rem, 10rem) scale(0.9);
+  }
+}
+.hero-beam-x,
+.hero-beam-y {
+  position: absolute;
+  opacity: 0;
+}
+.hero-beam-x {
+  left: 0;
+  width: 160px;
+  height: 1px;
+  margin-top: -0.5px;
+  background: linear-gradient(90deg, transparent, rgb(1 175 233 / 0.95), transparent);
+  box-shadow: 0 0 14px 1px rgb(1 175 233 / 0.45);
+  animation: beam-x 9s linear infinite;
+}
+.hero-beam-y {
+  top: 0;
+  width: 1px;
+  height: 140px;
+  margin-left: -0.5px;
+  background: linear-gradient(180deg, transparent, rgb(1 175 233 / 0.9), transparent);
+  box-shadow: 0 0 14px 1px rgb(1 175 233 / 0.4);
+  animation: beam-y 10s linear infinite;
+}
+@keyframes beam-x {
+  0% {
+    transform: translateX(-200px);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  45% {
+    opacity: 1;
+  }
+  55%,
+  100% {
+    transform: translateX(min(100vw, 1600px));
+    opacity: 0;
+  }
+}
+@keyframes beam-y {
+  0% {
+    transform: translateY(-160px);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    transform: translateY(900px);
+    opacity: 0;
+  }
+}
+.hero-pointer {
+  position: absolute;
+  inset: 0;
+  opacity: var(--spot, 0);
+  transition: opacity 0.4s ease;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgb(1 175 233 / 0.07), transparent 70%);
+}
+
+/* The customer path in "What it costs you": a line with light flowing along it. */
+.pipeline,
+.pipeline-v {
+  background-color: rgb(10 14 30 / 0.08);
+  background-repeat: no-repeat;
+}
+.pipeline {
+  background-image: linear-gradient(90deg, transparent, var(--color-accent), var(--color-azure-600), transparent);
+  background-size: 30% 100%;
+  animation: pipeline-x 4.5s linear infinite;
+}
+.pipeline-v {
+  background-image: linear-gradient(180deg, transparent, var(--color-accent), var(--color-azure-600), transparent);
+  background-size: 100% 30%;
+  animation: pipeline-y 4.5s linear infinite;
+}
+@keyframes pipeline-x {
+  from {
+    background-position: -40% 0;
+  }
+  to {
+    background-position: 140% 0;
+  }
+}
+@keyframes pipeline-y {
+  from {
+    background-position: 0 -40%;
+  }
+  to {
+    background-position: 0 140%;
+  }
+}
+
+/* Results: a quiet light canvas with soft light behind the case cards. */
+.bg-results {
+  background:
+    radial-gradient(45% 35% at 0% 30%, rgb(1 175 233 / 0.12), transparent 70%),
+    radial-gradient(45% 35% at 100% 65%, rgb(37 99 235 / 0.1), transparent 70%),
+    radial-gradient(60% 30% at 50% 100%, rgb(1 175 233 / 0.08), transparent 70%),
+    linear-gradient(180deg, rgb(5 6 10 / 0.06), transparent 9rem),
+    linear-gradient(0deg, rgb(5 6 10 / 0.035), transparent 9rem),
+    linear-gradient(180deg, #ffffff 0%, #f5f8fc 50%, #f3f6fa 100%);
+}
+
+/* How we work: light pooling behind the statement on the left. */
+.bg-promises {
+  background:
+    radial-gradient(45% 50% at 18% 35%, rgb(37 99 235 / 0.42), transparent 72%),
+    radial-gradient(35% 40% at 90% 85%, rgb(1 175 233 / 0.06), transparent 70%),
+    var(--color-ink-975);
+}
+.ring-wave {
+  animation: ring-wave 2.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+@keyframes ring-wave {
+  0% {
+    transform: scale(0.55);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.25);
+    opacity: 0;
+  }
+}
+.phone-ring {
+  animation: phone-ring 2.4s ease-in-out infinite;
+}
+@keyframes phone-ring {
+  0%,
+  30%,
+  100% {
+    transform: rotate(0);
+  }
+  5%,
+  15%,
+  25% {
+    transform: rotate(-14deg);
+  }
+  10%,
+  20% {
+    transform: rotate(14deg);
+  }
+}
+
+/* Report: a light canvas with soft light behind the report preview. */
+.bg-report {
+  background:
+    radial-gradient(45% 55% at 80% 45%, rgb(37 99 235 / 0.09), transparent 70%),
+    radial-gradient(35% 40% at 5% 90%, rgb(1 175 233 / 0.1), transparent 70%),
+linear-gradient(180deg, rgb(5 6 10 / 0.06), transparent 9rem),
+    linear-gradient(0deg, rgb(5 6 10 / 0.035), transparent 9rem),
+    linear-gradient(180deg, #ffffff, #f3f6fa);
+}
+
+/* How it works: a dark band whose progress line lights each step in turn. */
+.bg-process {
+  background:
+    radial-gradient(60% 50% at 50% 0%, rgb(37 99 235 / 0.45), transparent 70%),
+    radial-gradient(40% 40% at 100% 100%, rgb(1 175 233 / 0.05), transparent 70%),
+    var(--color-ink-975);
+}
+.proc-fill-x,
+.proc-fill-y {
+  transition:
+    width 2.4s cubic-bezier(0.45, 0, 0.2, 1) 0.3s,
+    height 2.4s cubic-bezier(0.45, 0, 0.2, 1) 0.3s;
+}
+.proc-fill-x {
+  width: 100%;
+}
+.proc-fill-y {
+  height: 100%;
+}
+.proc-node {
+  color: var(--color-ink-975);
+  background-color: var(--color-accent);
+  box-shadow: 0 0 0 6px rgb(1 175 233 / 0.12), 0 0 24px rgb(1 175 233 / 0.35);
+  transition:
+    color 0.5s ease,
+    background-color 0.5s ease,
+    box-shadow 0.5s ease;
+  transition-delay: calc(0.3s + var(--step) * 0.75s);
+}
+.js [data-reveal]:not([data-visible]) .proc-fill-x {
+  width: 0;
+}
+.js [data-reveal]:not([data-visible]) .proc-fill-y {
+  height: 0;
+}
+.js [data-reveal]:not([data-visible]) .proc-node {
+  color: rgb(255 255 255 / 0.6);
+  background-color: var(--color-ink-975);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.15);
+}
+
+/* FAQ: paper with light pooling behind the question card on the left. */
+.bg-faq {
+  background:
+    linear-gradient(180deg, rgb(5 6 10 / 0.06), transparent 9rem),
+    radial-gradient(40% 50% at 12% 45%, rgb(1 175 233 / 0.12), transparent 70%),
+    radial-gradient(45% 45% at 90% 20%, rgb(37 99 235 / 0.06), transparent 70%),
+    linear-gradient(0deg, rgb(5 6 10 / 0.035), transparent 9rem),
+    linear-gradient(180deg, #ffffff, #f7f9fc 40%, #f3f6fa);
+}
+
+/* Final CTA: dark band with a slow accent orb, flowing into the footer below. */
+.bg-final {
+  background:
+    radial-gradient(60% 60% at 50% 0%, rgb(37 99 235 / 0.5), transparent 70%),
+    var(--color-ink-975);
+}
+.final-orb {
+  background: radial-gradient(closest-side, rgb(1 175 233 / 0.18), transparent);
+  filter: blur(40px);
+  animation: final-orb 12s ease-in-out infinite alternate;
+}
+@keyframes final-orb {
+  to {
+    transform: translate(-30%, 4rem) scale(1.15);
+  }
+}
+
+/* Where a dark section starts: a fine cyan line that fades out at both ends. */
+.edge-glow::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(1 175 233 / 0.45) 30%, rgb(37 99 235 / 0.45) 70%, transparent);
+  pointer-events: none;
+}
+
+/* Service card illustrations: they play once their card is revealed. */
+.svc-gauge {
+  stroke-dashoffset: var(--gauge-to);
+  transition: stroke-dashoffset 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.25s;
+}
+.svc-bar {
+  width: var(--bar);
+  transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--bar-delay, 0ms) + 250ms);
+}
+.svc-spark {
+  height: var(--spark);
+  transition: height 1s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--bar-delay, 0ms) + 500ms);
+}
+.js [data-reveal]:not([data-visible]) .svc-spark {
+  height: 4%;
+}
+.svc-row {
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--row-delay, 0ms);
+}
+.js [data-reveal]:not([data-visible]) .svc-gauge {
+  stroke-dashoffset: var(--gauge-full);
+}
+.js [data-reveal]:not([data-visible]) .svc-bar {
+  width: 0;
+}
+.js [data-reveal]:not([data-visible]) .svc-row {
+  opacity: 0;
+  transform: translateY(10px);
 }
 
 /* Scroll reveal. Content is hidden only once JavaScript has marked the page,
@@ -126,19 +517,6 @@ body {
   transform: none;
 }
 
-/* FAQ: animate the answer open. */
-.faq-body {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.35s ease;
-}
-details[open] .faq-body {
-  grid-template-rows: 1fr;
-}
-.faq-body > div {
-  overflow: hidden;
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -151,6 +529,62 @@ details[open] .faq-body {
     transition-duration: 0.01ms !important;
   }
   .js [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+  .hero-beam-x,
+  .hero-beam-y {
+    display: none;
+  }
+}
+
+/* ---------- Phones: app-like touch, motion and type ---------- */
+
+/* A new page fades in after a client-side navigation. Opacity only: moving the page
+   would shift the target of a link like /#hero-form while it scrolls there. */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+  }
+}
+.page-enter {
+  animation: page-enter 0.4s ease-out;
+}
+
+html {
+  /* Dark behind the page, so pulling past the top or bottom on iOS shows the header and footer colour. */
+  background: var(--color-ink-975);
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (hover: none) {
+  a,
+  button,
+  summary,
+  [role="tab"] {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  /* Buttons and chips press in slightly under the finger. */
+  :where(a, button)[class*="rounded"]:active {
+    scale: 0.97;
+  }
+  .press:has(a:active) {
+    scale: 0.985;
+  }
+}
+
+@media (max-width: 639px) {
+  /* Nothing smaller than 11px on a phone. */
+  .text-\[10px\] {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 767px) {
+  /* Cards waiting to the right of a swipe row are off screen sideways, so they would never
+     reveal; show them as they are, so the peeking card invites the swipe. */
+  .js .swipe-row [data-reveal] {
     opacity: 1;
     transform: none;
   }

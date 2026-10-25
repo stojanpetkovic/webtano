@@ -28,6 +28,8 @@ export interface CaseStudy {
   work: { title: string; text: string }[];
   outcome: string[];
   lighthouse: { performance: number; accessibility: number; bestPractices: number; seo: number };
+  /** Where the figures above come from, shown next to them. */
+  source: string;
   shots: Shot[];
 }
 
@@ -60,6 +62,7 @@ export const caseStudies: CaseStudy[] = [
       'The owner sees every lead the second it arrives and gets one monthly report in plain language.',
     ],
     lighthouse: { performance: 91, accessibility: 96, bestPractices: 96, seo: 100 },
+    source: 'WebTano lead tracking and the client’s Google Ads account; rating from Google.',
     shots: [
       { src: '/work/tree-jaws-hero-dark.webp', alt: 'The Tree Jaws homepage, built around a job-site photo with the rating and a call button up front.', width: 1440, height: 603 },
       { src: '/work/tree-jaws-testimonials.webp', alt: 'A reviews section showing the 4.9-star rating across 427 Google reviews.', width: 1440, height: 603 },
@@ -91,6 +94,7 @@ export const caseStudies: CaseStudy[] = [
     ],
     outcome: ['The site scores 100 for SEO and Best Practices in Lighthouse, and it grows from search without paid ads.'],
     lighthouse: { performance: 87, accessibility: 91, bestPractices: 100, seo: 100 },
+    source: 'Lighthouse on the live site, page counts from the site; rating from Google.',
     shots: [
       { src: '/work/mahalo-hero.webp', alt: 'The Mahalo Tree Service homepage: fast, efficient, affordable tree removal, over a job-site photo.', width: 1440, height: 619 },
       { src: '/work/mahalo-services.webp', alt: 'The services section with tree removal, trimming and the ISA Certified Arborist badge.', width: 1440, height: 619 },
@@ -122,6 +126,7 @@ export const caseStudies: CaseStudy[] = [
     ],
     outcome: ['In the last 30 days 111 visitors produced 26 calls, an 11.2% conversion rate.'],
     lighthouse: { performance: 95, accessibility: 96, bestPractices: 100, seo: 100 },
+    source: 'WebTano lead tracking, last 30 days; Lighthouse on the live site.',
     shots: [
       { src: '/work/caretrans-home.webp', alt: 'The Care Trans homepage with 24/7 availability and a call button.', width: 1440, height: 900 },
       { src: '/work/caretrans-service.webp', alt: 'A Care Trans service page for one type of patient transport.', width: 1440, height: 900 },
@@ -152,6 +157,7 @@ export const caseStudies: CaseStudy[] = [
     ],
     outcome: ['The site scores 96 for performance and 100 for accessibility, best practices and SEO, with full-size photography.'],
     lighthouse: { performance: 96, accessibility: 100, bestPractices: 100, seo: 100 },
+    source: 'WebTano lead tracking, last 30 days; Lighthouse on the live site.',
     shots: [
       { src: '/work/eric-dental-centar-home.webp', alt: 'The new Erić Dental Centar homepage with the dentist’s photo, a 5.0 rating and a booking button.', width: 1440, height: 900 },
       { src: '/work/eric-dental-centar-before-home.webp', alt: 'The old site: a dark full-screen photo and no way to book.', width: 1440, height: 900 },

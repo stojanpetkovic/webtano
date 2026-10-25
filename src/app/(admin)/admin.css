@@ -1,28 +1,48 @@
 /* Private lead admin. Loaded only by the admin's root layout, so none of it
-   reaches the public site. The look follows the Tailwick admin template: DM
-   Sans, zinc neutrals, a blue primary, pastel stat cards and outlined status
-   badges. */
+   reaches the public site. Same family as webtano.com: Geist, near-black ink
+   for the sidebar, white cards on a cool grey canvas and the brand cyan for
+   what is active or new. */
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
 
-  --color-primary: var(--color-blue-500);
-  --color-primary-dark: var(--color-blue-600);
+  --color-ink-975: #05060a;
+  --color-ink-950: #0b0d14;
+  --color-ink-900: #151926;
+  --color-ink-800: #222838;
+  --color-accent: #01afe9;
+  --color-accent-dark: #0097cb;
+
+  --color-primary: #0279b0;
+  --color-primary-dark: #02679a;
   --color-secondary: var(--color-violet-500);
-  --color-success: var(--color-green-500);
+  --color-success: var(--color-emerald-500);
   --color-info: var(--color-sky-500);
   --color-warning: var(--color-amber-500);
-  --color-danger: var(--color-orange-500);
+  --color-danger: var(--color-rose-500);
 
-  --color-body: var(--color-zinc-50);
+  --color-body: #f4f6f9;
   --color-card: var(--color-white);
-  --color-line: var(--color-zinc-200);
-  --color-ink: var(--color-zinc-800);
+  --color-line: #e7eaf0;
+  --color-ink: #0b0d14;
   --color-muted: var(--color-zinc-500);
 
-  --spacing-sidenav: 260px;
-  --spacing-topbar: 70px;
+  --spacing-sidenav: 264px;
+  --spacing-topbar: 64px;
+
+  --shadow-card: 0 1px 2px rgb(10 14 30 / 0.04), 0 1px 3px rgb(10 14 30 / 0.03);
+  --shadow-pop: 0 12px 32px -12px rgb(10 14 30 / 0.25);
+
+  --animate-rise: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
 }
 
 @layer base {
@@ -30,7 +50,8 @@
     -webkit-font-smoothing: antialiased;
   }
   body {
-    @apply bg-body text-zinc-600 font-sans text-sm;
+    @apply bg-body font-sans text-sm text-zinc-600;
+    font-feature-settings: "ss01", "cv11";
   }
   h1,
   h2,
@@ -39,113 +60,135 @@
   h5,
   h6 {
     @apply text-ink;
+    letter-spacing: -0.015em;
   }
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-primary;
+    @apply outline-2 outline-offset-2 outline-accent;
+  }
+  ::selection {
+    background: rgb(1 175 233 / 0.2);
   }
 }
 
 @layer components {
-  /* ── Sidenav ─────────────────────────────────────────────────────────── */
+  /* ── Sidenav (dark) ──────────────────────────────────────────────────── */
   .menu-title {
-    @apply flex h-8 items-center px-4 pt-2 text-[10px] font-bold uppercase tracking-widest text-zinc-600/75;
+    @apply flex h-8 items-center px-3 pt-3 font-mono text-[10px] font-medium tracking-[0.14em] text-white/35 uppercase;
   }
   .menu-link {
-    @apply flex items-center gap-x-3 rounded px-3 py-2 text-sm leading-none font-medium text-zinc-600 transition-colors;
+    @apply relative flex items-center gap-x-3 rounded-xl px-3 py-2.5 text-[13.5px] leading-none font-medium text-white/60 transition-colors;
   }
   .menu-link:hover {
-    @apply bg-primary/10 text-primary;
+    @apply bg-white/[0.05] text-white;
   }
   .menu-link[aria-current='page'] {
-    @apply bg-primary/10 text-primary;
+    @apply bg-white/[0.08] text-white;
+  }
+  .menu-link[aria-current='page']::before {
+    content: "";
+    @apply absolute top-2 bottom-2 -left-3 w-[3px] rounded-r-full bg-accent;
+  }
+  .menu-link[aria-current='page'] svg {
+    @apply text-accent;
   }
   .menu-badge {
-    @apply ms-auto rounded-full bg-danger px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white;
+    @apply ms-auto rounded-full bg-accent px-1.75 py-0.75 font-mono text-[10px] leading-none font-semibold text-ink-950;
   }
 
   /* ── Cards ───────────────────────────────────────────────────────────── */
   .card {
-    @apply relative flex flex-col rounded-[0.3rem] bg-card shadow-sm;
+    @apply relative flex min-w-0 flex-col rounded-2xl bg-card shadow-card ring-1 ring-zinc-900/[0.06];
   }
   .card-header {
-    @apply flex min-h-14 items-center justify-between gap-3 border-b border-line px-5;
+    @apply flex min-h-14 flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-3;
   }
   .card-title {
-    @apply text-base font-semibold text-zinc-800;
+    @apply text-[15px] font-semibold text-ink;
+  }
+  .card-sub {
+    @apply mt-0.5 text-xs text-muted;
   }
   .card-body {
     @apply p-5;
   }
 
-  /* Pastel stat card: tinted background, solid icon tile, faint big icon. */
+  /* KPI card: label and icon chip, then the number, the change and a sparkline. */
   .stat-card {
-    @apply relative overflow-hidden rounded-[0.3rem] p-5;
+    @apply relative flex flex-col overflow-hidden rounded-2xl bg-card p-5 shadow-card ring-1 ring-zinc-900/[0.06];
   }
   .stat-icon {
-    @apply grid size-12 place-items-center rounded text-white;
-  }
-  .stat-watermark {
-    @apply pointer-events-none absolute -end-8 -top-2 size-32;
+    @apply grid size-9 place-items-center rounded-xl;
   }
   .stat-value {
-    @apply mt-5 mb-2 text-lg font-semibold text-zinc-800;
+    @apply mt-3 text-[28px] leading-none font-semibold tracking-tight text-ink tabular-nums;
   }
   .stat-label {
-    @apply text-sm text-zinc-700;
+    @apply text-[13px] font-medium text-zinc-500;
   }
 
   /* ── Buttons ─────────────────────────────────────────────────────────── */
   .btn {
-    @apply inline-flex cursor-pointer items-center justify-center gap-x-2 whitespace-nowrap rounded border border-transparent px-4 py-1.75 text-center text-sm font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex cursor-pointer items-center justify-center gap-x-2 rounded-lg border border-transparent px-4 py-2 text-center text-[13px] font-medium whitespace-nowrap transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-sm {
-    @apply px-3.5 py-1.5 text-xs;
+    @apply px-3 py-1.5 text-xs;
   }
   .btn-primary {
-    @apply bg-primary text-white hover:bg-primary-dark;
+    @apply bg-ink-950 text-white shadow-[0_1px_2px_rgb(10_14_30/0.2),inset_0_1px_0_rgb(255_255_255/0.08)] hover:bg-ink-800;
+  }
+  .btn-accent {
+    @apply bg-accent text-ink-950 shadow-[0_6px_16px_-6px_rgb(1_175_233/0.6)] hover:bg-accent-dark;
   }
   .btn-soft {
-    @apply bg-primary/20 text-primary hover:bg-primary hover:text-white;
+    @apply bg-primary/10 text-primary hover:bg-primary hover:text-white;
   }
   .btn-light {
-    @apply bg-zinc-400/10 text-zinc-700 hover:bg-zinc-100;
+    @apply bg-zinc-100 text-zinc-700 hover:bg-zinc-200/70;
   }
   .btn-outline {
-    @apply border-line bg-transparent text-zinc-600 hover:border-primary/10 hover:bg-primary/10 hover:text-primary;
+    @apply border-line bg-white text-zinc-700 shadow-[0_1px_2px_rgb(10_14_30/0.04)] hover:border-zinc-300 hover:text-ink;
   }
   .btn-danger {
-    @apply bg-danger/10 text-danger hover:bg-danger hover:text-white;
+    @apply bg-danger/10 text-rose-600 hover:bg-danger hover:text-white;
   }
 
   /* ── Forms ───────────────────────────────────────────────────────────── */
   .form-label {
-    @apply mb-2 inline-block text-sm font-medium text-zinc-800;
+    @apply mb-1.5 inline-block text-[13px] font-medium text-zinc-700;
   }
   .form-input {
-    @apply block w-full rounded border border-zinc-200 bg-transparent px-4 py-2.5 text-sm text-zinc-700 placeholder:text-zinc-400 focus:border-primary focus:ring-0 focus:outline-none disabled:opacity-50;
+    @apply block w-full rounded-lg border border-line bg-white px-3.5 py-2.25 text-[13.5px] text-ink shadow-[0_1px_2px_rgb(10_14_30/0.03)] transition placeholder:text-zinc-400 focus:border-accent focus:ring-4 focus:ring-accent/15 focus:outline-none disabled:opacity-50;
+  }
+  select.form-input {
+    @apply appearance-none bg-[length:1rem] bg-[right_0.75rem_center] bg-no-repeat pe-9;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   }
   .form-hint {
     @apply mt-1.5 text-xs text-muted;
   }
 
-  /* ── Badges (outlined pastel, as in Tailwick's order lists) ──────────── */
+  /* ── Badges: soft pill with a status dot ─────────────────────────────── */
   .badge {
-    @apply inline-flex items-center gap-x-1.5 rounded border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap;
+    @apply inline-flex items-center gap-x-1.5 rounded-full px-2.5 py-1 text-xs leading-none font-medium whitespace-nowrap ring-1 ring-inset;
+  }
+  .badge::before {
+    content: "";
+    @apply size-1.5 rounded-full bg-current;
   }
   .badge-new {
-    @apply border-info/30 bg-info/10 text-info;
+    @apply bg-sky-50 text-sky-700 ring-sky-600/15;
   }
   .badge-contacted {
-    @apply border-warning/30 bg-warning/10 text-amber-600;
+    @apply bg-amber-50 text-amber-700 ring-amber-600/20;
   }
   .badge-won {
-    @apply border-success/30 bg-success/10 text-green-600;
+    @apply bg-emerald-50 text-emerald-700 ring-emerald-600/20;
   }
   .badge-lost {
-    @apply border-zinc-300 bg-zinc-100 text-zinc-500;
+    @apply bg-zinc-100 text-zinc-600 ring-zinc-500/15;
   }
   .badge-spam {
-    @apply border-danger/30 bg-danger/10 text-danger;
+    @apply bg-rose-50 text-rose-700 ring-rose-600/15;
   }
 
   /* ── Tables ──────────────────────────────────────────────────────────── */
@@ -153,30 +196,42 @@
     @apply min-w-full text-left;
   }
   .table thead {
-    @apply bg-zinc-100;
+    @apply bg-zinc-50/80;
   }
   .table th {
-    @apply px-4 py-3 text-sm font-normal whitespace-nowrap text-zinc-700;
+    @apply px-5 py-2.5 text-[11px] font-medium tracking-wider whitespace-nowrap text-zinc-500 uppercase;
   }
   .table td {
-    @apply border-t border-zinc-200 px-4 py-3 align-top text-sm text-zinc-800;
+    @apply border-t border-line px-5 py-3.5 align-middle text-[13.5px] text-zinc-700;
   }
   .table tbody tr {
-    @apply transition-colors hover:bg-zinc-50;
+    @apply transition-colors hover:bg-zinc-50/70;
   }
 
   /* ── Notices ─────────────────────────────────────────────────────────── */
   .alert {
-    @apply rounded border px-4 py-3 text-[13px];
+    @apply rounded-xl border px-4 py-3 text-[13px];
   }
   .alert-success {
-    @apply border-success/30 bg-success/10 text-green-700;
+    @apply border-emerald-200 bg-emerald-50 text-emerald-800;
   }
   .alert-danger {
-    @apply border-danger/30 bg-danger/10 text-orange-700;
+    @apply border-rose-200 bg-rose-50 text-rose-800;
   }
   .alert-info {
-    @apply border-info/30 bg-info/10 text-sky-800;
+    @apply border-sky-200 bg-sky-50 text-sky-900;
+  }
+
+  /* Segmented control (period, status tabs). */
+  .segmented {
+    @apply inline-flex rounded-xl bg-zinc-100 p-1 ring-1 ring-zinc-900/[0.04];
+  }
+  .segmented > * {
+    @apply rounded-lg px-3 py-1.5 text-xs font-medium text-zinc-600 transition hover:text-ink;
+  }
+  .segmented > [aria-current='page'],
+  .segmented > [aria-current='true'] {
+    @apply bg-white text-ink shadow-[0_1px_2px_rgb(10_14_30/0.08),0_0_0_1px_rgb(10_14_30/0.04)];
   }
 }
 

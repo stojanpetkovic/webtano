@@ -16,19 +16,19 @@ function Errors({ errors }: { errors: string[] }) {
   );
 }
 
-export function NewSiteForm() {
+/** Adds a site for one customer, inside the pop-up on the customer's page. */
+export function NewSiteForm({ customerId, clientName }: { customerId: string; clientName: string }) {
   const [state, action, pending] = useActionState(createSite, { errors: [] } as SiteFormState);
   return (
-    <form action={action} className="card" id="novi">
-      <div className="card-header">
-        <h2 className="card-title">Dodaj sajt</h2>
-      </div>
-      <div className="card-body space-y-4">
-        <Errors errors={state.errors} />
-        {/* A new key remounts the fields with what was typed, after a refused submit. */}
-        <SiteFields key={JSON.stringify(state.draft ?? {})} site={state.draft} />
+    // The pop-up stays open, so a refused domain shows its error; a saved site opens its settings.
+    <form action={action} className="space-y-4" onSubmit={(e) => e.stopPropagation()}>
+      <input type="hidden" name="customer_id" value={customerId} />
+      <Errors errors={state.errors} />
+      {/* A new key remounts the fields with what was typed, after a refused submit. */}
+      <SiteFields key={JSON.stringify(state.draft ?? {})} site={state.draft ?? { client_name: clientName }} idPrefix="site-" />
+      <div className="flex justify-end border-t border-line pt-4">
         <button className="btn btn-primary" type="submit" disabled={pending}>
-          Dodaj sajt
+          {pending ? 'Dodajem…' : 'Dodaj sajt'}
         </button>
       </div>
     </form>

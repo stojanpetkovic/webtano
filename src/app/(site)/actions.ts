@@ -9,7 +9,9 @@ export interface CheckState {
   error?: string;
 }
 
-const FIELDS = ['service', 'website', 'business', 'timeline', 'name', 'email', 'phone', 'message'] as const;
+const FIELDS = ['website', 'business', 'timeline', 'name', 'email', 'phone', 'message'] as const;
+
+const SERVICE_KEYS = ['new-website', 'redesign', 'seo', 'ads', 'other'];
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -20,6 +22,9 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
  */
 export async function submitCheck(_prev: CheckState, formData: FormData): Promise<CheckState> {
   const fields: Record<string, string> = {};
+  // Several services can be picked; they are stored as one comma list, like the other fields.
+  const services = [...new Set(formData.getAll('service').map(String))].filter((s) => SERVICE_KEYS.includes(s));
+  if (services.length) fields.service = services.join(', ');
   for (const key of FIELDS) {
     const value = formData.get(key)?.toString().trim().slice(0, key === 'message' ? 5000 : 200) ?? '';
     if (value) fields[key] = value;

@@ -11,16 +11,9 @@ export function RangeTabs({ current, path, params }: { current: RangeDays; path:
     return `${path}?${next}`;
   };
   return (
-    <nav className="inline-flex rounded border border-line bg-white p-0.5" aria-label="Period">
+    <nav className="segmented" aria-label="Period">
       {RANGES.map((days) => (
-        <Link
-          key={days}
-          href={hrefFor(days)}
-          className={`rounded px-3 py-1.5 text-xs font-medium transition-colors ${
-            days === current ? 'bg-primary text-white' : 'text-zinc-600 hover:bg-zinc-100'
-          }`}
-          aria-current={days === current ? 'page' : undefined}
-        >
+        <Link key={days} href={hrefFor(days)} scroll={false} aria-current={days === current ? 'page' : undefined}>
           {label(days)}
         </Link>
       ))}

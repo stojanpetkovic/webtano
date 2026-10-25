@@ -1,37 +1,109 @@
-import type { Metadata } from 'next';
-import { Bricolage_Grotesque, Inter } from 'next/font/google';
+import type { Metadata, Viewport } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
 import { Header } from '@/components/site/Header';
+import { BackToTop } from '@/components/site/BackToTop';
 import { Footer } from '@/components/site/Footer';
+import { MobileTabBar } from '@/components/site/MobileTabBar';
 import { RevealObserver } from '@/components/site/RevealObserver';
+import { Tracking } from '@/components/site/Tracking';
 import { site } from '@/content/site';
+import { appSettings } from '@/lib/admin/settings';
+import { OG_IMAGE } from '@/lib/seo';
 import './site.css';
 
-const inter = Inter({ variable: '--font-inter', subsets: ['latin', 'latin-ext'] });
-const display = Bricolage_Grotesque({ variable: '--font-bricolage', subsets: ['latin', 'latin-ext'] });
+const sans = Geist({ variable: '--font-geist', subsets: ['latin', 'latin-ext'] });
+const mono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin', 'latin-ext'] });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(site.url),
-  title: {
-    default: 'WebTano | Websites, local SEO and Google Ads that bring calls',
-    template: '%s | WebTano',
-  },
-  description:
-    'WebTano builds fast websites, runs local SEO and Google Ads for tree services and other local companies, and tracks every call and form so you see what pays.',
-  openGraph: { siteName: 'WebTano', type: 'website' },
+// Pages are rebuilt at most hourly, and at once when Podešavanja or the price list is saved.
+export const revalidate = 3600;
+
+const DESCRIPTION =
+  'WebTano builds fast websites, runs local SEO and Google Ads for tree services and other local companies, and tracks every call and form so you see what pays.';
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { tracking: t } = await appSettings();
+  const other: Record<string, string> = {};
+  if (t.bing_verification) other['msvalidate.01'] = t.bing_verification;
+  if (t.facebook_verification) other['facebook-domain-verification'] = t.facebook_verification;
+  return {
+    metadataBase: new URL(site.url),
+    title: {
+      default: 'WebTano | Websites, local SEO and Google Ads that bring calls',
+      template: '%s | WebTano',
+    },
+    description: DESCRIPTION,
+    applicationName: site.name,
+    openGraph: { siteName: site.name, type: 'website', locale: 'en_US', images: [OG_IMAGE] },
+    twitter: { card: 'summary_large_image', images: [OG_IMAGE.url] },
+    formatDetection: { telephone: false, address: false, email: false },
+    robots: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1 },
+    verification: { google: t.google_verification || undefined, other },
+  };
+}
+
+// Dark browser chrome on phones, and room for the notch and home bar.
+export const viewport: Viewport = {
+  themeColor: '#05060a',
+  viewportFit: 'cover',
 };
 
-export default function SiteLayout({ children }: { children: React.ReactNode }) {
+export default async function SiteLayout({ children }: { children: React.ReactNode }) {
+  const { tracking: t, company } = await appSettings();
+  // Who we are, once for every page: search engines tie each page to this one business.
+  const graph = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Organization',
+        '@id': `${site.url}/#organization`,
+        name: site.name,
+        url: site.url,
+        logo: { '@type': 'ImageObject', url: `${site.url}/brand/webtano-mark-512.png`, width: 512, height: 512 },
+        description: DESCRIPTION,
+        areaServed: { '@type': 'Country', name: 'United States' },
+        knowsAbout: ['Website design', 'Local SEO', 'Google Ads', 'Google Business Profile', 'Call tracking'],
+        ...(company.email || company.phone
+          ? { contactPoint: { '@type': 'ContactPoint', contactType: 'sales', email: company.email || undefined, telephone: company.phone || undefined, availableLanguage: 'English' } }
+          : {}),
+      },
+      {
+        '@type': 'WebSite',
+        '@id': `${site.url}/#website`,
+        url: site.url,
+        name: site.name,
+        description: site.tagline,
+        inLanguage: 'en-US',
+        publisher: { '@id': `${site.url}/#organization` },
+      },
+    ],
+  };
   return (
-    <html lang="en" className={`${inter.variable} ${display.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${sans.variable} ${mono.variable}`} suppressHydrationWarning>
       <head>
         {/* Lets the scroll animations hide content only when they can also show it. */}
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
       </head>
       <body className="min-h-screen">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(graph).replace(/</g, '\\u003c') }} />
+        <Tracking
+          config={{
+            ga4: t.ga4_id,
+            gtm: t.gtm_id,
+            ads: t.google_ads_id,
+            adsLead: t.google_ads_lead_label,
+            adsCall: t.google_ads_call_label,
+            pixel: t.meta_pixel_id,
+            consent: t.consent,
+          }}
+        />
         <RevealObserver />
         <Header />
         <main>{children}</main>
         <Footer />
+        {/* Keeps the end of the footer clear of the phone tab bar. */}
+        <div className="h-[calc(5.5rem+env(safe-area-inset-bottom))] bg-ink-975 md:hidden" aria-hidden />
+        <MobileTabBar />
+        <BackToTop />
         {/* Our own collector: page views and call clicks on webtano.com land in the admin like any client site. */}
         <script src="/leads.js" data-site-key={site.leadsSiteKey} defer />
       </body>
