@@ -3,7 +3,7 @@
 import { redirect } from 'next/navigation';
 import { refresh, revalidatePath } from 'next/cache';
 import { db } from '@/lib/admin/supabase';
-import { PROPOSAL_STATUS, STAGE_LABEL } from '@/lib/admin/crm/labels';
+import { PROPOSAL_STATUS, SERVICES, STAGE_LABEL } from '@/lib/admin/crm/labels';
 import { PRICED_PATHS } from '@/lib/pricing';
 import type { DealStage, TaskStatus } from '@/lib/admin/crm/types';
 
@@ -106,7 +106,14 @@ export async function convertDeal(form: FormData) {
   if (!customerId) {
     const { data: created } = await db()
       .from('crm_customers')
-      .insert({ company: deal.company || deal.website || deal.name, contact_name: deal.name, email: deal.email, phone: deal.phone, website: deal.website })
+      .insert({
+        company: deal.company || deal.website || deal.name,
+        contact_name: deal.name,
+        email: deal.email,
+        phone: deal.phone,
+        website: deal.website,
+        services: deal.service && deal.service in SERVICES ? [deal.service] : [],
+      })
       .select('id')
       .single<{ id: string }>();
     customerId = created?.id ?? null;
@@ -141,6 +148,7 @@ export async function saveCustomer(form: FormData) {
     city: str(form, 'city', 100),
     country: str(form, 'country', 100),
     industry: str(form, 'industry', 100),
+    services: form.getAll('services').map(String).filter((k) => k in SERVICES),
     status: oneOf(form.get('status'), ['active', 'inactive'] as const, 'active'),
     notes: str(form, 'notes', 5000),
   };

@@ -5,6 +5,7 @@ import { PageHeading } from '@/components/admin/PageHeading';
 import { Pagination } from '@/components/admin/Pagination';
 import { Modal } from '@/components/admin/Modal';
 import { CustomerForm } from '@/components/admin/crm/CustomerForm';
+import { ServicePills } from '@/components/admin/crm/ServicePills';
 import { db } from '@/lib/admin/supabase';
 import { money } from '@/lib/admin/crm/labels';
 import { formatDate } from '@/lib/admin/format';
@@ -91,6 +92,7 @@ export default async function CustomersPage({ searchParams }: { searchParams: Pr
               <thead>
                 <tr>
                   <th>Firma</th>
+                  <th>Usluge</th>
                   <th>Kontakt</th>
                   <th className="text-right">Prihvaćene ponude</th>
                   <th className="text-right">Aktivni projekti</th>
@@ -121,6 +123,9 @@ export default async function CustomersPage({ searchParams }: { searchParams: Pr
                           </div>
                         </div>
                       </div>
+                    </td>
+                    <td>
+                      <ServicePills services={c.services} className="max-w-[220px]" />
                     </td>
                     <td>
                       <div className="text-ink">{c.contact_name ?? '—'}</div>

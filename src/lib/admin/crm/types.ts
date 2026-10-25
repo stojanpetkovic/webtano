@@ -18,6 +18,8 @@ export interface Customer {
   city: string | null;
   country: string | null;
   industry: string | null;
+  /** Keys of SERVICES (labels.ts): what the customer has with WebTano. */
+  services: string[];
   status: 'active' | 'inactive';
   notes: string | null;
   created_at: string;

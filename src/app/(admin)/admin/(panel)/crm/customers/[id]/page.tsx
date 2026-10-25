@@ -9,6 +9,7 @@ import { ActivityFeed } from '@/components/admin/crm/ActivityFeed';
 import { CustomerForm } from '@/components/admin/crm/CustomerForm';
 import { NewProject } from '@/components/admin/crm/NewProject';
 import { CustomerSites } from '@/components/admin/crm/CustomerSites';
+import { ServicePills } from '@/components/admin/crm/ServicePills';
 import { NewProposal } from '@/components/admin/crm/NewProposal';
 import { deleteCustomer } from '../../actions';
 import { db } from '@/lib/admin/supabase';
@@ -137,6 +138,12 @@ export default async function CustomerPage({
               <h2 className="card-title">Kontakt</h2>
               {customer.status === 'active' ? <span className="badge badge-won">Aktivan</span> : <span className="badge badge-lost">Neaktivan</span>}
             </div>
+            {customer.services?.length > 0 && (
+              <div className="border-b border-line px-5 py-4">
+                <div className="mb-2 text-[11px] font-semibold tracking-wider text-zinc-500 uppercase">Usluge</div>
+                <ServicePills services={customer.services} />
+              </div>
+            )}
             <ul className="space-y-3 p-5 text-[13.5px]">
               {customer.email && (
                 <li className="flex items-center gap-3"><Mail className="size-4 text-zinc-400" /><a className="truncate text-ink hover:text-primary" href={`mailto:${customer.email}`}>{customer.email}</a></li>
