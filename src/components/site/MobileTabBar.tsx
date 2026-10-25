@@ -60,7 +60,7 @@ export function MobileTabBar() {
         hidden ? 'pointer-events-none translate-y-[calc(100%+1.5rem)] opacity-0' : 'translate-y-0 opacity-100'
       }`}
     >
-      <ul className="grid grid-cols-5 items-center rounded-[1.4rem] bg-ink-975/85 p-1.5 shadow-[0_18px_40px_-12px_rgb(0_0_0/0.65),inset_0_1px_0_rgb(255_255_255/0.06)] ring-1 ring-white/10 backdrop-blur-xl backdrop-saturate-150">
+      <ul className="grid grid-cols-5 items-center rounded-[1.75rem] bg-white/80 p-1.5 shadow-[0_8px_24px_-12px_rgb(10_14_30/0.18)] ring-1 ring-black/[0.06] backdrop-blur-2xl backdrop-saturate-[1.8]">
         {tabs.slice(0, 2).map((t) => (
           <Tab key={t.href} {...t} active={isActive(t.href)} />
         ))}
@@ -68,9 +68,10 @@ export function MobileTabBar() {
           <Link
             href="/#hero-form"
             aria-label="Free website check"
-            className="-mt-6 flex h-14 w-14 flex-col items-center justify-center rounded-full bg-accent text-ink-950 shadow-[0_0_0_5px_rgb(5_6_10),0_10px_24px_-6px_rgb(1_175_233/0.7)] transition active:scale-95"
+            className="flex h-12 w-full flex-col items-center justify-center gap-0.5 rounded-[1.25rem] bg-accent text-[11px] font-semibold text-ink-950 transition active:scale-95"
           >
-            <ScanSearch className="h-6 w-6" aria-hidden />
+            <ScanSearch className="h-5 w-5" strokeWidth={2.2} aria-hidden />
+            Check
           </Link>
         </li>
         {tabs.slice(2).map((t) => (
@@ -87,11 +88,11 @@ function Tab({ href, label, icon: Icon, active }: { href: string; label: string;
       <Link
         href={href}
         aria-current={active ? 'page' : undefined}
-        className={`relative flex h-12 flex-col items-center justify-center gap-1 rounded-2xl text-[11px] font-medium transition active:scale-95 ${
-          active ? 'bg-white/[0.07] text-white' : 'text-white/55'
+        className={`relative flex h-12 flex-col items-center justify-center gap-0.5 rounded-[1.25rem] text-[11px] font-medium transition active:scale-95 ${
+          active ? 'bg-black/[0.05] text-ink-950' : 'text-zinc-500'
         }`}
       >
-        <Icon className={`h-5 w-5 transition ${active ? 'text-accent' : ''}`} strokeWidth={active ? 2.2 : 1.8} aria-hidden />
+        <Icon className={`h-5 w-5 transition ${active ? 'text-azure-700' : ''}`} strokeWidth={active ? 2.2 : 1.8} aria-hidden />
         {label}
       </Link>
     </li>
