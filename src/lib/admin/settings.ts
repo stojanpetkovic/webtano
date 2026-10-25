@@ -165,6 +165,19 @@ export const SETTINGS = {
       },
     ],
   },
+  newsletter: {
+    title: 'Newsletter',
+    description: 'Prijava na newsletter na webtano.com. Prijave vidiš pod Marketing → Pretplatnici.',
+    fields: [
+      {
+        key: 'popup',
+        label: 'Prikaži popup za prijavu',
+        type: 'toggle',
+        hint: 'Pojavljuje se posle 12 sekundi i skrolovanja (na telefonu kasnije), najviše jednom po poseti, i ne vraća se 30 dana kad ga posetilac zatvori.',
+      },
+      { key: 'footer', label: 'Prikaži prijavu u futeru', type: 'toggle' },
+    ],
+  },
 } as const satisfies Record<string, { title: string; description: string; fields: readonly Field[] }>;
 
 export type Section = keyof typeof SETTINGS;
@@ -196,6 +209,7 @@ const DEFAULTS = {
     facebook_verification: '',
     consent: true,
   },
+  newsletter: { popup: true, footer: true },
 };
 
 export type AppSettings = typeof DEFAULTS;

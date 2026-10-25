@@ -33,6 +33,7 @@ export default async function PrivacyPage() {
     ['wt_consent', 'WebTano', 'Necessary', 'Remembers your cookie choice and when you made it', '12 months (local storage)'],
     ['sp_lead_attribution', 'WebTano', 'Necessary', 'Links an enquiry you send to the page, referrer and campaign you arrived from', '30 days (local storage)'],
     ['sp_visit, wt_lead_name', 'WebTano', 'Necessary', 'Counts a visit once per session and shows your first name on the thank-you page', 'Until the tab is closed (session storage)'],
+    ['wt_newsletter', 'WebTano', 'Necessary', 'Remembers that you closed or used the newsletter popup, so it is not shown again', '30 days, or until you subscribe (local storage)'],
     ['__cf_bm and similar', 'Cloudflare', 'Necessary', 'Protects the site against bots and attacks', 'Up to 30 minutes'],
   ];
   if (t.ga4_id) cookieRows.push(['_ga, _ga_*', 'Google', 'Analytics', 'Distinguishes visitors and sessions for Google Analytics 4', 'Up to 2 years']);
@@ -54,7 +55,7 @@ export default async function PrivacyPage() {
           </p>
           <p>
             This notice covers webtano.com. When we build or run a website for a client, the client is the controller of the data its visitors
-            submit, and we act only as its processor (see section 5).
+            submit, and we act only as its processor (see section 6).
           </p>
         </>
       ),
@@ -82,7 +83,7 @@ export default async function PrivacyPage() {
           {thirdParty && (
             <p>
               <strong className="text-ink-950">Cookies, only with your consent.</strong> Analytics and advertising tools that set cookies and
-              receive your IP address and device details. See section 6.
+              receive your IP address and device details. See section 7.
             </p>
           )}
         </>
@@ -96,6 +97,7 @@ export default async function PrivacyPage() {
           head={['Purpose', 'Legal basis (GDPR and Serbian law)']}
           rows={[
             ['Replying to your enquiry, preparing the free check and a proposal', 'Steps you asked for before a contract, Art. 6(1)(b)'],
+            ['Sending the newsletter you subscribed to, and keeping proof of your consent', 'Your consent, Art. 6(1)(a), which you can withdraw with the unsubscribe link'],
             ['Following up on that enquiry by email or phone', 'Our legitimate interest in answering requests, Art. 6(1)(f)'],
             ['Keeping the site secure, preventing spam and abuse, cookie-free statistics', 'Legitimate interest in a safe, working website, Art. 6(1)(f)'],
             ['Analytics and advertising cookies', 'Your consent, Art. 6(1)(a), which you can withdraw at any time'],
@@ -105,13 +107,31 @@ export default async function PrivacyPage() {
       ),
     },
     {
+      id: 'newsletter',
+      title: 'Newsletter',
+      body: (
+        <>
+          <p>
+            If you sign up for our newsletter in the popup or the footer, we store your email address, the date, where you signed up, the wording
+            you agreed to and a one-way hash of your IP address. We then send you one email asking you to confirm (double opt-in); you are added
+            to the list only after you click the link in it. Sign-ups that are never confirmed are deleted after 30 days.
+          </p>
+          <p>
+            The newsletter comes about once a month. Every email has a link to unsubscribe in one click, and you can also ask us to delete your
+            address completely. After you unsubscribe we keep only a record that you did, so you are not added again by mistake, unless you ask
+            for deletion.
+          </p>
+        </>
+      ),
+    },
+    {
       id: 'never',
       title: 'What we never do',
       body: (
         <Bullets
           items={[
             'We do not sell your personal data, and we do not share it for money.',
-            'We do not send newsletters or add you to mailing lists without asking.',
+            'We do not add you to our newsletter or any mailing list unless you sign up and confirm it yourself.',
             'We do not make decisions about you by automated means that have legal or similarly significant effects.',
           ]}
         />
@@ -165,7 +185,7 @@ export default async function PrivacyPage() {
               'Supabase (database where enquiries are stored)',
               'Resend (sending email notifications and replies)',
               'Cloudflare (network, DNS and security)',
-              ...(thirdParty ? ['Google and Meta, only for the cookies you allow (see section 6); they act partly as independent controllers under their own privacy policies'] : []),
+              ...(thirdParty ? ['Google and Meta, only for the cookies you allow (see section 7); they act partly as independent controllers under their own privacy policies'] : []),
             ]}
           />
           <p>We may also disclose data when the law requires it, to protect our rights in a dispute, or to a successor if the business is sold.</p>
@@ -192,8 +212,9 @@ export default async function PrivacyPage() {
           items={[
             'Enquiries that do not lead to work: up to 24 months after our last contact, then deleted or anonymised.',
             'Client records: for the duration of the work and afterwards as long as tax, accounting and limitation periods require.',
+            'Newsletter: until you unsubscribe or ask for deletion; unconfirmed sign-ups for 30 days.',
             'Cookie-free visit statistics: kept only in aggregated or daily-hashed form.',
-            'Cookies: for the lifetimes listed in section 6, or until you delete them.',
+            'Cookies: for the lifetimes listed in section 7, or until you delete them.',
           ]}
         />
       ),

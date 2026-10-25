@@ -3,6 +3,9 @@
 import { headers } from 'next/headers';
 import { findSite, isRateLimited, recordLead, visitorHash } from '@/lib/admin/ingest';
 import { site } from '@/content/site';
+import { env } from '@/lib/admin/env';
+import { hashIp } from '@/lib/admin/leads';
+import { subscribe, tooManySignups } from '@/lib/admin/newsletter';
 
 export interface CheckState {
   ok: boolean;
@@ -72,6 +75,34 @@ export async function submitCheck(_prev: CheckState, formData: FormData): Promis
     return { ok: true };
   } catch (error) {
     console.error('Website check form failed:', error);
+    return { ok: false, error: 'Something went wrong. Please try again in a minute.' };
+  }
+}
+
+export interface NewsletterState {
+  ok: boolean;
+  error?: string;
+}
+
+const SOURCES = ['popup', 'footer'];
+
+/** Newsletter sign-up from the popup or the footer: stores it as pending and sends the confirmation email. */
+export async function subscribeNewsletter(_prev: NewsletterState, formData: FormData): Promise<NewsletterState> {
+  const email = formData.get('email')?.toString().trim().slice(0, 200) ?? '';
+  if (!EMAIL.test(email)) return { ok: false, error: 'Please enter a valid email.' };
+  // Bots fill the hidden field; tell them it worked and store nothing.
+  if (formData.get('company_url')?.toString()) return { ok: true };
+  const source = SOURCES.includes(String(formData.get('source'))) ? String(formData.get('source')) : 'footer';
+
+  try {
+    const h = await headers();
+    const ip = h.get('x-forwarded-for')?.split(',')[0]?.trim() || h.get('x-real-ip') || 'unknown';
+    const ipHash = hashIp(ip, env.ipHashSalt || 'newsletter');
+    if (await tooManySignups(ipHash)) return { ok: false, error: 'Too many requests. Please try again in a few minutes.' };
+    await subscribe({ email, source, pageUrl: h.get('referer'), ipHash, userAgent: h.get('user-agent') });
+    return { ok: true };
+  } catch (error) {
+    console.error('Newsletter sign-up failed:', error);
     return { ok: false, error: 'Something went wrong. Please try again in a minute.' };
   }
 }
