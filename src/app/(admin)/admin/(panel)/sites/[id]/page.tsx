@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { BellRing, CalendarCheck, CalendarDays, Handshake, Inbox, MousePointerClick, Percent, Phone, Users } from 'lucide-react';
 import { PageHeading } from '@/components/admin/PageHeading';
 import { SiteHeader } from '@/components/admin/SiteHeader';
+import { siteCustomer } from '@/lib/admin/crm/data';
 import { StatCard } from '@/components/admin/StatCard';
 import { DailyChart } from '@/components/admin/DailyChart';
 import { BarList } from '@/components/admin/BarList';
@@ -59,7 +60,7 @@ export default async function SitePage({
       <PageHeading title={site.name} crumbs={[{ label: 'Sajtovi', href: '/admin/sites' }]}>
         <RangeTabs current={range} path={`/admin/sites/${site.id}`} params={query} />
       </PageHeading>
-      <SiteHeader site={site} current="overview" />
+      <SiteHeader site={site} customer={await siteCustomer(site.id)} current="overview" />
 
       {!analytics.hasData && (
         <div className="alert alert-info">

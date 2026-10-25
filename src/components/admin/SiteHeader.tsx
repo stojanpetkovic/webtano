@@ -1,10 +1,19 @@
 import Link from 'next/link';
-import { ChartColumn, ExternalLink, FileText, Globe, MoveRight, Settings } from 'lucide-react';
+import { ChartColumn, ExternalLink, FileText, Globe, MoveRight, Settings, Users } from 'lucide-react';
 import type { Site } from '@/lib/admin/types';
 
 // The strip above every page of one site: its address, client and status,
 // then the tabs that split the site into its overview and its settings.
-export function SiteHeader({ site, current }: { site: Site; current: 'overview' | 'settings' | 'report' }) {
+export function SiteHeader({
+  site,
+  current,
+  customer,
+}: {
+  site: Site;
+  current: 'overview' | 'settings' | 'report';
+  /** The CRM customer this site belongs to, when it is linked. */
+  customer?: { id: string; company: string } | null;
+}) {
   const tabs = [
     { key: 'overview', label: 'Pregled', icon: ChartColumn, href: `/admin/sites/${site.id}` },
     { key: 'report', label: 'Izveštaj (PDF)', icon: FileText, href: `/admin/sites/${site.id}/report` },
@@ -28,7 +37,13 @@ export function SiteHeader({ site, current }: { site: Site; current: 'overview' 
             <ExternalLink className="size-3.5 text-zinc-400" />
           </a>
           <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-zinc-500">
-            {site.client_name ?? 'Bez imena klijenta'}
+            {customer ? (
+              <Link href={`/admin/crm/customers/${customer.id}`} className="inline-flex items-center gap-1 font-medium text-primary hover:underline">
+                <Users className="size-3.5" /> {customer.company}
+              </Link>
+            ) : (
+              (site.client_name ?? 'Bez imena klijenta')
+            )}
             {site.active ? <span className="badge badge-won">Aktivan</span> : <span className="badge badge-lost">Pauziran</span>}
           </div>
         </div>

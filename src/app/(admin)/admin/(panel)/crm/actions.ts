@@ -398,3 +398,19 @@ export async function addItemFromProposal(item: ItemInput): Promise<boolean> {
     });
   return !error;
 }
+
+/* ── Customer websites ─────────────────────────────────────────────────── */
+
+export async function linkSite(form: FormData) {
+  const customerId = id(form, 'customer_id');
+  const siteId = id(form, 'site_id');
+  if (!customerId || !siteId) return;
+  await db().from('crm_customer_sites').upsert({ site_id: siteId, customer_id: customerId }, { onConflict: 'site_id' });
+  refresh();
+}
+
+export async function unlinkSite(form: FormData) {
+  const siteId = id(form, 'site_id');
+  if (siteId) await db().from('crm_customer_sites').delete().eq('site_id', siteId);
+  refresh();
+}

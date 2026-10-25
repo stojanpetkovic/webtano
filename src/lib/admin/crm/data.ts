@@ -70,3 +70,9 @@ export async function syncDeals(): Promise<void> {
   });
   if (notes.length) await db().from('crm_activity').insert(notes);
 }
+
+/** The CRM customer a client site is linked to, if any. */
+export async function siteCustomer(siteId: string): Promise<{ id: string; company: string } | null> {
+  const { data } = await db().from('crm_customer_sites').select('crm_customers(id, company)').eq('site_id', siteId).maybeSingle();
+  return ((data as unknown as { crm_customers: { id: string; company: string } | null } | null)?.crm_customers) ?? null;
+}

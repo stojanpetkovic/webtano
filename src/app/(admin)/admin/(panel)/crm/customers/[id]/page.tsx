@@ -8,6 +8,7 @@ import { ConfirmSubmit } from '@/components/admin/ConfirmSubmit';
 import { ActivityFeed } from '@/components/admin/crm/ActivityFeed';
 import { CustomerForm } from '@/components/admin/crm/CustomerForm';
 import { NewProject } from '@/components/admin/crm/NewProject';
+import { CustomerSites } from '@/components/admin/crm/CustomerSites';
 import { NewProposal } from '@/components/admin/crm/NewProposal';
 import { deleteCustomer } from '../../actions';
 import { db } from '@/lib/admin/supabase';
@@ -152,6 +153,8 @@ export default async function CustomerPage({
             </ul>
             {customer.notes && <p className="border-t border-line px-5 py-4 text-[13px] whitespace-pre-line text-zinc-600">{customer.notes}</p>}
           </div>
+
+          <CustomerSites customerId={customer.id} />
 
           {(deals ?? []).length > 0 && (
             <div className="card">

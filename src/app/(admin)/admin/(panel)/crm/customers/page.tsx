@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Plus, Search } from 'lucide-react';
+import { Globe, Plus, Search } from 'lucide-react';
 import { PageHeading } from '@/components/admin/PageHeading';
 import { Pagination } from '@/components/admin/Pagination';
 import { Modal } from '@/components/admin/Modal';
@@ -29,12 +29,16 @@ export default async function CustomersPage({ searchParams }: { searchParams: Pr
 
   // Accepted proposal totals and open projects per customer, for the table.
   const ids = customers.map((c) => c.id);
-  const [{ data: props }, { data: projects }] = ids.length
+  const [{ data: props }, { data: projects }, { data: siteLinks }] = ids.length
     ? await Promise.all([
         db().from('crm_proposals').select('id, customer_id, discount_pct, crm_proposal_items(qty, unit_price)').eq('status', 'accepted').in('customer_id', ids),
         db().from('crm_projects').select('customer_id, status').in('customer_id', ids).in('status', ['not_started', 'in_progress', 'on_hold']),
+        db().from('crm_customer_sites').select('customer_id, sites(domain)').in('customer_id', ids),
       ])
-    : [{ data: [] }, { data: [] }];
+    : [{ data: [] }, { data: [] }, { data: [] }];
+  const domains = new Map<string, string[]>();
+  for (const l of (siteLinks ?? []) as unknown as { customer_id: string; sites: { domain: string } | null }[])
+    if (l.sites) domains.set(l.customer_id, [...(domains.get(l.customer_id) ?? []), l.sites.domain]);
   const revenue = new Map<string, number>();
   for (const p of (props ?? []) as { customer_id: string; discount_pct: number; crm_proposal_items: { qty: number; unit_price: number }[] }[]) {
     const sum = p.crm_proposal_items.reduce((n, i) => n + Number(i.qty) * Number(i.unit_price), 0) * (1 - Number(p.discount_pct) / 100);
@@ -106,7 +110,15 @@ export default async function CustomersPage({ searchParams }: { searchParams: Pr
                           <Link href={`/admin/crm/customers/${c.id}`} className="font-medium text-ink after:absolute after:inset-0 hover:text-primary">
                             {c.company}
                           </Link>
-                          <div className="text-xs text-muted">{c.website ?? c.city ?? '—'}</div>
+                          <div className="text-xs text-muted">
+                            {domains.get(c.id)?.length ? (
+                              <span className="inline-flex items-center gap-1">
+                                <Globe className="size-3 text-accent" /> {domains.get(c.id)!.join(', ')}
+                              </span>
+                            ) : (
+                              (c.website ?? c.city ?? '—')
+                            )}
+                          </div>
                         </div>
                       </div>
                     </td>

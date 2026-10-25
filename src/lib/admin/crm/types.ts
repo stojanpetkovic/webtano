@@ -124,3 +124,10 @@ export interface CatalogItem {
   created_at: string;
   updated_at: string;
 }
+
+/** A row of crm_customer_sites: a client website that belongs to a customer. */
+export interface CustomerSite {
+  site_id: string;
+  customer_id: string;
+  created_at: string;
+}
