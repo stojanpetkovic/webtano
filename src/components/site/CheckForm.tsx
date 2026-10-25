@@ -1,8 +1,10 @@
 'use client';
 
 import { useActionState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { BadgeCheck, CheckCircle2, Gauge, KeyRound, Loader2, Lock, Star } from 'lucide-react';
 import { submitCheck, type CheckState } from '@/app/(site)/actions';
+import { NAME_KEY } from '@/components/site/ThankYouName';
 
 const SERVICES = [
   { value: 'new-website', label: 'A new website' },
@@ -28,9 +30,12 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
   const [state, action, pending] = useActionState<CheckState, FormData>(submitCheck, { ok: false });
   const utmRef = useRef<HTMLInputElement>(null);
   const referrerRef = useRef<HTMLInputElement>(null);
+  const nameRef = useRef('');
+  const router = useRouter();
 
   // leads.js keeps the first campaign and referrer the visitor came with; send them along.
-  function attachAttribution() {
+  function attachAttribution(e: React.FormEvent<HTMLFormElement>) {
+    nameRef.current = String(new FormData(e.currentTarget).get('name') ?? '').trim().split(/\s+/)[0].slice(0, 40);
     try {
       const saved = JSON.parse(localStorage.getItem('sp_lead_attribution') || 'null');
       if (saved && utmRef.current && referrerRef.current) {
@@ -42,10 +47,18 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
     }
   }
 
-  // A sent form is the conversion Google Ads and the Meta Pixel count (when they are set up and allowed).
+  // A sent form is the conversion Google Ads and the Meta Pixel count (when they are set up and allowed),
+  // then the visitor goes on to the thank-you page. The message below shows for the moment that takes.
   useEffect(() => {
-    if (state.ok) window.wtTrack?.lead();
-  }, [state.ok]);
+    if (!state.ok) return;
+    window.wtTrack?.lead();
+    try {
+      sessionStorage.setItem(NAME_KEY, nameRef.current);
+    } catch {
+      // Storage blocked: the thank-you page greets without the name.
+    }
+    router.push('/thank-you');
+  }, [state.ok, router]);
 
   if (state.ok) {
     return (
