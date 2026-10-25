@@ -4,6 +4,8 @@ import { KanbanSquare, List, Plus } from 'lucide-react';
 import { PageHeading } from '@/components/admin/PageHeading';
 import { StatCard } from '@/components/admin/StatCard';
 import { DealBoard } from '@/components/admin/crm/DealBoard';
+import { DealForm } from '@/components/admin/crm/DealForm';
+import { Modal } from '@/components/admin/Modal';
 import { MarkLeadsSeen } from '@/components/admin/MarkLeadsSeen';
 import { db } from '@/lib/admin/supabase';
 import { syncDeals } from '@/lib/admin/crm/data';
@@ -44,9 +46,19 @@ export default async function CrmLeadsPage({ searchParams }: { searchParams: Pro
             <List className="size-3.5" /> Lista
           </Link>
         </nav>
-        <Link href="/admin/crm/leads/new" className="btn btn-primary">
-          <Plus className="size-4" /> Novi lid
-        </Link>
+        <Modal
+          label={
+            <>
+              <Plus className="size-4" /> Novi lid
+            </>
+          }
+          title="Novi lid"
+          description="Za lidove koji nisu stigli preko forme: poziv, preporuka, LinkedIn."
+          defaultOpen={query.get('new') === '1'}
+          closeHref="/admin/crm/leads"
+        >
+          <DealForm />
+        </Modal>
       </PageHeading>
 
       <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { ArrowUpRight, Building2, FileText, Globe, Mail, Phone, Trash2, UserCheck } from 'lucide-react';
 import { PageHeading } from '@/components/admin/PageHeading';
+import { NewProposal } from '@/components/admin/crm/NewProposal';
 import { MarkLeadsSeen } from '@/components/admin/MarkLeadsSeen';
 import { unseenLeadCount } from '@/lib/admin/seen';
 import { ConfirmSubmit } from '@/components/admin/ConfirmSubmit';
@@ -53,9 +54,15 @@ export default async function DealPage({
     <>
       {(await unseenLeadCount('crm')) > 0 && <MarkLeadsSeen scope="crm" />}
       <PageHeading title={deal.name} crumbs={[{ label: 'WebTano CRM' }, { label: 'Lidovi', href: '/admin/crm/leads' }]} description={deal.company ?? undefined}>
-        <Link href={`/admin/crm/proposals/new?deal=${deal.id}`} className="btn btn-outline">
-          <FileText className="size-4" /> Napravi ponudu
-        </Link>
+        <NewProposal
+          dealId={deal.id}
+          buttonClassName="btn btn-outline"
+          label={
+            <>
+              <FileText className="size-4" /> Napravi ponudu
+            </>
+          }
+        />
         <form action={convertDeal}>
           <input type="hidden" name="id" value={deal.id} />
           <button className="btn btn-primary" type="submit">
@@ -130,7 +137,6 @@ export default async function DealPage({
           <div className="card">
             <div className="card-header">
               <h2 className="card-title">Ponude</h2>
-              <Link href={`/admin/crm/proposals/new?deal=${deal.id}`} className="btn btn-sm btn-light">Nova</Link>
             </div>
             <ul className="divide-y divide-line">
               {(proposals ?? []).length === 0 && <li className="px-5 py-4 text-muted">Još nema ponuda.</li>}

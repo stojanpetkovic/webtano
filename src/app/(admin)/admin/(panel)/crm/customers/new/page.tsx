@@ -1,18 +1,10 @@
-import type { Metadata } from 'next';
-import { PageHeading } from '@/components/admin/PageHeading';
-import { CustomerForm } from '@/components/admin/crm/CustomerForm';
+import { redirect } from 'next/navigation';
+import { toParams } from '@/lib/admin/params';
 
-export const metadata: Metadata = { title: 'Novi klijent' };
-
-export default function NewCustomerPage() {
-  return (
-    <>
-      <PageHeading title="Novi klijent" crumbs={[{ label: 'WebTano CRM' }, { label: 'Klijenti', href: '/admin/crm/customers' }]} />
-      <div className="card max-w-3xl">
-        <div className="card-body">
-          <CustomerForm />
-        </div>
-      </div>
-    </>
-  );
+// Adding now happens in a pop-up on the list; old links open it there.
+export default async function New({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const query = toParams(await searchParams);
+  const next = new URLSearchParams({ new: '1' });
+  for (const k of [] as string[]) if (query.get(k)) next.set(k, query.get(k)!);
+  redirect(`/admin/crm/customers?${next}`);
 }

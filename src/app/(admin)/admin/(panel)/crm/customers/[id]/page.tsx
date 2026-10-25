@@ -7,6 +7,8 @@ import { StatCard } from '@/components/admin/StatCard';
 import { ConfirmSubmit } from '@/components/admin/ConfirmSubmit';
 import { ActivityFeed } from '@/components/admin/crm/ActivityFeed';
 import { CustomerForm } from '@/components/admin/crm/CustomerForm';
+import { NewProject } from '@/components/admin/crm/NewProject';
+import { NewProposal } from '@/components/admin/crm/NewProposal';
 import { deleteCustomer } from '../../actions';
 import { db } from '@/lib/admin/supabase';
 import { PROJECT_STATUS, PROPOSAL_STATUS, STAGE_LABEL, money, totals } from '@/lib/admin/crm/labels';
@@ -52,12 +54,23 @@ export default async function CustomerPage({
         crumbs={[{ label: 'WebTano CRM' }, { label: 'Klijenti', href: '/admin/crm/customers' }]}
         description={[customer.contact_name, customer.industry].filter(Boolean).join(' · ') || undefined}
       >
-        <Link href={`/admin/crm/proposals/new?customer=${customer.id}`} className="btn btn-outline">
-          <FileText className="size-4" /> Nova ponuda
-        </Link>
-        <Link href={`/admin/crm/projects/new?customer=${customer.id}`} className="btn btn-primary">
-          <FolderKanban className="size-4" /> Novi projekat
-        </Link>
+        <NewProposal
+          customerId={customer.id}
+          buttonClassName="btn btn-outline"
+          label={
+            <>
+              <FileText className="size-4" /> Nova ponuda
+            </>
+          }
+        />
+        <NewProject
+          customerId={customer.id}
+          label={
+            <>
+              <FolderKanban className="size-4" /> Novi projekat
+            </>
+          }
+        />
       </PageHeading>
 
       {notice === 'saved' && <div className="alert alert-success">Sačuvano.</div>}
@@ -75,7 +88,6 @@ export default async function CustomerPage({
           <div className="card">
             <div className="card-header">
               <h2 className="card-title">Projekti</h2>
-              <Link href={`/admin/crm/projects/new?customer=${customer.id}`} className="btn btn-sm btn-light">Novi</Link>
             </div>
             <ul className="divide-y divide-line">
               {(projects ?? []).length === 0 && <li className="px-5 py-4 text-muted">Još nema projekata.</li>}
@@ -94,7 +106,6 @@ export default async function CustomerPage({
           <div className="card">
             <div className="card-header">
               <h2 className="card-title">Ponude</h2>
-              <Link href={`/admin/crm/proposals/new?customer=${customer.id}`} className="btn btn-sm btn-light">Nova</Link>
             </div>
             <ul className="divide-y divide-line">
               {props.length === 0 && <li className="px-5 py-4 text-muted">Još nema ponuda.</li>}

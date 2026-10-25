@@ -13,6 +13,7 @@ export function ProposalForm({
   deals,
   priceList,
   preset = {},
+  inModal = false,
 }: {
   proposal?: Proposal;
   items?: ProposalItem[];
@@ -20,6 +21,8 @@ export function ProposalForm({
   deals: Pick<Deal, 'id' | 'name' | 'company'>[];
   priceList: PriceListEntry[];
   preset?: { customer_id?: string; deal_id?: string; title?: string; items?: EditorItem[] };
+  /** In a pop-up the save bar sticks to the pop-up's bottom edge instead of the page's. */
+  inModal?: boolean;
 }) {
   const initial: EditorItem[] = proposal
     ? items.map((i) => ({ description: i.description, details: i.details ?? '', qty: Number(i.qty), unit_price: Number(i.unit_price), recurring: i.recurring }))
@@ -85,7 +88,9 @@ export function ProposalForm({
         </div>
       </div>
 
-      <div className="sticky bottom-0 z-10 -mx-4 flex justify-end gap-2 border-t border-line bg-body/90 px-4 py-3 backdrop-blur lg:-mx-8 lg:px-8">
+      <div
+        className={`sticky z-10 flex justify-end gap-2 border-t border-line bg-body/90 py-3 backdrop-blur ${inModal ? '-bottom-5 -mx-5 -mb-5 px-5' : 'bottom-0 -mx-4 px-4 lg:-mx-8 lg:px-8'}`}
+      >
         <button className="btn btn-primary" type="submit">{proposal ? 'Sačuvaj ponudu' : 'Napravi ponudu'}</button>
       </div>
     </form>

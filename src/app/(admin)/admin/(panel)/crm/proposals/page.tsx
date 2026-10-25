@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { PageHeading } from '@/components/admin/PageHeading';
 import { Pagination } from '@/components/admin/Pagination';
+import { NewProposal } from '@/components/admin/crm/NewProposal';
 import { db } from '@/lib/admin/supabase';
 import { PROPOSAL_STATUS, money, totals } from '@/lib/admin/crm/labels';
 import { formatDate } from '@/lib/admin/format';
@@ -37,9 +38,17 @@ export default async function ProposalsPage({ searchParams }: { searchParams: Pr
   return (
     <>
       <PageHeading title="Ponude" crumbs={[{ label: 'WebTano CRM' }]} description="Ponude sa stavkama iz cenovnika, spremne za PDF.">
-        <Link href="/admin/crm/proposals/new" className="btn btn-primary">
-          <Plus className="size-4" /> Nova ponuda
-        </Link>
+        <NewProposal
+          label={
+            <>
+              <Plus className="size-4" /> Nova ponuda
+            </>
+          }
+          dealId={query.get('deal') ?? undefined}
+          customerId={query.get('customer') ?? undefined}
+          defaultOpen={query.get('new') === '1'}
+          closeHref="/admin/crm/proposals"
+        />
       </PageHeading>
 
       <div className="card">

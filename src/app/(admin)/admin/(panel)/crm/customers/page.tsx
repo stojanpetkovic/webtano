@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { Plus, Search } from 'lucide-react';
 import { PageHeading } from '@/components/admin/PageHeading';
 import { Pagination } from '@/components/admin/Pagination';
+import { Modal } from '@/components/admin/Modal';
+import { CustomerForm } from '@/components/admin/crm/CustomerForm';
 import { db } from '@/lib/admin/supabase';
 import { money } from '@/lib/admin/crm/labels';
 import { formatDate } from '@/lib/admin/format';
@@ -52,9 +54,18 @@ export default async function CustomersPage({ searchParams }: { searchParams: Pr
   return (
     <>
       <PageHeading title="Klijenti" crumbs={[{ label: 'WebTano CRM' }]} description="Firme sa kojima radiš ili si radio.">
-        <Link href="/admin/crm/customers/new" className="btn btn-primary">
-          <Plus className="size-4" /> Novi klijent
-        </Link>
+        <Modal
+          label={
+            <>
+              <Plus className="size-4" /> Novi klijent
+            </>
+          }
+          title="Novi klijent"
+          defaultOpen={query.get('new') === '1'}
+          closeHref="/admin/crm/customers"
+        >
+          <CustomerForm />
+        </Modal>
       </PageHeading>
 
       <div className="card">

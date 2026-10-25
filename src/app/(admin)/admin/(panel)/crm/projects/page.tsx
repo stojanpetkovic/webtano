@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { CalendarDays, Plus } from 'lucide-react';
 import { PageHeading } from '@/components/admin/PageHeading';
+import { NewProject } from '@/components/admin/crm/NewProject';
 import { db } from '@/lib/admin/supabase';
 import { PROJECT_STATUS, money } from '@/lib/admin/crm/labels';
 import { formatDate } from '@/lib/admin/format';
@@ -37,9 +38,16 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
             </Link>
           ))}
         </nav>
-        <Link href="/admin/crm/projects/new" className="btn btn-primary">
-          <Plus className="size-4" /> Novi projekat
-        </Link>
+        <NewProject
+          label={
+            <>
+              <Plus className="size-4" /> Novi projekat
+            </>
+          }
+          customerId={query.get('customer') ?? undefined}
+          defaultOpen={query.get('new') === '1'}
+          closeHref="/admin/crm/projects"
+        />
       </PageHeading>
 
       {rows.length === 0 ? (
