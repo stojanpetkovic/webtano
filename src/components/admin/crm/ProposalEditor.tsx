@@ -37,7 +37,9 @@ export function ProposalEditor({
   const [currency, setCurrency] = useState(initialCurrency);
   const [discount, setDiscount] = useState(initialDiscount);
   const t = useMemo(() => totals(items, discount), [items, discount]);
-  const groups = [...new Set(priceList.map((p) => p.group))];
+  // One-time items first, then monthly, each under its own group in the picker.
+  const groupOf = (p: PriceListEntry) => `${p.recurring ? 'Mesečno' : 'Jednokratno'} · ${p.group}`;
+  const groups = [...new Set([...priceList.filter((p) => !p.recurring), ...priceList.filter((p) => p.recurring)].map(groupOf))];
   // Lines saved to the price list from here, by their text, so the button shows it.
   const [saved, setSaved] = useState<string[]>([]);
   const [, startSaving] = useTransition();
@@ -76,7 +78,7 @@ export function ProposalEditor({
           {groups.map((g) => (
             <optgroup key={g} label={g}>
               {priceList.map((p, n) =>
-                p.group === g ? (
+                groupOf(p) === g ? (
                   <option key={n} value={n}>
                     {p.description} · {money(p.unit_price)}
                     {p.recurring ? '/mes' : ''}
