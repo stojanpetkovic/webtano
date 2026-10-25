@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { CalendarCheck, CalendarDays, FileText, Inbox, MoveRight, Users } from 'lucide-react';
+import { CalendarCheck, CalendarDays, CheckSquare, CircleDollarSign, FileText, Inbox, KanbanSquare, MoveRight, Users } from 'lucide-react';
 import { PageHeading } from '@/components/admin/PageHeading';
 import { StatCard } from '@/components/admin/StatCard';
 import { DailyChart } from '@/components/admin/DailyChart';
@@ -12,6 +12,9 @@ import { dailySeries, summarize, daysAgo } from '@/lib/admin/stats';
 import { sitesOverview, rate } from '@/lib/admin/analytics';
 import { STATUS_LABELS } from '@/lib/admin/format';
 import type { Lead, Site } from '@/lib/admin/types';
+import type { Deal } from '@/lib/admin/crm/types';
+import { syncDeals, webtanoSiteId } from '@/lib/admin/crm/data';
+import { money } from '@/lib/admin/crm/labels';
 
 export const dynamic = 'force-dynamic';
 export const metadata: Metadata = { title: 'Kontrolna tabla' };
@@ -20,13 +23,25 @@ const DAYS = 30;
 
 export default async function DashboardPage() {
   const since = daysAgo(60);
-  const [{ data: sitesData }, { data: leadsData }] = await Promise.all([
+  await syncDeals();
+  const webtanoId = await webtanoSiteId();
+  let leadList = db().from('leads').select('*').eq('is_spam', false).gte('created_at', since).order('created_at', { ascending: false });
+  if (webtanoId) leadList = leadList.neq('site_id', webtanoId);
+  const todayKey = new Date().toISOString().slice(0, 10);
+  const [{ data: sitesData }, { data: leadsData }, { data: dealData }, { count: proposalsOut }, { data: taskData }] = await Promise.all([
     db().from('sites').select('*').order('name'),
-    db().from('leads').select('*').eq('is_spam', false).gte('created_at', since).order('created_at', { ascending: false }),
+    leadList,
+    db().from('crm_deals').select('stage, value').eq('archived', false),
+    db().from('crm_proposals').select('id', { count: 'exact', head: true }).eq('status', 'sent'),
+    db().from('crm_tasks').select('due_date').neq('status', 'done').not('due_date', 'is', null).lte('due_date', todayKey),
   ]);
 
-  const sites = (sitesData ?? []) as Site[];
+  // The client sites only: WebTano's own leads live in the CRM.
+  const sites = ((sitesData ?? []) as Site[]).filter((s) => s.id !== webtanoId);
   const leads = (leadsData ?? []) as Lead[];
+  const deals = (dealData ?? []) as Pick<Deal, 'stage' | 'value'>[];
+  const openDeals = deals.filter((d) => d.stage !== 'won' && d.stage !== 'lost');
+  const tasksDue = (taskData ?? []) as { due_date: string }[];
   const siteMap = new Map(sites.map((s) => [s.id, s]));
   const stats = summarize(leads);
 
@@ -68,7 +83,7 @@ export default async function DashboardPage() {
               <>
                 {' · '}
                 <Link href="/admin/leads?status=new" className="font-medium text-primary hover:underline">
-                  {newCount} {newCount === 1 ? 'novi lid čeka' : 'novih lidova čeka'} odgovor
+                  {newCount} {newCount === 1 ? 'novi lid čeka' : 'novih lidova sa sajtova čeka'} odgovor
                 </Link>
               </>
             )}
@@ -79,7 +94,7 @@ export default async function DashboardPage() {
           <FileText className="size-4" /> Izveštaji
         </Link>
         <Link href="/admin/leads" className="btn btn-primary">
-          <Inbox className="size-4" /> Svi lidovi
+          <Inbox className="size-4" /> Lidovi sa sajtova
         </Link>
       </PageHeading>
       {sites.length === 0 && (
@@ -93,6 +108,43 @@ export default async function DashboardPage() {
           </Link>
         </div>
       )}
+
+      <section className="relative overflow-hidden rounded-2xl bg-ink-975 p-5 text-white sm:p-6">
+        <div className="pointer-events-none absolute inset-0" style={{ background: 'radial-gradient(60% 80% at 100% 0%, rgb(1 175 233 / 0.18), transparent 70%)' }} aria-hidden="true" />
+        <div className="relative flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div className="font-mono text-[10px] tracking-[0.16em] text-accent uppercase">WebTano CRM</div>
+            <h2 className="mt-1 text-[17px] font-semibold text-white">Tvoja prodaja i projekti</h2>
+          </div>
+          <Link href="/admin/crm/leads" className="btn btn-sm btn-accent">
+            <KanbanSquare className="size-4" /> Otvori tablu
+          </Link>
+        </div>
+        <div className="relative mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {[
+            { icon: Inbox, label: 'Novi lidovi', value: String(deals.filter((d) => d.stage === 'new').length), href: '/admin/crm/leads' },
+            { icon: CircleDollarSign, label: 'Vrednost u toku', value: money(openDeals.reduce((n, d) => n + Number(d.value || 0), 0)), href: '/admin/crm/leads' },
+            { icon: FileText, label: 'Ponude čekaju odgovor', value: String(proposalsOut ?? 0), href: '/admin/crm/proposals?status=sent' },
+            {
+              icon: CheckSquare,
+              label: 'Zadaci za danas i kasne',
+              value: String(tasksDue.length),
+              href: '/admin/crm/tasks',
+            },
+          ].map((k) => (
+            <Link key={k.label} href={k.href} className="rounded-xl bg-white/[0.05] p-4 ring-1 ring-white/[0.08] transition hover:bg-white/[0.08]">
+              <k.icon className="size-4 text-accent" />
+              <div className="mt-3 text-2xl font-semibold tracking-tight tabular-nums">{k.value}</div>
+              <div className="mt-0.5 text-xs text-white/55">{k.label}</div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <div className="flex items-center gap-3 pt-2">
+        <h2 className="text-[15px] font-semibold">Klijentski sajtovi</h2>
+        <span className="h-px flex-1 bg-line" />
+      </div>
 
       <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         <StatCard icon={CalendarCheck} color="success" label="Upiti danas" value={stats.today} trend={allDaily.slice(-14)} />

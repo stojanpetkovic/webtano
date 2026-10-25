@@ -58,7 +58,7 @@ export default async function LeadPage({
 
   return (
     <>
-      {(await unseenLeadCount()) > 0 && <MarkLeadsSeen />}
+      {(await unseenLeadCount('sites')) > 0 && <MarkLeadsSeen scope="sites" />}
       <PageHeading title={title} crumbs={[{ label: 'Lidovi', href: '/admin/leads' }]} />
       {notice && (
         <div className="alert alert-success" role="status">

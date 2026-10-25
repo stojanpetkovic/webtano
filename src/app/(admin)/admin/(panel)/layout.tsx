@@ -11,7 +11,8 @@ export default async function PanelLayout({ children }: { children: React.ReactN
   const initial = email.charAt(0).toUpperCase() || 'W';
 
   // Leads that came in since the lead list was last opened, on the bell and beside "Lidovi".
-  const newLeads = await unseenLeadCount();
+  const [newLeads, crmNew] = await Promise.all([unseenLeadCount('sites'), unseenLeadCount('crm')]);
+  const unseen = newLeads + crmNew;
 
   return (
     <>
@@ -28,7 +29,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
           <Logo />
         </Link>
 
-        <NavLinks newLeads={newLeads} />
+        <NavLinks newLeads={newLeads} crmNew={crmNew} />
 
         <div className="relative m-4 overflow-hidden rounded-2xl bg-white/[0.04] p-4 ring-1 ring-white/[0.08]">
           <p className="text-[13px] font-semibold text-white">Kod za sajtove</p>
@@ -100,15 +101,15 @@ export default async function PanelLayout({ children }: { children: React.ReactN
                 webtano.com <ExternalLink className="size-3.5 text-zinc-400" />
               </a>
               <Link
-                href="/admin/leads"
+                href={crmNew > 0 ? '/admin/crm/leads' : '/admin/leads'}
                 className="btn btn-outline relative size-9 p-0"
-                aria-label={`Novi lidovi od poslednjeg pregleda: ${newLeads}`}
-                title={`Novi lidovi od poslednjeg pregleda: ${newLeads}`}
+                aria-label={`Novi lidovi od poslednjeg pregleda: ${unseen}`}
+                title={`Novi lidovi od poslednjeg pregleda: ${unseen}`}
               >
                 <Bell className="size-[18px]" />
-                {newLeads > 0 && (
+                {unseen > 0 && (
                   <span className="absolute -end-1 -top-1 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-accent px-1 font-mono text-[10px] font-semibold text-ink-950 ring-2 ring-body">
-                    {newLeads > 99 ? '99+' : newLeads}
+                    {unseen > 99 ? '99+' : unseen}
                   </span>
                 )}
               </Link>

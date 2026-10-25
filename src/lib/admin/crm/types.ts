@@ -1,0 +1,110 @@
+// Rows of the crm_ tables (supabase/migrations/20261024_crm.sql).
+
+export type DealStage = 'new' | 'contacted' | 'qualified' | 'proposal' | 'won' | 'lost';
+export type ProposalStatus = 'draft' | 'sent' | 'accepted' | 'declined';
+export type ProjectStatus = 'not_started' | 'in_progress' | 'on_hold' | 'done' | 'cancelled';
+export type TaskStatus = 'todo' | 'doing' | 'review' | 'done';
+export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent';
+export type ActivityKind = 'note' | 'call' | 'email' | 'meeting' | 'system';
+
+export interface Customer {
+  id: string;
+  company: string;
+  contact_name: string | null;
+  email: string | null;
+  phone: string | null;
+  website: string | null;
+  address: string | null;
+  city: string | null;
+  country: string | null;
+  industry: string | null;
+  status: 'active' | 'inactive';
+  notes: string | null;
+  created_at: string;
+}
+
+export interface Deal {
+  id: string;
+  lead_id: string | null;
+  customer_id: string | null;
+  name: string;
+  company: string | null;
+  email: string | null;
+  phone: string | null;
+  website: string | null;
+  source: string | null;
+  service: string | null;
+  value: number;
+  stage: DealStage;
+  position: number;
+  lost_reason: string | null;
+  next_step: string | null;
+  next_step_at: string | null;
+  archived: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Activity {
+  id: string;
+  deal_id: string | null;
+  customer_id: string | null;
+  project_id: string | null;
+  kind: ActivityKind;
+  body: string;
+  created_at: string;
+}
+
+export interface Proposal {
+  id: string;
+  number: number;
+  customer_id: string | null;
+  deal_id: string | null;
+  title: string;
+  status: ProposalStatus;
+  currency: string;
+  issue_date: string;
+  valid_until: string | null;
+  discount_pct: number;
+  intro: string | null;
+  terms: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProposalItem {
+  id: string;
+  proposal_id: string;
+  position: number;
+  description: string;
+  details: string | null;
+  qty: number;
+  unit_price: number;
+  recurring: boolean;
+}
+
+export interface Project {
+  id: string;
+  customer_id: string | null;
+  proposal_id: string | null;
+  name: string;
+  status: ProjectStatus;
+  start_date: string | null;
+  deadline: string | null;
+  budget: number | null;
+  description: string | null;
+  created_at: string;
+}
+
+export interface Task {
+  id: string;
+  project_id: string | null;
+  title: string;
+  description: string | null;
+  status: TaskStatus;
+  priority: TaskPriority;
+  due_date: string | null;
+  position: number;
+  completed_at: string | null;
+  created_at: string;
+}

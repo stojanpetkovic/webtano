@@ -8,6 +8,7 @@ import { LeadTable } from '@/components/admin/LeadTable';
 import { Pagination } from '@/components/admin/Pagination';
 import { db } from '@/lib/admin/supabase';
 import { readFilters, leadQuery } from '@/lib/admin/leadQuery';
+import { webtanoSiteId } from '@/lib/admin/crm/data';
 import { STATUS_LABELS } from '@/lib/admin/format';
 import { toParams } from '@/lib/admin/params';
 import type { Lead, LeadStatus, Site } from '@/lib/admin/types';
@@ -19,7 +20,7 @@ const SIZES = [25, 50, 100];
 
 export default async function LeadsPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const query = toParams(await searchParams);
-  const filters = readFilters(query);
+  const filters = { ...readFilters(query), exclude: await webtanoSiteId() };
   const size = SIZES.includes(Number(query.get('size'))) ? Number(query.get('size')) : SIZES[0];
   const requested = Math.max(1, Math.floor(Number(query.get('page')) || 1));
 
@@ -56,8 +57,8 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
 
   return (
     <>
-      {(await unseenLeadCount()) > 0 && <MarkLeadsSeen />}
-      <PageHeading title="Lidovi" description="Svi upiti sa svih sajtova, najnoviji prvi.">
+      {(await unseenLeadCount('sites')) > 0 && <MarkLeadsSeen scope="sites" />}
+      <PageHeading title="Lidovi sa sajtova" crumbs={[{ label: 'Klijentski sajtovi' }]} description="Upiti sa sajtova klijenata, najnoviji prvi. WebTano upiti su u CRM-u.">
         <a href={exportHref} className="btn btn-outline">
           <Download className="size-4" /> Izvezi CSV
         </a>
@@ -107,7 +108,7 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
             </label>
             <select className="form-input" id="site" name="site" defaultValue={filters.site}>
               <option value="">Svi sajtovi</option>
-              {sites.map((s) => (
+              {sites.filter((s) => s.id !== filters.exclude).map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.name}
                 </option>

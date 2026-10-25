@@ -3,9 +3,9 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
-import { Download, Globe, Inbox, LayoutDashboard, Plus, Sparkles } from 'lucide-react';
+import { CheckSquare, FileText, FolderKanban, Globe, Inbox, KanbanSquare, LayoutDashboard, Users } from 'lucide-react';
 
-export function NavLinks({ newLeads }: { newLeads: number }) {
+export function NavLinks({ newLeads, crmNew }: { newLeads: number; crmNew: number }) {
   const path = usePathname().replace(/\/$/, '') || '/admin';
 
   // Close the mobile drawer after a navigation.
@@ -14,24 +14,27 @@ export function NavLinks({ newLeads }: { newLeads: number }) {
     if (toggle) toggle.checked = false;
   }, [path]);
 
+  const at = (prefix: string) => path === prefix || path.startsWith(prefix + '/');
   const sections = [
     {
       title: 'Pregled',
       items: [{ href: '/admin', label: 'Kontrolna tabla', icon: LayoutDashboard, active: path === '/admin', badge: 0 }],
     },
     {
-      title: 'Upravljanje',
+      title: 'WebTano CRM',
       items: [
-        { href: '/admin/leads', label: 'Lidovi', icon: Inbox, active: path.startsWith('/admin/leads') && !path.includes('export'), badge: newLeads },
-        { href: '/admin/sites', label: 'Sajtovi', icon: Globe, active: path === '/admin/sites' || path.startsWith('/admin/sites/'), badge: 0 },
+        { href: '/admin/crm/leads', label: 'Lidovi', icon: KanbanSquare, active: at('/admin/crm/leads'), badge: crmNew },
+        { href: '/admin/crm/customers', label: 'Klijenti', icon: Users, active: at('/admin/crm/customers'), badge: 0 },
+        { href: '/admin/crm/proposals', label: 'Ponude', icon: FileText, active: at('/admin/crm/proposals'), badge: 0 },
+        { href: '/admin/crm/projects', label: 'Projekti', icon: FolderKanban, active: at('/admin/crm/projects'), badge: 0 },
+        { href: '/admin/crm/tasks', label: 'Zadaci', icon: CheckSquare, active: at('/admin/crm/tasks'), badge: 0 },
       ],
     },
     {
-      title: 'Brze radnje',
+      title: 'Klijentski sajtovi',
       items: [
-        { href: '/admin/leads?status=new', label: 'Neobrađeni lidovi', icon: Sparkles, active: false, badge: 0 },
-        { href: '/admin/sites#novi', label: 'Dodaj sajt', icon: Plus, active: false, badge: 0 },
-        { href: '/admin/leads/export.csv', label: 'Izvezi CSV', icon: Download, active: false, badge: 0 },
+        { href: '/admin/sites', label: 'Sajtovi i izveštaji', icon: Globe, active: at('/admin/sites'), badge: 0 },
+        { href: '/admin/leads', label: 'Lidovi sa sajtova', icon: Inbox, active: at('/admin/leads'), badge: newLeads },
       ],
     },
   ];
@@ -44,19 +47,11 @@ export function NavLinks({ newLeads }: { newLeads: number }) {
           <ul className="mt-1 space-y-0.5">
             {section.items.map((item) => (
               <li key={item.href}>
-                {item.href.endsWith('.csv') ? (
-                  // A file download, so a plain link rather than client navigation.
-                  <a href={item.href} className="menu-link">
-                    <item.icon className="size-[18px] shrink-0" />
-                    <span>{item.label}</span>
-                  </a>
-                ) : (
-                  <Link href={item.href} className="menu-link" aria-current={item.active ? 'page' : undefined}>
-                    <item.icon className="size-[18px] shrink-0" />
-                    <span>{item.label}</span>
-                    {item.badge > 0 && <span className="menu-badge">{item.badge}</span>}
-                  </Link>
-                )}
+                <Link href={item.href} className="menu-link" aria-current={item.active ? 'page' : undefined}>
+                  <item.icon className="size-[18px] shrink-0" />
+                  <span>{item.label}</span>
+                  {item.badge > 0 && <span className="menu-badge">{item.badge}</span>}
+                </Link>
               </li>
             ))}
           </ul>
