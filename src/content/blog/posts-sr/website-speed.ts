@@ -78,7 +78,7 @@ export const post: Post = {
       p: 'Naši sajtovi su brze, uglavnom statične stranice sa optimizovanim slikama, vrlo malo JavaScript-a i što manje skripti trećih strana. Studije slučaja na ovom sajtu navode žive Lighthouse ocene svakog klijentskog sajta, na primer [Tree Jaws](/work/tree-jaws) i [Care Trans](/work/care-trans), pa ih možete sami proveriti.',
     },
     {
-      p: 'Ako su vaši PageSpeed rezultati crveni ili narandžasti i niste sigurni šta prvo da popravite, [zatražite besplatnu proveru sajta](/#hero-form). Reći ćemo vam koji problemi vas zaista koštaju poziva.',
+      p: 'Ako su vaši PageSpeed rezultati crveni ili narandžasti i niste sigurni šta prvo da popravite, [zatražite besplatnu analizu sajta](/#hero-form). Reći ćemo vam koji problemi vas zaista koštaju poziva.',
     },
   ],
   faq: [

@@ -97,7 +97,7 @@ export const post: Post = {
       p: 'To što je LSA unutar Google Ads-a dugoročno je dobra stvar. Kampanja sa plaćanjem po upitu, kampanje za pretragu i podaci o konverzijama konačno su u jednom nalogu. Uz praćenje poziva na sajtu, vidite koji kanal donosi poslove koje zaista želite i po kojoj ceni, bez spajanja tri panela.',
     },
     {
-      p: 'Upravo tako vodimo naloge za klijente kao što je [Tree Jaws](/work/tree-jaws): svaki poziv i forma povezani su sa oglasom ili pretragom koja ih je donela. Ako želite da neko još jednom pogleda vaše podešavanje pre prelaska, [zatražite besplatnu proveru](/#hero-form) i pregledaćemo oglase, profil i sajt zajedno.',
+      p: 'Upravo tako vodimo naloge za klijente kao što je [Tree Jaws](/work/tree-jaws): svaki poziv i forma povezani su sa oglasom ili pretragom koja ih je donela. Ako želite da neko još jednom pogleda vaše podešavanje pre prelaska, [zatražite besplatnu analizu](/#hero-form) i pregledaćemo oglase, profil i sajt zajedno.',
     },
   ],
   faq: [

@@ -13,8 +13,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t('Case studies', 'Studije slučaja'),
     description: t(
-      'Websites, local SEO and Google Ads for tree services, a dental practice and a medical transport company, with the numbers from their own lead tracking.',
-      'Sajtovi, lokalni SEO i Google Ads za firme za drveće, stomatološku ordinaciju i firmu za sanitetski prevoz, sa brojevima iz njihovog praćenja upita.',
+      'Real projects: websites, SEO and Google Ads for a dental practice, a medical transport company and home-service firms, with the numbers from their own call and enquiry tracking.',
+      'Pravi projekti: sajtovi, SEO i Google oglašavanje za stomatološku ordinaciju, sanitetski prevoz i uslužne firme, sa brojkama iz njihovog praćenja poziva i upita.',
     ),
     alternates: alternates(lang, '/work'),
     openGraph: { url: lp('/work'), images: [ogImage(lang)] },
@@ -64,14 +64,14 @@ export default async function WorkPage() {
           </Reveal>
           <Reveal delay={80}>
             <h1 className="mt-3 max-w-3xl font-display text-4xl font-bold tracking-tight text-balance sm:text-6xl">
-              {t('The work, and', 'Radovi, i')} <span className="text-gradient">{t('what it brought in', 'šta su doneli')}</span>
+              {t('Our work, and', 'Naši projekti i')} <span className="text-gradient">{t('what it brought in', 'šta su doneli')}</span>
             </h1>
           </Reveal>
           <Reveal delay={160}>
             <p className="mt-5 max-w-2xl text-lg text-white/75">
               {t(
-                'Every figure comes from the client’s own lead tracking, ad account or a Lighthouse run on the live site.',
-                'Svaki broj potiče iz klijentovog praćenja upita, oglasnog naloga ili Lighthouse merenja na živom sajtu.',
+                'Every figure comes from the client’s own call tracking, ad account or a Lighthouse test of the live site.',
+                'Svaka brojka potiče iz klijentovog praćenja poziva, Google Ads naloga ili Lighthouse testa sajta.',
               )}
             </p>
           </Reveal>
@@ -90,7 +90,7 @@ export default async function WorkPage() {
             href={lp('/#hero-form')}
             className="group inline-flex items-center gap-2 rounded-full bg-azure-700 px-6 py-3.5 font-semibold text-white shadow-[0_10px_24px_-10px_rgb(37_99_235/0.7)] transition hover:-translate-y-px hover:bg-ink-800"
           >
-            {t('Get a free website check', 'Zatražite besplatnu proveru')}
+            {t('Get a free website audit', 'Zatražite besplatnu analizu')}
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
           </Link>
         </div>

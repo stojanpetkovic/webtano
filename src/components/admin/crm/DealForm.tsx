@@ -74,7 +74,7 @@ export async function DealForm({ deal }: { deal?: Deal }) {
           <label className="form-label" htmlFor="next_step">
             {t('Next step', 'Sledeći korak')}
           </label>
-          <input className="form-input" id="next_step" name="next_step" defaultValue={deal?.next_step ?? ''} placeholder={t('Call and book a free website check', 'Pozvati i dogovoriti besplatnu proveru sajta')} />
+          <input className="form-input" id="next_step" name="next_step" defaultValue={deal?.next_step ?? ''} placeholder={t('Call and book a free website check', 'Pozvati i dogovoriti besplatnu analizu sajta')} />
         </div>
         {deal?.stage === 'lost' && (
           <div className="sm:col-span-2">

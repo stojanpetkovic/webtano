@@ -21,10 +21,10 @@ export async function generateMetadata(): Promise<Metadata> {
   const ads = usd(lang, monthlyPlans.find((p) => p.id === 'google-ads')?.price ?? 0);
   const site = usd(lang, websitePlans[0].price);
   return {
-    title: t('Pricing: websites, local SEO and Google Ads', 'Cene: sajtovi, lokalni SEO i Google Ads'),
+    title: t('Pricing: websites, SEO and Google Ads', 'Cene: izrada sajtova, SEO i Google oglašavanje'),
     description: t(
-      `Clear prices for local service companies: Google Ads from ${ads}/mo, local SEO and websites from ${site}. No setup fees, no long contracts, every lead tracked.`,
-      `Jasne cene za lokalne uslužne firme: Google Ads od ${ads} mesečno, lokalni SEO i sajtovi od ${site}. Bez naknade za postavku, bez dugih ugovora, svaki upit se prati.`,
+      `Clear prices for small and local businesses: Google Ads from ${ads}/mo, websites from ${site}. No setup fees, no long contracts, every enquiry tracked.`,
+      `Jasne cene za male i lokalne firme: Google oglašavanje od ${ads} mesečno, sajtovi od ${site}. Bez troškova podešavanja, bez dugoročnih ugovora, svaki upit zabeležen.`,
     ),
     alternates: alternates(lang, '/pricing'),
     openGraph: { url: lp('/pricing'), images: [ogImage(lang)] },
@@ -65,8 +65,8 @@ function PlanCard({ plan, dark = false, lang, t, lp }: { plan: Plan; dark?: bool
       <p className={`mt-2 min-h-[2.5rem] text-xs leading-snug ${onDark ? 'text-white/50' : 'text-zinc-500'}`}>
         {plan.note ??
           (plan.unit === 'mo'
-            ? t('No setup fee. Month to month.', 'Bez naknade za postavku. Iz meseca u mesec.')
-            : t('Half to start, half at launch.', 'Pola na početku, pola pri puštanju.'))}
+            ? t('No setup fee. Month to month.', 'Bez troškova podešavanja. Otkazujete kad želite.')
+            : t('Half to start, half at launch.', 'Pola na početku, pola kad sajt bude objavljen.'))}
       </p>
       <Link
         href={lp('/#hero-form')}
@@ -74,7 +74,7 @@ function PlanCard({ plan, dark = false, lang, t, lp }: { plan: Plan; dark?: bool
           hi ? 'bg-accent text-ink-950 shadow-glow hover:bg-accent-dark' : onDark ? 'bg-white text-ink-950 hover:bg-azure-50' : 'bg-ink-950 text-white hover:bg-ink-800'
         }`}
       >
-        {t('Start with a free check', 'Počnite besplatnom proverom')}
+        {t('Start with a free audit', 'Počnite besplatnom analizom')}
         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
       </Link>
       <div className={`mt-7 border-t pt-6 ${onDark ? 'border-white/10' : 'border-zinc-200/80'}`}>
@@ -91,7 +91,7 @@ function PlanCard({ plan, dark = false, lang, t, lp }: { plan: Plan; dark?: bool
         </ul>
       </div>
       <p className={`mt-auto pt-7 text-xs leading-relaxed ${onDark ? 'text-white/50' : 'text-zinc-500'}`}>
-        <span className={`font-semibold ${onDark ? 'text-white/75' : 'text-ink-950'}`}>{t('Best for: ', 'Najbolje za: ')}</span>
+        <span className={`font-semibold ${onDark ? 'text-white/75' : 'text-ink-950'}`}>{t('Ideal for: ', 'Idealno za: ')}</span>
         {plan.bestFor}
       </p>
     </div>
@@ -174,14 +174,14 @@ export default async function PricingPage() {
           </Reveal>
           <Reveal delay={80}>
             <h1 className="mx-auto mt-5 max-w-3xl font-display text-4xl font-bold tracking-tight text-balance sm:text-6xl sm:leading-[1.05]">
-              {t('Clear prices.', 'Jasne cene.')} <span className="text-gradient">{t('Every lead counted.', 'Svaki upit se broji.')}</span>
+              {t('Clear prices.', 'Jasne cene.')} <span className="text-gradient">{t('Every enquiry counted.', 'Svaki upit zabeležen.')}</span>
             </h1>
           </Reveal>
           <Reveal delay={160}>
             <p className="mx-auto mt-5 max-w-2xl text-lg text-white/75">
               {t(
                 'Flat monthly fees for SEO and Google Ads, one fixed price for websites. No setup fees, no long contracts, and a report that shows what every dollar brought in.',
-                'Fiksne mesečne naknade za SEO i Google Ads, jedna fiksna cena za sajtove. Bez naknade za postavku, bez dugih ugovora, i izveštaj koji pokazuje šta je svaki dolar doneo.',
+                'Fiksna mesečna cena za SEO i Google oglašavanje, jedna fiksna cena za sajt. Bez troškova podešavanja, bez dugoročnih ugovora, uz izveštaj koji pokazuje šta je doneo svaki uloženi dolar.',
               )}
             </p>
           </Reveal>
@@ -210,12 +210,12 @@ export default async function PricingPage() {
                 <p className="font-display text-4xl font-bold text-azure-700">$0</p>
                 <div>
                   <p className="font-display text-lg font-semibold text-ink-950">
-                    {t('Step one is always free: a website check', 'Prvi korak je uvek besplatan: provera sajta')}
+                    {t('Step one is always free: a website audit', 'Prvi korak je uvek besplatan: analiza sajta')}
                   </p>
                   <p className="mt-0.5 text-sm text-zinc-600">
                     {t(
                       'We review your site, Google profile and ads, and tell you honestly which plan you need, if any.',
-                      'Pregledamo vaš sajt, Google profil i oglase i iskreno vam kažemo koji paket vam treba, ako ijedan.',
+                      'Pregledamo vaš sajt, Google profil i oglase i iskreno vam kažemo koji paket vam treba, i da li vam uopšte treba.',
                     )}
                   </p>
                 </div>
@@ -224,7 +224,7 @@ export default async function PricingPage() {
                 href={lp('/#hero-form')}
                 className="group inline-flex shrink-0 items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-ink-950 shadow-glow transition hover:-translate-y-px hover:bg-accent-dark"
               >
-                {t('Get my free check', 'Zatražite besplatnu proveru')}
+                {t('Get my free audit', 'Zatražite besplatnu analizu')}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
               </Link>
             </div>
@@ -233,12 +233,12 @@ export default async function PricingPage() {
           <div className="mt-20 text-center">
             <p className="font-mono text-[11px] tracking-[0.14em] text-azure-700 uppercase">{t('Monthly plans', 'Mesečni paketi')}</p>
             <h2 id="monthly-title" className="mt-3 font-display text-3xl font-bold tracking-tight text-balance text-ink-950 md:text-[2.5rem]">
-              {t('More calls every month, measured', 'Više poziva svakog meseca, izmereno')}
+              {t('More calls every month, and proof of where they came from', 'Više poziva svakog meseca, i dokaz odakle su došli')}
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-zinc-600">
               {t(
                 'Flat fees, month to month. Ad budgets are paid directly to Google from your own account.',
-                'Fiksne naknade, iz meseca u mesec. Budžet za oglase plaća se direktno Google-u sa vašeg naloga.',
+                'Fiksna cena, bez dugoročnog ugovora. Budžet za oglase plaćate direktno Google-u sa svog naloga.',
               )}
             </p>
           </div>
@@ -301,16 +301,16 @@ export default async function PricingPage() {
           <div className="text-center">
             <p className="font-mono text-[11px] tracking-[0.14em] text-accent uppercase">{t('Websites', 'Sajtovi')}</p>
             <h2 id="websites-title" className="mt-3 font-display text-3xl font-bold tracking-tight text-balance md:text-[2.5rem]">
-              {t('One fixed price. Yours to keep.', 'Jedna fiksna cena. Zauvek vaše.')}
+              {t('One fixed price. Yours to keep.', 'Jedna fiksna cena. Sajt je zauvek vaš.')}
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-white/70">
               {t(
-                'Fast sites written to sell, with tracking built in. Domain, code and hosting in your name from day one.',
-                'Brzi sajtovi pisani da prodaju, sa ugrađenim praćenjem. Domen, kod i hosting na vaše ime od prvog dana.',
+                'Fast websites written to sell, with call tracking built in. Domain, code and hosting in your name from day one.',
+                'Brzi sajtovi sa tekstovima koji prodaju i ugrađenim praćenjem poziva. Domen, kod i hosting su na vaše ime od prvog dana.',
               )}
             </p>
           </div>
-          <SwipeRow as="ul" label={t('Website plans', 'Paketi sajtova')} className="mt-14 grid items-stretch gap-6 max-md:pt-4 lg:grid-cols-3 lg:gap-5">
+          <SwipeRow as="ul" label={t('Website plans', 'Paketi za sajtove')} className="mt-14 grid items-stretch gap-6 max-md:pt-4 lg:grid-cols-3 lg:gap-5">
             {websitePlans.map((p, i) => (
               <Reveal as="li" key={p.id} delay={i * 80}>
                 <div id={p.id} className="h-full scroll-mt-24">
@@ -324,7 +324,7 @@ export default async function PricingPage() {
             <Link href={lp('/work')} className="font-medium text-accent hover:underline">
               {t('the sites we built', 'sajtove koje smo napravili')}
             </Link>{' '}
-            {t('and their live Lighthouse scores.', 'i njihove žive Lighthouse ocene.')}
+            {t('and their live Lighthouse scores.', 'i njihove trenutne Lighthouse ocene.')}
           </p>
         </div>
       </section>
@@ -348,7 +348,7 @@ export default async function PricingPage() {
                       <span className="font-display font-semibold text-ink-950">{a.name}</span>
                       <span className="font-display font-semibold text-azure-700">
                         {money(a.price)}
-                        {a.per === '/mo' ? t('/mo', '/mes.') : t(' each', ' po komadu')}
+                        {a.per === '/mo' ? t('/mo', '/mes.') : t(' each', ' pojedinačno')}
                       </span>
                     </p>
                     <p className="mt-1 text-sm leading-relaxed text-zinc-600">{a.text}</p>
@@ -395,8 +395,8 @@ export default async function PricingPage() {
             </h2>
             <p className="mt-4 text-zinc-600">
               {t(
-                'Anything else? Ask it in the free check and we will answer within one business day.',
-                'Još nešto? Pitajte u besplatnoj proveri i odgovorićemo u roku od jednog radnog dana.',
+                'Anything else? Ask in your free audit and we will answer within one business day.',
+                'Imate još pitanja? Postavite ih uz zahtev za besplatnu analizu i odgovorićemo u roku od jednog radnog dana.',
               )}
             </p>
           </div>
@@ -415,8 +415,8 @@ export default async function PricingPage() {
             </h2>
             <p className="mt-3 text-lg text-white/70">
               {t(
-                'Start with the free check. We will recommend one plan, or tell you that you do not need us yet.',
-                'Počnite besplatnom proverom. Preporučićemo jedan paket ili vam reći da vam još ne trebamo.',
+                'Start with the free audit. We will recommend one plan, or tell you honestly that you do not need us yet.',
+                'Počnite besplatnom analizom. Preporučićemo jedan paket ili vam iskreno reći da vam još nismo potrebni.',
               )}
             </p>
           </div>
@@ -424,7 +424,7 @@ export default async function PricingPage() {
             href={lp('/#hero-form')}
             className="group inline-flex shrink-0 items-center gap-2 rounded-full bg-accent px-6 py-3.5 font-semibold text-ink-950 shadow-glow transition hover:-translate-y-px hover:bg-accent-dark"
           >
-            {t('Get a free website check', 'Zatražite besplatnu proveru')}
+            {t('Get a free website audit', 'Zatražite besplatnu analizu')}
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
           </Link>
         </div>

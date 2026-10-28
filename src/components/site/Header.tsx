@@ -134,8 +134,8 @@ export function Header() {
               href={lp('/#hero-form')}
               className="group inline-flex items-center gap-1.5 rounded-full bg-accent px-3.5 py-2 text-sm font-semibold whitespace-nowrap text-ink-950 shadow-glow transition hover:-translate-y-px hover:bg-accent-dark max-md:py-1.5 max-md:shadow-none sm:px-4"
             >
-              <span className="sm:hidden">{t('Free check', 'Besplatna provera')}</span>
-              <span className="hidden sm:inline">{t('Free website check', 'Besplatna provera sajta')}</span>
+              <span className="sm:hidden">{t('Free audit', 'Besplatna analiza')}</span>
+              <span className="hidden sm:inline">{t('Free website audit', 'Besplatna analiza sajta')}</span>
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
             </Link>
             <button
@@ -230,7 +230,7 @@ export function Header() {
               onClick={() => setOpen(false)}
               className="group flex h-[52px] w-full items-center justify-center gap-2 rounded-2xl bg-accent px-6 text-[17px] font-semibold text-ink-950 transition active:bg-accent-dark"
             >
-              {t('Get a free website check', 'Besplatna provera sajta')}
+              {t('Get a free website audit', 'Zatražite besplatnu analizu')}
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
             </Link>
             <p className="text-center text-xs text-zinc-500">{t('Reply within one business day', 'Odgovor u roku od jednog radnog dana')}</p>

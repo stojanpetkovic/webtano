@@ -90,7 +90,7 @@ export const post: Post = {
       ],
     },
     {
-      p: 'Želite da znate kako vaš profil stoji u poređenju sa firmama koje su iznad vas? [Zatražite besplatnu proveru](/#hero-form) i pregledaćemo vaš profil i sajt zajedno.',
+      p: 'Želite da znate kako vaš profil stoji u poređenju sa firmama koje su iznad vas? [Zatražite besplatnu analizu](/#hero-form) i pregledaćemo vaš profil i sajt zajedno.',
     },
   ],
   faq: [

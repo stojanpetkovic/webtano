@@ -89,7 +89,7 @@ export const post: Post = {
       p: 'Conversion rates vary a lot by market and traffic source, so be careful with averages. As one real example, the Tree Jaws site turned 7.9% of its visitors into a call or form in the last 30 days we measured, from 891 visitors to 74 leads. You can see the details in the [case study](/work/tree-jaws).',
     },
     {
-      p: 'Curious how your own site does on these ten points? [Ask for a free website check](/#hero-form) and we will send you a short, honest list of what to fix first.',
+      p: 'Curious how your own site does on these ten points? [Ask for a free website audit](/#hero-form) and we will send you a short, honest list of what to fix first.',
     },
   ],
   faq: [

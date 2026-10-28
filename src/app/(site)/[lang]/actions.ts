@@ -26,7 +26,7 @@ const SERVICE_KEYS = ['new-website', 'redesign', 'seo', 'ads', 'other'];
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
- * The free website check form. It goes straight into the lead admin as a lead
+ * The free website audit form. It goes straight into the lead admin as a lead
  * of the webtano.com site, so it arrives like any client site's enquiry: one
  * record in /admin and one notification email.
  */

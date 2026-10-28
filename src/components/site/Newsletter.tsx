@@ -217,17 +217,17 @@ export function NewsletterPopup() {
           <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-accent/15 text-accent ring-1 ring-accent/30">
             <Mail className="h-5 w-5" aria-hidden />
           </span>
-          <p className="mt-4 font-mono text-[10px] tracking-[0.14em] text-accent uppercase">{t('The WebTano letter', 'WebTano pismo')}</p>
+          <p className="mt-4 font-mono text-[10px] tracking-[0.14em] text-accent uppercase">{t('The WebTano newsletter', 'WebTano bilten')}</p>
         </div>
         <div className="md:px-7 md:pt-6 md:pb-7">
           <h2 id="nl-title" className="pe-8 font-display text-lg font-bold tracking-tight md:text-2xl">
-            {t('Get more calls from your website', 'Više poziva preko vašeg sajta')}
+            {t('Get more customers from your website', 'Više kupaca preko vašeg sajta')}
           </h2>
           <p className="mt-1 text-sm leading-relaxed text-zinc-600 md:hidden">{t('One short email a month. No spam.', 'Jedan kratak email mesečno. Bez spama.')}</p>
           <p className="mt-2 text-[15px] leading-relaxed text-zinc-600 max-md:hidden">
             {t(
-              'One short email a month with practical tips on websites, local SEO and Google Ads for service businesses. No spam.',
-              'Jedan kratak email mesečno sa praktičnim savetima o sajtovima, lokalnom SEO-u i Google Ads-u za uslužne firme. Bez spama.',
+              'One short email a month with practical tips on websites, SEO and Google Ads for small businesses. No spam.',
+              'Jedan kratak email mesečno sa praktičnim savetima o sajtovima, SEO-u i Google oglašavanju za male firme. Bez spama.',
             )}
           </p>
           <div className="mt-3.5 md:mt-5">

@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const { t, lp } = await getI18n();
   return {
     title: t('Thank you', 'Hvala'),
-    description: t('Your free website check request is in. Here is what happens next.', 'Vaš zahtev za besplatnu proveru sajta je primljen. Evo šta sledi.'),
+    description: t('Your free website audit request is in. Here is what happens next.', 'Vaš zahtev za besplatnu analizu sajta je primljen. Evo šta sledi.'),
     robots: { index: false, follow: true },
     alternates: { canonical: lp('/thank-you') },
   };
@@ -27,29 +27,29 @@ const steps = (t: T) => [
     icon: Check,
     when: t('Done', 'Gotovo'),
     title: t('Your request is in', 'Zahtev je primljen'),
-    text: t('It reached us the moment you pressed send. Nothing else is needed from you.', 'Stigao je čim ste kliknuli na slanje. Od vas ne treba ništa više.'),
+    text: t('It reached us the moment you pressed send. Nothing else is needed from you.', 'Stigao je čim ste ga poslali. Od vas ne treba ništa više.'),
   },
   {
     icon: FileText,
     when: t('Within 1 business day', 'U roku od 1 radnog dana'),
-    title: t('Your review, by email', 'Vaš pregled, emailom'),
+    title: t('Your audit, by email', 'Analiza stiže na vaš email'),
     text: t(
       'We look at your site, your Google Business Profile and your top local competitors, and write down the few fixes that would bring the most calls.',
-      'Pogledamo vaš sajt, Google Business profil i glavnu lokalnu konkurenciju i zapišemo nekoliko izmena koje bi donele najviše poziva.',
+      'Pregledamo vaš sajt, Google Business profil i glavnu lokalnu konkurenciju i izdvojimo nekoliko izmena koje bi vam donele najviše poziva.',
     ),
   },
   {
     icon: MessageSquare,
     when: t('Then, only if you want', 'Zatim, samo ako želite'),
-    title: t('A short call to go through it', 'Kratak razgovor da ga prođemo'),
+    title: t('A short call to go through it', 'Kratak razgovor o rezultatima'),
     text: t(
-      'Fifteen minutes to answer questions. No pressure and no long contract: the review is yours to keep either way.',
-      'Petnaest minuta za pitanja. Bez pritiska i bez dugog ugovora: pregled ostaje vama u svakom slučaju.',
+      'Fifteen minutes to answer your questions. No pressure and no long contract: the audit is yours to keep either way.',
+      'Petnaest minuta za vaša pitanja. Bez pritiska i bez dugoročnog ugovora: analiza ostaje vama šta god odlučili.',
     ),
   },
 ];
 
-const guideSlugs = ['tree-service-website-that-converts', 'google-ads-for-tree-services', 'speed-to-lead-home-services'];
+const guideSlugs = ['website-speed-core-web-vitals-local-business', 'call-tracking-for-contractors', 'speed-to-lead-home-services'];
 
 export default async function ThankYouPage() {
   const { lang, t, lp } = await getI18n();
@@ -83,7 +83,7 @@ export default async function ThankYouPage() {
               <p className="mt-5 max-w-xl text-lg text-white/75">
                 {t(
                   'A real person, not a bot, reviews your website and the companies you compete with. You get the findings by email within one business day.',
-                  'Pravi čovek, ne bot, pregleda vaš sajt i firme sa kojima se takmičite. Nalaze dobijate emailom u roku od jednog radnog dana.',
+                  'Vaš sajt i konkurenciju pregleda pravi čovek, ne bot. Rezultate dobijate emailom u roku od jednog radnog dana.',
                 )}
               </p>
               <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm text-white/70">
@@ -146,7 +146,7 @@ export default async function ThankYouPage() {
             <p className="text-sm font-semibold tracking-widest text-azure-700 uppercase">{t('While you wait', 'Dok čekate')}</p>
             <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
               <h2 className="max-w-2xl font-display text-3xl font-bold tracking-tight text-ink-950 sm:text-4xl">
-                {t('What the work brought other local companies', 'Šta je posao doneo drugim lokalnim firmama')}
+                {t('What our work brought other local businesses', 'Šta smo postigli za druge firme')}
               </h2>
               <Link href={lp('/work')} className="inline-flex items-center gap-1 text-sm font-semibold text-azure-700 hover:underline">
                 {t('All case studies', 'Sve studije slučaja')} <ArrowRight className="h-4 w-4" aria-hidden />
@@ -167,9 +167,9 @@ export default async function ThankYouPage() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal>
             <h2 className="font-display text-3xl font-bold tracking-tight text-ink-950 sm:text-4xl">
-              {t('Three short guides worth reading first', 'Tri kratka vodiča vredna čitanja')}
+              {t('Three short guides worth reading first', 'Tri kratka vodiča koja vredi pročitati')}
             </h2>
-            <p className="mt-3 max-w-2xl text-zinc-600">{t('They answer the questions we hear most on the first call.', 'Odgovaraju na pitanja koja najčešće čujemo u prvom razgovoru.')}</p>
+            <p className="mt-3 max-w-2xl text-zinc-600">{t('They answer the questions we hear most on the first call.', 'Odgovaraju na pitanja koja najčešće čujemo na prvom razgovoru.')}</p>
           </Reveal>
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {guides.map((p, i) => (

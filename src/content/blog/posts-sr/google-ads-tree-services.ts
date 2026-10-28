@@ -98,7 +98,7 @@ export const post: Post = {
       p: 'Ako koristite i Local Services Ads, imajte u vidu da prelaze u Google Ads. Naš [vodič za prelazak](/blog/local-services-ads-move-to-google-ads) objašnjava šta da uradite pre nego što vam se nalog premesti.',
     },
     {
-      p: 'Želite iskren pogled na svoj trenutni nalog i na to gde odlazi novac? [Zatražite besplatnu proveru](/#hero-form) i pregledaćemo vaše oglase, odredišne stranice i praćenje.',
+      p: 'Želite iskren pogled na svoj trenutni nalog i na to gde odlazi novac? [Zatražite besplatnu analizu](/#hero-form) i pregledaćemo vaše oglase, odredišne stranice i praćenje.',
     },
   ],
   faq: [

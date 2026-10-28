@@ -36,9 +36,9 @@ import { livePricing, type Pricing } from '@/lib/pricing';
 import { AreaVisual, NumbersVisual, OwnershipVisual, RingingPhone } from '@/components/site/PromiseVisuals';
 
 const heroStats = (t: T) => [
-  { value: t('1,010', '1.010'), label: t('tracked leads for one tree service', 'praćenih upita za jednu firmu za drveće') },
-  { value: t('11.2%', '11,2%'), label: t('of visitors called, for medical transport', 'posetilaca pozvalo, za sanitetski prevoz') },
-  { value: t('< 1 day', '< 1 dan'), label: t('to reply to every enquiry', 'do odgovora na svaki upit') },
+  { value: t('1,010', '1.010'), label: t('tracked enquiries for a single client', 'praćenih upita za jednog klijenta') },
+  { value: t('11.2%', '11,2%'), label: t('of visitors picked up the phone', 'posetilaca je pozvalo telefonom') },
+  { value: t('< 1 day', '< 1 dan'), label: t('to answer every enquiry', 'do odgovora na svaki upit') },
 ];
 
 // The customer's path from a search to a booked job, and where each step leaks.
@@ -46,42 +46,42 @@ const problems = (t: T) => [
   {
     stage: t('Search', 'Pretraga'),
     icon: SearchX,
-    title: t('They can’t find you', 'Ne mogu da vas nađu'),
+    title: t('Customers can’t find you', 'Kupci vas ne nalaze'),
     text: t(
-      'Thin pages and no local content keep you off page one, and ChatGPT or Google’s AI answers name someone else.',
-      'Tanke stranice i bez lokalnog sadržaja drže vas van prve strane, a ChatGPT i Google-ovi AI odgovori pominju nekog drugog.',
+      'Thin pages with nothing local on them keep you off page one, and when people ask ChatGPT or Google’s AI, it recommends someone else.',
+      'Sajt sa malo sadržaja Google ne prikazuje na prvoj strani, a kad ljudi pitaju ChatGPT ili Google AI, preporuči im se neko drugi.',
     ),
-    fix: t('A page for every service and town, written the way people search.', 'Stranica za svaku uslugu i mesto, napisana onako kako ljudi pretražuju.'),
+    fix: t('A page for every service and location, written the way your customers search.', 'Posebna stranica za svaku uslugu i lokaciju, napisana rečima kojima kupci pretražuju.'),
   },
   {
     stage: t('Visit', 'Poseta'),
     icon: Hourglass,
-    title: t('They leave before it loads', 'Odu pre nego što se učita'),
+    title: t('They leave before it loads', 'Odu pre nego što se sajt učita'),
     text: t(
-      'Every extra second on a phone loses people before they see your number, and the ones you paid for with ads go first.',
-      'Svaka dodatna sekunda na telefonu gubi ljude pre nego što vide vaš broj, a prvi odlaze oni koje ste platili oglasima.',
+      'Every extra second on a phone costs you visitors before they see your number, and the ones you paid for with ads leave first.',
+      'Svaka sekunda čekanja na telefonu odnosi posetioce pre nego što vide vaš broj. Prvi odlaze oni koje ste platili kroz oglase.',
     ),
-    fix: t('Pages that open in under two seconds, number on the first screen.', 'Stranice koje se otvaraju za manje od dve sekunde, broj na prvom ekranu.'),
+    fix: t('Pages that load in under two seconds, with your number on the first screen.', 'Stranice koje se učitaju za manje od dve sekunde, sa brojem telefona odmah na vrhu.'),
   },
   {
     stage: t('Enquiry', 'Upit'),
     icon: MailX,
-    title: t('The enquiry goes cold', 'Upit se ohladi'),
+    title: t('The enquiry goes cold', 'Upit ostane bez odgovora'),
     text: t(
-      'Forms land in an inbox nobody checks. By the time you reply, the customer has booked the next company.',
-      'Forme stižu u inbox koji niko ne proverava. Dok odgovorite, kupac je već zakazao kod sledeće firme.',
+      'Forms land in an inbox nobody checks. By the time you reply, the customer has already gone to a competitor.',
+      'Poruke sa sajta završe u inboxu koji niko ne gleda. Dok odgovorite, kupac je već otišao kod konkurencije.',
     ),
-    fix: t('Every call and form reaches your phone the second it happens.', 'Svaki poziv i forma stižu vam na telefon u sekundi kad se dese.'),
+    fix: t('Every call and enquiry reaches your phone the moment it comes in.', 'Svaki poziv i upit stiže vam na telefon istog trenutka.'),
   },
   {
     stage: t('Budget', 'Budžet'),
     icon: Wallet,
-    title: t('You can’t tell what pays', 'Ne znate šta se isplati'),
+    title: t('You can’t tell what pays off', 'Ne znate šta se isplati'),
     text: t(
-      'Clicks, impressions and agency reports, but no answer to the only question that matters: which dollars brought jobs?',
-      'Klikovi, prikazi i izveštaji agencije, ali bez odgovora na jedino važno pitanje: koji novac je doneo poslove?',
+      'Clicks, impressions and agency reports, but no answer to the only question that matters: which money brought in customers?',
+      'Klikovi, prikazi i izveštaji agencije, a odgovora nema na jedino važno pitanje: koji uloženi novac je doveo kupce?',
     ),
-    fix: t('One monthly report: leads, calls and cost per lead, by source.', 'Jedan mesečni izveštaj: upiti, pozivi i cena po upitu, po izvoru.'),
+    fix: t('One monthly report: enquiries, calls and cost per enquiry, by source.', 'Jedan mesečni izveštaj: upiti, pozivi i cena po upitu, po izvoru.'),
   },
 ];
 
@@ -91,23 +91,23 @@ const services = (t: T) => [
     icon: LayoutTemplate,
     visual: SpeedVisual,
     area: 'lg:col-start-1 lg:row-start-1',
-    title: t('Fast websites', 'Brzi sajtovi'),
+    title: t('Websites that sell', 'Sajtovi koji prodaju'),
     text: t(
-      'Custom pages that open instantly on any phone, with your phone number and reviews on the first screen.',
-      'Stranice po meri koje se odmah otvaraju na svakom telefonu, sa vašim brojem i recenzijama na prvom ekranu.',
+      'Custom-designed, lightning-fast on any phone, with your offer, reviews and a clear call to action right on the first screen.',
+      'Dizajn po meri, munjevito brz na svakom telefonu, sa ponudom, recenzijama i jasnim pozivom na akciju odmah na prvom ekranu.',
     ),
-    points: [t('Built for phones first', 'Pravljeni prvo za telefon'), t('Lighthouse scores in the 90s', 'Lighthouse ocene preko 90')],
+    points: [t('Mobile-first design', 'Prilagođeno telefonima'), t('Google speed scores of 90+', 'Google ocena brzine 90+')],
   },
   {
     icon: MapPin,
     visual: SearchVisual,
     area: 'lg:col-start-2 lg:row-start-1',
-    title: t('Local SEO and AI search', 'Lokalni SEO i AI pretraga'),
+    title: t('SEO and AI search', 'SEO i AI pretraga'),
     text: t(
-      'A page for every service and every area you cover, written the way your customers search on Google and in ChatGPT.',
-      'Stranica za svaku uslugu i svaku oblast koju pokrivate, napisana onako kako vaši kupci pretražuju na Google-u i u ChatGPT-u.',
+      'Be the business Google, Maps and ChatGPT recommend, with a page for every service and location written the way customers actually search.',
+      'Budite firma koju preporučuju Google, Mape i ChatGPT, uz stranicu za svaku uslugu i lokaciju napisanu onako kako kupci zaista pretražuju.',
     ),
-    points: [t('Service and area pages', 'Stranice za usluge i oblasti'), t('Structured data built in', 'Ugrađeni strukturirani podaci')],
+    points: [t('Service and location pages', 'Stranice za usluge i lokacije'), t('Technical SEO built in', 'Tehnički SEO ugrađen')],
   },
   {
     icon: Target,
@@ -115,50 +115,50 @@ const services = (t: T) => [
     area: 'lg:col-span-2 lg:col-start-1 lg:row-start-2',
     title: 'Google Ads',
     text: t(
-      'Campaigns for the jobs you want, in the areas you serve, with every call and form tied back to the keyword that brought it.',
-      'Kampanje za poslove koje želite, u oblastima koje pokrivate, sa svakim pozivom i formom vezanim za ključnu reč koja ih je donela.',
+      'Ads shown to people who are ready to buy, in the areas you serve, with every call and enquiry traced back to the search that brought it.',
+      'Oglasi koji se prikazuju ljudima spremnim za kupovinu, tamo gde radite, a svaki poziv i upit vezan je za pretragu koja ga je donela.',
     ),
-    points: [t('Call and form tracking', 'Praćenje poziva i formi'), t('Budget moved to what pays', 'Budžet ide tamo gde se isplati')],
+    points: [t('Call and enquiry tracking', 'Praćenje poziva i upita'), t('Budget goes where it pays off', 'Budžet ide tamo gde se isplati')],
   },
   {
     icon: BellRing,
     visual: LeadsVisual,
     area: 'lg:col-start-3 lg:row-span-2 lg:row-start-1',
-    title: t('Lead tracking and reports', 'Praćenje upita i izveštaji'),
+    title: t('Enquiry tracking and reports', 'Praćenje upita i izveštaji'),
     text: t(
-      'Every form and call reaches you the second it happens, and a monthly report shows visitors, leads and cost per lead.',
-      'Svaka forma i poziv stižu vam u sekundi kad se dese, a mesečni izveštaj pokazuje posetioce, upite i cenu po upitu.',
+      'Every enquiry and call reaches you the moment it happens, and a monthly report shows visitors, enquiries and what each one cost.',
+      'Svaki upit i poziv stiže vam istog trenutka, a mesečni izveštaj pokazuje posete, upite i koliko vas je koštao svaki od njih.',
     ),
-    points: [t('Instant lead emails', 'Trenutni emailovi za upite'), t('One plain-language report', 'Jedan izveštaj jasnim jezikom')],
+    points: [t('Instant enquiry alerts', 'Obaveštenje o upitu odmah'), t('One report in plain language', 'Izveštaj bez stručnih izraza')],
   },
 ];
 
 const promises = (t: T) => [
   {
     icon: MapPin,
-    title: t('One company per area', 'Jedna firma po oblasti'),
+    title: t('One business per industry, per area', 'Jedna firma po delatnosti u gradu'),
     visual: AreaVisual,
     text: t(
-      'We never work for two competitors in the same service area. The pages and ads we build for you are yours alone.',
-      'Nikad ne radimo za dva konkurenta u istoj oblasti. Stranice i oglasi koje pravimo za vas samo su vaši.',
+      'We never work for two competitors in the same area. Everything we build for you works only for you.',
+      'Ne radimo za dve konkurentske firme u istom mestu. Sve što napravimo za vas radi samo za vas.',
     ),
   },
   {
     icon: KeyRound,
-    title: t('Everything in your name', 'Sve na vaše ime'),
+    title: t('Everything in your name', 'Sve je na vaše ime'),
     visual: OwnershipVisual,
     text: t(
-      'Domain, code, hosting and ad account belong to you from day one. No lock-in, nothing held hostage.',
-      'Domen, kod, hosting i oglasni nalog pripadaju vama od prvog dana. Bez vezivanja, ništa se ne drži kao talac.',
+      'Domain, code, hosting and ad account belong to you from day one. No lock-in and no hidden strings.',
+      'Domen, kod, hosting i nalog za oglase su vaši od prvog dana. Bez vezivanja i bez skrivenih uslova.',
     ),
   },
   {
     icon: FileText,
-    title: t('Numbers, not excuses', 'Brojevi, ne izgovori'),
+    title: t('Numbers, not excuses', 'Brojke, a ne izgovori'),
     visual: NumbersVisual,
     text: t(
-      'You see every lead as it arrives and one plain-language report a month. If something does not pay, we say so first.',
-      'Vidite svaki upit čim stigne i jedan izveštaj mesečno jasnim jezikom. Ako se nešto ne isplati, mi to kažemo prvi.',
+      'You see every enquiry as it arrives and get one clear report a month. If something isn’t paying off, you hear it from us first.',
+      'Svaki upit vidite čim stigne, a jednom mesečno dobijate jasan izveštaj. Ako nešto ne donosi rezultat, prvi ćemo vam to reći.',
     ),
   },
 ];
@@ -168,71 +168,71 @@ const reportPoints = (t: T) => [
     icon: BellRing,
     title: t('Every enquiry, instantly', 'Svaki upit, odmah'),
     text: t(
-      'The full form, the page and the ad or search behind it, in your inbox the second it is sent.',
-      'Cela forma, stranica i oglas ili pretraga iza nje, u vašem inboxu u sekundi kad je poslata.',
+      'The full message, the page it came from and the ad or search behind it, in your inbox the moment it is sent.',
+      'Cela poruka, stranica sa koje je poslata i oglas ili pretraga koja ju je dovela, u vašem inboxu čim je poslata.',
     ),
   },
   {
     icon: Phone,
-    title: t('Every call counted', 'Svaki poziv se broji'),
+    title: t('Every call counted', 'Svaki poziv se računa'),
     text: t(
-      'Taps on your phone number, WhatsApp and text links count as leads, next to the forms.',
-      'Dodiri na vaš broj telefona, WhatsApp i SMS linkove broje se kao upiti, pored formi.',
+      'Taps on your phone number, WhatsApp and SMS links count as enquiries, right next to the forms.',
+      'Klikovi na broj telefona, WhatsApp i SMS računaju se kao upiti, zajedno sa porukama sa sajta.',
     ),
   },
   {
     icon: Wallet,
-    title: t('Cost per lead and ROAS', 'Cena po upitu i ROAS'),
+    title: t('Cost per enquiry and ROAS', 'Cena po upitu i povrat ulaganja'),
     text: t(
-      'Add your ad spend and the report shows what each lead really cost and what it returned.',
-      'Unesite potrošnju na oglase i izveštaj pokazuje koliko je svaki upit zaista koštao i šta je vratio.',
+      'Add your ad spend and the report shows what each enquiry really cost and what it earned you.',
+      'Unesite koliko ste potrošili na oglase i izveštaj pokazuje koliko je zaista koštao svaki upit i koliko vam je doneo.',
     ),
   },
   {
     icon: ShieldCheck,
-    title: t('Private by design', 'Privatnost po dizajnu'),
+    title: t('Privacy built in', 'Privatnost na prvom mestu'),
     text: t(
-      'Visitors are counted without cookies and without following them across other websites.',
-      'Posetioci se broje bez kolačića i bez praćenja po drugim sajtovima.',
+      'Visitors are counted without cookies and without tracking them across other websites.',
+      'Posete se broje bez kolačića i bez praćenja ljudi po drugim sajtovima.',
     ),
   },
 ];
 
 const steps = (t: T) => [
   {
-    title: t('Free website check', 'Besplatna provera sajta'),
-    when: t('Within 1 business day', 'U roku od 1 radnog dana'),
-    get: t('An honest review of your site and your top local competitors', 'Iskren pregled vašeg sajta i glavne lokalne konkurencije'),
+    title: t('Free website audit', 'Besplatna analiza sajta'),
+    when: t('Within 1 business day', 'Za jedan radni dan'),
+    get: t('An honest review of your site and your top competitors', 'Iskrena analiza vašeg sajta i najjače konkurencije'),
     text: t(
-      'Send the form. Within one business day we review your site and your top local competitors and tell you honestly what holds you back.',
-      'Pošaljite formu. U roku od jednog radnog dana pregledamo vaš sajt i glavnu lokalnu konkurenciju i iskreno vam kažemo šta vas koči.',
+      'Send the form. Within one business day we review your site and your top competitors and tell you honestly what is holding you back.',
+      'Popunite formu. Za jedan radni dan pregledamo vaš sajt i najjaču konkurenciju i iskreno vam kažemo šta vas koči.',
     ),
   },
   {
-    title: t('One clear proposal', 'Jedna jasna ponuda'),
+    title: t('One clear proposal', 'Jasna ponuda'),
     when: t('One short call', 'Jedan kratak razgovor'),
-    get: t('Scope, timeline and one fixed price in writing', 'Obim, rok i jedna fiksna cena, napismeno'),
+    get: t('Scope, timeline and one fixed price, in writing', 'Šta radimo, do kada i po kojoj ceni, napismeno'),
     text: t(
-      'A short call, then one document: what we build or run, when it is ready, and one fixed price.',
-      'Kratak razgovor, pa jedan dokument: šta pravimo ili vodimo, kada je gotovo i jedna fiksna cena.',
+      'A short call, then one document: what we build or manage, when it is ready, and one fixed price.',
+      'Kratak razgovor, a zatim jedan dokument: šta radimo, kada je gotovo i koliko košta. Cena je fiksna.',
     ),
   },
   {
-    title: t('Build and launch', 'Izrada i puštanje'),
-    when: t('Your old site stays live', 'Stari sajt ostaje aktivan'),
-    get: t('A preview link to follow every step', 'Link za pregled da pratite svaki korak'),
+    title: t('Design and launch', 'Izrada i pokretanje'),
+    when: t('Your old site stays live', 'Stari sajt radi do kraja'),
+    get: t('A preview link to follow every step', 'Link na kom pratite svaki korak'),
     text: t(
-      'You follow progress on a preview link. Your current site stays live until the new one is ready, and old pages are redirected.',
-      'Napredak pratite preko linka za pregled. Sadašnji sajt radi dok novi ne bude gotov, a stare stranice se preusmeravaju.',
+      'You follow progress on a preview link. Your current site stays live until the new one is ready, and old pages are redirected so you keep your rankings.',
+      'Napredak pratite preko linka. Postojeći sajt radi sve dok novi ne bude spreman, a stare adrese preusmeravamo da ne izgubite pozicije na Google-u.',
     ),
   },
   {
     title: t('Measure and grow', 'Merenje i rast'),
     when: t('Every month', 'Svakog meseca'),
-    get: t('Every lead as it arrives and one plain report', 'Svaki upit čim stigne i jedan jasan izveštaj'),
+    get: t('Every enquiry as it arrives, and one clear report', 'Svaki upit čim stigne i jasan izveštaj'),
     text: t(
-      'Tracking is on from day one. Each month you see what came in, and we put the budget where the jobs come from.',
-      'Praćenje radi od prvog dana. Svakog meseca vidite šta je stiglo, a budžet stavljamo tamo odakle dolaze poslovi.',
+      'Tracking runs from day one. Each month you see what came in, and we move the budget to whatever brings customers.',
+      'Praćenje radi od prvog dana. Svakog meseca vidite šta je stiglo, a budžet usmeravamo na ono što donosi kupce.',
     ),
   },
 ];
@@ -250,31 +250,31 @@ const faqList = (lang: Lang, t: T, { monthlyPlans, websitePlans }: Pricing) => {
       ),
     },
     {
-      q: t('Do you work with my competitors?', 'Da li radite sa mojom konkurencijom?'),
+      q: t('Do you work with my competitors?', 'Da li radite i za moju konkurenciju?'),
       a: t(
-        'No. We take one company per trade in each service area, so the pages and ads we build for you never compete with another client of ours.',
-        'Ne. Uzimamo jednu firmu po delatnosti u svakoj oblasti, pa se stranice i oglasi koje pravimo za vas nikad ne takmiče sa drugim našim klijentom.',
+        'No. We take one business per industry in each area, so what we build for you never competes with another client of ours.',
+        'Ne. U jednom mestu radimo samo sa jednom firmom iz iste delatnosti, pa se ono što napravimo za vas nikad ne takmiči sa drugim našim klijentom.',
       ),
     },
     {
-      q: t('What happens to my current site and rankings?', 'Šta biva sa mojim sadašnjim sajtom i pozicijama?'),
+      q: t('What happens to my current site and Google rankings?', 'Šta biva sa mojim sadašnjim sajtom i pozicijama na Google-u?'),
       a: t(
-        'Your current site stays live until the new one is ready. Content and addresses move over, and old pages are redirected so nothing that ranks today gets lost.',
-        'Sadašnji sajt radi dok novi ne bude gotov. Sadržaj i adrese se prenose, a stare stranice se preusmeravaju, pa se ništa što se danas rangira ne gubi.',
+        'Your current site stays live until the new one is ready. Content moves over and old pages are redirected, so nothing that ranks today gets lost.',
+        'Postojeći sajt radi dok novi ne bude spreman. Sadržaj prenosimo, a stare adrese preusmeravamo, pa ne gubite ništa što se danas dobro rangira.',
       ),
     },
     {
-      q: t('Who owns the website?', 'Ko je vlasnik sajta?'),
+      q: t('Who owns the website?', 'Čiji je sajt?'),
       a: t(
         'You do. The domain, the code and the hosting are in your name from day one. If you ever leave, you take everything with you.',
-        'Vi. Domen, kod i hosting su na vaše ime od prvog dana. Ako ikad odete, sve nosite sa sobom.',
+        'Vaš. Domen, kod i hosting su na vaše ime od prvog dana. Ako jednog dana odete, sve nosite sa sobom.',
       ),
     },
     {
-      q: t('Do you only work with tree services?', 'Da li radite samo sa firmama za drveće?'),
+      q: t('What kinds of businesses do you work with?', 'Sa kakvim firmama radite?'),
       a: t(
-        'Tree services are where most of our work is, but the same approach works for any local company that lives on phone calls: dentists, medical transport, contractors and more.',
-        'Najviše radimo sa firmama za seču i negu drveća, ali isti pristup radi za svaku lokalnu firmu koja živi od poziva: stomatologe, sanitetski prevoz, izvođače radova i druge.',
+        'Any small or local business that gets customers through calls, enquiries and bookings: dental and medical practices, trades and home services, transport, retail, restaurants and professional services.',
+        'Sa svakom malom ili lokalnom firmom koja dobija klijente preko poziva, upita i rezervacija: stomatološke i medicinske ordinacije, zanatske i kućne usluge, prevoz, prodavnice, ugostiteljstvo i stručne usluge.',
       ),
     },
     {
@@ -286,14 +286,14 @@ const faqList = (lang: Lang, t: T, { monthlyPlans, websitePlans }: Pricing) => {
 
 // Short proof lines for the client cards under the hero.
 const clientHighlight = (t: T): Record<string, { value: string; label: string }> => ({
-  'tree-jaws': { value: t('1,010', '1.010'), label: t('tracked leads from Google Ads', 'praćenih upita iz Google Ads-a') },
-  'mahalo-tree-service': { value: '100', label: t('Lighthouse SEO, $0 on ads', 'Lighthouse SEO, $0 na oglase') },
-  'care-trans': { value: t('11.2%', '11,2%'), label: t('of visitors picked up the phone', 'posetilaca je pozvalo') },
+  'tree-jaws': { value: t('1,010', '1.010'), label: t('tracked enquiries from Google Ads', 'praćenih upita iz Google oglasa') },
+  'mahalo-tree-service': { value: '100', label: t('Google SEO score, $0 on ads', 'Google SEO ocena, $0 za oglase') },
+  'care-trans': { value: t('11.2%', '11,2%'), label: t('of visitors picked up the phone', 'posetilaca je pozvalo telefonom') },
   'eric-dental-centar': { value: '60', label: t('pages in three languages', 'stranica na tri jezika') },
 });
 
 const clientProof = (t: T) => [
-  { value: t('1,000+', '1.000+'), label: t('Tracked leads', 'Praćenih upita') },
+  { value: t('1,000+', '1.000+'), label: t('Tracked enquiries', 'Praćenih upita') },
   { value: t('4.9–5.0★', '4,9–5,0★'), label: t('Client Google ratings', 'Ocene klijenata na Google-u') },
   { value: '2', label: t('Countries', 'Zemlje') },
 ];
@@ -325,31 +325,31 @@ export default async function HomePage() {
             <Reveal className="max-md:hidden">
               <p className="inline-flex items-center gap-2.5 rounded-full border border-white/12 bg-white/[0.04] px-3.5 py-1.5 font-mono text-xs tracking-wide text-white/75 shadow-[inset_0_1px_0_rgb(255_255_255/0.06)] backdrop-blur">
                 <span className="h-2 w-2 animate-pulse-dot rounded-full bg-accent" aria-hidden />
-                {t('Taking on one company per service area', 'Primamo jednu firmu po oblasti')}
+                {t('Taking on one business per industry in each area', 'Primamo jednu firmu po delatnosti u svakom gradu')}
               </p>
             </Reveal>
             <Reveal delay={80}>
               <h1 className="mt-6 font-display text-[2.6rem] leading-[1.02] text-balance max-md:mt-0 max-md:text-[1.95rem] max-md:leading-[1.08] sm:text-6xl lg:text-[4.4rem]">
-                {t('Websites and ads that turn searches into', 'Sajtovi i oglasi koji pretrage pretvaraju u')}{' '}
-                <span className="text-gradient">{t('booked jobs', 'zakazane poslove')}</span>
+                {t('Websites and ads that turn visitors into', 'Sajtovi i oglasi koji posetioce pretvaraju u')}{' '}
+                <span className="text-gradient">{t('paying customers', 'kupce')}</span>
               </h1>
             </Reveal>
             <Reveal delay={160}>
               {/* Phones: one short line, so the form is on the first screen. */}
               <p className="mx-auto mt-3 max-w-xs text-[15px] leading-snug text-white/70 md:hidden">
-                {t('Websites, local SEO and Google Ads. Every call and form counted.', 'Sajtovi, lokalni SEO i Google Ads. Svaki poziv i forma se broje.')}
+                {t('Web design, SEO and Google Ads. Every call and enquiry tracked.', 'Izrada sajtova, SEO i Google oglašavanje. Svaki poziv i upit je zabeležen.')}
               </p>
               <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-pretty text-white/70 max-md:hidden lg:mx-0">
                 {t(
-                  'WebTano builds fast websites and runs local SEO and Google Ads for tree services and other local companies. Every call and form is counted, so you see exactly which dollars bring in work.',
-                  'WebTano pravi brze sajtove i vodi lokalni SEO i Google Ads za firme za seču drveća i druge lokalne firme. Svaki poziv i forma se broje, pa tačno vidite koji novac donosi posao.',
+                  'WebTano designs fast, modern websites and runs SEO and Google Ads for small and local businesses. You see every call and enquiry your site brings in, and exactly what each one cost.',
+                  'WebTano pravi brze, moderne sajtove i vodi SEO i Google oglašavanje za male i lokalne firme. Vidite svaki poziv i upit koji vam sajt donese i tačno koliko vas je koštao.',
                 )}
               </p>
             </Reveal>
             <Reveal delay={240} className="max-md:hidden">
               <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
                 <Link href="#hero-form" className={`${primaryButton} w-full sm:w-auto`}>
-                  {t('Get a free website check', 'Zatražite besplatnu proveru')}
+                  {t('Get a free website audit', 'Zatražite besplatnu analizu')}
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
                 </Link>
                 <Link
@@ -361,7 +361,7 @@ export default async function HomePage() {
               </div>
               <p className="mt-5 flex items-center justify-center gap-2 text-sm text-white/55 lg:justify-start">
                 <Check className="h-4 w-4 text-accent" aria-hidden />
-                {t('Free, no obligation, reply within one business day', 'Besplatno, bez obaveze, odgovor u roku od jednog radnog dana')}
+                {t('Free, no obligation. We reply within one business day.', 'Besplatno i bez obaveze. Odgovaramo za jedan radni dan.')}
               </p>
             </Reveal>
             <dl className="mt-12 grid grid-cols-3 gap-3 max-md:hidden sm:gap-4">
@@ -398,10 +398,10 @@ export default async function HomePage() {
           <div className="flex flex-col items-center justify-between gap-6 text-center lg:flex-row lg:items-end lg:text-left">
             <Reveal>
               <p className="font-mono text-[11px] font-medium tracking-[0.16em] text-azure-700 uppercase">
-                {t('Growing with local companies like', 'Rastemo sa lokalnim firmama kao što su')}
+                {t('Growing alongside businesses like', 'Rastemo zajedno sa firmama kao što su')}
               </p>
               <h2 className="mt-3 max-w-xl font-display text-2xl text-balance text-ink-950 sm:text-3xl">
-                {t('Real businesses, real numbers, measured by our own tracking', 'Prave firme, pravi brojevi, mereni našim praćenjem')}
+                {t('Real businesses, real numbers, measured by our own tracking', 'Prave firme i pravi rezultati, izmereni našim praćenjem')}
               </h2>
             </Reveal>
             <Reveal delay={100} className="max-md:hidden">
@@ -474,14 +474,14 @@ export default async function HomePage() {
                 {t('What it costs you', 'Koliko vas to košta')}
               </p>
               <h2 className="mt-4 font-display text-3xl text-balance text-ink-950 md:text-[2.75rem] md:leading-[1.08]">
-                {t('Your website may be sending customers to the company down the road', 'Vaš sajt možda šalje kupce firmi iz susedne ulice')}
+                {t('Your website may be sending customers to your competitors', 'Vaš sajt možda šalje kupce vašoj konkurenciji')}
               </h2>
             </Reveal>
             <Reveal delay={100} className="max-md:hidden">
               <p className="text-lg leading-relaxed text-pretty text-zinc-600">
                 {t(
-                  'Nothing warns you. No error and no alert, just calls that never come. Here is where a customer slips away on the way from a search to a booked job.',
-                  'Ništa vas ne upozorava. Nema greške ni uzbune, samo poziva koji nikad ne stignu. Evo gde kupac isklizne na putu od pretrage do zakazanog posla.',
+                  'Nothing warns you. No error and no alert, just calls that never come. Here is where customers slip away between finding you and buying from you.',
+                  'Ništa vas ne upozorava. Nema greške ni obaveštenja, samo poziva koji ne stižu. Evo gde kupci odlaze negde između pretrage i kupovine.',
                 )}
               </p>
             </Reveal>
@@ -508,7 +508,7 @@ export default async function HomePage() {
                         <p.icon className="h-5 w-5" aria-hidden />
                       </span>
                       <span className="rounded-full bg-red-50 px-2.5 py-1 font-mono text-[10px] font-medium tracking-wide text-red-700 uppercase ring-1 ring-red-100 max-md:hidden">
-                        {t('Leak', 'Curenje')}
+                        {t('Leak', 'Gubitak')}
                       </span>
                     </div>
                     <h3 className="mt-5 font-display text-lg text-ink-950 max-md:mt-0 max-md:text-[17px]">{p.title}</h3>
@@ -519,7 +519,7 @@ export default async function HomePage() {
                       <Check className="h-3 w-3" aria-hidden />
                     </span>
                     <p className="text-sm leading-snug text-ink-900">
-                      <span className="font-semibold">{t('We fix it: ', 'Mi to rešavamo: ')}</span>
+                      <span className="font-semibold">{t('We fix it: ', 'Naše rešenje: ')}</span>
                       {p.fix}
                     </p>
                   </div>
@@ -531,14 +531,14 @@ export default async function HomePage() {
           <Reveal delay={150} className="max-md:hidden">
             <div className="mt-14 flex flex-col items-center justify-between gap-5 rounded-3xl bg-ink-975 px-6 py-6 text-center text-white shadow-float ring-1 ring-white/10 sm:px-8 md:flex-row md:text-left">
               <p className="max-w-2xl text-lg text-white/80">
-                <span className="font-semibold text-white">{t('Close all four leaks', 'Zatvorite sva četiri curenja')}</span>{' '}
+                <span className="font-semibold text-white">{t('Fix all four', 'Rešite sva četiri problema')}</span>{' '}
                 {t(
-                  'and the same ad budget brings in more booked jobs. The free check shows you which ones are open on your site.',
-                  'i isti budžet za oglase donosi više zakazanih poslova. Besplatna provera pokazuje koja su otvorena na vašem sajtu.',
+                  'and the same budget brings in more customers. The free audit shows which of them your site has right now.',
+                  'i isti budžet donosi više kupaca. Besplatna analiza pokazuje koje od njih vaš sajt trenutno ima.',
                 )}
               </p>
               <Link href="#hero-form" className={`${primaryButton} shrink-0`}>
-                {t('Find my leaks', 'Pronađite curenja')}
+                {t('Check my website', 'Proverite moj sajt')}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
               </Link>
             </div>
@@ -553,11 +553,11 @@ export default async function HomePage() {
           <Reveal>
             <SectionHeading
               light
-              eyebrow={t('What we do', 'Šta radimo')}
-              title={t('Everything between a search and a phone call', 'Sve između pretrage i telefonskog poziva')}
+              eyebrow={t('What we do', 'Usluge')}
+              title={t('Everything it takes to turn a search into a sale', 'Sve što treba da pretraga postane prodaja')}
               lead={t(
-                'One team for the website, the search rankings, the ads and the tracking, so nothing falls between two agencies.',
-                'Jedan tim za sajt, pozicije u pretrazi, oglase i praćenje, pa ništa ne propada između dve agencije.',
+                'One team for your website, Google rankings, ads and tracking, so nothing falls through the cracks between agencies.',
+                'Jedan tim za sajt, pozicije na Google-u, oglase i praćenje rezultata, pa ništa ne ostaje između dve agencije.',
               )}
             />
           </Reveal>
@@ -593,7 +593,7 @@ export default async function HomePage() {
             ))}
           </div>
           <p className="mt-6 text-center font-mono text-[10px] tracking-wide text-white/35 uppercase max-md:hidden">
-            {t('Illustrations use example data. Real figures are in the case studies below.', 'Ilustracije koriste primer podatke. Pravi brojevi su u studijama slučaja ispod.')}
+            {t('Illustrations use sample data. Real figures are in the case studies below.', 'Ilustracije su sa primer podacima. Pravi brojevi su u studijama slučaja ispod.')}
           </p>
         </div>
       </section>
@@ -606,10 +606,10 @@ export default async function HomePage() {
           <Reveal>
             <SectionHeading
               eyebrow={t('Results', 'Rezultati')}
-              title={t('Real numbers from real client sites', 'Pravi brojevi sa pravih sajtova klijenata')}
+              title={t('Real results from real client websites', 'Pravi rezultati sa sajtova naših klijenata')}
               lead={t(
-                'Every figure below comes from the client’s own lead tracking, ad account or a Lighthouse run on the live site, not from a mock-up.',
-                'Svaki broj ispod potiče iz klijentovog praćenja upita, oglasnog naloga ili Lighthouse merenja na živom sajtu, a ne iz makete.',
+                'Every figure below comes from the client’s own enquiry tracking, ad account or a Google speed test of the live site. Nothing is a mock-up.',
+                'Svaki broj ispod potiče iz praćenja upita, naloga za oglase ili Google testa brzine na živom sajtu. Ništa nije izmišljeno.',
               )}
             />
           </Reveal>
@@ -638,20 +638,20 @@ export default async function HomePage() {
               {t('How we work', 'Kako radimo')}
             </p>
             <h2 className="mt-4 font-display text-3xl text-balance md:text-[2.75rem] md:leading-[1.08]">
-              {t('We only win when', 'Dobijamo samo kad')} <span className="text-gradient">{t('the phone rings', 'telefon zazvoni')}</span>
+              {t('We only win when', 'Uspeh merimo')} <span className="text-gradient">{t('your phone rings', 'pozivima koje dobijete')}</span>
             </h2>
             <p className="mt-4 text-lg text-pretty text-white/70 max-md:hidden">
               {t(
-                'Most agencies get paid for activity. We judge our work by one number, the leads you can count, and these three rules are part of every agreement.',
-                'Većina agencija naplaćuje aktivnost. Mi svoj rad merimo jednim brojem, upitima koje možete da prebrojite, a ova tri pravila su deo svakog dogovora.',
+                'Most agencies get paid for activity. We judge our work by one number, the enquiries you can count, and these three rules are in every agreement.',
+                'Većina agencija naplaćuje uloženo vreme. Mi svoj rad merimo jednim brojem, upitima koje možete da prebrojite, a ova tri pravila su deo svakog ugovora.',
               )}
             </p>
             <div className="ring-gradient mt-8 flex items-center gap-5 rounded-3xl bg-white/[0.03] p-5 max-md:hidden sm:p-6">
               <RingingPhone />
               <div>
                 <p className="font-mono text-[10px] tracking-[0.14em] text-white/45 uppercase">{t('What we answer to', 'Za šta odgovaramo')}</p>
-                <p className="mt-1 font-display text-xl sm:text-2xl">{t('Calls and forms, counted', 'Pozivi i forme, prebrojani')}</p>
-                <p className="mt-1 text-sm text-white/60">{t('Not clicks, impressions or rankings on their own.', 'Ne klikovi, prikazi ili pozicije sami po sebi.')}</p>
+                <p className="mt-1 font-display text-xl sm:text-2xl">{t('Calls and enquiries, counted', 'Pozivi i upiti, prebrojani')}</p>
+                <p className="mt-1 text-sm text-white/60">{t('Not clicks, impressions or rankings on their own.', 'Ne klikovi, prikazi ni pozicije sami po sebi.')}</p>
               </div>
             </div>
             <div className="mt-8 flex flex-wrap items-center gap-3 max-md:hidden">
@@ -659,7 +659,7 @@ export default async function HomePage() {
                 href={lp('/#hero-form')}
                 className="group inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-ink-950 shadow-glow transition hover:-translate-y-0.5 hover:bg-accent-dark"
               >
-                {t('Get a free website check', 'Zatražite besplatnu proveru')}
+                {t('Get a free website audit', 'Zatražite besplatnu analizu')}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
               </Link>
               <Link href="#work" className="rounded-full px-4 py-3 text-sm font-semibold text-white/75 transition hover:text-white">
@@ -705,12 +705,12 @@ export default async function HomePage() {
                 {t('Tracking and monthly report', 'Praćenje i mesečni izveštaj')}
               </p>
               <h2 className="mt-4 font-display text-3xl text-balance text-ink-950 md:text-[2.75rem] md:leading-[1.08]">
-                {t('Without numbers you are guessing, and that is how budgets disappear', 'Bez brojeva nagađate, a tako budžeti nestaju')}
+                {t('Without numbers you are guessing, and that is how budgets disappear', 'Bez brojki samo nagađate, a tako se troši novac')}
               </h2>
               <p className="mt-4 text-lg text-pretty text-zinc-600 max-md:hidden">
                 {t(
-                  'Every site we build or run comes with our own lead tracking: every enquiry, every call and every dollar, in one report written in plain language.',
-                  'Svaki sajt koji pravimo ili vodimo dolazi sa našim praćenjem upita: svaki upit, svaki poziv i svaki dolar, u jednom izveštaju pisanom jasnim jezikom.',
+                  'Every site we build or manage comes with our own enquiry tracking: every enquiry, every call and every dollar, in one report written in plain language.',
+                  'Uz svaki sajt koji pravimo ili vodimo ide i naše praćenje upita: svaki upit, svaki poziv i svaki uloženi dinar, u jednom razumljivom izveštaju.',
                 )}
               </p>
             </Reveal>
@@ -735,7 +735,7 @@ export default async function HomePage() {
                 {t('Open the live demo report', 'Otvorite primer izveštaja')}
                 <ArrowUpRight className="h-4 w-4 text-accent transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
               </Link>
-              <span className="text-sm text-zinc-500 max-md:hidden">{t('Example data, every button works.', 'Primer podaci, svako dugme radi.')}</span>
+              <span className="text-sm text-zinc-500 max-md:hidden">{t('Sample data, every button works.', 'Primer podaci, sve radi.')}</span>
             </Reveal>
           </div>
 
@@ -759,8 +759,8 @@ export default async function HomePage() {
                 <Image
                   src="/work/report-example.webp"
                   alt={t(
-                    'The demo monthly report: visitors, inquiries, calls, cost per lead and a daily chart, with example data.',
-                    'Primer mesečnog izveštaja: posetioci, upiti, pozivi, cena po upitu i dnevni grafikon, sa primer podacima.',
+                    'The demo monthly report: visitors, enquiries, calls, cost per enquiry and a daily chart, with sample data.',
+                    'Primer mesečnog izveštaja: posete, upiti, pozivi, cena po upitu i dnevni grafikon, sa primer podacima.',
                   )}
                   width={1586}
                   height={2226}
@@ -770,7 +770,7 @@ export default async function HomePage() {
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-white to-transparent" aria-hidden />
                 <span className="absolute inset-x-0 bottom-5 flex justify-center">
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-ink-950 px-4 py-2 text-xs font-semibold text-white opacity-0 shadow-lift transition duration-300 group-hover:opacity-100">
-                    {t('Try it yourself', 'Probajte sami')}
+                    {t('Try it yourself', 'Isprobajte')}
                     <ArrowUpRight className="h-3.5 w-3.5 text-accent" aria-hidden />
                   </span>
                 </span>
@@ -783,8 +783,8 @@ export default async function HomePage() {
                   <BellRing className="h-4 w-4" aria-hidden />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-semibold text-ink-950">{t('New enquiry: Free estimate', 'Nov upit: besplatna procena')}</p>
-                  <p className="text-[11px] text-zinc-500">{t('From Google Ads · just now', 'Iz Google Ads-a · upravo')}</p>
+                  <p className="text-xs font-semibold text-ink-950">{t('New enquiry: Request a quote', 'Nov upit: zahtev za ponudu')}</p>
+                  <p className="text-[11px] text-zinc-500">{t('From Google Ads · just now', 'Iz Google oglasa · upravo')}</p>
                 </div>
                 <span className="h-2 w-2 animate-pulse-dot rounded-full bg-accent" aria-hidden />
               </div>
@@ -792,7 +792,7 @@ export default async function HomePage() {
             <div className="absolute -right-3 bottom-16 hidden rounded-2xl bg-ink-950 px-4 py-3 text-white shadow-soft sm:block lg:-right-8">
               <p className="font-mono text-[10px] tracking-[0.14em] text-white/50 uppercase">{t('Cost per contact', 'Cena po kontaktu')}</p>
               <p className="mt-0.5 font-display text-2xl text-accent">{t('$12.50', '$12,50')}</p>
-              <p className="text-[11px] text-white/60">{t('Return on ad spend 5.3×', 'Povrat na oglase 5,3×')}</p>
+              <p className="text-[11px] text-white/60">{t('Return on ad spend 5.3×', 'Povraćaj ulaganja 5,3×')}</p>
             </div>
             <span className="absolute -bottom-3 left-6 inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1 text-xs font-semibold text-ink-950 shadow-glow">
               <Zap className="h-3.5 w-3.5" aria-hidden />
@@ -809,8 +809,8 @@ export default async function HomePage() {
           <Reveal>
             <SectionHeading
               light
-              eyebrow={t('How it works', 'Kako radimo')}
-              title={t('Four steps from a site that loses customers to one that wins them', 'Četiri koraka od sajta koji gubi kupce do sajta koji ih osvaja')}
+              eyebrow={t('How it works', 'Kako izgleda saradnja')}
+              title={t('Four steps from a site that loses customers to one that wins them', 'Četiri koraka do sajta koji donosi kupce')}
               lead={t('No long meetings and no surprises. You always know what happens next.', 'Bez dugih sastanaka i bez iznenađenja. Uvek znate šta sledi.')}
             />
           </Reveal>
@@ -850,13 +850,13 @@ export default async function HomePage() {
             <div className="mx-auto mt-12 flex max-w-3xl flex-col items-center justify-between gap-4 rounded-full bg-white/[0.04] p-2 pl-6 ring-1 ring-white/10 sm:flex-row max-sm:rounded-3xl max-sm:p-5 max-sm:text-center">
               <p className="text-sm text-white/75">
                 <span className="font-semibold text-white">{t('Step one is free', 'Prvi korak je besplatan')}</span>{' '}
-                {t('and you are under no obligation after it.', 'i posle njega nemate nikakvu obavezu.')}
+                {t('and you are under no obligation after it.', 'i posle njega ništa ne morate.')}
               </p>
               <Link
                 href={lp('/#hero-form')}
                 className="group inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold whitespace-nowrap text-ink-950 shadow-glow transition hover:bg-accent-dark"
               >
-                {t('Start with the free check', 'Počnite besplatnom proverom')}
+                {t('Start with the free audit', 'Počnite besplatnom analizom')}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
               </Link>
             </div>
@@ -883,9 +883,9 @@ export default async function HomePage() {
               <span className="h-1.5 w-1.5 rounded-full bg-azure-600" aria-hidden />
               {t('Questions', 'Pitanja')}
             </p>
-            <h2 className="mt-4 font-display text-3xl text-balance text-ink-950 md:text-[2.75rem] md:leading-[1.08]">{t('Before you ask', 'Pre nego što pitate')}</h2>
+            <h2 className="mt-4 font-display text-3xl text-balance text-ink-950 md:text-[2.75rem] md:leading-[1.08]">{t('Before you ask', 'Najčešća pitanja')}</h2>
             <p className="mt-4 text-lg text-pretty text-zinc-600 max-md:hidden">
-              {t('The things owners ask us most, answered straight. No fine print.', 'Ono što nas vlasnici najčešće pitaju, odgovoreno direktno. Bez sitnih slova.')}
+              {t('What business owners ask us most, answered straight. No fine print.', 'Ono što nas vlasnici firmi najčešće pitaju, sa direktnim odgovorima. Bez sitnih slova.')}
             </p>
 
             <div className="mt-8 overflow-hidden rounded-3xl bg-ink-975 text-white ring-1 ring-ink-900 max-md:hidden">
@@ -893,20 +893,20 @@ export default async function HomePage() {
                 <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_90%_at_100%_0%,rgb(1_175_233/0.16),transparent_60%)]" aria-hidden />
                 <p className="relative flex items-center gap-2 font-mono text-[10px] tracking-[0.14em] text-accent uppercase">
                   <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-accent" aria-hidden />
-                  {t('Reply within one business day', 'Odgovor u roku od jednog radnog dana')}
+                  {t('Reply within one business day', 'Odgovor za jedan radni dan')}
                 </p>
-                <p className="relative mt-3 font-display text-2xl">{t('Still have a question?', 'Imate još pitanja?')}</p>
+                <p className="relative mt-3 font-display text-2xl">{t('Still have a question?', 'Imate još neko pitanje?')}</p>
                 <p className="relative mt-2 text-sm leading-relaxed text-white/65">
                   {t(
-                    'Ask it in the free check form. A real person who has looked at your site writes back.',
-                    'Postavite ga u formi za besplatnu proveru. Odgovara vam prava osoba koja je pogledala vaš sajt.',
+                    'Ask it in the free audit form. A real person who has looked at your site writes back.',
+                    'Napišite ga u formi za besplatnu analizu. Odgovara vam osoba koja je zaista pogledala vaš sajt.',
                   )}
                 </p>
                 <Link
                   href="#hero-form"
                   className="group relative mt-5 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-ink-950 shadow-glow transition hover:bg-accent-dark"
                 >
-                  {t('Ask in the free check', 'Pitajte u besplatnoj proveri')}
+                  {t('Ask in the free audit', 'Pitajte nas')}
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
                 </Link>
               </div>
@@ -914,7 +914,7 @@ export default async function HomePage() {
                 {[
                   ['1', t('fixed price', 'fiksna cena')],
                   ['0', t('lock-in', 'vezivanja')],
-                  ['1', t('client per area', 'klijent po oblasti')],
+                  ['1', t('client per industry and area', 'klijent po delatnosti u gradu')],
                 ].map(([v, k]) => (
                   <li key={k} className="px-2 py-4">
                     <p className="font-display text-2xl text-accent">{v}</p>
@@ -940,21 +940,21 @@ export default async function HomePage() {
           <Reveal>
             <p className="inline-flex items-center gap-2 rounded-full bg-white/[0.04] px-3 py-1 font-mono text-[11px] font-medium tracking-[0.14em] text-accent uppercase ring-1 ring-white/12">
               <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-accent" aria-hidden />
-              {t('Taking new clients, one per area', 'Primamo nove klijente, jednog po oblasti')}
+              {t('Taking new clients, one per industry in each area', 'Primamo nove klijente, jednog po delatnosti u gradu')}
             </p>
             <h2 className="mt-5 font-display text-4xl text-balance max-md:text-3xl md:text-[3.5rem] md:leading-[1.02]">
-              {t('The company that shows up first gets the call. Let’s make that', 'Poziv dobija firma koja se prva pojavi. Neka to budete')}{' '}
+              {t('The business that shows up first gets the customer. Let’s make that', 'Kupca dobija firma koja se prva pojavi. Neka to budete')}{' '}
               <span className="text-gradient">{t('you', 'vi')}</span>.
             </h2>
             <p className="mt-5 max-w-xl text-lg text-white/70 max-md:mx-auto max-md:mt-3 max-md:text-base">
               {t(
-                'The check is free. The worst case: you learn exactly what loses you customers and what to fix first.',
-                'Provera je besplatna. U najgorem slučaju tačno saznate šta vam odnosi kupce i šta prvo da popravite.',
+                'The check is free. Worst case, you learn exactly what is losing you customers and what to fix first.',
+                'Analiza je besplatna. U najgorem slučaju saznaćete šta vam tačno odnosi kupce i šta prvo treba popraviti.',
               )}
             </p>
             <div className="mt-9 flex flex-col gap-3 max-md:mt-6 sm:flex-row">
               <Link href="#hero-form" className={primaryButton}>
-                {t('Get my free website check', 'Zatražite besplatnu proveru')}
+                {t('Get my free website audit', 'Zatražite besplatnu analizu')}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
               </Link>
               <Link
@@ -965,7 +965,7 @@ export default async function HomePage() {
               </Link>
             </div>
             <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/60 max-md:mt-5 max-md:justify-center">
-              {[t('No obligation', 'Bez obaveze'), t('One fixed price', 'Jedna fiksna cena'), t('You own everything', 'Sve je vaše')].map((item) => (
+              {[t('No obligation', 'Bez obaveze'), t('One fixed price', 'Fiksna cena'), t('You own everything', 'Sve je vaše')].map((item) => (
                 <li key={item} className="flex items-center gap-1.5">
                   <Check className="h-4 w-4 text-accent" aria-hidden />
                   {item}
@@ -977,22 +977,22 @@ export default async function HomePage() {
           <Reveal variant="scale" delay={120} className="max-md:hidden">
             <div className="ring-gradient rounded-3xl bg-white/[0.04] p-6 backdrop-blur sm:p-7">
               <p className="font-mono text-[10px] tracking-[0.14em] text-white/45 uppercase">
-                {t('What happens after you send the form', 'Šta se dešava kad pošaljete formu')}
+                {t('What happens after you send the form', 'Šta sledi kad pošaljete formu')}
               </p>
               <ol className="mt-5 space-y-5">
                 {[
-                  [t('Today', 'Danas'), t('You send the form', 'Pošaljete formu'), t('Name, email and your website. It takes a minute.', 'Ime, email i vaš sajt. Traje minut.')],
+                  [t('Today', 'Danas'), t('You send the form', 'Pošaljete formu'), t('Name, email and your website. It takes a minute.', 'Ime, email i adresa sajta. Traje minut.')],
                   [
-                    t('Within 1 business day', 'U roku od 1 radnog dana'),
+                    t('Within 1 business day', 'Za jedan radni dan'),
                     t('We review your site', 'Pregledamo vaš sajt'),
-                    t('Speed, search and your top local competitors, checked by a person.', 'Brzinu, pretragu i glavnu lokalnu konkurenciju proverava čovek.'),
+                    t('Speed, search visibility and your top competitors, checked by a person.', 'Brzinu, vidljivost na Google-u i najjaču konkurenciju proverava čovek, a ne program.'),
                   ],
                   [
                     t('Then', 'Zatim'),
-                    t('You get a clear answer', 'Dobijete jasan odgovor'),
+                    t('You get a clear answer', 'Dobijate jasan odgovor'),
                     t(
                       'What holds you back, what to fix first, and one fixed price if you want our help.',
-                      'Šta vas koči, šta prvo da popravite i jednu fiksnu cenu ako želite našu pomoć.',
+                      'Šta vas koči, šta prvo da popravite i fiksnu cenu ako želite našu pomoć.',
                     ),
                   ],
                 ].map(([when, title, text], i) => (

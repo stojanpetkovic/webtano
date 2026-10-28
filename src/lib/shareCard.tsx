@@ -28,10 +28,10 @@ export async function shareCard(lang: Lang) {
         <div style={{ fontSize: 44, fontWeight: 700, letterSpacing: -1 }}>WebTano</div>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <div style={{ fontSize: 68, fontWeight: 700, lineHeight: 1.05, letterSpacing: -2, maxWidth: 980 }}>{t('Websites, local SEO and Google Ads', 'Sajtovi, lokalni SEO i Google Ads')}</div>
-        <div style={{ fontSize: 68, fontWeight: 700, lineHeight: 1.05, letterSpacing: -2, color: '#01afe9' }}>{t('that bring calls.', 'koji donose pozive.')}</div>
+        <div style={{ fontSize: 68, fontWeight: 700, lineHeight: 1.05, letterSpacing: -2, maxWidth: 980 }}>{t('Websites, SEO and Google Ads', 'Sajtovi, SEO i Google oglasi')}</div>
+        <div style={{ fontSize: 68, fontWeight: 700, lineHeight: 1.05, letterSpacing: -2, color: '#01afe9' }}>{t('that bring customers.', 'koji donose kupce.')}</div>
         <div style={{ marginTop: 28, fontSize: 28, color: 'rgba(255,255,255,0.68)' }}>
-          {t('For tree services and other local companies. Every call and form tracked.', 'Za firme za seču drveća i druge lokalne firme. Svaki poziv i upit se broji.')}
+          {t('For small and local businesses. Every call and enquiry tracked.', 'Za male i lokalne firme. Svaki poziv i upit zabeležen.')}
         </div>
       </div>
       <div style={{ display: 'flex', fontSize: 24, color: 'rgba(255,255,255,0.55)', letterSpacing: 1 }}>webtano.com</div>

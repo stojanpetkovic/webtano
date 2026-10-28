@@ -60,7 +60,7 @@ export async function SpeedVisual() {
 export async function SearchVisual() {
   const { t } = await getI18n();
   const rows = [
-    { name: t('Your Tree Service', 'Vaša firma'), top: true },
+    { name: t('Your Business', 'Vaša firma'), top: true },
     { name: t('Competitor A', 'Konkurent A'), top: false },
     { name: t('Competitor B', 'Konkurent B'), top: false },
   ];
@@ -99,16 +99,16 @@ export async function SearchVisual() {
 export async function AdsVisual() {
   const { t } = await getI18n();
   const bars = [
-    { label: t('Tree removal', 'Uklanjanje drveća'), value: 92, cpl: '$38' },
-    { label: t('Emergency', 'Hitne intervencije'), value: 74, cpl: '$46' },
-    { label: t('Trimming', 'Orezivanje'), value: 48, cpl: '$61' },
-    { label: t('Stump grinding', 'Vađenje panjeva'), value: 22, cpl: null },
+    { label: t('Emergency repairs', 'Hitne intervencije'), value: 92, cpl: '$38' },
+    { label: t('Installations', 'Ugradnja'), value: 74, cpl: '$46' },
+    { label: t('Maintenance', 'Održavanje'), value: 48, cpl: '$61' },
+    { label: t('Remarketing', 'Remarketing'), value: 22, cpl: null },
   ];
   return (
     <div>
       <div className="flex items-center justify-between font-mono text-[10px] tracking-wide text-white/45 uppercase">
         <span>{t('Budget by campaign', 'Budžet po kampanji')}</span>
-        <span>{t('Cost per lead', 'Cena po upitu')}</span>
+        <span>{t('Cost per enquiry', 'Cena po upitu')}</span>
       </div>
       <ul className="mt-3 space-y-3">
         {bars.map((b, i) => (
@@ -132,15 +132,15 @@ export async function AdsVisual() {
 export async function LeadsVisual() {
   const { t } = await getI18n();
   const leads = [
-    { icon: Phone, title: t('Call from Google Ads', 'Poziv iz Google Ads-a'), meta: t('Tree removal · 2 min ago', 'Uklanjanje drveća · pre 2 min') },
-    { icon: FileText, title: t('Quote form', 'Zahtev za ponudu'), meta: t('“Oak over the roof” · 18 min ago', '„Hrast iznad krova” · pre 18 min') },
-    { icon: Phone, title: t('Call from Google Maps', 'Poziv sa Google mapa'), meta: t('Emergency · 1 h ago', 'Hitno · pre 1 h') },
-    { icon: FileText, title: t('Booking request', 'Zahtev za termin'), meta: t('Stump grinding · 3 h ago', 'Vađenje panjeva · pre 3 h') },
+    { icon: Phone, title: t('Call from Google Ads', 'Poziv iz Google oglasa'), meta: t('Emergency repairs · 2 min ago', 'Hitne intervencije · pre 2 min') },
+    { icon: FileText, title: t('Quote form', 'Zahtev za ponudu'), meta: t('“Need a quote this week” · 18 min ago', '„Treba mi ponuda ove nedelje” · pre 18 min') },
+    { icon: Phone, title: t('Call from Google Maps', 'Poziv sa Google mapa'), meta: t('Emergency repairs · 1 h ago', 'Hitne intervencije · pre 1 h') },
+    { icon: FileText, title: t('Booking request', 'Zahtev za termin'), meta: t('Maintenance · 3 h ago', 'Održavanje · pre 3 h') },
   ];
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
       <div className="flex items-center justify-between px-1 pb-2">
-        <span className="font-mono text-[10px] tracking-wide text-white/45 uppercase">{t('New leads', 'Novi upiti')}</span>
+        <span className="font-mono text-[10px] tracking-wide text-white/45 uppercase">{t('New enquiries', 'Novi upiti')}</span>
         <span className="inline-flex items-center gap-1.5 font-mono text-[10px] text-accent uppercase">
           <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-accent" aria-hidden />
           {t('Live', 'Uživo')}
@@ -165,8 +165,8 @@ export async function LeadsVisual() {
       </ul>
       <div className="mt-3 grid grid-cols-3 gap-2 border-t border-white/10 pt-3 text-center">
         {[
-          ['74', t('Leads', 'Upiti')],
-          ['$41', t('Per lead', 'Po upitu')],
+          ['74', t('Enquiries', 'Upiti')],
+          ['$41', t('Per enquiry', 'Po upitu')],
           [t('7.9%', '7,9%'), t('Rate', 'Stopa')],
         ].map(([v, k]) => (
           <div key={k}>
@@ -178,7 +178,7 @@ export async function LeadsVisual() {
       <div className="mt-3 rounded-xl bg-white p-3 text-ink-950">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold">{t('Monthly report', 'Mesečni izveštaj')}</span>
-          <span className="font-mono text-[10px] text-zinc-500">{t('Leads per day', 'Upiti po danu')}</span>
+          <span className="font-mono text-[10px] text-zinc-500">{t('Enquiries per day', 'Upiti po danu')}</span>
         </div>
         <div className="mt-2 flex h-14 items-end gap-1" aria-hidden>
           {[30, 45, 38, 60, 52, 70, 48, 66, 80, 58, 74, 90, 68, 84].map((h, i) => (

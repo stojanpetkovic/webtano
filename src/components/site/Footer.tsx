@@ -14,9 +14,9 @@ function columns(lang: Lang) {
       title: t('Services', 'Usluge'),
       links: [
         { href: '/#services', label: t('Websites', 'Sajtovi') },
-        { href: '/#services', label: t('Local SEO', 'Lokalni SEO') },
+        { href: '/#services', label: t('SEO', 'SEO optimizacija') },
         { href: '/#services', label: 'Google Ads' },
-        { href: '/#report', label: t('Lead tracking', 'Praćenje upita') },
+        { href: '/#report', label: t('Call tracking', 'Praćenje poziva') },
       ],
     },
     {
@@ -66,12 +66,12 @@ export function Footer({ newsletter = true, lang = DEFAULT_LANG }: { newsletter?
         {newsletter && (
         <div className="grid gap-5 border-t border-white/10 py-10 max-md:border-0 max-md:pt-7 max-md:pb-2 md:grid-cols-[1.3fr_2fr] md:items-center md:gap-16">
           <div>
-            <p className="font-mono text-[10px] tracking-[0.14em] text-accent uppercase">{t('The WebTano letter', 'WebTano pismo')}</p>
+            <p className="font-mono text-[10px] tracking-[0.14em] text-accent uppercase">{t('The WebTano newsletter', 'WebTano bilten')}</p>
             <p className="mt-2 font-display text-xl font-bold text-white max-md:text-lg">{t('One useful email a month', 'Jedan koristan email mesečno')}</p>
             <p className="mt-1.5 max-w-sm text-sm leading-relaxed max-md:hidden">
               {t(
-                'Practical tips on getting more calls from your website, local SEO and Google Ads.',
-                'Praktični saveti kako da dobijete više poziva preko sajta, lokalnog SEO-a i Google Ads-a.',
+                'Practical tips on getting more customers from your website, SEO and Google Ads.',
+                'Praktični saveti kako da preko sajta, SEO-a i Google oglasa dobijete više kupaca.',
               )}
             </p>
           </div>
@@ -93,7 +93,7 @@ export function Footer({ newsletter = true, lang = DEFAULT_LANG }: { newsletter?
                 href={lp('/#hero-form')}
                 className="group inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-ink-950 shadow-glow transition hover:bg-accent-dark"
               >
-                {t('Free website check', 'Besplatna provera sajta')}
+                {t('Free website audit', 'Besplatna analiza sajta')}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
               </Link>
             </div>
@@ -143,7 +143,7 @@ export function Footer({ newsletter = true, lang = DEFAULT_LANG }: { newsletter?
             <CookieSettingsLink className="ms-3 underline-offset-2 hover:text-white hover:underline" />
           </p>
           <p className="max-md:hidden">
-            {t('Websites, local SEO and Google Ads, measured by our own tracking.', 'Sajtovi, lokalni SEO i Google Ads, mereni našim praćenjem.')}
+            {t('Websites, SEO and Google Ads for small and local businesses, with every result measured.', 'Izrada sajtova, SEO i Google oglašavanje za male i lokalne firme, sa merljivim rezultatima.')}
           </p>
         </div>
       </div>

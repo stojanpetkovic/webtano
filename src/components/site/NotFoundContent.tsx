@@ -3,14 +3,14 @@ import { ArrowRight } from 'lucide-react';
 import { DEFAULT_LANG, localePath, translator, type Lang, type T } from '@/lib/i18n';
 
 const links = (t: T) => [
-  { href: '/', label: t('Home', 'Početna'), text: t('Websites, local SEO and Google Ads for local companies.', 'Sajtovi, lokalni SEO i Google Ads za lokalne firme.') },
+  { href: '/', label: t('Home', 'Početna'), text: t('Websites, SEO and Google Ads for small and local businesses.', 'Izrada sajtova, SEO i Google oglašavanje za male i lokalne firme.') },
   {
     href: '/work',
     label: t('Case studies', 'Studije slučaja'),
-    text: t('What the work brought in, from the clients’ own tracking.', 'Šta je posao doneo, iz praćenja samih klijenata.'),
+    text: t('Real results, from our clients’ own tracking.', 'Pravi rezultati, iz praćenja samih klijenata.'),
   },
-  { href: '/pricing', label: t('Pricing', 'Cene'), text: t('Flat monthly plans and fixed website prices.', 'Fiksni mesečni paketi i fiksne cene sajtova.') },
-  { href: '/blog', label: 'Blog', text: t('Guides on Google Ads, local SEO and lead tracking.', 'Vodiči za Google Ads, lokalni SEO i praćenje upita.') },
+  { href: '/pricing', label: t('Pricing', 'Cene'), text: t('Flat monthly plans and fixed website prices.', 'Fiksni mesečni paketi i fiksne cene za sajtove.') },
+  { href: '/blog', label: 'Blog', text: t('Guides on websites, SEO, Google Ads and call tracking.', 'Saveti o sajtovima, SEO-u, Google oglašavanju i praćenju poziva.') },
 ];
 
 /** The 404 body, shared by the site's not-found page and the global one for unknown URLs. */
@@ -25,7 +25,7 @@ export function NotFoundContent({ lang = DEFAULT_LANG }: { lang?: Lang }) {
         <p className="mt-5 max-w-2xl text-lg text-white/75">
           {t(
             'The link may be old or mistyped. One of these is probably what you were looking for.',
-            'Link je možda star ili pogrešno ukucan. Verovatno ste tražili nešto od ovoga.',
+            'Link je možda zastareo ili pogrešno ukucan. Verovatno tražite nešto od ovoga.',
           )}
         </p>
         <ul className="mt-10 grid gap-3 sm:grid-cols-2">

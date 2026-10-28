@@ -78,7 +78,7 @@ export const post: Post = {
       p: 'Our sites are built as fast, mostly static pages with optimised images, very little JavaScript and as few third-party scripts as possible. The case studies on this site list the live Lighthouse scores of each client site, for example [Tree Jaws](/work/tree-jaws) and [Care Trans](/work/care-trans), so you can check them yourself.',
     },
     {
-      p: 'If your PageSpeed results are red or orange and you are not sure what to fix first, [ask for a free website check](/#hero-form). We will tell you which problems actually cost you calls.',
+      p: 'If your PageSpeed results are red or orange and you are not sure what to fix first, [ask for a free website audit](/#hero-form). We will tell you which problems actually cost you calls.',
     },
   ],
   faq: [

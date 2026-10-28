@@ -71,11 +71,11 @@ export function MobileTabBar() {
         <li className="flex justify-center">
           <Link
             href={lp('/#hero-form')}
-            aria-label={t('Free website check', 'Besplatna provera sajta')}
+            aria-label={t('Free website audit', 'Besplatna analiza sajta')}
             className="flex h-12 w-full flex-col items-center justify-center gap-0.5 rounded-[1.25rem] bg-accent text-[11px] font-semibold text-ink-950 transition active:scale-95"
           >
             <ScanSearch className="h-5 w-5" strokeWidth={2.2} aria-hidden />
-            {t('Check', 'Provera')}
+            {t('Audit', 'Analiza')}
           </Link>
         </li>
         {tabs(t).slice(2).map((tab) => (

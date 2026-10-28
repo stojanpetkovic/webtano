@@ -77,7 +77,7 @@ export const post: Post = {
       p: 'Put three numbers on the same monthly sheet as your ad spend: answered call rate, average form response time and leads booked. When a month looks bad, those numbers tell you whether the problem was the marketing or the follow-up. Very often it is the follow-up, and that is much cheaper to fix.',
     },
     {
-      p: 'Our clients get instant alerts for every new form, and every call is logged with its source, so missed opportunities are visible the same day. If you want to see where your leads go today, [ask for a free website check](/#hero-form).',
+      p: 'Our clients get instant alerts for every new form, and every call is logged with its source, so missed opportunities are visible the same day. If you want to see where your leads go today, [ask for a free website audit](/#hero-form).',
     },
   ],
   faq: [
