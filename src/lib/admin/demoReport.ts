@@ -11,10 +11,10 @@ import type { Site } from './types';
 
 export const DEMO_SITE: Site = {
   id: '00000000-0000-0000-0000-000000000000',
-  name: 'Demo Tree Service',
-  domain: 'demotreeservice.com',
+  name: 'Demo Home Services',
+  domain: 'demohomeservices.com',
   site_key: 'demo',
-  client_name: 'Demo Tree Service LLC',
+  client_name: 'Demo Home Services LLC',
   client_emails: [],
   email_language: 'en',
   timezone: 'America/New_York',
@@ -80,13 +80,13 @@ const CHANNEL_MIX: {
 
 const PAGES = [
   ['/', 0.34],
-  ['/tree-removal', 0.18],
-  ['/emergency-tree-service', 0.12],
-  ['/tree-trimming', 0.1],
-  ['/stump-grinding', 0.08],
+  ['/services', 0.18],
+  ['/emergency-repairs', 0.12],
+  ['/installations', 0.1],
+  ['/maintenance-plans', 0.08],
   ['/service-areas/fort-lauderdale', 0.07],
   ['/contact', 0.06],
-  ['/blog/when-to-remove-a-tree', 0.05],
+  ['/blog/how-to-choose-a-contractor', 0.05],
 ] as const;
 
 const NAMES = [

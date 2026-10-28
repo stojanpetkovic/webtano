@@ -87,7 +87,7 @@ export const post: Post = {
       ],
     },
     {
-      p: 'Svaki WebTano klijent ovo dobija kao standard: svaki poziv i forma prate se do izvora i završavaju u mesečnom izveštaju koji vlasnik zaista može da pročita. Možete [otvoriti demo izveštaj](/demo/report) da vidite kako izgleda, ili [zatražiti besplatnu proveru](/#hero-form) trenutnog podešavanja.',
+      p: 'Svaki WebTano klijent ovo dobija kao standard: svaki poziv i forma prate se do izvora i završavaju u mesečnom izveštaju koji vlasnik zaista može da pročita. Možete [otvoriti demo izveštaj](/demo/report) da vidite kako izgleda, ili [zatražiti besplatnu analizu](/#hero-form) trenutnog podešavanja.',
     },
   ],
   faq: [

@@ -87,7 +87,7 @@ export const post: Post = {
       ],
     },
     {
-      p: 'Every WebTano client gets this as standard: each call and form is tracked back to its source and lands in a monthly report the owner can actually read. You can [open the demo report](/demo/report) to see what it looks like, or [ask for a free check](/#hero-form) of your current setup.',
+      p: 'Every WebTano client gets this as standard: each call and form is tracked back to its source and lands in a monthly report the owner can actually read. You can [open the demo report](/demo/report) to see what it looks like, or [ask for a free audit](/#hero-form) of your current setup.',
     },
   ],
   faq: [

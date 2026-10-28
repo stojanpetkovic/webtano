@@ -98,7 +98,7 @@ export const post: Post = {
       p: 'If you also run Local Services Ads, note that they are moving into Google Ads. Our [guide to the migration](/blog/local-services-ads-move-to-google-ads) explains what to do before your account moves.',
     },
     {
-      p: 'Want an honest look at your current account and where the money goes? [Ask for a free check](/#hero-form) and we will review your ads, landing pages and tracking.',
+      p: 'Want an honest look at your current account and where the money goes? [Ask for a free audit](/#hero-form) and we will review your ads, landing pages and tracking.',
     },
   ],
   faq: [

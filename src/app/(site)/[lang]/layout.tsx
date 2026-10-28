@@ -28,8 +28,8 @@ export const dynamicParams = false;
 
 const description = (lang: 'en' | 'sr') =>
   translator(lang)(
-    'WebTano builds fast websites, runs local SEO and Google Ads for tree services and other local companies, and tracks every call and form so you see what pays.',
-    'WebTano pravi brze sajtove, vodi lokalni SEO i Google Ads za firme za seču drveća i druge lokalne firme, i broji svaki poziv i upit, pa vidite šta se isplati.',
+    'WebTano designs fast websites and runs SEO and Google Ads for small and local businesses, then tracks every call and enquiry so you know exactly what pays.',
+    'WebTano pravi brze, moderne sajtove i vodi SEO i Google oglašavanje za male i lokalne firme, a svaki poziv i upit beleži, pa tačno znate šta vam se isplati.',
   );
 
 export async function generateMetadata(): Promise<Metadata> {

@@ -12,14 +12,14 @@ import { alternates } from '@/lib/seo';
 
 const description = (t: T) =>
   t(
-    'Practical guides on Google Ads, local SEO, AI search, websites and lead tracking for tree services and other local companies, from the accounts we run.',
-    'Praktični vodiči za Google Ads, lokalni SEO, AI pretragu, sajtove i praćenje upita za firme za drveće i druge lokalne firme, iz naloga koje vodimo.',
+    'Practical guides on websites, SEO, AI search, Google Ads and call tracking for small and local businesses, written from the projects we run.',
+    'Praktični saveti o sajtovima, SEO optimizaciji, AI pretrazi, Google oglašavanju i praćenju poziva za male i lokalne firme, iz projekata koje vodimo.',
   );
 
 export async function generateMetadata(): Promise<Metadata> {
   const { lang, t, lp } = await getI18n();
   return {
-    title: t('Blog: local SEO, Google Ads and websites', 'Blog: lokalni SEO, Google Ads i sajtovi'),
+    title: t('Blog: websites, SEO and Google Ads', 'Blog: sajtovi, SEO i Google oglašavanje'),
     description: description(t),
     alternates: { ...alternates(lang, '/blog'), types: { 'application/rss+xml': lp('/blog/rss.xml') } },
     openGraph: { type: 'website', url: lp('/blog'), images: [postImage(postsIn(lang)[0]).src] },
@@ -75,14 +75,14 @@ export default async function BlogPage() {
           </Reveal>
           <Reveal delay={80}>
             <h1 className="mt-5 max-w-3xl font-display text-4xl font-bold tracking-tight text-balance sm:text-6xl sm:leading-[1.05]">
-              {t('Marketing that brings calls,', 'Marketing koji donosi pozive,')} <span className="text-gradient">{t('explained plainly', 'objašnjen jednostavno')}</span>
+              {t('Online marketing that brings customers,', 'Internet marketing koji donosi kupce,')} <span className="text-gradient">{t('explained plainly', 'objašnjen bez komplikovanja')}</span>
             </h1>
           </Reveal>
           <Reveal delay={160}>
             <p className="mt-5 max-w-2xl text-lg text-white/75">
               {t(
-                'Practical guides on Google Ads, local SEO, AI search and websites for tree services and other local companies. Written from the accounts and sites we run every day.',
-                'Praktični vodiči za Google Ads, lokalni SEO, AI pretragu i sajtove za firme za drveće i druge lokalne firme. Pisani iz naloga i sajtova koje vodimo svaki dan.',
+                'Practical guides on websites, SEO, AI search and Google Ads for small and local businesses. Written from the sites and ad accounts we run every day.',
+                'Praktični saveti o sajtovima, SEO optimizaciji, AI pretrazi i Google oglašavanju za male i lokalne firme. Pišemo ih iz sajtova i kampanja koje svakodnevno vodimo.',
               )}
             </p>
           </Reveal>
@@ -122,12 +122,12 @@ export default async function BlogPage() {
         <div className="relative mx-auto flex max-w-6xl flex-col items-start gap-8 px-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-2xl">
             <h2 className="font-display text-3xl font-bold tracking-tight text-balance sm:text-4xl">
-              {t('Rather have it done for you?', 'Radije biste da to uradimo umesto vas?')}
+              {t('Rather have it done for you?', 'Više volite da to prepustite nama?')}
             </h2>
             <p className="mt-3 text-lg text-white/70">
               {t(
                 'We will look at your website, Google profile and ads, and send you a short list of what is costing you calls. Free, no obligation.',
-                'Pogledaćemo vaš sajt, Google profil i oglase i poslati vam kratak spisak onoga što vas košta poziva. Besplatno, bez obaveze.',
+                'Pogledaćemo vaš sajt, Google profil i oglase i poslati vam kratak spisak onoga zbog čega gubite pozive. Besplatno i bez obaveze.',
               )}
             </p>
           </div>
@@ -135,7 +135,7 @@ export default async function BlogPage() {
             href={lp('/#hero-form')}
             className="group inline-flex shrink-0 items-center gap-2 rounded-full bg-accent px-6 py-3.5 font-semibold text-ink-950 shadow-glow transition hover:-translate-y-px hover:bg-accent-dark"
           >
-            {t('Get a free website check', 'Zatražite besplatnu proveru')}
+            {t('Get a free website audit', 'Zatražite besplatnu analizu')}
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
           </Link>
         </div>

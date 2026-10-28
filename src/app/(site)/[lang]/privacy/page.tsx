@@ -167,7 +167,7 @@ export default async function PrivacyPage() {
           head={[t('Purpose', 'Svrha'), t('Legal basis (GDPR and Serbian law)', 'Pravni osnov (GDPR i zakon Srbije)')]}
           rows={[
             [
-              t('Replying to your enquiry, preparing the free check and a proposal', 'Odgovor na vaš upit, priprema besplatne provere i ponude'),
+              t('Replying to your enquiry, preparing the free audit and a proposal', 'Odgovor na vaš upit, priprema besplatne analize i ponude'),
               t('Steps you asked for before a contract, Art. 6(1)(b)', 'Radnje koje ste tražili pre zaključenja ugovora, čl. 6(1)(b)'),
             ],
             [

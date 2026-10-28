@@ -89,7 +89,7 @@ export const post: Post = {
       p: 'Stope konverzije se mnogo razlikuju po tržištu i izvoru saobraćaja, pa budite oprezni sa prosecima. Kao jedan stvaran primer, sajt Tree Jaws je u poslednjih 30 dana koje smo merili pretvorio 7,9% posetilaca u poziv ili formu, od 891 posetioca do 74 upita. Detalje možete videti u [studiji slučaja](/work/tree-jaws).',
     },
     {
-      p: 'Zanima vas kako vaš sajt stoji na ovih deset tačaka? [Zatražite besplatnu proveru sajta](/#hero-form) i poslaćemo vam kratak, iskren spisak šta prvo da popravite.',
+      p: 'Zanima vas kako vaš sajt stoji na ovih deset tačaka? [Zatražite besplatnu analizu sajta](/#hero-form) i poslaćemo vam kratak, iskren spisak šta prvo da popravite.',
     },
   ],
   faq: [

@@ -97,7 +97,7 @@ export const post: Post = {
       p: 'Having LSA inside Google Ads is, in the long run, a good thing. Your pay-per-lead campaign, your search campaigns and your conversion data finally sit in one account. Combined with call tracking on your website, you can see which channel brings the jobs you actually want, at what cost, without stitching three dashboards together.',
     },
     {
-      p: 'That is exactly how we run accounts for clients like [Tree Jaws](/work/tree-jaws): every call and form is tied to the ad or search that produced it. If you want a second pair of eyes on your setup before the switch, [ask for a free check](/#hero-form) and we will look at your ads, profile and website together.',
+      p: 'That is exactly how we run accounts for clients like [Tree Jaws](/work/tree-jaws): every call and form is tied to the ad or search that produced it. If you want a second pair of eyes on your setup before the switch, [ask for a free audit](/#hero-form) and we will look at your ads, profile and website together.',
     },
   ],
   faq: [

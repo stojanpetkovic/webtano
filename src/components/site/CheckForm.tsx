@@ -108,16 +108,16 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
         className="scroll-mt-24 rounded-3xl border border-white/10 bg-white p-6 text-zinc-700 shadow-float shadow-black/40 max-md:rounded-[24px] max-md:border-0 max-md:p-5 sm:p-7"
       >
         <div className="flex items-center justify-between gap-3 max-md:hidden">
-          <p className="font-mono text-[11px] font-medium tracking-[0.14em] text-azure-700 uppercase">{t('Free website check', 'Besplatna provera sajta')}</p>
+          <p className="font-mono text-[11px] font-medium tracking-[0.14em] text-azure-700 uppercase">{t('Free website audit', 'Besplatna analiza sajta')}</p>
           <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-azure-50 px-2.5 py-1 text-[11px] font-semibold whitespace-nowrap text-ink-800 ring-1 ring-azure-100">
             <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-azure-600" aria-hidden />
             {t('Reply in 1 day', 'Odgovor za 1 dan')}
           </span>
         </div>
-        <p className="mt-3 font-display text-2xl text-ink-950 max-md:mt-0 max-md:text-[1.35rem] max-md:leading-tight sm:text-[1.7rem] sm:leading-tight">{t('See what your site is costing you', 'Pogledajte koliko vas sajt košta')}</p>
-        <p className="mt-1 text-[13px] text-zinc-500 md:hidden">{t('Free check, reply within one business day.', 'Besplatna provera, odgovor u roku od jednog radnog dana.')}</p>
+        <p className="mt-3 font-display text-2xl text-ink-950 max-md:mt-0 max-md:text-[1.35rem] max-md:leading-tight sm:text-[1.7rem] sm:leading-tight">{t('Find out what your website is costing you', 'Saznajte koliko vas košta loš sajt')}</p>
+        <p className="mt-1 text-[13px] text-zinc-500 md:hidden">{t('Free audit, reply within one business day.', 'Besplatna analiza, odgovor u roku od jednog radnog dana.')}</p>
         <p className="mt-1.5 text-sm text-zinc-500 max-md:hidden">
-          {t('A real review of your site and your top competitors, within one business day.', 'Pravi pregled vašeg sajta i glavne konkurencije, u roku od jednog radnog dana.')}
+          {t('An honest review of your website and your top competitors, within one business day.', 'Iskrena analiza vašeg sajta i glavne konkurencije, u roku od jednog radnog dana.')}
         </p>
 
         <div className="mt-5 flex items-center gap-3 rounded-2xl bg-zinc-50 px-4 py-3 ring-1 ring-zinc-200/70 max-md:hidden">
@@ -134,7 +134,7 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
 
         <fieldset className="mt-5 max-md:mt-4">
           <legend className={label}>
-          {t('What do you need?', 'Šta vam treba?')} <span className="font-normal text-zinc-500">{t('Pick all that apply.', 'Izaberite sve što važi.')}</span>
+          {t('What do you need?', 'Šta vam treba?')} <span className="font-normal text-zinc-500">{t('Pick all that apply.', 'Može i više odgovora.')}</span>
         </legend>
           {/* Two even rows on phones, one row of four with shorter labels on larger screens. */}
           <div className="mt-2 grid grid-cols-2 gap-2 md:grid-cols-4">
@@ -153,7 +153,7 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
         <div className="mt-4 grid gap-3.5 max-md:gap-3 sm:grid-cols-2">
           <div>
             <label htmlFor={id('name')} className={label}>
-              {t('Your name', 'Ime')}
+              {t('Your name', 'Ime i prezime')}
             </label>
             <input id={id('name')} name="name" required minLength={2} className={input} autoComplete="name" autoCapitalize="words" enterKeyHint="next" />
           </div>
@@ -173,7 +173,7 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
             <label htmlFor={id('business')} className={label}>
               {t('Business and city', 'Delatnost i grad')}
             </label>
-            <input id={id('business')} name="business" placeholder={t('Tree service in Tampa', 'Seča drveća u Novom Sadu')} className={input} autoCapitalize="sentences" enterKeyHint="next" />
+            <input id={id('business')} name="business" placeholder={t('Dental clinic in Austin', 'Stomatološka ordinacija, Novi Sad')} className={input} autoCapitalize="sentences" enterKeyHint="next" />
           </div>
         </div>
         <div className="hidden" aria-hidden>
@@ -196,7 +196,7 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
           className={`group mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 font-semibold text-ink-950 shadow-glow transition hover:-translate-y-px hover:bg-accent-dark disabled:translate-y-0 disabled:opacity-70 ${submit}`}
         >
           {pending && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
-          {pending ? t('Sending…', 'Šaljem…') : t('Get my free website check', 'Zatražite besplatnu proveru')}
+          {pending ? t('Sending…', 'Šaljem…') : t('Get my free website audit', 'Zatražite besplatnu analizu')}
         </button>
         <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-xs text-zinc-500">
           <Lock className="h-3.5 w-3.5" aria-hidden />
@@ -206,7 +206,7 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
           {[
             { icon: BadgeCheck, title: 'Google Ads', text: t('managed in-house', 'vodimo ih sami') },
             { icon: Gauge, title: t('90+ speed', 'Brzina 90+'), text: t('Lighthouse score', 'Lighthouse ocena') },
-            { icon: KeyRound, title: t('No lock-in', 'Bez vezivanja'), text: t('you own it all', 'sve je vaše') },
+            { icon: KeyRound, title: t('No lock-in', 'Bez obaveze'), text: t('you own it all', 'sve je na vaše ime') },
           ].map((b) => (
             <li key={b.title} className="flex flex-col items-center gap-1 rounded-xl px-1 py-1">
               <b.icon className="h-5 w-5 text-azure-700" aria-hidden />
@@ -228,7 +228,7 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
     >
       <fieldset>
         <legend className={label}>
-          {t('What do you need?', 'Šta vam treba?')} <span className="font-normal text-zinc-500">{t('Pick all that apply.', 'Izaberite sve što važi.')}</span>
+          {t('What do you need?', 'Šta vam treba?')} <span className="font-normal text-zinc-500">{t('Pick all that apply.', 'Može i više odgovora.')}</span>
         </legend>
         <div className="mt-2 flex flex-wrap gap-2">
           {SERVICES.map((s, i) => (
@@ -253,11 +253,11 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
           <label htmlFor={id('business')} className={label}>
             {t('Business and city', 'Delatnost i grad')}
           </label>
-          <input id={id('business')} name="business" placeholder={t('Tree service in Tampa', 'Seča drveća u Novom Sadu')} className={input} autoCapitalize="sentences" enterKeyHint="next" />
+          <input id={id('business')} name="business" placeholder={t('Dental clinic in Austin', 'Stomatološka ordinacija, Novi Sad')} className={input} autoCapitalize="sentences" enterKeyHint="next" />
         </div>
         <div>
           <label htmlFor={id('name')} className={label}>
-            {t('Your name', 'Ime')}
+            {t('Your name', 'Ime i prezime')}
           </label>
           <input id={id('name')} name="name" required minLength={2} className={input} autoComplete="name" autoCapitalize="words" enterKeyHint="next" />
         </div>
@@ -289,7 +289,7 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
 
       <div className="mt-4">
         <label htmlFor={id('message')} className={label}>
-          {t('Anything else we should know?', 'Još nešto što treba da znamo?')} <span className="font-normal text-zinc-500">{t('(optional)', '(nije obavezno)')}</span>
+          {t('Anything else we should know?', 'Još nešto što bi trebalo da znamo?')} <span className="font-normal text-zinc-500">{t('(optional)', '(nije obavezno)')}</span>
         </label>
         <textarea id={id('message')} name="message" rows={3} className={input} />
       </div>
@@ -317,7 +317,7 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
         className={`mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-azure-700 px-6 py-3.5 font-semibold text-white shadow-[0_10px_24px_-10px_rgb(37_99_235/0.7)] transition hover:-translate-y-px hover:bg-ink-800 hover:shadow-[0_14px_28px_-10px_rgb(37_99_235/0.8)] disabled:translate-y-0 disabled:opacity-70 ${submit}`}
       >
         {pending && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
-        {pending ? t('Sending…', 'Šaljem…') : t('Get my free website check', 'Zatražite besplatnu proveru')}
+        {pending ? t('Sending…', 'Šaljem…') : t('Get my free website audit', 'Zatražite besplatnu analizu')}
       </button>
       <p className="mt-3 text-center text-xs text-zinc-500">
         {t('We use your details only to reply to you. By sending, you agree to our', 'Vaše podatke koristimo samo da vam odgovorimo. Slanjem prihvatate naše')}{' '}

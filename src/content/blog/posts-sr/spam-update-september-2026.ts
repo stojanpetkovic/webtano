@@ -80,7 +80,7 @@ export const post: Post = {
       p: 'Sve ka čemu vas pravila o spamu guraju isto je ono što tera vlasnike kuća da pozovu: prave fotografije, prave cene, pravi odgovori i prave recenzije. Kada smo napravili 176 stranica za [Tree Jaws](/work/tree-jaws), uključujući 108 lokalnih vodiča, pisane su za način na koji vlasnici kuća u Južnoj Floridi zaista pretražuju, a ne iskopirane iz jednog šablona.',
     },
     {
-      p: 'Niste sigurni da li vaš sajt ima stranice koje bi mogle biti problem? [Zatražite besplatnu proveru sajta](/#hero-form) i iskreno ćemo vam reći šta smo našli.',
+      p: 'Niste sigurni da li vaš sajt ima stranice koje bi mogle biti problem? [Zatražite besplatnu analizu sajta](/#hero-form) i iskreno ćemo vam reći šta smo našli.',
     },
   ],
   faq: [

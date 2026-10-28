@@ -10,8 +10,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t('Terms of use', 'Uslovi korišćenja'),
     description: t(
-      'The terms for using webtano.com and the free website check: no guarantee of results, how case studies should be read, intellectual property, limits of liability and governing law.',
-      'Uslovi korišćenja sajta webtano.com i besplatne provere sajta: bez garancije rezultata, kako čitati studije slučaja, intelektualna svojina, ograničenje odgovornosti i merodavno pravo.',
+      'The terms for using webtano.com and the free website audit: no guarantee of results, how case studies should be read, intellectual property, limits of liability and governing law.',
+      'Uslovi korišćenja sajta webtano.com i besplatne analize sajta: bez garancije rezultata, kako čitati studije slučaja, intelektualna svojina, ograničenje odgovornosti i merodavno pravo.',
     ),
     alternates: alternates(lang, '/terms'),
     openGraph: { url: lp('/terms'), images: [ogImage(lang)] },
@@ -42,8 +42,8 @@ export default async function TermsPage() {
         <>
           <p>
             {t(
-              'These terms apply to your use of webtano.com and everything on it, including the free website check, the demo report, the blog and the case studies (together, the “site”). The site is operated by WebTano (“WebTano”, “we”, “us”). By using the site you accept these terms. If you do not agree, please do not use it.',
-              'Ovi uslovi važe za korišćenje sajta webtano.com i svega na njemu, uključujući besplatnu proveru sajta, primer izveštaja, blog i studije slučaja (zajedno: „sajt”). Sajtom upravlja WebTano („WebTano”, „mi”). Korišćenjem sajta prihvatate ove uslove. Ako se ne slažete, molimo vas da ga ne koristite.',
+              'These terms apply to your use of webtano.com and everything on it, including the free website audit, the demo report, the blog and the case studies (together, the “site”). The site is operated by WebTano (“WebTano”, “we”, “us”). By using the site you accept these terms. If you do not agree, please do not use it.',
+              'Ovi uslovi važe za korišćenje sajta webtano.com i svega na njemu, uključujući besplatnu analizu sajta, primer izveštaja, blog i studije slučaja (zajedno: „sajt”). Sajtom upravlja WebTano („WebTano”, „mi”). Korišćenjem sajta prihvatate ove uslove. Ako se ne slažete, molimo vas da ga ne koristite.',
             )}
           </p>
           <p>
@@ -69,7 +69,7 @@ export default async function TermsPage() {
     },
     {
       id: 'check',
-      title: t('The free website check', 'Besplatna provera sajta'),
+      title: t('The free website audit', 'Besplatna analiza sajta'),
       body: (
         <Bullets
           items={[
@@ -268,8 +268,8 @@ export default async function TermsPage() {
       intro={
         <p>
           {t(
-            'Please read these terms before using webtano.com or asking for a free website check. They are short, and they are written to be clear.',
-            'Molimo vas da pročitate ove uslove pre korišćenja sajta webtano.com ili traženja besplatne provere sajta. Kratki su i napisani da budu jasni.',
+            'Please read these terms before using webtano.com or asking for a free website audit. They are short, and they are written to be clear.',
+            'Molimo vas da pročitate ove uslove pre korišćenja sajta webtano.com ili traženja besplatne analize sajta. Kratki su i napisani da budu jasni.',
           )}
         </p>
       }

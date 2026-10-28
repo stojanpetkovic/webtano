@@ -149,7 +149,7 @@ async function sendWelcome(row: Subscriber) {
     eyebrow: 'WebTano newsletter',
     heading: 'You are subscribed',
     intro: 'Thanks for confirming. About once a month you will get one short, practical email on getting more calls from your website, local SEO and Google Ads.',
-    body: `<div style="margin:24px 0 8px">${buttons([button('Get a free website check', `${env.siteUrl}/#hero-form`), button('Read the blog', `${env.siteUrl}/blog`, true)])}</div>`,
+    body: `<div style="margin:24px 0 8px">${buttons([button('Get a free website audit', `${env.siteUrl}/#hero-form`), button('Read the blog', `${env.siteUrl}/blog`, true)])}</div>`,
     footer: 'You receive this because you subscribed on webtano.com.',
     preheader: 'Your WebTano newsletter subscription is confirmed.',
     unsubscribe: unsub,

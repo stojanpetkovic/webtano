@@ -167,7 +167,7 @@ export default async function CasePage({ params }: PageProps<'/[lang]/work/[slug
 
         <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
           <div className="rounded-2xl border border-zinc-200/80 bg-white p-6 shadow-soft">
-            <h2 className="font-display text-lg font-bold text-ink-950">{t('Lighthouse, live site', 'Lighthouse, živ sajt')}</h2>
+            <h2 className="font-display text-lg font-bold text-ink-950">{t('Lighthouse, live site', 'Lighthouse, sajt uživo')}</h2>
             <ul className="mt-4 grid grid-cols-2 gap-3">
               {lighthouse.map((l) => (
                 <li key={l.label} className="rounded-xl bg-azure-50 p-3 text-center">
@@ -183,18 +183,18 @@ export default async function CasePage({ params }: PageProps<'/[lang]/work/[slug
             rel="noopener"
             className="flex items-center justify-between rounded-2xl border border-zinc-200/80 bg-white p-5 font-semibold text-ink-950 shadow-soft transition hover:-translate-y-0.5 hover:border-azure-200 hover:shadow-lift"
           >
-            {t('Visit the live site', 'Posetite živ sajt')}
+            {t('Visit the live site', 'Posetite sajt')}
             <ExternalLink className="h-4 w-4 text-azure-700" aria-hidden />
           </a>
           <div className="relative overflow-hidden rounded-2xl bg-ink-950 p-6 text-white shadow-lift">
             <div className="pointer-events-none absolute -right-10 -bottom-10 h-40 w-40 rounded-full bg-accent/20 blur-2xl" aria-hidden />
-            <h2 className="font-display text-lg font-bold">{t('Want numbers like these?', 'Želite ovakve brojeve?')}</h2>
-            <p className="mt-2 text-sm text-white/75">{t('Start with a free check of your current website.', 'Počnite besplatnom proverom vašeg sadašnjeg sajta.')}</p>
+            <h2 className="font-display text-lg font-bold">{t('Want results like these?', 'Želite ovakve rezultate?')}</h2>
+            <p className="mt-2 text-sm text-white/75">{t('Start with a free audit of your current website.', 'Počnite besplatnom analizom vašeg sadašnjeg sajta.')}</p>
             <Link
               href={lp('/#hero-form')}
               className="relative mt-4 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-ink-950 shadow-glow transition hover:-translate-y-px hover:bg-accent-dark"
             >
-              {t('Free website check', 'Besplatna provera sajta')}
+              {t('Free website audit', 'Besplatna analiza sajta')}
               <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
           </div>

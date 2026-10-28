@@ -82,7 +82,7 @@ export const post: Post = {
       p: 'Dodajte jednostavno pitanje „Kako ste čuli za nas?” u formu i telefonski scenario, sa opcijom „AI pretraga” ili „ChatGPT/Google AI”. Kombinujte to sa praćenjem poziva na sajtu i videćete da li se rad isplati, mnogo pre nego što vam bilo koji alat kaže vašu „ocenu AI vidljivosti”.',
     },
     {
-      p: 'Isti pristup koristimo na sajtovima klijenata: pišemo stranice oko stvarnih pitanja kupaca i svaki poziv i formu pratimo do izvora. Ako želite da znate kako vaša firma danas izgleda Google-u, [zatražite besplatnu proveru sajta](/#hero-form).',
+      p: 'Isti pristup koristimo na sajtovima klijenata: pišemo stranice oko stvarnih pitanja kupaca i svaki poziv i formu pratimo do izvora. Ako želite da znate kako vaša firma danas izgleda Google-u, [zatražite besplatnu analizu sajta](/#hero-form).',
     },
   ],
   faq: [

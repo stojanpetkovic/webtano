@@ -229,8 +229,8 @@ export default async function PostPage({ params }: PageProps<'/[lang]/blog/[slug
                     <p className="font-display text-lg font-semibold text-ink-950">{t('Written by the WebTano team', 'Napisao WebTano tim')}</p>
                     <p className="mt-1 text-[0.9375rem] leading-relaxed text-zinc-600">
                       {t(
-                        'We build websites and run local SEO and Google Ads for tree services and other local companies, and track every call and form they bring. See',
-                        'Pravimo sajtove i vodimo lokalni SEO i Google Ads za firme za drveće i druge lokalne firme, i pratimo svaki poziv i formu koje donesu. Pogledajte',
+                        'We design websites and run SEO and Google Ads for small and local businesses, and track every call and enquiry they bring in. See',
+                        'Pravimo sajtove i vodimo SEO i Google oglašavanje za male i lokalne firme, i beležimo svaki poziv i upit koji donesu. Pogledajte',
                       )}{' '}
                       <Link href={lp('/work')} className="font-medium text-azure-700 hover:underline">
                         {t('our work', 'naše radove')}
@@ -246,15 +246,15 @@ export default async function PostPage({ params }: PageProps<'/[lang]/blog/[slug
                   <TableOfContents items={contents} />
                   <div className="relative overflow-hidden rounded-2xl bg-ink-950 p-6 text-white">
                     <div className="pointer-events-none absolute -right-10 -bottom-10 h-36 w-36 rounded-full bg-accent/20 blur-2xl" aria-hidden />
-                    <p className="font-display text-lg font-bold leading-snug">{t('Want us to check your site?', 'Želite da proverimo vaš sajt?')}</p>
+                    <p className="font-display text-lg font-bold leading-snug">{t('Want us to audit your website?', 'Želite da analiziramo vaš sajt?')}</p>
                     <p className="mt-2 text-sm leading-relaxed text-white/70">
-                      {t('A free, honest look at your website, Google profile and ads.', 'Besplatan, iskren pogled na vaš sajt, Google profil i oglase.')}
+                      {t('A free, honest look at your website, Google profile and ads.', 'Besplatna i iskrena analiza vašeg sajta, Google profila i oglasa.')}
                     </p>
                     <Link
                       href={lp('/#hero-form')}
                       className="group relative mt-5 inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2.5 text-sm font-semibold text-ink-950 transition hover:bg-accent-dark"
                     >
-                      {t('Free website check', 'Besplatna provera sajta')}
+                      {t('Free website audit', 'Besplatna analiza sajta')}
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
                     </Link>
                   </div>
@@ -285,16 +285,16 @@ export default async function PostPage({ params }: PageProps<'/[lang]/blog/[slug
           </SwipeRow>
           <div className="mt-14 flex flex-col items-start gap-6 rounded-3xl bg-white/[0.04] p-7 ring-1 ring-white/10 sm:flex-row sm:items-center sm:justify-between sm:p-9">
             <div>
-              <p className="font-display text-2xl font-bold">{t('Rather have it done for you?', 'Radije biste da to uradimo umesto vas?')}</p>
+              <p className="font-display text-2xl font-bold">{t('Rather have it done for you?', 'Više volite da to prepustite nama?')}</p>
               <p className="mt-2 text-white/70">
-                {t('Start with a free check of your website. Reply within one business day.', 'Počnite besplatnom proverom sajta. Odgovor u roku od jednog radnog dana.')}
+                {t('Start with a free audit of your website. Reply within one business day.', 'Počnite besplatnom analizom sajta. Odgovor stiže u roku od jednog radnog dana.')}
               </p>
             </div>
             <Link
               href={lp('/#hero-form')}
               className="group inline-flex shrink-0 items-center gap-2 rounded-full bg-accent px-6 py-3.5 font-semibold text-ink-950 shadow-glow transition hover:-translate-y-px hover:bg-accent-dark"
             >
-              {t('Get a free website check', 'Zatražite besplatnu proveru')}
+              {t('Get a free website audit', 'Zatražite besplatnu analizu')}
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
             </Link>
           </div>

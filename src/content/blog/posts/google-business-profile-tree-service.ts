@@ -90,7 +90,7 @@ export const post: Post = {
       ],
     },
     {
-      p: 'Want to know how your profile compares with the companies that outrank you? [Ask for a free check](/#hero-form) and we will review your profile and website together.',
+      p: 'Want to know how your profile compares with the companies that outrank you? [Ask for a free audit](/#hero-form) and we will review your profile and website together.',
     },
   ],
   faq: [

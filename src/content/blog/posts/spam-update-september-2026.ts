@@ -80,7 +80,7 @@ export const post: Post = {
       p: 'Everything the spam policies push you towards is also what makes homeowners call: real photos, real prices, real answers and real reviews. When we built 176 pages for [Tree Jaws](/work/tree-jaws), including 108 local guides, they were written for the way South Florida homeowners actually search, not stamped out from one template.',
     },
     {
-      p: 'Not sure whether your site has pages that could be a problem? [Ask for a free website check](/#hero-form) and we will tell you honestly what we find.',
+      p: 'Not sure whether your site has pages that could be a problem? [Ask for a free website audit](/#hero-form) and we will tell you honestly what we find.',
     },
   ],
   faq: [

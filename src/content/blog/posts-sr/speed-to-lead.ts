@@ -77,7 +77,7 @@ export const post: Post = {
       p: 'Stavite tri broja u istu mesečnu tabelu sa potrošnjom na oglase: procenat javljenih poziva, prosečno vreme odgovora na forme i zakazane poslove. Kada mesec izgleda loše, ti brojevi vam kažu da li je problem bio u marketingu ili u daljem postupanju. Vrlo često je u daljem postupanju, a to je mnogo jeftinije popraviti.',
     },
     {
-      p: 'Naši klijenti dobijaju trenutno obaveštenje za svaku novu formu, a svaki poziv se beleži sa izvorom, pa su propuštene prilike vidljive istog dana. Ako želite da vidite gde danas odlaze vaši upiti, [zatražite besplatnu proveru sajta](/#hero-form).',
+      p: 'Naši klijenti dobijaju trenutno obaveštenje za svaku novu formu, a svaki poziv se beleži sa izvorom, pa su propuštene prilike vidljive istog dana. Ako želite da vidite gde danas odlaze vaši upiti, [zatražite besplatnu analizu sajta](/#hero-form).',
     },
   ],
   faq: [

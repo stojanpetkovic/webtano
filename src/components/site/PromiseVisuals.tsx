@@ -65,7 +65,7 @@ export async function NumbersVisual() {
   const { t } = await getI18n();
   const rows = [
     { icon: Phone, title: t('New call', 'Nov poziv'), meta: t('Google Ads · just now', 'Google Ads · upravo'), hot: true },
-    { icon: BellRing, title: t('New form', 'Nova forma'), meta: t('Tree removal page · 4 min', 'Stranica uklanjanja drveća · 4 min'), hot: false },
+    { icon: BellRing, title: t('New form', 'Nova forma'), meta: t('Services page · 4 min', 'Stranica usluga · pre 4 min'), hot: false },
     { icon: FileText, title: t('Monthly report', 'Mesečni izveštaj'), meta: t('Sent on the 1st', 'Stiže 1. u mesecu'), hot: false },
   ];
   return (

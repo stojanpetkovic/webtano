@@ -2,8 +2,8 @@ export const site = {
   name: 'WebTano',
   url: 'https://webtano.com',
   tagline: {
-    en: 'Websites, local SEO and Google Ads for local service companies.',
-    sr: 'Sajtovi, lokalni SEO i Google Ads za lokalne uslužne firme.',
+    en: 'Websites, SEO and Google Ads for small and local businesses.',
+    sr: 'Izrada sajtova, SEO i Google oglašavanje za male i lokalne firme.',
   },
   // The webtano.com row in the lead admin. Public by design: it sits in the script tag.
   leadsSiteKey: '4efb22cf8b22fa845d7a39b243a17934',

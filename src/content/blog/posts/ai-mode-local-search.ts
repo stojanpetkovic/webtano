@@ -82,7 +82,7 @@ export const post: Post = {
       p: 'Add a simple "How did you hear about us?" question to your form and phone script, with "AI search" or "ChatGPT/Google AI" as an option. Combine that with call tracking on your site and you will see whether the work is paying off, long before any tool can tell you your "AI visibility score".',
     },
     {
-      p: 'This is the same approach we use on client sites: we write pages around real customer questions and track every call and form back to its source. If you want to know how your company looks to Google today, [request a free website check](/#hero-form).',
+      p: 'This is the same approach we use on client sites: we write pages around real customer questions and track every call and form back to its source. If you want to know how your company looks to Google today, [request a free website audit](/#hero-form).',
     },
   ],
   faq: [
