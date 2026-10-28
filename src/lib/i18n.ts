@@ -37,6 +37,9 @@ export function localePath(lang: Lang, path: string): string {
 export function splitPath(pathname: string): { lang: Lang; path: string } {
   if (pathname === '/sr' || pathname === '/sr/') return { lang: 'sr', path: '/' };
   if (pathname.startsWith('/sr/')) return { lang: 'sr', path: pathname.slice(3) };
+  // English pages are served from /en behind a rewrite, and some requests report that inner path.
+  if (pathname === '/en' || pathname === '/en/') return { lang: 'en', path: '/' };
+  if (pathname.startsWith('/en/')) return { lang: 'en', path: pathname.slice(3) };
   return { lang: 'en', path: pathname || '/' };
 }
 
