@@ -98,8 +98,9 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       },
     ],
   };
+  // translate="no": the site has its own English and Serbian, and a browser translating it rewrites text React still manages, which crashes the page.
   return (
-    <html lang={HTML_LANG[lang]} className={`${sans.variable} ${mono.variable}`} suppressHydrationWarning>
+    <html lang={HTML_LANG[lang]} className={`${sans.variable} ${mono.variable}`} translate="no" suppressHydrationWarning>
       <head>
         {/* Lets the scroll animations hide content only when they can also show it. */}
         <Script id="js-class" strategy="beforeInteractive">{"document.documentElement.classList.add('js')"}</Script>

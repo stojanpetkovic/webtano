@@ -12,22 +12,19 @@ import {
   Check,
   Code2,
   Hand,
-  Lock,
   Maximize2,
   Minimize2,
   Monitor,
-  Phone,
   Search,
   Smartphone,
   Sparkles,
-  Star,
   X,
 } from 'lucide-react';
 import { useLang, useLocalePath, useT } from '@/components/i18n/LangProvider';
+import { DemoSite, type Block } from './DemoSite';
 import type { T } from '@/lib/i18n';
 
 type Stage = 'site' | 'code' | 'seo' | 'tracking' | 'done';
-type Block = 'hero' | 'trust' | 'services' | 'form' | 'callbar';
 type Step = { stage: Stage; block?: Block; phone?: boolean; title: string; text: string; wrong?: string; gets: string[]; tryIt?: string };
 
 const steps = (t: T): Step[] => [
@@ -224,7 +221,7 @@ export function DemoTour() {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [go, index]);
+  });
 
   useEffect(() => {
     if (!toast) return;
@@ -235,7 +232,7 @@ export function DemoTour() {
   const record = (what: string, source = t('This demo', 'Ovaj demo')) => setEvents((list) => [{ time: now(), what, source, you: true }, ...list]);
 
   const stageLabel: Record<Stage, string> = {
-    site: t('Demo site', 'Demo sajt'),
+    site: t('Demo site · made-up business', 'Demo sajt · izmišljena firma'),
     code: t('The code', 'Kod'),
     seo: t('Google and AI', 'Google i AI'),
     tracking: t('Your dashboard', 'Vaš panel'),
@@ -463,292 +460,6 @@ export function DemoTour() {
   );
 }
 
-/* ---------- The demo business's site ---------- */
-
-function DemoSite({
-  block,
-  phone,
-  bare,
-  path,
-  onPath,
-  onCall,
-  onSend,
-}: {
-  block?: Block;
-  phone: boolean;
-  /** No device frame or browser chrome: the visitor's own phone is the frame. */
-  bare: boolean;
-  path: string;
-  onPath: (path: string, label: string) => void;
-  onCall: () => void;
-  onSend: (name: string, service: string) => void;
-}) {
-  const t = useT();
-  const scroller = useRef<HTMLDivElement>(null);
-  const refs = useRef<Partial<Record<Block, HTMLElement | null>>>({});
-  const [name, setName] = useState('');
-  const [tel, setTel] = useState('');
-  const [service, setService] = useState(0);
-  const [sent, setSent] = useState(false);
-
-  const services = [
-    { slug: 'checkups', sr: 'pregledi', name: t('Check-up and cleaning', 'Pregled i čišćenje'), price: t('from $95', 'od 3.500 din') },
-    { slug: 'implants', sr: 'implantati', name: t('Dental implants', 'Implantati'), price: t('from $1,900', 'od 75.000 din') },
-    { slug: 'whitening', sr: 'izbeljivanje', name: t('Teeth whitening', 'Izbeljivanje zuba'), price: t('from $290', 'od 12.000 din') },
-    { slug: 'emergency', sr: 'hitni-slucajevi', name: t('Same-day emergencies', 'Hitni slučajevi'), price: t('same day', 'isti dan') },
-  ];
-
-  // Bring the block this step talks about into view inside the frame, without moving the page.
-  useEffect(() => {
-    const box = scroller.current;
-    const el = block && block !== 'callbar' ? refs.current[block] : null;
-    if (!box) return;
-    box.scrollTo({ top: el ? Math.max(0, el.offsetTop - 64) : 0, behavior: 'smooth' });
-  }, [block, phone]);
-
-  const focus = (b: Block) =>
-    block === b ? 'relative z-[1] rounded-2xl ring-2 ring-accent ring-offset-4 ring-offset-white' : block ? 'opacity-35 transition-opacity' : '';
-  const tag = (b: Block, label: string) =>
-    block === b && (
-      <span className="absolute -top-3 left-3 z-[2] rounded-full bg-accent px-2.5 py-0.5 font-mono text-[10px] font-semibold tracking-wide text-ink-950 uppercase shadow-glow">
-        {label}
-      </span>
-    );
-  const sr = useLang() === 'sr';
-  const addr = `lumendental.${sr ? 'rs' : 'com'}${path === '/' ? '' : path}`;
-
-  return (
-    <div
-      className={`mx-auto flex h-full flex-col overflow-hidden ${
-        bare
-          ? 'bg-white'
-          : phone
-            ? 'max-h-[780px] max-w-[380px] rounded-[2.4rem] bg-ink-950 p-2 shadow-float ring-1 ring-white/10'
-            : 'max-w-6xl rounded-2xl bg-white shadow-lift ring-1 ring-zinc-200'
-      }`}
-    >
-      <div className={`flex min-h-0 flex-1 flex-col ${phone && !bare ? 'overflow-hidden rounded-[2rem] bg-white' : ''}`}>
-        {/* Browser bar */}
-        <div className={`flex shrink-0 items-center gap-2 border-b border-zinc-200 bg-zinc-50 px-3 py-2 ${bare ? 'hidden' : ''}`}>
-          {!phone && (
-            <span className="flex gap-1.5" aria-hidden>
-              <span className="h-2 w-2 rounded-full bg-[#ff5f57]" />
-              <span className="h-2 w-2 rounded-full bg-[#febc2e]" />
-              <span className="h-2 w-2 rounded-full bg-[#28c840]" />
-            </span>
-          )}
-          <span className="flex min-w-0 flex-1 items-center justify-center gap-1 truncate rounded-md bg-white px-2.5 py-1 text-[11px] text-zinc-500 ring-1 ring-zinc-200">
-            <Lock className="h-3 w-3 shrink-0 text-emerald-600" aria-hidden />
-            <span className="truncate">{addr}</span>
-          </span>
-        </div>
-
-        <div className="relative min-h-0 flex-1">
-          <div ref={scroller} className="h-full overflow-y-auto overscroll-contain">
-            {/* Header */}
-            <div className="sticky top-0 z-[3] flex items-center justify-between border-b border-zinc-100 bg-white/95 px-4 py-3 backdrop-blur">
-              <span className="flex items-center gap-2 font-display text-[15px] text-ink-950">
-                <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-teal-600 text-[11px] font-bold text-white">L</span>
-                Lumen Dental
-              </span>
-              {!phone && (
-                <span className="flex items-center gap-4 text-xs text-zinc-500">
-                  <span>{t('Services', 'Usluge')}</span>
-                  <span>{t('Reviews', 'Utisci')}</span>
-                  <span>{t('Contact', 'Kontakt')}</span>
-                </span>
-              )}
-              <button type="button" onClick={onCall} className="inline-flex items-center gap-1.5 rounded-full bg-teal-600 px-3 py-1.5 text-xs font-semibold text-white">
-                <Phone className="h-3 w-3" aria-hidden />
-                {phone ? t('Call', 'Pozovite') : t('(555) 010-2040', '021 555 0100')}
-              </button>
-            </div>
-
-            <div className={`space-y-6 p-4 pb-24 ${phone ? '' : 'mx-auto max-w-4xl sm:p-6'}`}>
-              {/* Hero */}
-              <section
-                ref={(el) => {
-                  refs.current.hero = el;
-                }}
-                className={`relative ${focus('hero')}`}
-              >
-                {tag('hero', t('First screen', 'Prvi ekran'))}
-                <div className="rounded-2xl bg-gradient-to-br from-teal-50 to-white p-5 ring-1 ring-teal-100">
-                  <p className="inline-flex items-center gap-1 rounded-full bg-white px-2 py-0.5 text-[11px] font-medium text-teal-700 ring-1 ring-teal-100">
-                    <Star className="h-3 w-3 fill-amber-400 text-amber-400" aria-hidden /> 4.9 · {t('186 Google reviews', '186 Google ocena')}
-                  </p>
-                  <h3 className={`mt-3 font-display leading-tight text-ink-950 ${phone ? 'text-[22px]' : 'text-[28px]'}`}>
-                    {t('A gentle dentist in Springfield, open evenings and Saturdays', 'Stomatolog u Novom Sadu, radimo i uveče i subotom')}
-                  </h3>
-                  <p className="mt-2 text-[13px] leading-snug text-zinc-600">
-                    {t('Check-ups, implants and same-day emergencies. Upfront prices, no surprises.', 'Pregledi, implantati i hitni slučajevi isti dan. Cena unapred, bez iznenađenja.')}
-                  </p>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    <span className="rounded-full bg-teal-600 px-4 py-2 text-xs font-semibold text-white">{t('Book a visit', 'Zakažite pregled')}</span>
-                    <button
-                      type="button"
-                      onClick={onCall}
-                      className="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-xs font-semibold text-teal-700 ring-1 ring-teal-200 transition hover:ring-teal-400"
-                    >
-                      <Phone className="h-3 w-3" aria-hidden />
-                      {t('Call', 'Pozovite')}
-                    </button>
-                  </div>
-                </div>
-              </section>
-
-              {/* Trust */}
-              <section
-                ref={(el) => {
-                  refs.current.trust = el;
-                }}
-                className={`relative ${focus('trust')}`}
-              >
-                {tag('trust', t('Proof', 'Dokaz'))}
-                <div className={`grid gap-2 ${phone ? '' : 'grid-cols-3'}`}>
-                  {[
-                    [t('“They fitted me in the same day and explained every step.”', '„Primili su me isti dan i objasnili svaki korak.”'), 'Ana M.'],
-                    [t('“First dentist I am not nervous about.”', '„Prvi zubar kod koga nisam nervozan.”'), 'Marko P.'],
-                    [t('“Clear price before they started. Exactly what I paid.”', '„Cenu su rekli unapred. Platio sam tačno toliko.”'), 'Jelena S.'],
-                  ].map(([quote, who]) => (
-                    <figure key={who} className="rounded-xl bg-zinc-50 p-3 ring-1 ring-zinc-100">
-                      <p className="text-amber-400" aria-hidden>
-                        ★★★★★
-                      </p>
-                      <blockquote className="mt-1 text-[12px] leading-snug text-zinc-700">{quote}</blockquote>
-                      <figcaption className="mt-1.5 text-[11px] text-zinc-400">{who} · Google</figcaption>
-                    </figure>
-                  ))}
-                </div>
-                <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-zinc-500">
-                  <span>✓ {t('12 years in Springfield', '12 godina u Novom Sadu')}</span>
-                  <span>✓ {t('Price agreed before treatment', 'Cena dogovorena pre tretmana')}</span>
-                </p>
-              </section>
-
-              {/* Services */}
-              <section
-                ref={(el) => {
-                  refs.current.services = el;
-                }}
-                className={`relative ${focus('services')}`}
-              >
-                {tag('services', t('Service pages', 'Stranice usluga'))}
-                <h4 className="font-display text-[17px] text-ink-950">{t('What we do', 'Usluge')}</h4>
-                <div className="mt-2 grid grid-cols-2 gap-2">
-                  {services.map((s) => {
-                    const href = `/${sr ? 'usluge' : 'services'}/${sr ? s.sr : s.slug}`;
-                    const on = path === href;
-                    return (
-                      <button
-                        key={s.slug}
-                        type="button"
-                        onClick={() => onPath(href, s.name)}
-                        className={`rounded-xl p-3 text-left ring-1 transition ${on ? 'bg-teal-50 ring-teal-400' : 'bg-white ring-zinc-200 hover:ring-teal-300'}`}
-                      >
-                        <span className="block text-[13px] font-semibold text-ink-950">{s.name}</span>
-                        <span className="mt-0.5 block text-[11px] text-zinc-500">{s.price}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </section>
-
-              {/* Form */}
-              <section
-                ref={(el) => {
-                  refs.current.form = el;
-                }}
-                className={`relative ${focus('form')}`}
-              >
-                {tag('form', t('Enquiry form', 'Forma za upit'))}
-                <div className="rounded-2xl bg-ink-950 p-4 text-white">
-                  <h4 className="font-display text-[17px]">{t('Book a visit', 'Zakažite pregled')}</h4>
-                  {sent ? (
-                    <p className="mt-3 flex items-center gap-2 rounded-xl bg-white/10 p-3 text-[13px]">
-                      <Check className="h-4 w-4 text-emerald-400" aria-hidden />
-                      {t('Thanks! We will call you within the hour.', 'Hvala! Zovemo vas u roku od sat vremena.')}
-                    </p>
-                  ) : (
-                    <form
-                      className="mt-3 space-y-2"
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        setSent(true);
-                        onSend(name.trim(), services[service].name);
-                      }}
-                    >
-                      <div className={`grid gap-2 ${phone ? '' : 'grid-cols-2'}`}>
-                        <input
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          placeholder={t('Your name', 'Vaše ime')}
-                          aria-label={t('Your name', 'Vaše ime')}
-                          className="h-10 rounded-lg bg-white/10 px-3 text-[13px] text-white placeholder:text-white/40 ring-1 ring-white/15 outline-none focus:ring-accent"
-                        />
-                        <input
-                          value={tel}
-                          onChange={(e) => setTel(e.target.value)}
-                          placeholder={t('Phone', 'Telefon')}
-                          aria-label={t('Phone', 'Telefon')}
-                          inputMode="tel"
-                          className="h-10 rounded-lg bg-white/10 px-3 text-[13px] text-white placeholder:text-white/40 ring-1 ring-white/15 outline-none focus:ring-accent"
-                        />
-                      </div>
-                      <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label={t('What do you need?', 'Šta vam treba?')}>
-                        {services.map((s, i) => (
-                          <button
-                            key={s.slug}
-                            type="button"
-                            role="radio"
-                            aria-checked={service === i}
-                            onClick={() => setService(i)}
-                            className={`rounded-full px-2.5 py-1 text-[11px] font-medium ring-1 transition ${service === i ? 'bg-accent text-ink-950 ring-accent' : 'text-white/70 ring-white/20'}`}
-                          >
-                            {s.name}
-                          </button>
-                        ))}
-                      </div>
-                      <button type="submit" className="h-10 w-full rounded-lg bg-accent text-[13px] font-semibold text-ink-950">
-                        {t('Send', 'Pošaljite')}
-                      </button>
-                    </form>
-                  )}
-                </div>
-              </section>
-
-              {/* Footer */}
-              <div className={`rounded-xl bg-zinc-50 p-3 text-[11px] leading-relaxed text-zinc-500 ${block ? 'opacity-35' : ''}`}>
-                Lumen Dental · {t('14 Oak Street, Springfield', 'Bulevar oslobođenja 14, Novi Sad')}
-                <br />
-                {t('Mon–Fri 8–20 · Sat 9–14', 'Pon–pet 8–20 · Sub 9–14')}
-              </div>
-            </div>
-          </div>
-
-          {/* The call bar phones keep on screen. */}
-          {phone && (
-            <div className={`absolute inset-x-2 bottom-2 ${block === 'callbar' ? 'rounded-2xl ring-2 ring-accent ring-offset-2' : ''}`}>
-              {block === 'callbar' && (
-                <span className="absolute -top-7 left-1/2 -translate-x-1/2 rounded-full bg-accent px-2.5 py-0.5 font-mono text-[10px] font-semibold whitespace-nowrap text-ink-950 uppercase shadow-glow">
-                  {t('Always on screen', 'Uvek na ekranu')}
-                </span>
-              )}
-              <div className="grid grid-cols-2 gap-1.5 rounded-2xl bg-white/95 p-1.5 shadow-lift ring-1 ring-zinc-200 backdrop-blur">
-                <button type="button" onClick={onCall} className="inline-flex h-10 items-center justify-center gap-1.5 rounded-xl bg-teal-600 text-[13px] font-semibold text-white">
-                  <Phone className="h-3.5 w-3.5" aria-hidden />
-                  {t('Call', 'Pozovite')}
-                </button>
-                <span className="inline-flex h-10 items-center justify-center rounded-xl bg-zinc-100 text-[13px] font-semibold text-ink-950">{t('Book', 'Zakažite')}</span>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /* ---------- Under the hood ---------- */
 
 function Panel({ title, note, children }: { title: string; note?: string; children: React.ReactNode }) {
@@ -881,20 +592,20 @@ function SeoStage() {
         <Panel title={t('Google search', 'Google pretraga')} note={t('Illustration', 'Ilustracija')}>
           <p className="flex items-center gap-2 rounded-full bg-zinc-50 px-4 py-2 text-sm text-ink-950 ring-1 ring-zinc-200">
             <Search className="h-4 w-4 text-zinc-400" aria-hidden />
-            {t('dentist open saturday springfield', 'zubar subotom novi sad')}
+            {t('ac repair same day springfield', 'servis klima isti dan novi sad')}
           </p>
           <div className="mt-4 rounded-xl p-1">
-            <p className="text-[12px] text-zinc-500">lumendental.{sr ? 'rs' : 'com'} › {t('services', 'usluge')}</p>
+            <p className="text-[12px] text-zinc-500">{sr ? 'summitklima.rs › usluge' : 'summitheatingair.com › services'}</p>
             <p className="mt-0.5 text-[17px] leading-snug text-[#1a0dab]">
-              {t('Dentist in Springfield, Open Saturdays | Lumen Dental', 'Stomatolog Novi Sad, radimo subotom | Lumen Dental')}
+              {t('AC Repair in Springfield, Same Day | Summit Heating & Air', 'Servis klima Novi Sad, isti dan | Summit klima i grejanje')}
             </p>
             <p className="mt-1 text-[12px] text-zinc-500">
-              <span className="text-amber-500">★★★★★</span> {t('Rating: 4.9 · 186 reviews', 'Ocena: 4,9 · 186 ocena')}
+              <span className="text-amber-500">★★★★★</span> {t('Rating: 4.9 · 312 reviews', 'Ocena: 4,9 · 312 ocena')}
             </p>
             <p className="mt-1 text-[13px] leading-snug text-zinc-600">
               {t(
-                'Check-ups, implants and same-day emergencies. Upfront prices, evening and Saturday appointments. Call or book online.',
-                'Pregledi, implantati i hitni slučajevi isti dan. Cena unapred, termini uveče i subotom. Pozovite ili zakažite online.',
+                'Licensed technicians, same-day repairs and a fixed price before we start. 2-year guarantee. Call or book online.',
+                'Licencirani serviseri, popravka isti dan i fiksna cena pre početka. Garancija 2 godine. Pozovite ili zakažite online.',
               )}
             </p>
           </div>
@@ -911,13 +622,13 @@ function SeoStage() {
         <Panel title={t('Structured data, hidden in the page', 'Strukturirani podaci, skriveni u stranici')} note={t('Code', 'Kod')}>
           <pre className="overflow-x-auto rounded-xl bg-ink-975 p-4 font-mono text-[12px] leading-relaxed text-white/80">
             {`{
-  "@type": "Dentist",
-  "name": "Lumen Dental",
+  "@type": "HVACBusiness",
+  "name": "${sr ? 'Summit klima i grejanje' : 'Summit Heating & Air'}",
   "telephone": "${sr ? '+381 21 555 0100' : '+1 555 010 2040'}",
   "address": "${sr ? 'Bulevar oslobođenja 14, Novi Sad' : '14 Oak Street, Springfield'}",
-  "openingHours": ["Mo-Fr 08:00-20:00", "Sa 09:00-14:00"],
-  "areaServed": ${sr ? '["Novi Sad", "Petrovaradin", "Veternik"]' : '["Springfield", "Riverside", "Oak Park"]'},
-  "aggregateRating": { "ratingValue": 4.9, "reviewCount": 186 }
+  "openingHours": ["Mo-Fr 07:00-19:00", "Sa 08:00-14:00"],
+  "areaServed": ${sr ? '["Novi Sad", "Petrovaradin", "Veternik", "Futog"]' : '["Springfield", "Riverside", "Oak Park", "Fairview"]'},
+  "aggregateRating": { "ratingValue": 4.9, "reviewCount": 312 }
 }`}
           </pre>
           <p className="mt-3 text-[12px] leading-snug text-zinc-500">
@@ -932,7 +643,7 @@ function SeoStage() {
       {view === 'ai' && (
         <Panel title={t('An AI assistant', 'AI asistent')} note={t('Illustration', 'Ilustracija')}>
           <p className="ml-auto w-fit max-w-[85%] rounded-2xl rounded-br-md bg-zinc-100 px-4 py-2 text-[13px] text-ink-950">
-            {t('Which dentist in Springfield is open on Saturday?', 'Koji zubar u Novom Sadu radi subotom?')}
+            {t('Who can fix my AC today in Springfield?', 'Ko može danas da popravi klimu u Novom Sadu?')}
           </p>
           <div className="mt-3 flex gap-2.5">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink-950 text-accent">
@@ -940,8 +651,8 @@ function SeoStage() {
             </span>
             <p className="rounded-2xl rounded-tl-md bg-azure-50 px-4 py-2 text-[13px] leading-snug text-ink-950 ring-1 ring-azure-100">
               {t(
-                'Lumen Dental on Oak Street is open Saturdays 9–14, has a 4.9 rating from 186 reviews and takes same-day emergencies.',
-                'Lumen Dental na Bulevaru oslobođenja radi subotom od 9 do 14, ima ocenu 4,9 iz 186 recenzija i prima hitne slučajeve isti dan.',
+                'Summit Heating & Air offers same-day AC repair in Springfield, gives a fixed price before starting and has a 4.9 rating from 312 reviews.',
+                'Summit klima i grejanje radi servis klima isti dan u Novom Sadu, daje fiksnu cenu pre početka i ima ocenu 4,9 iz 312 recenzija.',
               )}
             </p>
           </div>
@@ -961,9 +672,9 @@ function TrackingStage({ events }: { events: Event[] }) {
   const t = useT();
   const sample: Event[] = [
     { time: '16:42', what: t('Call tapped', 'Klik na poziv'), source: 'Google Maps' },
-    { time: '14:10', what: `${t('Enquiry', 'Upit')}: Milan · ${t('Dental implants', 'Implantati')}`, source: 'Google Ads' },
+    { time: '14:10', what: `${t('Enquiry', 'Upit')}: Milan · ${t('New install', 'Ugradnja')}`, source: 'Google Ads' },
     { time: '11:25', what: t('Call tapped', 'Klik na poziv'), source: t('Google search', 'Google pretraga') },
-    { time: '09:03', what: `${t('Enquiry', 'Upit')}: Ivana · ${t('Check-up and cleaning', 'Pregled i čišćenje')}`, source: 'Facebook' },
+    { time: '09:03', what: `${t('Enquiry', 'Upit')}: Ivana · ${t('AC not cooling', 'Klima ne hladi')}`, source: 'Facebook' },
   ];
   const list = [...events, ...sample];
   const bySource = [
