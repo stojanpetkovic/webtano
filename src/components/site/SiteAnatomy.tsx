@@ -206,6 +206,10 @@ function FirstScreenCompare() {
 
   return (
     <div className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-zinc-50 to-white p-8 ring-1 ring-zinc-200/80 max-md:p-4">
+      <div
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgb(10_14_30/0.07)_1px,transparent_1px)] [background-size:18px_18px] [mask-image:radial-gradient(ellipse_60%_70%_at_50%_50%,#000,transparent)]"
+        aria-hidden
+      />
       <div className="pointer-events-none absolute top-1/2 left-[30%] h-80 w-80 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-400/15 blur-3xl max-lg:left-1/4" aria-hidden />
       <div className="pointer-events-none absolute top-1/2 left-[70%] h-80 w-80 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/20 blur-3xl max-lg:left-3/4" aria-hidden />
 
@@ -218,7 +222,7 @@ function FirstScreenCompare() {
           {cards(bad, false)}
         </div>
 
-        <div className="flex items-start justify-center gap-10 pt-6 max-sm:gap-3 max-sm:pt-8">
+        <div className="relative flex items-start justify-center gap-6 pt-6 max-sm:gap-3 max-sm:pt-8">
           {/* Typical: a photo still loading, a vague welcome, no number, a cookie pop-up. */}
           <div className="relative -rotate-3 text-center max-sm:-rotate-2">
             <span className="absolute -top-7 -left-4 z-20 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-[11px] font-semibold whitespace-nowrap text-red-600 shadow-lift ring-1 ring-red-100 max-sm:-top-8 max-sm:-left-1 max-sm:px-2 max-sm:text-[9px]">
@@ -239,7 +243,10 @@ function FirstScreenCompare() {
                 <Pin n={1} className="top-1.5 left-1/2 -translate-x-1/2" />
               </div>
               <div className="relative mx-2 flex h-40 items-center justify-center rounded-xl bg-gradient-to-br from-zinc-200 to-zinc-300 max-sm:h-24">
-                <span className="h-8 w-8 animate-spin rounded-full border-[3px] border-zinc-400 border-t-transparent max-sm:h-6 max-sm:w-6" />
+                <span className="flex flex-col items-center gap-2">
+                  <span className="h-8 w-8 animate-spin rounded-full border-[3px] border-zinc-400 border-t-transparent max-sm:h-6 max-sm:w-6" />
+                  <span className="text-[10px] font-medium text-zinc-500 max-sm:text-[8px]">{t('Loading…', 'Učitava se…')}</span>
+                </span>
                 <Pin n={2} className="top-2 right-2" />
               </div>
               <div className="relative px-3 pt-3">
@@ -260,7 +267,17 @@ function FirstScreenCompare() {
                 <Pin n={4} className="-top-2 right-3" />
               </div>
             </PhoneFrame>
+            <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 shadow-soft ring-1 ring-red-100 max-sm:mt-3 max-sm:gap-1 max-sm:px-2">
+              <svg viewBox="0 0 40 16" className="h-4 w-10 max-sm:h-3 max-sm:w-7" aria-hidden>
+                <polyline points="1,3 10,6 18,5 27,11 39,14" fill="none" stroke="#ef4444" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <span className="text-[12px] font-semibold text-red-600 max-sm:text-[9px]">{t('Visitor leaves', 'Posetilac odlazi')}</span>
+            </div>
           </div>
+
+          <span className="mt-48 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-ink-950 font-mono text-xs font-bold text-white shadow-lift ring-4 ring-white max-sm:absolute max-sm:top-[11.5rem] max-sm:left-1/2 max-sm:z-30 max-sm:mt-0 max-sm:h-8 max-sm:w-8 max-sm:-translate-x-1/2 max-sm:text-[10px]">
+            VS
+          </span>
 
           {/* Ours: a call button in the header, rating, clear offer, call and book, a short form, a call bar. */}
           <div className="relative rotate-3 text-center max-sm:rotate-2">
@@ -294,7 +311,8 @@ function FirstScreenCompare() {
                   <Pin n={2} good className="-top-3 -left-2" />
                 </p>
                 <span className="relative mt-3 flex gap-1.5">
-                  <span className="flex h-7 flex-1 items-center justify-center gap-1 rounded-lg bg-accent text-[10px] font-bold text-ink-950 max-sm:h-5 max-sm:text-[7px]">
+                  <span className="relative flex h-7 flex-1 items-center justify-center gap-1 rounded-lg bg-accent text-[10px] font-bold text-ink-950 max-sm:h-5 max-sm:text-[7px]">
+                    <span className="ring-wave pointer-events-none absolute -inset-1 rounded-xl ring-2 ring-accent" aria-hidden />
                     <Phone className="h-2.5 w-2.5" aria-hidden />
                     {t('Call now', 'Pozovite')}
                   </span>
@@ -318,6 +336,12 @@ function FirstScreenCompare() {
                 <span className="h-6 rounded-lg bg-ink-950 max-sm:h-4" />
               </div>
             </PhoneFrame>
+            <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 shadow-soft ring-1 ring-emerald-100 max-sm:mt-3 max-sm:gap-1 max-sm:px-2">
+              <svg viewBox="0 0 40 16" className="h-4 w-10 max-sm:h-3 max-sm:w-7" aria-hidden>
+                <polyline points="1,14 11,11 19,12 28,6 39,2" fill="none" stroke="#10b981" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <span className="text-[12px] font-semibold text-emerald-600 max-sm:text-[9px]">{t('Visitor calls', 'Posetilac zove')}</span>
+            </div>
           </div>
         </div>
 
