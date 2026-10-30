@@ -120,8 +120,9 @@ export function SiteAnatomy() {
   const answered = Object.keys(answers).length;
   const leaks = Object.values(answers).filter((a) => a !== 'yes').length;
 
+  // translate="no": a browser translating the page rewrites text React still updates, which crashes it.
   return (
-    <div>
+    <div translate="no">
       <div className="overflow-hidden rounded-3xl bg-white ring-1 ring-zinc-200/80">
         {/* Column heads */}
         <div className="grid grid-cols-[minmax(0,0.7fr)_minmax(0,1fr)_minmax(0,1fr)] border-b border-zinc-200 max-md:hidden">

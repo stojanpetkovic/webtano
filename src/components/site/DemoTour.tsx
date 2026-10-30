@@ -210,8 +210,9 @@ export function DemoTour() {
     done: t('Summary', 'Pregled'),
   };
 
+  // translate="no": a browser translating the page rewrites text React still updates, which crashes it.
   return (
-    <div ref={tourRef} className="scroll-mt-20">
+    <div ref={tourRef} translate="no" className="scroll-mt-20">
       {/* Progress */}
       <div className="mb-6 flex items-center gap-3 max-md:mb-4">
         <span className="font-mono text-xs text-zinc-500">
