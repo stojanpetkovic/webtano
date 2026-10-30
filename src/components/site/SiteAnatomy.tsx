@@ -2,7 +2,26 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { ArrowRight, BarChart3, Check, Code2, LayoutTemplate, PlayCircle, Search, X } from 'lucide-react';
+import {
+  ArrowRight,
+  Ban,
+  BarChart3,
+  BellRing,
+  Check,
+  ClipboardList,
+  Code2,
+  Hourglass,
+  LayoutTemplate,
+  MapPin,
+  MessageSquareOff,
+  Phone,
+  PhoneOff,
+  PlayCircle,
+  Search,
+  Star,
+  Undo2,
+  X,
+} from 'lucide-react';
 import { useLocalePath, useT } from '@/components/i18n/LangProvider';
 import type { T } from '@/lib/i18n';
 
@@ -108,24 +127,38 @@ const questions = (t: T) => [
 
 type Answer = 'yes' | 'no' | 'unsure';
 
-/** A phone outline around a sketch of a homepage's first screen. */
+/** A phone with a status bar and camera island around a sketch of a first screen. */
 function PhoneFrame({ children, good }: { children: React.ReactNode; good?: boolean }) {
   return (
     <div
-      className={`relative w-[200px] shrink-0 rounded-[2rem] p-1.5 max-sm:w-[150px] max-sm:rounded-[1.5rem] max-sm:p-1 ${
-        good ? 'bg-ink-950 shadow-[0_30px_60px_-25px_rgb(1_175_233/0.55)] ring-1 ring-accent/40' : 'bg-zinc-300'
+      className={`relative w-[220px] shrink-0 rounded-[2.4rem] p-[7px] max-sm:w-[150px] max-sm:rounded-[1.7rem] max-sm:p-1 ${
+        good
+          ? 'bg-gradient-to-b from-ink-800 to-ink-950 shadow-[0_40px_80px_-30px_rgb(1_175_233/0.6)] ring-1 ring-white/10'
+          : 'bg-gradient-to-b from-zinc-300 to-zinc-400 shadow-[0_30px_60px_-30px_rgb(10_14_30/0.35)]'
       }`}
     >
-      <div className="relative h-[400px] overflow-hidden rounded-[1.6rem] bg-white max-sm:h-[300px] max-sm:rounded-[1.2rem]">{children}</div>
+      <div className="relative h-[440px] overflow-hidden rounded-[2rem] bg-white max-sm:h-[310px] max-sm:rounded-[1.4rem]">
+        <div className="flex items-center justify-between px-5 pt-2 pb-1 text-[9px] font-semibold text-ink-950 max-sm:px-3 max-sm:text-[7px]">
+          <span>9:41</span>
+          <span className="absolute top-1.5 left-1/2 h-4 w-16 -translate-x-1/2 rounded-full bg-ink-950 max-sm:h-3 max-sm:w-11" aria-hidden />
+          <span className="flex items-center gap-0.5" aria-hidden>
+            <span className="h-1.5 w-0.5 rounded-sm bg-ink-950" />
+            <span className="h-2 w-0.5 rounded-sm bg-ink-950" />
+            <span className="h-2.5 w-0.5 rounded-sm bg-ink-950" />
+            <span className="ml-1 h-2 w-4 rounded-[3px] ring-1 ring-ink-950" />
+          </span>
+        </div>
+        {children}
+      </div>
     </div>
   );
 }
 
-/** Numbered marker on a phone sketch, matching a line in the list beside it. */
+/** Numbered marker on a phone sketch, matching a card beside it. */
 function Pin({ n, good, className }: { n: number; good?: boolean; className: string }) {
   return (
     <span
-      className={`absolute z-10 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold text-white ring-2 ring-white ${good ? 'bg-emerald-500' : 'bg-red-500'} ${className}`}
+      className={`absolute z-10 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold text-white shadow-md ring-2 ring-white max-sm:h-4 max-sm:w-4 max-sm:text-[8px] ${good ? 'bg-emerald-500' : 'bg-red-500'} ${className}`}
       aria-hidden
     >
       {n}
@@ -135,127 +168,174 @@ function Pin({ n, good, className }: { n: number; good?: boolean; className: str
 
 /**
  * The first screen of a typical small-business site next to one of ours, as
- * two phone sketches with numbered pins, so the difference is seen, not read.
+ * two phones with numbered pins and what each one leads to, so the
+ * difference is seen rather than read.
  */
 function FirstScreenCompare() {
   const t = useT();
   const bad = [
-    t('No phone number in sight', 'Broj telefona se ne vidi'),
-    t('A heavy photo still loading', 'Teška slika se još učitava'),
-    t('“Welcome”, but no offer or town', '„Dobro došli”, bez ponude i grada'),
-    t('A pop-up covering the page', 'Prozor preko pola ekrana'),
-  ];
+    [PhoneOff, t('No phone number in sight', 'Broj telefona se ne vidi')],
+    [Hourglass, t('A heavy photo still loading', 'Teška slika se još učitava')],
+    [MessageSquareOff, t('“Welcome”, no offer, no town', '„Dobro došli”, bez ponude i grada')],
+    [Ban, t('A pop-up covering the page', 'Prozor preko pola ekrana')],
+  ] as const;
   const good = [
-    t('Rating visible at once', 'Ocena odmah vidljiva'),
-    t('What you do and where', 'Šta radite i gde'),
-    t('One tap to call', 'Poziv jednim dodirom'),
-    t('A three-field form', 'Forma od tri polja'),
-  ];
-  const list = (items: string[], ok: boolean) => (
-    <ol className="space-y-2.5">
-      {items.map((item, i) => (
-        <li key={item} className="flex items-center gap-2.5 text-[15px] font-medium text-ink-950 max-sm:text-[13px]">
-          <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white ${ok ? 'bg-emerald-500' : 'bg-red-500'}`}>{i + 1}</span>
-          {item}
+    [Star, t('Rating visible at once', 'Ocena odmah vidljiva')],
+    [MapPin, t('What you do and where', 'Šta radite i gde')],
+    [Phone, t('One tap to call', 'Poziv jednim dodirom')],
+    [ClipboardList, t('A three-field form', 'Forma od tri polja')],
+  ] as const;
+  const cards = (items: typeof bad | typeof good, ok: boolean) => (
+    <ol className="space-y-2.5 max-sm:space-y-1.5">
+      {items.map(([Icon, label], i) => (
+        <li
+          key={label}
+          className={`flex items-center gap-3 rounded-2xl bg-white p-3 ring-1 max-sm:gap-2 max-sm:rounded-xl max-sm:p-2 ${ok ? 'ring-emerald-100' : 'ring-red-100'}`}
+        >
+          <span className={`relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl max-sm:h-7 max-sm:w-7 ${ok ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'}`}>
+            <Icon className="h-[18px] w-[18px] max-sm:h-3.5 max-sm:w-3.5" aria-hidden />
+            <span className={`absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold text-white ring-2 ring-white ${ok ? 'bg-emerald-500' : 'bg-red-500'}`}>
+              {i + 1}
+            </span>
+          </span>
+          <span className="text-[14px] leading-snug font-medium text-ink-950 max-sm:text-[12px]">{label}</span>
         </li>
       ))}
     </ol>
   );
+
   return (
-    <div className="grid items-center gap-8 rounded-3xl bg-white p-8 ring-1 ring-zinc-200/80 max-md:gap-5 max-md:p-4 lg:grid-cols-[1fr_auto_1fr]">
-      <div className="max-lg:hidden">
-        <p className="mb-4 font-mono text-[11px] tracking-[0.14em] text-red-500 uppercase">{t('Typical site', 'Tipičan sajt')}</p>
-        {list(bad, false)}
-      </div>
+    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-zinc-50 to-white p-8 ring-1 ring-zinc-200/80 max-md:p-4">
+      <div className="pointer-events-none absolute top-1/2 left-[30%] h-80 w-80 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-400/15 blur-3xl max-lg:left-1/4" aria-hidden />
+      <div className="pointer-events-none absolute top-1/2 left-[70%] h-80 w-80 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/20 blur-3xl max-lg:left-3/4" aria-hidden />
 
-      <div className="flex items-start justify-center gap-6 max-sm:gap-3">
-        <div className="text-center">
-          <PhoneFrame>
-            {/* Typical: logo and menu, a photo still loading, a vague welcome, a cookie pop-up. */}
-            <div className="flex items-center justify-between px-3 py-2.5">
-              <span className="h-2.5 w-14 rounded bg-zinc-300" />
-              <span className="space-y-0.5">
-                <span className="block h-0.5 w-4 bg-zinc-400" />
-                <span className="block h-0.5 w-4 bg-zinc-400" />
-                <span className="block h-0.5 w-4 bg-zinc-400" />
-              </span>
-            </div>
-            <div className="relative mx-2 flex h-36 items-center justify-center rounded-lg bg-gradient-to-br from-zinc-200 to-zinc-300 max-sm:h-28">
-              <span className="h-7 w-7 animate-spin rounded-full border-2 border-zinc-400 border-t-transparent" />
-              <Pin n={2} className="top-2 right-2" />
-            </div>
-            <div className="relative px-3 pt-3">
-              <p className="text-[13px] font-semibold text-zinc-500 max-sm:text-[11px]">{t('Welcome to our website!', 'Dobro došli na naš sajt!')}</p>
-              <span className="mt-2 block h-1.5 w-full rounded bg-zinc-200" />
-              <span className="mt-1.5 block h-1.5 w-5/6 rounded bg-zinc-200" />
-              <span className="mt-1.5 block h-1.5 w-4/6 rounded bg-zinc-200" />
-              <Pin n={3} className="-top-1 right-2" />
-            </div>
-            <Pin n={1} className="top-1.5 left-1/2 -translate-x-1/2" />
-            <div className="absolute inset-x-0 bottom-0 rounded-t-2xl bg-zinc-800 p-3 text-white">
-              <span className="block h-1.5 w-full rounded bg-white/30" />
-              <span className="mt-1.5 block h-1.5 w-4/5 rounded bg-white/30" />
-              <span className="mt-2.5 flex gap-1.5">
-                <span className="h-5 flex-1 rounded bg-white/80" />
-                <span className="h-5 flex-1 rounded bg-white/20" />
-              </span>
-              <Pin n={4} className="-top-2 right-3" />
-            </div>
-          </PhoneFrame>
-          <p className="mt-3 text-sm font-semibold text-zinc-500 max-sm:text-xs">{t('Typical site', 'Tipičan sajt')}</p>
+      <div className="relative grid items-center gap-8 max-md:gap-5 lg:grid-cols-[1fr_auto_1fr]">
+        <div className="max-lg:hidden">
+          <p className="mb-4 inline-flex items-center gap-2 rounded-full bg-red-50 px-3 py-1 font-mono text-[11px] tracking-[0.14em] text-red-600 uppercase ring-1 ring-red-100">
+            <X className="h-3 w-3" aria-hidden />
+            {t('Typical site', 'Tipičan sajt')}
+          </p>
+          {cards(bad, false)}
         </div>
 
-        <div className="text-center">
-          <PhoneFrame good>
-            {/* Ours: header with a call button, rating, clear offer, call and book, a short form. */}
-            <div className="flex items-center justify-between px-3 py-2.5">
-              <span className="flex items-center gap-1">
-                <span className="h-4 w-4 rounded bg-ink-950" />
-                <span className="h-2 w-10 rounded bg-ink-950/80" />
+        <div className="flex items-start justify-center gap-10 pt-6 max-sm:gap-3 max-sm:pt-8">
+          {/* Typical: a photo still loading, a vague welcome, no number, a cookie pop-up. */}
+          <div className="relative -rotate-3 text-center max-sm:-rotate-2">
+            <span className="absolute -top-7 -left-4 z-20 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-[11px] font-semibold whitespace-nowrap text-red-600 shadow-lift ring-1 ring-red-100 max-sm:-top-8 max-sm:-left-1 max-sm:px-2 max-sm:text-[9px]">
+              <Undo2 className="h-3.5 w-3.5 max-sm:h-3 max-sm:w-3" aria-hidden />
+              {t('Back to Google', 'Nazad na Google')}
+            </span>
+            <PhoneFrame>
+              <div className="h-0.5 w-full bg-zinc-100">
+                <div className="h-full w-2/5 bg-red-400" />
+              </div>
+              <div className="relative flex items-center justify-between px-3 py-2.5">
+                <span className="h-2.5 w-14 rounded bg-zinc-300" />
+                <span className="space-y-0.5">
+                  <span className="block h-0.5 w-4 bg-zinc-400" />
+                  <span className="block h-0.5 w-4 bg-zinc-400" />
+                  <span className="block h-0.5 w-4 bg-zinc-400" />
+                </span>
+                <Pin n={1} className="top-1.5 left-1/2 -translate-x-1/2" />
+              </div>
+              <div className="relative mx-2 flex h-40 items-center justify-center rounded-xl bg-gradient-to-br from-zinc-200 to-zinc-300 max-sm:h-24">
+                <span className="h-8 w-8 animate-spin rounded-full border-[3px] border-zinc-400 border-t-transparent max-sm:h-6 max-sm:w-6" />
+                <Pin n={2} className="top-2 right-2" />
+              </div>
+              <div className="relative px-3 pt-3">
+                <p className="text-[14px] font-semibold text-zinc-500 max-sm:text-[10px]">{t('Welcome to our website!', 'Dobro došli na naš sajt!')}</p>
+                <span className="mt-2 block h-1.5 w-full rounded bg-zinc-200" />
+                <span className="mt-1.5 block h-1.5 w-5/6 rounded bg-zinc-200" />
+                <span className="mt-1.5 block h-1.5 w-4/6 rounded bg-zinc-200" />
+                <Pin n={3} className="-top-1 right-2" />
+              </div>
+              <div className="absolute inset-x-0 bottom-0 rounded-t-2xl bg-zinc-800 p-3.5 text-white max-sm:p-2">
+                <p className="text-[10px] font-semibold text-white/80 max-sm:text-[7px]">{t('We use cookies', 'Koristimo kolačiće')}</p>
+                <span className="mt-1.5 block h-1.5 w-full rounded bg-white/25" />
+                <span className="mt-1.5 block h-1.5 w-4/5 rounded bg-white/25" />
+                <span className="mt-2.5 flex gap-1.5">
+                  <span className="h-6 flex-1 rounded-md bg-white/80 max-sm:h-4" />
+                  <span className="h-6 flex-1 rounded-md bg-white/20 max-sm:h-4" />
+                </span>
+                <Pin n={4} className="-top-2 right-3" />
+              </div>
+            </PhoneFrame>
+          </div>
+
+          {/* Ours: a call button in the header, rating, clear offer, call and book, a short form, a call bar. */}
+          <div className="relative rotate-3 text-center max-sm:rotate-2">
+            <span className="absolute -top-8 -right-8 z-20 flex animate-float items-center gap-2 rounded-2xl bg-white/95 py-2 pr-3 pl-2 text-left shadow-float ring-1 ring-zinc-200 backdrop-blur max-sm:-top-9 max-sm:-right-1 max-sm:gap-1 max-sm:rounded-xl max-sm:py-1 max-sm:pr-2 max-sm:pl-1">
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-ink-950 text-accent max-sm:h-5 max-sm:w-5">
+                <BellRing className="h-3.5 w-3.5 max-sm:h-3 max-sm:w-3" aria-hidden />
               </span>
-              <span className="rounded-md bg-accent px-1.5 py-0.5 text-[8px] font-bold text-ink-950">{t('CALL', 'POZIV')}</span>
-            </div>
-            <div className="relative bg-ink-950 px-3 pt-3 pb-4 text-white">
-              <span className="relative inline-flex items-center gap-1 rounded-full bg-white/10 px-1.5 py-0.5 text-[8px]">
-                <span className="text-amber-400">★★★★★</span> 4.9
-                <Pin n={1} good className="-top-2 -right-6" />
+              <span>
+                <span className="block text-[11px] font-semibold whitespace-nowrap text-ink-950 max-sm:text-[9px]">{t('New enquiry: Ana', 'Novi upit: Ana')}</span>
+                <span className="block text-[10px] whitespace-nowrap text-zinc-500 max-sm:hidden">{t('AC not cooling · Google Maps', 'Klima ne hladi · Google Mape')}</span>
               </span>
-              <p className="relative mt-2 text-[14px] leading-tight font-semibold max-sm:text-[11px]">
-                {t('Same-day AC repair in Springfield', 'Servis klima isti dan u Novom Sadu')}
-                <Pin n={2} good className="-top-3 -left-2" />
-              </p>
-              <span className="relative mt-3 flex gap-1.5">
-                <span className="flex h-6 flex-1 items-center justify-center rounded-md bg-accent text-[9px] font-bold text-ink-950">{t('Call now', 'Pozovite')}</span>
-                <span className="h-6 flex-1 rounded-md bg-white/15" />
-                <Pin n={3} good className="-top-2 -left-2" />
-              </span>
-            </div>
-            <div className="relative space-y-1.5 px-3 pt-3">
-              <span className="block h-5 rounded-md bg-zinc-100 ring-1 ring-zinc-200" />
-              <span className="block h-5 rounded-md bg-zinc-100 ring-1 ring-zinc-200" />
-              <span className="flex gap-1">
-                <span className="h-4 flex-1 rounded bg-ink-950" />
-                <span className="h-4 flex-1 rounded ring-1 ring-zinc-200" />
-              </span>
-              <span className="block h-6 rounded-md bg-accent" />
-              <Pin n={4} good className="-top-1 right-1" />
-            </div>
-          </PhoneFrame>
-          <p className="mt-3 text-sm font-semibold text-ink-950 max-sm:text-xs">{t('A WebTano site', 'WebTano sajt')}</p>
+            </span>
+            <PhoneFrame good>
+              <div className="flex items-center justify-between px-3 py-2">
+                <span className="flex items-center gap-1">
+                  <span className="h-4 w-4 rounded-md bg-ink-950" />
+                  <span className="h-2 w-12 rounded bg-ink-950/80 max-sm:w-8" />
+                </span>
+                <span className="inline-flex items-center gap-0.5 rounded-md bg-accent px-1.5 py-0.5 text-[8px] font-bold text-ink-950 max-sm:text-[6px]">
+                  <Phone className="h-2 w-2" aria-hidden />
+                  {t('CALL', 'POZIV')}
+                </span>
+              </div>
+              <div className="relative bg-gradient-to-b from-ink-900 to-ink-950 px-3 pt-3.5 pb-4 text-white">
+                <span className="relative inline-flex items-center gap-1 rounded-full bg-white/10 px-1.5 py-0.5 text-[9px] max-sm:text-[7px]">
+                  <span className="text-amber-400">★★★★★</span> 4.9
+                  <Pin n={1} good className="-top-2 -right-6" />
+                </span>
+                <p className="relative mt-2 text-[16px] leading-tight font-semibold max-sm:text-[11px]">
+                  {t('Same-day AC repair in', 'Servis klima isti dan u')} <span className="text-accent">{t('Springfield', 'Novom Sadu')}</span>
+                  <Pin n={2} good className="-top-3 -left-2" />
+                </p>
+                <span className="relative mt-3 flex gap-1.5">
+                  <span className="flex h-7 flex-1 items-center justify-center gap-1 rounded-lg bg-accent text-[10px] font-bold text-ink-950 max-sm:h-5 max-sm:text-[7px]">
+                    <Phone className="h-2.5 w-2.5" aria-hidden />
+                    {t('Call now', 'Pozovite')}
+                  </span>
+                  <span className="flex h-7 flex-1 items-center justify-center rounded-lg bg-white/15 text-[10px] font-semibold max-sm:h-5 max-sm:text-[7px]">{t('Book', 'Zakažite')}</span>
+                  <Pin n={3} good className="-top-2.5 -left-2" />
+                </span>
+              </div>
+              <div className="relative space-y-1.5 px-3 pt-3">
+                <p className="text-[10px] font-semibold text-ink-950 max-sm:text-[7px]">{t('Free estimate', 'Besplatna procena')}</p>
+                <span className="block h-6 rounded-lg bg-zinc-50 ring-1 ring-zinc-200 max-sm:h-4" />
+                <span className="block h-6 rounded-lg bg-zinc-50 ring-1 ring-zinc-200 max-sm:h-4" />
+                <span className="flex gap-1">
+                  <span className="h-5 flex-1 rounded-md bg-ink-950 max-sm:h-3.5" />
+                  <span className="h-5 flex-1 rounded-md ring-1 ring-zinc-200 max-sm:h-3.5" />
+                </span>
+                <span className="block h-7 rounded-lg bg-accent max-sm:h-5" />
+                <Pin n={4} good className="-top-1 right-1" />
+              </div>
+              <div className="absolute inset-x-2 bottom-2 grid grid-cols-2 gap-1 rounded-xl bg-white/95 p-1 shadow-lift ring-1 ring-zinc-200 max-sm:inset-x-1 max-sm:bottom-1">
+                <span className="h-6 rounded-lg bg-accent max-sm:h-4" />
+                <span className="h-6 rounded-lg bg-ink-950 max-sm:h-4" />
+              </div>
+            </PhoneFrame>
+          </div>
+        </div>
+
+        <div className="max-lg:hidden">
+          <p className="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 font-mono text-[11px] tracking-[0.14em] text-emerald-700 uppercase ring-1 ring-emerald-100">
+            <Check className="h-3 w-3" aria-hidden />
+            {t('A WebTano site', 'WebTano sajt')}
+          </p>
+          {cards(good, true)}
+        </div>
+
+        {/* Phones and tablets: both lists under the phones. */}
+        <div className="grid grid-cols-2 gap-3 lg:hidden">
+          {cards(bad, false)}
+          {cards(good, true)}
         </div>
       </div>
-
-      <div className="max-lg:hidden">
-        <p className="mb-4 font-mono text-[11px] tracking-[0.14em] text-emerald-600 uppercase">{t('A WebTano site', 'WebTano sajt')}</p>
-        {list(good, true)}
-      </div>
-
-      {/* Phones and tablets: both lists under the sketches. */}
-      <div className="grid grid-cols-2 gap-4 lg:hidden">
-        {list(bad, false)}
-        {list(good, true)}
-      </div>
-      <p className="text-center font-mono text-[10px] tracking-wide text-zinc-400 uppercase lg:col-span-3">
+      <p className="relative mt-6 text-center font-mono text-[10px] tracking-wide text-zinc-400 uppercase max-md:mt-4">
         {t('Illustration: the first screen a visitor sees on a phone', 'Ilustracija: prvi ekran koji posetilac vidi na telefonu')}
       </p>
     </div>
