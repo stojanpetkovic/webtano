@@ -383,42 +383,47 @@ export function SiteAnatomy() {
     <div translate="no">
       <FirstScreenCompare />
 
-      {/* Phones get the picture; the full comparison table is desktop detail. */}
-      <div className="mt-6 overflow-hidden rounded-3xl bg-white ring-1 ring-zinc-200/80 max-md:hidden">
-        {/* Column heads */}
-        <div className="grid grid-cols-[minmax(0,0.7fr)_minmax(0,1fr)_minmax(0,1fr)] border-b border-zinc-200 max-md:hidden">
-          <div className="px-6 py-4 font-mono text-[11px] tracking-[0.14em] text-zinc-400 uppercase">{t('What it covers', 'Šta se gleda')}</div>
-          <div className="px-6 py-4 font-mono text-[11px] tracking-[0.14em] text-zinc-500 uppercase">{t('Typical small-business site', 'Tipičan sajt male firme')}</div>
-          <div className="flex items-center gap-2 bg-azure-50/70 px-6 py-4 font-mono text-[11px] font-semibold tracking-[0.14em] text-azure-700 uppercase">
-            <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden />
-            {t('A WebTano site', 'WebTano sajt')}
-          </div>
-        </div>
-
-        {groups(t).map((g) => (
-          <div key={g.title} className="border-b border-zinc-100 last:border-b-0">
-            <div className="grid grid-cols-[minmax(0,0.7fr)_minmax(0,1fr)_minmax(0,1fr)] max-md:block">
-              <div className="col-span-2 flex items-center gap-2.5 bg-zinc-50/80 px-6 py-2.5 max-md:px-4">
-                <g.icon className="h-4 w-4 text-azure-700" aria-hidden />
-                <h3 className="font-display text-[15px] text-ink-950">{g.title}</h3>
+      {/* Phones get the picture; the full comparison is desktop detail. */}
+      <div className="mt-6 grid gap-4 max-md:hidden lg:grid-cols-2">
+        {groups(t).map((g, gi) => (
+          <div key={g.title} className="group/card overflow-hidden rounded-3xl bg-white ring-1 ring-zinc-200/80 transition duration-300 hover:shadow-lift hover:ring-zinc-300">
+            <div className="flex items-center gap-3 border-b border-zinc-100 px-6 py-4">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-ink-950 text-accent transition group-hover/card:shadow-glow">
+                <g.icon className="h-[18px] w-[18px]" aria-hidden />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="font-mono text-[10px] tracking-[0.14em] text-zinc-400 uppercase">
+                  {t('Layer', 'Sloj')} {String(gi + 1).padStart(2, '0')}
+                </p>
+                <h3 className="font-display text-lg text-ink-950">{g.title}</h3>
               </div>
-              <div className="bg-azure-50/70 max-md:hidden" />
+              <span className="hidden items-center gap-3 font-mono text-[10px] tracking-wide uppercase xl:flex">
+                <span className="flex items-center gap-1 text-zinc-400">
+                  <X className="h-3 w-3 text-red-400" aria-hidden />
+                  {t('Typical', 'Tipično')}
+                </span>
+                <span className="flex items-center gap-1 text-azure-700">
+                  <Check className="h-3 w-3" aria-hidden />
+                  WebTano
+                </span>
+              </span>
             </div>
-            <ul>
+            <ul className="divide-y divide-zinc-100">
               {g.rows.map((r) => (
-                <li
-                  key={r.what}
-                  className="grid grid-cols-[minmax(0,0.7fr)_minmax(0,1fr)_minmax(0,1fr)] border-t border-zinc-100 text-[15px] first:border-t-0 max-md:block max-md:px-4 max-md:py-3"
-                >
-                  <p className="px-6 py-3.5 font-medium text-ink-950 max-md:p-0 max-md:text-[15px]">{r.what}</p>
-                  <p className="flex gap-2.5 px-6 py-3.5 leading-snug text-zinc-500 max-md:mt-1.5 max-md:p-0 max-md:text-sm">
-                    <X className="mt-0.5 h-4 w-4 shrink-0 text-red-400" aria-label={t('Typical site:', 'Tipičan sajt:')} />
-                    {r.typical}
-                  </p>
-                  <p className="flex gap-2.5 bg-azure-50/70 px-6 py-3.5 leading-snug font-medium text-ink-950 max-md:mt-1.5 max-md:bg-transparent max-md:p-0 max-md:text-sm">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-azure-700" aria-label={t('WebTano site:', 'WebTano sajt:')} />
-                    {r.ours}
-                  </p>
+                <li key={r.what} className="grid grid-cols-[7.5rem_1fr] gap-4 px-6 py-4">
+                  <p className="pt-0.5 text-[13px] font-semibold text-ink-950">{r.what}</p>
+                  <div className="space-y-1.5">
+                    <p className="flex gap-2 text-[13.5px] leading-snug text-zinc-400">
+                      <X className="mt-0.5 h-3.5 w-3.5 shrink-0 text-red-400" aria-label={t('Typical site:', 'Tipičan sajt:')} />
+                      <span className="line-through decoration-red-300/70">{r.typical}</span>
+                    </p>
+                    <p className="flex gap-2 text-[14.5px] leading-snug font-medium text-ink-950">
+                      <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-accent/15">
+                        <Check className="h-3 w-3 text-azure-700" aria-label={t('WebTano site:', 'WebTano sajt:')} />
+                      </span>
+                      {r.ours}
+                    </p>
+                  </div>
                 </li>
               ))}
             </ul>
