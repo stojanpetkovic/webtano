@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { createPortal } from 'react-dom';
 import {
   AlertTriangle,
   ArrowLeft,
@@ -12,12 +13,15 @@ import {
   Code2,
   Hand,
   Lock,
+  Maximize2,
+  Minimize2,
   Monitor,
   Phone,
   Search,
   Smartphone,
   Sparkles,
   Star,
+  X,
 } from 'lucide-react';
 import { useLang, useLocalePath, useT } from '@/components/i18n/LangProvider';
 import type { T } from '@/lib/i18n';
@@ -154,6 +158,8 @@ const steps = (t: T): Step[] => [
 
 type Event = { time: string; what: string; source: string; you?: boolean };
 
+const noop = () => () => {};
+
 const now = () => new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 
 /**
@@ -171,17 +177,43 @@ export function DemoTour() {
   const [path, setPath] = useState('/');
   const [events, setEvents] = useState<Event[]>([]);
   const [toast, setToast] = useState<string | null>(null);
-  const tourRef = useRef<HTMLDivElement>(null);
+  const [small, setSmall] = useState(false);
+  const [full, setFull] = useState(false);
+  // False while rendering on the server, true in the browser.
+  const mounted = useSyncExternalStore(noop, () => true, () => false);
+  const panelRef = useRef<HTMLDivElement>(null);
   const step = all[index];
-  const phone = step.phone || device === 'phone';
+  // On a phone the demo site already fills a phone screen, so it is shown without a device frame.
+  const phone = small || step.phone || device === 'phone';
   const last = all.length - 1;
 
   const go = (next: number) => {
     setIndex(Math.max(0, Math.min(last, next)));
     setToast(null);
-    // On phones the explanation sits under the demo, so bring the tour back to its top.
-    if (window.matchMedia('(max-width: 1023px)').matches) tourRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    panelRef.current?.scrollTo({ top: 0 });
   };
+
+  const toggleFullscreen = () => {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else document.documentElement.requestFullscreen?.();
+  };
+
+  // The tour covers the whole window: no page scroll behind it, and it follows the screen size and full-screen mode.
+  useEffect(() => {
+    const { overflow } = document.body.style;
+    document.body.style.overflow = 'hidden';
+    const query = window.matchMedia('(max-width: 639px)');
+    const onSize = () => setSmall(query.matches);
+    const onFull = () => setFull(Boolean(document.fullscreenElement));
+    onSize();
+    query.addEventListener('change', onSize);
+    document.addEventListener('fullscreenchange', onFull);
+    return () => {
+      document.body.style.overflow = overflow;
+      query.removeEventListener('change', onSize);
+      document.removeEventListener('fullscreenchange', onFull);
+    };
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -210,180 +242,117 @@ export function DemoTour() {
     done: t('Summary', 'Pregled'),
   };
 
+  // Rendered into <body>, so no section's stacking or clipping (the phone layout rounds and isolates them) can hold it.
+  if (!mounted) return null;
   // translate="no": a browser translating the page rewrites text React still updates, which crashes it.
-  return (
-    <div ref={tourRef} translate="no" className="scroll-mt-20">
-      {/* Progress */}
-      <div className="mb-6 flex items-center gap-3 max-md:mb-4">
-        <span className="font-mono text-xs text-zinc-500">
-          {String(index + 1).padStart(2, '0')} / {String(all.length).padStart(2, '0')}
+  return createPortal(
+    <div translate="no" role="dialog" aria-modal="true" aria-label={t('WebTano demo', 'WebTano demo')} className="fixed inset-0 z-[80] flex flex-col bg-white">
+      {/* Top bar */}
+      <div className="flex h-14 shrink-0 items-center gap-3 bg-ink-950 px-4 text-white sm:gap-5 sm:px-5">
+        <span className="flex shrink-0 items-center gap-2 font-display text-[15px]">
+          WebTano
+          <span className="rounded-full bg-accent/15 px-2 py-0.5 font-mono text-[10px] tracking-wide text-accent uppercase ring-1 ring-accent/30">Demo</span>
         </span>
-        <div className="flex flex-1 gap-1">
-          {all.map((s, i) => (
-            <button
-              key={s.title}
-              type="button"
-              onClick={() => go(i)}
-              aria-label={`${t('Step', 'Korak')} ${i + 1}: ${s.title}`}
-              aria-current={i === index ? 'step' : undefined}
-              className="group flex-1 py-2"
-            >
-              <span className={`block h-1.5 rounded-full transition-colors duration-300 ${i <= index ? 'bg-accent' : 'bg-zinc-200 group-hover:bg-zinc-300'}`} />
-            </button>
-          ))}
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          <div className="flex flex-1 gap-1">
+            {all.map((s, i) => (
+              <button
+                key={s.title}
+                type="button"
+                onClick={() => go(i)}
+                aria-label={`${t('Step', 'Korak')} ${i + 1}: ${s.title}`}
+                aria-current={i === index ? 'step' : undefined}
+                className="group flex-1 py-3"
+              >
+                <span className={`block h-1 rounded-full transition-colors duration-300 ${i <= index ? 'bg-accent' : 'bg-white/15 group-hover:bg-white/30'}`} />
+              </button>
+            ))}
+          </div>
+          <span className="shrink-0 font-mono text-xs text-white/50">
+            {index + 1}/{all.length}
+          </span>
         </div>
+        {step.stage === 'site' && !small && (
+          <div className="flex shrink-0 rounded-full bg-white/[0.06] p-0.5 text-xs font-semibold ring-1 ring-white/10">
+            {(
+              [
+                ['desktop', Monitor, t('Computer', 'Računar')],
+                ['phone', Smartphone, t('Phone', 'Telefon')],
+              ] as const
+            ).map(([value, Icon, label]) => {
+              const on = (value === 'phone') === phone;
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setDevice(value)}
+                  disabled={step.phone}
+                  aria-pressed={on}
+                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 transition ${on ? 'bg-white text-ink-950' : 'text-white/60 hover:text-white'}`}
+                >
+                  <Icon className="h-3.5 w-3.5" aria-hidden />
+                  <span className="max-md:hidden">{label}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+        <button
+          type="button"
+          onClick={toggleFullscreen}
+          aria-label={t('Full screen', 'Ceo ekran')}
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white/70 ring-1 ring-white/15 transition hover:text-white max-sm:hidden"
+        >
+          {full ? <Minimize2 className="h-4 w-4" aria-hidden /> : <Maximize2 className="h-4 w-4" aria-hidden />}
+        </button>
+        <Link
+          href={lp('/')}
+          aria-label={t('Close the demo', 'Zatvori demo')}
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white/70 ring-1 ring-white/15 transition hover:text-white"
+        >
+          <X className="h-4 w-4" aria-hidden />
+        </Link>
       </div>
 
-      <div className="grid gap-6 max-lg:flex max-lg:flex-col-reverse lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-10">
-        {/* Explanation */}
-        <div className="lg:sticky lg:top-24 lg:self-start">
-          <div className="rounded-3xl bg-white p-6 ring-1 ring-zinc-200/80 max-md:p-5 sm:p-7" aria-live="polite">
-            <p className="font-mono text-[11px] tracking-[0.14em] text-azure-700 uppercase">
-              {t('Step', 'Korak')} {index + 1} · {stageLabel[step.stage]}
-            </p>
-            <h2 className="mt-2 font-display text-2xl text-balance text-ink-950 sm:text-3xl">{step.title}</h2>
-            <p className="mt-3 leading-relaxed text-pretty text-zinc-600">{step.text}</p>
-
-            {step.wrong && (
-              <p className="mt-5 flex gap-2.5 rounded-2xl bg-red-50/70 px-4 py-3 text-sm leading-snug text-red-900/80 ring-1 ring-red-100">
-                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-500" aria-hidden />
-                <span>
-                  <strong className="font-semibold text-red-900">{t('What we usually find: ', 'Šta najčešće zateknemo: ')}</strong>
-                  {step.wrong}
-                </span>
-              </p>
-            )}
-
-            {step.gets.length > 0 && (
-              <ul className="mt-5 flex flex-wrap gap-2">
-                {step.gets.map((g) => (
-                  <li key={g} className="inline-flex items-center gap-1.5 rounded-full bg-azure-50 px-3 py-1 text-xs font-medium text-azure-700 ring-1 ring-azure-100">
-                    <Check className="h-3.5 w-3.5" aria-hidden />
-                    {g}
-                  </li>
-                ))}
-              </ul>
-            )}
-
-            {step.tryIt && (
-              <p className="mt-5 flex items-center gap-2 text-sm font-medium text-ink-950">
-                <Hand className="h-4 w-4 shrink-0 text-accent" aria-hidden />
-                {step.tryIt}
-              </p>
-            )}
-
-            {step.stage === 'done' && (
-              <div className="mt-6 flex flex-wrap gap-2">
-                <Link
-                  href={lp('/#hero-form')}
-                  className="group inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-ink-950 shadow-glow transition hover:bg-accent-dark"
-                >
-                  {t('Get a free website audit', 'Zatražite besplatnu analizu')}
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
-                </Link>
-                <Link
-                  href={lp('/pricing')}
-                  className="inline-flex items-center gap-2 rounded-full px-4 py-3 text-sm font-semibold text-ink-950 ring-1 ring-zinc-200 transition hover:ring-zinc-300"
-                >
-                  {t('See pricing', 'Pogledajte cene')}
-                </Link>
-              </div>
-            )}
-
-            <div className="mt-7 flex items-center justify-between gap-3 border-t border-zinc-100 pt-5">
-              <button
-                type="button"
-                onClick={() => go(index - 1)}
-                disabled={index === 0}
-                className="inline-flex items-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-semibold text-zinc-600 ring-1 ring-zinc-200 transition hover:text-ink-950 hover:ring-zinc-300 disabled:opacity-40"
-              >
-                <ArrowLeft className="h-4 w-4" aria-hidden />
-                {t('Back', 'Nazad')}
-              </button>
-              {index < last ? (
-                <button
-                  type="button"
-                  onClick={() => go(index + 1)}
-                  className="group inline-flex items-center gap-1.5 rounded-full bg-ink-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-ink-800"
-                >
-                  {t('Next', 'Dalje')}
-                  <ArrowRight className="h-4 w-4 text-accent transition-transform group-hover:translate-x-0.5" aria-hidden />
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => go(0)}
-                  className="rounded-full px-4 py-2.5 text-sm font-semibold text-zinc-600 ring-1 ring-zinc-200 transition hover:text-ink-950"
-                >
-                  {t('Start over', 'Ispočetka')}
-                </button>
-              )}
-            </div>
-            <p className="mt-3 text-center text-xs text-zinc-400 max-lg:hidden">{t('Tip: use the ← → keys.', 'Savet: koristite strelice ← →.')}</p>
-          </div>
-        </div>
-
+      <div className="flex min-h-0 flex-1 max-lg:flex-col">
         {/* Stage */}
-        <div className="relative">
-          {step.stage === 'site' && (
-            <div className="mb-3 flex items-center justify-between gap-3">
-              <span className="font-mono text-[10px] tracking-wide text-zinc-400 uppercase">
-                {t('Made-up business, sample content', 'Izmišljena firma, primer sadržaja')}
-              </span>
-              <div className="flex rounded-full bg-zinc-100 p-0.5 text-xs font-semibold max-sm:hidden">
-                {(
-                  [
-                    ['desktop', Monitor, t('Computer', 'Računar')],
-                    ['phone', Smartphone, t('Phone', 'Telefon')],
-                  ] as const
-                ).map(([value, Icon, label]) => {
-                  const on = (value === 'phone') === phone;
-                  return (
-                    <button
-                      key={value}
-                      type="button"
-                      onClick={() => setDevice(value)}
-                      disabled={step.phone}
-                      aria-pressed={on}
-                      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 transition ${on ? 'bg-white text-ink-950 shadow-sm' : 'text-zinc-500 hover:text-ink-950'}`}
-                    >
-                      <Icon className="h-3.5 w-3.5" aria-hidden />
-                      {label}
-                    </button>
-                  );
-                })}
+        <div className={`relative min-h-0 flex-1 ${step.stage === 'site' ? (phone && !small ? 'bg-ink-900' : 'bg-zinc-100') : 'bg-zinc-50'}`}>
+          {step.stage === 'site' ? (
+            <div className={`h-full ${small ? '' : phone ? 'p-6' : 'p-5'}`}>
+              <DemoSite
+                block={step.block}
+                phone={phone}
+                bare={small}
+                path={path}
+                onPath={(p, label) => {
+                  setPath(p);
+                  record(`${t('Viewed', 'Pregled')} ${label}`, t('Google search', 'Google pretraga'));
+                }}
+                onCall={() => {
+                  record(t('Call tapped', 'Klik na poziv'), 'Google Maps');
+                  setToast(t('Call tapped. It is now in your tracking (step 8).', 'Klik na poziv je zabeležen (vidite ga u 8. koraku).'));
+                }}
+                onSend={(name, service) => {
+                  record(`${t('Enquiry', 'Upit')}: ${name || t('Visitor', 'Posetilac')} · ${service}`, 'Google Ads');
+                  setToast(`${t('New enquiry', 'Novi upit')}: ${name || t('Visitor', 'Posetilac')} · ${service}`);
+                }}
+              />
+            </div>
+          ) : (
+            <div className="h-full overflow-y-auto p-4 sm:p-8 lg:p-10">
+              <div className="mx-auto max-w-3xl">
+                {step.stage === 'code' && <CodeStage />}
+                {step.stage === 'seo' && <SeoStage />}
+                {step.stage === 'tracking' && <TrackingStage events={events} />}
+                {step.stage === 'done' && <DoneStage all={all} onPick={go} />}
               </div>
             </div>
           )}
-
-          {step.stage === 'site' && (
-            <DemoSite
-              block={step.block}
-              phone={phone}
-              path={path}
-              onPath={(p, label) => {
-                setPath(p);
-                record(`${t('Viewed', 'Pregled')} ${label}`, t('Google search', 'Google pretraga'));
-              }}
-              onCall={() => {
-                record(t('Call tapped', 'Klik na poziv'), 'Google Maps');
-                setToast(t('Call tapped. It is now in your tracking (step 8).', 'Klik na poziv je zabeležen (vidite ga u 8. koraku).'));
-              }}
-              onSend={(name, service) => {
-                record(`${t('Enquiry', 'Upit')}: ${name || t('Visitor', 'Posetilac')} · ${service}`, 'Google Ads');
-                setToast(`${t('New enquiry', 'Novi upit')}: ${name || t('Visitor', 'Posetilac')} · ${service}`);
-              }}
-            />
-          )}
-          {step.stage === 'code' && <CodeStage />}
-          {step.stage === 'seo' && <SeoStage />}
-          {step.stage === 'tracking' && <TrackingStage events={events} />}
-          {step.stage === 'done' && <DoneStage all={all} onPick={go} />}
 
           {/* The owner's phone alert, as it would pop up for a real enquiry. */}
           <div
             role="status"
-            className={`pointer-events-none absolute inset-x-3 top-12 z-20 mx-auto max-w-sm transition duration-500 ${toast ? 'translate-y-0 opacity-100' : '-translate-y-3 opacity-0'}`}
+            className={`pointer-events-none absolute inset-x-3 top-4 z-20 mx-auto max-w-sm transition duration-500 ${toast ? 'translate-y-0 opacity-100' : '-translate-y-3 opacity-0'}`}
           >
             {toast && (
               <div className="flex items-start gap-3 rounded-2xl bg-white/95 p-3.5 shadow-float ring-1 ring-zinc-200 backdrop-blur">
@@ -400,8 +369,97 @@ export function DemoTour() {
             )}
           </div>
         </div>
+
+        {/* Explanation: a side panel on computers, a bottom sheet on phones. */}
+        <aside className="flex shrink-0 flex-col border-zinc-200 bg-white max-lg:max-h-[46%] max-lg:border-t max-lg:shadow-[0_-8px_24px_-12px_rgb(10_14_30/0.18)] lg:w-[420px] lg:border-l">
+          <div ref={panelRef} className="min-h-0 flex-1 overflow-y-auto px-6 pt-6 pb-4 max-lg:px-5 max-lg:pt-4" aria-live="polite">
+            <p className="font-mono text-[11px] tracking-[0.14em] text-azure-700 uppercase">
+              {t('Step', 'Korak')} {index + 1} · {stageLabel[step.stage]}
+            </p>
+            <h2 className="mt-2 font-display text-2xl text-balance text-ink-950 max-lg:text-xl">{step.title}</h2>
+            <p className="mt-3 leading-relaxed text-pretty text-zinc-600 max-lg:mt-2 max-lg:text-[15px] max-lg:leading-snug">{step.text}</p>
+
+            {step.wrong && (
+              <p className="mt-4 flex gap-2.5 rounded-2xl bg-red-50/70 px-4 py-3 text-sm leading-snug text-red-900/80 ring-1 ring-red-100">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-500" aria-hidden />
+                <span>
+                  <strong className="font-semibold text-red-900">{t('What we usually find: ', 'Šta najčešće zateknemo: ')}</strong>
+                  {step.wrong}
+                </span>
+              </p>
+            )}
+
+            {step.gets.length > 0 && (
+              <ul className="mt-4 flex flex-wrap gap-2">
+                {step.gets.map((g) => (
+                  <li key={g} className="inline-flex items-center gap-1.5 rounded-full bg-azure-50 px-3 py-1 text-xs font-medium text-azure-700 ring-1 ring-azure-100">
+                    <Check className="h-3.5 w-3.5" aria-hidden />
+                    {g}
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {step.tryIt && (
+              <p className="mt-4 flex items-center gap-2 text-sm font-medium text-ink-950">
+                <Hand className="h-4 w-4 shrink-0 text-accent" aria-hidden />
+                {step.tryIt}
+              </p>
+            )}
+
+            {step.stage === 'done' && (
+              <div className="mt-5 flex flex-wrap gap-2">
+                <Link
+                  href={lp('/#hero-form')}
+                  className="group inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-ink-950 shadow-glow transition hover:bg-accent-dark"
+                >
+                  {t('Get a free website audit', 'Zatražite besplatnu analizu')}
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
+                </Link>
+                <Link
+                  href={lp('/pricing')}
+                  className="inline-flex items-center gap-2 rounded-full px-4 py-3 text-sm font-semibold text-ink-950 ring-1 ring-zinc-200 transition hover:ring-zinc-300"
+                >
+                  {t('See pricing', 'Pogledajte cene')}
+                </Link>
+              </div>
+            )}
+          </div>
+
+          <div className="flex shrink-0 items-center justify-between gap-3 border-t border-zinc-100 px-6 py-4 max-lg:px-5 max-lg:py-3">
+            <button
+              type="button"
+              onClick={() => go(index - 1)}
+              disabled={index === 0}
+              className="inline-flex items-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-semibold text-zinc-600 ring-1 ring-zinc-200 transition hover:text-ink-950 hover:ring-zinc-300 disabled:opacity-40"
+            >
+              <ArrowLeft className="h-4 w-4" aria-hidden />
+              {t('Back', 'Nazad')}
+            </button>
+            <span className="text-xs text-zinc-400 max-lg:hidden">{t('or use ← →', 'ili strelice ← →')}</span>
+            {index < last ? (
+              <button
+                type="button"
+                onClick={() => go(index + 1)}
+                className="group inline-flex items-center gap-1.5 rounded-full bg-ink-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-ink-800"
+              >
+                {t('Next', 'Dalje')}
+                <ArrowRight className="h-4 w-4 text-accent transition-transform group-hover:translate-x-0.5" aria-hidden />
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => go(0)}
+                className="rounded-full px-4 py-2.5 text-sm font-semibold text-zinc-600 ring-1 ring-zinc-200 transition hover:text-ink-950"
+              >
+                {t('Start over', 'Ispočetka')}
+              </button>
+            )}
+          </div>
+        </aside>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
@@ -410,6 +468,7 @@ export function DemoTour() {
 function DemoSite({
   block,
   phone,
+  bare,
   path,
   onPath,
   onCall,
@@ -417,6 +476,8 @@ function DemoSite({
 }: {
   block?: Block;
   phone: boolean;
+  /** No device frame or browser chrome: the visitor's own phone is the frame. */
+  bare: boolean;
   path: string;
   onPath: (path: string, label: string) => void;
   onCall: () => void;
@@ -442,7 +503,7 @@ function DemoSite({
     const box = scroller.current;
     const el = block && block !== 'callbar' ? refs.current[block] : null;
     if (!box) return;
-    box.scrollTo({ top: el ? Math.max(0, el.offsetTop - 12) : 0, behavior: 'smooth' });
+    box.scrollTo({ top: el ? Math.max(0, el.offsetTop - 64) : 0, behavior: 'smooth' });
   }, [block, phone]);
 
   const focus = (b: Block) =>
@@ -458,13 +519,17 @@ function DemoSite({
 
   return (
     <div
-      className={`mx-auto overflow-hidden bg-white ring-1 ring-zinc-200 transition-[max-width] duration-500 ${
-        phone ? 'max-w-[360px] rounded-[2.2rem] p-2 shadow-float ring-ink-900/80 [background:var(--color-ink-950)]' : 'max-w-full rounded-2xl shadow-lift'
+      className={`mx-auto flex h-full flex-col overflow-hidden ${
+        bare
+          ? 'bg-white'
+          : phone
+            ? 'max-h-[780px] max-w-[380px] rounded-[2.4rem] bg-ink-950 p-2 shadow-float ring-1 ring-white/10'
+            : 'max-w-6xl rounded-2xl bg-white shadow-lift ring-1 ring-zinc-200'
       }`}
     >
-      <div className={phone ? 'overflow-hidden rounded-[1.8rem] bg-white' : ''}>
+      <div className={`flex min-h-0 flex-1 flex-col ${phone && !bare ? 'overflow-hidden rounded-[2rem] bg-white' : ''}`}>
         {/* Browser bar */}
-        <div className="flex items-center gap-2 border-b border-zinc-200 bg-zinc-50 px-3 py-2">
+        <div className={`flex shrink-0 items-center gap-2 border-b border-zinc-200 bg-zinc-50 px-3 py-2 ${bare ? 'hidden' : ''}`}>
           {!phone && (
             <span className="flex gap-1.5" aria-hidden>
               <span className="h-2 w-2 rounded-full bg-[#ff5f57]" />
@@ -478,10 +543,10 @@ function DemoSite({
           </span>
         </div>
 
-        <div className="relative">
-          <div ref={scroller} className={`overflow-y-auto overscroll-contain ${phone ? 'h-[520px]' : 'h-[540px] max-sm:h-[460px]'}`}>
+        <div className="relative min-h-0 flex-1">
+          <div ref={scroller} className="h-full overflow-y-auto overscroll-contain">
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-zinc-100 px-4 py-3">
+            <div className="sticky top-0 z-[3] flex items-center justify-between border-b border-zinc-100 bg-white/95 px-4 py-3 backdrop-blur">
               <span className="flex items-center gap-2 font-display text-[15px] text-ink-950">
                 <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-teal-600 text-[11px] font-bold text-white">L</span>
                 Lumen Dental
@@ -499,7 +564,7 @@ function DemoSite({
               </button>
             </div>
 
-            <div className="space-y-6 p-4 pb-24">
+            <div className={`space-y-6 p-4 pb-24 ${phone ? '' : 'mx-auto max-w-4xl sm:p-6'}`}>
               {/* Hero */}
               <section
                 ref={(el) => {
