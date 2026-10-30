@@ -173,6 +173,26 @@ type Event = { time: string; what: string; source: string; you?: boolean };
 
 const noop = () => () => {};
 
+// Browser extensions and page translators move or replace nodes React rendered,
+// and React then crashes with "removeChild: not a child of this node" when it
+// cleans up. Skip those few cases instead of breaking the page (the usual fix
+// from facebook/react#11538).
+function guardDom() {
+  const proto = Node.prototype as Node & { webtanoGuard?: boolean };
+  if (proto.webtanoGuard) return;
+  proto.webtanoGuard = true;
+  const remove = proto.removeChild;
+  proto.removeChild = function <N extends Node>(this: Node, child: N): N {
+    if (child.parentNode !== this) return child;
+    return remove.call(this, child) as N;
+  };
+  const insert = proto.insertBefore;
+  proto.insertBefore = function <N extends Node>(this: Node, node: N, ref: Node | null): N {
+    if (ref && ref.parentNode !== this) return node;
+    return insert.call(this, node, ref) as N;
+  };
+}
+
 const now = () => new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 
 /**
@@ -216,6 +236,7 @@ export function DemoTour() {
 
   // The tour covers the whole window: no page scroll behind it, and it follows the screen size and full-screen mode.
   useEffect(() => {
+    guardDom();
     if (!host) return;
     document.body.appendChild(host);
     return () => host.remove();
