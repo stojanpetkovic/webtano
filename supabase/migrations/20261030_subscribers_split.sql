@@ -7,7 +7,7 @@
 -- 3. Email-only "newsletter" leads that came in before this change are moved
 --    over to the subscriber list and removed from the leads.
 --
--- Safe to run more than once. To see first which leads part 3 will move, run:
+-- Safe to run more than once. Run it with "Run without RLS": it makes no new table. To see first which leads part 3 will move, run:
 --   select s.name, l.form_name, l.visitor_email, l.data, l.created_at from leads l join sites s on s.id = l.site_id
 --   where l.visitor_email is not null and l.visitor_name is null and l.visitor_phone is null order by l.created_at desc;
 
@@ -25,41 +25,44 @@ create index if not exists newsletter_subscribers_site_idx on newsletter_subscri
 -- 3. The old email-only leads. A lead counts as a sign-up when it has an email,
 --    no name and no phone, and every other field is a known technical one
 --    (source, lang, consent...) or the form is named like a newsletter form.
--- A plain table, not a temporary one: the Supabase SQL Editor may run each
--- statement on its own connection, where a temporary table would be gone.
-drop table if exists moved_leads;
-create table moved_leads as
-select l.*
-from leads l
-where l.visitor_email is not null
-  and l.visitor_name is null
-  and l.visitor_phone is null
-  and (
-    l.form_name ~* '(newsletter|subscri|pretplat|signup|sign-up|mailing)'
-    or not exists (
-      select 1 from jsonb_object_keys(l.data::jsonb) k
-      where k !~* '^(e-?mail.*|source|lang|locale|language|consent|gdpr|agree.*|acceptance.*|terms|privacy|subscribe|newsletter|list|tags?|redirect|form.*|page|url|company_url)$'
+--    One statement, with no helper table, so the Supabase SQL Editor runs it as is.
+with moved as (
+  select l.*
+  from leads l
+  where l.visitor_email is not null
+    and l.visitor_name is null
+    and l.visitor_phone is null
+    and (
+      l.form_name ~* '(newsletter|subscri|pretplat|signup|sign-up|mailing)'
+      or not exists (
+        select 1 from jsonb_object_keys(l.data::jsonb) k
+        where k !~* '^(e-?mail.*|source|lang|locale|language|consent|gdpr|agree.*|acceptance.*|terms|privacy|subscribe|newsletter|list|tags?|redirect|form.*|page|url|company_url)$'
+      )
     )
-  );
-
+),
 -- WebTano's own rows are already on its list (the sign-up stored them there too).
-insert into newsletter_subscribers (site_id, email, status, source, page_url, token, ip_hash, user_agent, confirmed_at, created_at, updated_at)
-select distinct on (m.site_id, lower(m.visitor_email))
-  m.site_id, lower(m.visitor_email), 'confirmed', 'form', m.page_url,
-  substr(replace(gen_random_uuid()::text || gen_random_uuid()::text, '-', ''), 1, 48), m.ip_hash, m.user_agent, m.created_at, m.created_at, m.created_at
-from moved_leads m
-join sites s on s.id = m.site_id
-where s.site_key <> '4efb22cf8b22fa845d7a39b243a17934'
-order by m.site_id, lower(m.visitor_email), m.created_at
-on conflict do nothing;
-
+added as (
+  insert into newsletter_subscribers (site_id, email, status, source, page_url, token, ip_hash, user_agent, confirmed_at, created_at, updated_at)
+  select distinct on (m.site_id, lower(m.visitor_email))
+    m.site_id, lower(m.visitor_email), 'confirmed', 'form', m.page_url,
+    substr(replace(gen_random_uuid()::text || gen_random_uuid()::text, '-', ''), 1, 48), m.ip_hash, m.user_agent, m.created_at, m.created_at, m.created_at
+  from moved m
+  join sites s on s.id = m.site_id
+  where s.site_key <> '4efb22cf8b22fa845d7a39b243a17934'
+  order by m.site_id, lower(m.visitor_email), m.created_at
+  on conflict do nothing
+  returning 1
+),
 -- Their CRM cards were made only from an email: drop the ones nobody has worked on yet.
-delete from crm_deals d
-using moved_leads m
-where d.lead_id = m.id and d.stage = 'new'
-  and not exists (select 1 from crm_proposals p where p.deal_id = d.id)
-  and not exists (select 1 from crm_activity a where a.deal_id = d.id and a.kind <> 'system');
+dropped as (
+  delete from crm_deals d
+  using moved m
+  where d.lead_id = m.id and d.stage = 'new'
+    and not exists (select 1 from crm_proposals p where p.deal_id = d.id)
+    and not exists (select 1 from crm_activity a where a.deal_id = d.id and a.kind <> 'system')
+  returning 1
+)
+delete from leads l using moved m where l.id = m.id;
 
-delete from leads l using moved_leads m where l.id = m.id;
-
+-- Left over if an earlier version of this file was run.
 drop table if exists moved_leads;
