@@ -194,6 +194,9 @@ export function DemoTour() {
   const [full, setFull] = useState(false);
   // False while rendering on the server, true in the browser.
   const mounted = useSyncExternalStore(noop, () => true, () => false);
+  // The tour's own box at the end of <body>. React manages <body> itself and can
+  // clear what it does not know about, so the tour never portals into it directly.
+  const [host] = useState(() => (typeof document === 'undefined' ? null : document.createElement('div')));
   const panelRef = useRef<HTMLDivElement>(null);
   const step = all[index];
   // On a phone the demo site already fills a phone screen, so it is shown without a device frame.
@@ -212,6 +215,12 @@ export function DemoTour() {
   };
 
   // The tour covers the whole window: no page scroll behind it, and it follows the screen size and full-screen mode.
+  useEffect(() => {
+    if (!host) return;
+    document.body.appendChild(host);
+    return () => host.remove();
+  }, [host]);
+
   useEffect(() => {
     const { overflow } = document.body.style;
     document.body.style.overflow = 'hidden';
@@ -257,7 +266,7 @@ export function DemoTour() {
   };
 
   // Rendered into <body>, so no section's stacking or clipping (the phone layout rounds and isolates them) can hold it.
-  if (!mounted) return null;
+  if (!mounted || !host) return null;
   // translate="no": a browser translating the page rewrites text React still updates, which crashes it.
   return createPortal(
     <div translate="no" role="dialog" aria-modal="true" aria-label={t('WebTano demo', 'WebTano demo')} className="fixed inset-0 z-[80] flex flex-col bg-white">
@@ -474,7 +483,7 @@ export function DemoTour() {
         </aside>
       </div>
     </div>,
-    document.body,
+    host,
   );
 }
 
