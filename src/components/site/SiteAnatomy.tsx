@@ -108,6 +108,160 @@ const questions = (t: T) => [
 
 type Answer = 'yes' | 'no' | 'unsure';
 
+/** A phone outline around a sketch of a homepage's first screen. */
+function PhoneFrame({ children, good }: { children: React.ReactNode; good?: boolean }) {
+  return (
+    <div
+      className={`relative w-[200px] shrink-0 rounded-[2rem] p-1.5 max-sm:w-[150px] max-sm:rounded-[1.5rem] max-sm:p-1 ${
+        good ? 'bg-ink-950 shadow-[0_30px_60px_-25px_rgb(1_175_233/0.55)] ring-1 ring-accent/40' : 'bg-zinc-300'
+      }`}
+    >
+      <div className="relative h-[400px] overflow-hidden rounded-[1.6rem] bg-white max-sm:h-[300px] max-sm:rounded-[1.2rem]">{children}</div>
+    </div>
+  );
+}
+
+/** Numbered marker on a phone sketch, matching a line in the list beside it. */
+function Pin({ n, good, className }: { n: number; good?: boolean; className: string }) {
+  return (
+    <span
+      className={`absolute z-10 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold text-white ring-2 ring-white ${good ? 'bg-emerald-500' : 'bg-red-500'} ${className}`}
+      aria-hidden
+    >
+      {n}
+    </span>
+  );
+}
+
+/**
+ * The first screen of a typical small-business site next to one of ours, as
+ * two phone sketches with numbered pins, so the difference is seen, not read.
+ */
+function FirstScreenCompare() {
+  const t = useT();
+  const bad = [
+    t('No phone number in sight', 'Broj telefona se ne vidi'),
+    t('A heavy photo still loading', 'Teška slika se još učitava'),
+    t('“Welcome”, but no offer or town', '„Dobro došli”, bez ponude i grada'),
+    t('A pop-up covering the page', 'Prozor preko pola ekrana'),
+  ];
+  const good = [
+    t('Rating visible at once', 'Ocena odmah vidljiva'),
+    t('What you do and where', 'Šta radite i gde'),
+    t('One tap to call', 'Poziv jednim dodirom'),
+    t('A three-field form', 'Forma od tri polja'),
+  ];
+  const list = (items: string[], ok: boolean) => (
+    <ol className="space-y-2.5">
+      {items.map((item, i) => (
+        <li key={item} className="flex items-center gap-2.5 text-[15px] font-medium text-ink-950 max-sm:text-[13px]">
+          <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white ${ok ? 'bg-emerald-500' : 'bg-red-500'}`}>{i + 1}</span>
+          {item}
+        </li>
+      ))}
+    </ol>
+  );
+  return (
+    <div className="grid items-center gap-8 rounded-3xl bg-white p-8 ring-1 ring-zinc-200/80 max-md:gap-5 max-md:p-4 lg:grid-cols-[1fr_auto_1fr]">
+      <div className="max-lg:hidden">
+        <p className="mb-4 font-mono text-[11px] tracking-[0.14em] text-red-500 uppercase">{t('Typical site', 'Tipičan sajt')}</p>
+        {list(bad, false)}
+      </div>
+
+      <div className="flex items-start justify-center gap-6 max-sm:gap-3">
+        <div className="text-center">
+          <PhoneFrame>
+            {/* Typical: logo and menu, a photo still loading, a vague welcome, a cookie pop-up. */}
+            <div className="flex items-center justify-between px-3 py-2.5">
+              <span className="h-2.5 w-14 rounded bg-zinc-300" />
+              <span className="space-y-0.5">
+                <span className="block h-0.5 w-4 bg-zinc-400" />
+                <span className="block h-0.5 w-4 bg-zinc-400" />
+                <span className="block h-0.5 w-4 bg-zinc-400" />
+              </span>
+            </div>
+            <div className="relative mx-2 flex h-36 items-center justify-center rounded-lg bg-gradient-to-br from-zinc-200 to-zinc-300 max-sm:h-28">
+              <span className="h-7 w-7 animate-spin rounded-full border-2 border-zinc-400 border-t-transparent" />
+              <Pin n={2} className="top-2 right-2" />
+            </div>
+            <div className="relative px-3 pt-3">
+              <p className="text-[13px] font-semibold text-zinc-500 max-sm:text-[11px]">{t('Welcome to our website!', 'Dobro došli na naš sajt!')}</p>
+              <span className="mt-2 block h-1.5 w-full rounded bg-zinc-200" />
+              <span className="mt-1.5 block h-1.5 w-5/6 rounded bg-zinc-200" />
+              <span className="mt-1.5 block h-1.5 w-4/6 rounded bg-zinc-200" />
+              <Pin n={3} className="-top-1 right-2" />
+            </div>
+            <Pin n={1} className="top-1.5 left-1/2 -translate-x-1/2" />
+            <div className="absolute inset-x-0 bottom-0 rounded-t-2xl bg-zinc-800 p-3 text-white">
+              <span className="block h-1.5 w-full rounded bg-white/30" />
+              <span className="mt-1.5 block h-1.5 w-4/5 rounded bg-white/30" />
+              <span className="mt-2.5 flex gap-1.5">
+                <span className="h-5 flex-1 rounded bg-white/80" />
+                <span className="h-5 flex-1 rounded bg-white/20" />
+              </span>
+              <Pin n={4} className="-top-2 right-3" />
+            </div>
+          </PhoneFrame>
+          <p className="mt-3 text-sm font-semibold text-zinc-500 max-sm:text-xs">{t('Typical site', 'Tipičan sajt')}</p>
+        </div>
+
+        <div className="text-center">
+          <PhoneFrame good>
+            {/* Ours: header with a call button, rating, clear offer, call and book, a short form. */}
+            <div className="flex items-center justify-between px-3 py-2.5">
+              <span className="flex items-center gap-1">
+                <span className="h-4 w-4 rounded bg-ink-950" />
+                <span className="h-2 w-10 rounded bg-ink-950/80" />
+              </span>
+              <span className="rounded-md bg-accent px-1.5 py-0.5 text-[8px] font-bold text-ink-950">{t('CALL', 'POZIV')}</span>
+            </div>
+            <div className="relative bg-ink-950 px-3 pt-3 pb-4 text-white">
+              <span className="relative inline-flex items-center gap-1 rounded-full bg-white/10 px-1.5 py-0.5 text-[8px]">
+                <span className="text-amber-400">★★★★★</span> 4.9
+                <Pin n={1} good className="-top-2 -right-6" />
+              </span>
+              <p className="relative mt-2 text-[14px] leading-tight font-semibold max-sm:text-[11px]">
+                {t('Same-day AC repair in Springfield', 'Servis klima isti dan u Novom Sadu')}
+                <Pin n={2} good className="-top-3 -left-2" />
+              </p>
+              <span className="relative mt-3 flex gap-1.5">
+                <span className="flex h-6 flex-1 items-center justify-center rounded-md bg-accent text-[9px] font-bold text-ink-950">{t('Call now', 'Pozovite')}</span>
+                <span className="h-6 flex-1 rounded-md bg-white/15" />
+                <Pin n={3} good className="-top-2 -left-2" />
+              </span>
+            </div>
+            <div className="relative space-y-1.5 px-3 pt-3">
+              <span className="block h-5 rounded-md bg-zinc-100 ring-1 ring-zinc-200" />
+              <span className="block h-5 rounded-md bg-zinc-100 ring-1 ring-zinc-200" />
+              <span className="flex gap-1">
+                <span className="h-4 flex-1 rounded bg-ink-950" />
+                <span className="h-4 flex-1 rounded ring-1 ring-zinc-200" />
+              </span>
+              <span className="block h-6 rounded-md bg-accent" />
+              <Pin n={4} good className="-top-1 right-1" />
+            </div>
+          </PhoneFrame>
+          <p className="mt-3 text-sm font-semibold text-ink-950 max-sm:text-xs">{t('A WebTano site', 'WebTano sajt')}</p>
+        </div>
+      </div>
+
+      <div className="max-lg:hidden">
+        <p className="mb-4 font-mono text-[11px] tracking-[0.14em] text-emerald-600 uppercase">{t('A WebTano site', 'WebTano sajt')}</p>
+        {list(good, true)}
+      </div>
+
+      {/* Phones and tablets: both lists under the sketches. */}
+      <div className="grid grid-cols-2 gap-4 lg:hidden">
+        {list(bad, false)}
+        {list(good, true)}
+      </div>
+      <p className="text-center font-mono text-[10px] tracking-wide text-zinc-400 uppercase lg:col-span-3">
+        {t('Illustration: the first screen a visitor sees on a phone', 'Ilustracija: prvi ekran koji posetilac vidi na telefonu')}
+      </p>
+    </div>
+  );
+}
+
 /**
  * Homepage section on what a WebTano site carries: a typical small-business
  * site next to ours, layer by layer, then a six-question self-check.
@@ -123,7 +277,10 @@ export function SiteAnatomy() {
   // translate="no": a browser translating the page rewrites text React still updates, which crashes it.
   return (
     <div translate="no">
-      <div className="overflow-hidden rounded-3xl bg-white ring-1 ring-zinc-200/80">
+      <FirstScreenCompare />
+
+      {/* Phones get the picture; the full comparison table is desktop detail. */}
+      <div className="mt-6 overflow-hidden rounded-3xl bg-white ring-1 ring-zinc-200/80 max-md:hidden">
         {/* Column heads */}
         <div className="grid grid-cols-[minmax(0,0.7fr)_minmax(0,1fr)_minmax(0,1fr)] border-b border-zinc-200 max-md:hidden">
           <div className="px-6 py-4 font-mono text-[11px] tracking-[0.14em] text-zinc-400 uppercase">{t('What it covers', 'Šta se gleda')}</div>
