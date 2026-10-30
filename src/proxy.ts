@@ -78,7 +78,8 @@ export async function proxy(request: NextRequest) {
 }
 
 // Paths outside the two languages: the admin's public demo report and files served as they are.
-const UNLOCALIZED = ['/demo'];
+// The demo site itself, /demo and /sr/demo, is a normal page in both languages.
+const UNLOCALIZED = ['/demo/report'];
 const FILE = /\.[a-z0-9]+$/i;
 
 /**
