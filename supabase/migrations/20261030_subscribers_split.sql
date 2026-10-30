@@ -25,8 +25,10 @@ create index if not exists newsletter_subscribers_site_idx on newsletter_subscri
 -- 3. The old email-only leads. A lead counts as a sign-up when it has an email,
 --    no name and no phone, and every other field is a known technical one
 --    (source, lang, consent...) or the form is named like a newsletter form.
+-- A plain table, not a temporary one: the Supabase SQL Editor may run each
+-- statement on its own connection, where a temporary table would be gone.
 drop table if exists moved_leads;
-create temporary table moved_leads as
+create table moved_leads as
 select l.*
 from leads l
 where l.visitor_email is not null
