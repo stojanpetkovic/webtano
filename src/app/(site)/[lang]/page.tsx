@@ -607,12 +607,12 @@ export default async function HomePage() {
               eyebrow={t('Under the hood', 'Ispod haube')}
               title={t('What your website should be doing, and probably isn’t', 'Šta vaš sajt treba da radi, a verovatno ne radi')}
               lead={t(
-                'Most small-business websites look fine and still lose enquiries every week, in places the owner never sees. Here is everything we build into every site, in plain language, and what it costs you when it is missing.',
-                'Većina sajtova malih firmi izgleda sasvim u redu, a ipak svake nedelje gubi upite, na mestima koja vlasnik nikad ne vidi. Ovo je sve što ugrađujemo u svaki sajt, jednostavnim rečima, i šta gubite kada toga nema.',
+                'Most small-business websites look fine and still lose enquiries in places the owner never sees. Here is a typical site next to the one we build.',
+                'Većina sajtova malih firmi izgleda u redu, a ipak gubi upite na mestima koja vlasnik ne vidi. Ovako izgleda tipičan sajt pored sajta koji mi pravimo.',
               )}
             />
           </Reveal>
-          <Reveal className="mt-14 max-md:mt-5">
+          <Reveal className="mt-10 max-md:mt-5">
             <SiteAnatomy />
           </Reveal>
         </div>
