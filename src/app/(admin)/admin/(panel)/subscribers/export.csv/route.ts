@@ -16,6 +16,8 @@ export async function GET(request: Request) {
   const status = params.get('status') ?? 'confirmed';
   let query = db().from('newsletter_subscribers').select('*').order('created_at', { ascending: false }).limit(50_000);
   if (status !== 'all' && status in SUBSCRIBER_STATUS) query = query.eq('status', status);
+  const list = params.get('list');
+  query = list && /^[0-9a-f-]{36}$/.test(list) ? query.eq('site_id', list) : query.is('site_id', null);
   const q = params.get('q')?.trim().toLowerCase();
   if (q) query = query.ilike('email', `%${q.replace(/[%_,()]/g, '')}%`);
   const { data } = await query;

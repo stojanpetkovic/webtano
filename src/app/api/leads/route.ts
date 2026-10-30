@@ -1,4 +1,6 @@
-import { cleanFields, originMatches, str, type IncomingLead } from '@/lib/admin/leads';
+import { cleanFields, extractContact, isSignupOnly, originMatches, str, type IncomingLead } from '@/lib/admin/leads';
+import { addSiteSubscriber, tooManySignups } from '@/lib/admin/newsletter';
+import { site as webtano } from '@/content/site';
 import { findSite, isRateLimited, recordLead, visitorHash } from '@/lib/admin/ingest';
 
 function cors(origin: string | null): Record<string, string> {
@@ -50,6 +52,27 @@ export async function POST(request: Request) {
   if (Object.keys(fields).length === 0) return reply(400, { ok: false, error: 'empty_form' }, headers);
 
   const ipHash = visitorHash(request, request.headers.get('x-real-ip') ?? undefined, site);
+
+  // A newsletter sign-up is not an inquiry: it goes to the subscriber list.
+  // On webtano.com the sign-up form already stored it with double opt-in.
+  if (isSignupOnly(str(body.form, 100), fields)) {
+    if (honeypot || site.site_key === webtano.leadsSiteKey) return reply(200, { ok: true }, headers);
+    if (await tooManySignups(ipHash)) return reply(429, { ok: false, error: 'rate_limited' }, headers);
+    try {
+      await addSiteSubscriber({
+        siteId: site.id,
+        email: extractContact(fields).email!,
+        pageUrl: str(body.page_url, 500),
+        ipHash,
+        userAgent: request.headers.get('user-agent'),
+      });
+    } catch (err) {
+      console.error('subscriber insert failed', err);
+      return reply(500, { ok: false, error: 'store_failed' }, headers);
+    }
+    return reply(200, { ok: true }, headers);
+  }
+
   if (await isRateLimited(site, ipHash)) return reply(429, { ok: false, error: 'rate_limited' }, headers);
 
   const lead = await recordLead({

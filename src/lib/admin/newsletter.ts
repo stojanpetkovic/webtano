@@ -26,6 +26,12 @@ export interface Subscriber {
   confirm_sent_at: string | null;
   confirmed_at: string | null;
   unsubscribed_at: string | null;
+  /** Null for the WebTano newsletter; set for a sign-up on a client's site. */
+  site_id: string | null;
+  /** The lead or CRM deal this subscriber was turned into. */
+  lead_id: string | null;
+  deal_id: string | null;
+  converted_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -40,6 +46,7 @@ export const SOURCES: Record<string, L> = {
   popup: { en: 'Popup', sr: 'Popup' },
   footer: { en: 'Footer', sr: 'Futer' },
   admin: { en: 'Admin', sr: 'Admin' },
+  form: { en: 'Site form', sr: 'Forma na sajtu' },
 };
 
 /** What the visitor agrees to, stored with the sign-up as proof of consent. */
@@ -70,7 +77,7 @@ export async function tooManySignups(ipHash: string): Promise<boolean> {
 export async function subscribe(input: { email: string; source: string; pageUrl: string | null; ipHash: string; userAgent: string | null }) {
   const email = input.email.trim().toLowerCase();
   const now = new Date().toISOString();
-  const { data: existing } = await db().from(TABLE).select('*').eq('email', email).maybeSingle<Subscriber>();
+  const { data: existing } = await db().from(TABLE).select('*').is('site_id', null).eq('email', email).maybeSingle<Subscriber>();
 
   if (existing?.status === 'confirmed') return;
   if (existing?.status === 'pending' && existing.confirm_sent_at && Date.now() - Date.parse(existing.confirm_sent_at) < RESEND_AFTER_MS) return;
@@ -106,6 +113,37 @@ export async function subscribe(input: { email: string; source: string; pageUrl:
     row = data;
   }
   if (row) await sendConfirmation(row);
+}
+
+/**
+ * A newsletter sign-up caught on a client's site by leads.js. The client runs
+ * their own list, so there is no confirmation email here: the address is only
+ * kept on that site's subscriber list, apart from the leads.
+ */
+export async function addSiteSubscriber(input: { siteId: string; email: string; pageUrl: string | null; ipHash: string; userAgent: string | null }) {
+  const email = input.email.trim().toLowerCase().slice(0, 320);
+  const now = new Date().toISOString();
+  const { data: existing } = await db().from(TABLE).select('id, status').eq('site_id', input.siteId).eq('email', email).maybeSingle<Pick<Subscriber, 'id' | 'status'>>();
+  if (existing) {
+    if (existing.status !== 'confirmed')
+      await db().from(TABLE).update({ status: 'confirmed', unsubscribed_at: null, updated_at: now }).eq('id', existing.id);
+    return;
+  }
+  const { error } = await db()
+    .from(TABLE)
+    .insert({
+      site_id: input.siteId,
+      email,
+      status: 'confirmed',
+      source: 'form',
+      page_url: input.pageUrl?.slice(0, 500) ?? null,
+      token: newToken(),
+      ip_hash: input.ipHash,
+      user_agent: input.userAgent?.slice(0, 500) ?? null,
+      confirmed_at: now,
+      updated_at: now,
+    });
+  if (error && error.code !== '23505') throw new Error(error.message);
 }
 
 async function send(to: string, message: { subject: string; html: string; text: string }, unsubscribe?: string) {
