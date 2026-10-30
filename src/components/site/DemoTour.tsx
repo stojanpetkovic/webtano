@@ -10,6 +10,8 @@ import {
   ArrowUpRight,
   BellRing,
   Check,
+  FileText,
+  Printer,
   Code2,
   Hand,
   Maximize2,
@@ -24,7 +26,7 @@ import { useLang, useLocalePath, useT } from '@/components/i18n/LangProvider';
 import { DemoSite, type Block } from './DemoSite';
 import type { T } from '@/lib/i18n';
 
-type Stage = 'site' | 'code' | 'seo' | 'tracking' | 'done';
+type Stage = 'site' | 'code' | 'seo' | 'tracking' | 'report' | 'done';
 type Step = { stage: Stage; block?: Block; phone?: boolean; title: string; text: string; wrong?: string; gets: string[]; tryIt?: string };
 
 const steps = (t: T): Step[] => [
@@ -143,6 +145,20 @@ const steps = (t: T): Step[] => [
     gets: [t('Call and form tracking', 'Praćenje poziva i formi'), t('Source of every enquiry', 'Izvor svakog upita'), t('Monthly report in plain language', 'Mesečni izveštaj razumljivim jezikom')],
   },
   {
+    stage: 'report',
+    title: t('A monthly report you can actually read', 'Mesečni izveštaj koji zaista možete da pročitate'),
+    text: t(
+      'At the start of every month you get a short PDF: how many people called or wrote, where they came from and what one enquiry cost you. No jargon, and the same report is always one click away in your browser.',
+      'Početkom svakog meseca dobijate kratak PDF: koliko ljudi je zvalo ili pisalo, odakle su došli i koliko vas je koštao jedan upit. Bez stručnih izraza, a isti izveštaj vam je uvek na jedan klik u pregledaču.',
+    ),
+    wrong: t(
+      'No report at all, or a screenshot of “visitors” every few months that says nothing about customers or money.',
+      'Izveštaja nema, ili na par meseci stigne slika „posetilaca” koja ništa ne govori o kupcima i novcu.',
+    ),
+    gets: [t('PDF report every month', 'PDF izveštaj svakog meseca'), t('Enquiries and cost per enquiry', 'Upiti i cena po upitu'), t('Plan for next month', 'Plan za sledeći mesec')],
+    tryIt: t('Open the full sample report: change the month or language and save it as PDF.', 'Otvorite ceo primer izveštaja: promenite mesec ili jezik i sačuvajte ga kao PDF.'),
+  },
+  {
     stage: 'done',
     title: t('That is what your site gets', 'To je ono što vaš sajt dobija'),
     text: t(
@@ -236,6 +252,7 @@ export function DemoTour() {
     code: t('The code', 'Kod'),
     seo: t('Google and AI', 'Google i AI'),
     tracking: t('Your dashboard', 'Vaš panel'),
+    report: t('Monthly report', 'Mesečni izveštaj'),
     done: t('Summary', 'Pregled'),
   };
 
@@ -341,6 +358,7 @@ export function DemoTour() {
                 {step.stage === 'code' && <CodeStage />}
                 {step.stage === 'seo' && <SeoStage />}
                 {step.stage === 'tracking' && <TrackingStage events={events} />}
+                {step.stage === 'report' && <ReportStage />}
                 {step.stage === 'done' && <DoneStage all={all} onPick={go} />}
               </div>
             </div>
@@ -723,6 +741,127 @@ function TrackingStage({ events }: { events: Event[] }) {
           <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
         </Link>
       </Panel>
+    </div>
+  );
+}
+
+function ReportStage() {
+  const t = useT();
+  const sr = useLang() === 'sr';
+  const kpis = [
+    [t('Enquiries', 'Upiti'), '22', '+29%'],
+    [t('Calls', 'Pozivi'), '14', '+17%'],
+    [t('Forms', 'Forme'), '8', '+60%'],
+    [t('Cost per enquiry', 'Cena po upitu'), sr ? '1.360 din' : '$12', '−18%'],
+  ] as const;
+  const weeks = [3, 5, 6, 8];
+  const sources = [
+    ['Google Maps', 9],
+    [t('Google search', 'Google pretraga'), 7],
+    ['Google Ads', 5],
+    ['Facebook', 1],
+  ] as const;
+  const done = [
+    t('Added a page for heat pump servicing', 'Dodata stranica za servis toplotnih pumpi'),
+    t('Answered 6 new Google reviews', 'Odgovoreno na 6 novih Google recenzija'),
+    t('Moved ad budget from Facebook to Google', 'Budžet za oglase prebačen sa Facebook-a na Google'),
+  ];
+  return (
+    <div>
+      <div className="relative mx-auto max-w-[560px]">
+        {/* A second sheet behind, so it reads as a multi-page PDF. */}
+        <div aria-hidden className="absolute inset-x-6 -bottom-3 top-3 rotate-[1.5deg] rounded-md bg-white shadow-[0_20px_50px_-24px_rgba(5,6,10,0.35)] ring-1 ring-zinc-200" />
+        <div className="relative rounded-md bg-white p-5 shadow-[0_30px_70px_-30px_rgba(5,6,10,0.45)] ring-1 ring-zinc-200 sm:p-7">
+          <span className="absolute -top-3 right-5 inline-flex items-center gap-1 rounded-md bg-red-600 px-2 py-1 font-mono text-[10px] font-bold tracking-wider text-white shadow-md">
+            <FileText className="h-3 w-3" aria-hidden />
+            PDF
+          </span>
+          <div className="flex items-start justify-between gap-4 border-b border-zinc-200 pb-4">
+            <div>
+              <p className="font-mono text-[9px] tracking-[0.16em] text-zinc-400 uppercase">{t('Monthly report', 'Mesečni izveštaj')}</p>
+              <p className="mt-1 font-display text-lg leading-tight text-ink-950">{t('Summit Heating & Air', 'Summit klima i grejanje')}</p>
+              <p className="text-[11px] text-zinc-500">{t('October 2026 · compared with September', 'Oktobar 2026 · u odnosu na septembar')}</p>
+            </div>
+            <span className="font-display text-[13px] text-ink-950">
+              Web<span className="text-azure-600">Tano</span>
+            </span>
+          </div>
+
+          <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {kpis.map(([label, value, change]) => (
+              <div key={label} className="rounded-lg bg-zinc-50 px-3 py-2.5 ring-1 ring-zinc-100">
+                <p className="text-[10px] text-zinc-500">{label}</p>
+                <p className="mt-0.5 font-display text-[19px] leading-none text-ink-950">{value}</p>
+                <p className="mt-1 text-[10px] font-semibold text-emerald-600">{change}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div>
+              <p className="text-[11px] font-semibold text-ink-950">{t('Enquiries by week', 'Upiti po nedeljama')}</p>
+              <div className="mt-2 flex h-20 items-end gap-2 border-b border-zinc-200">
+                {weeks.map((w, i) => (
+                  <div key={i} className="flex flex-1 flex-col items-center gap-1">
+                    <span className="text-[9px] text-zinc-500">{w}</span>
+                    <div className="w-full rounded-t bg-gradient-to-t from-azure-600 to-accent" style={{ height: `${w * 7}px` }} />
+                  </div>
+                ))}
+              </div>
+              <div className="mt-1 flex gap-2 text-center text-[9px] text-zinc-400">
+                {weeks.map((_, i) => (
+                  <span key={i} className="flex-1">{t('Wk', 'Ned')} {i + 1}</span>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p className="text-[11px] font-semibold text-ink-950">{t('Where they came from', 'Odakle su došli')}</p>
+              <ul className="mt-2 space-y-1.5">
+                {sources.map(([source, n]) => (
+                  <li key={source} className="text-[10px]">
+                    <div className="flex justify-between text-zinc-600">
+                      <span>{source}</span>
+                      <span className="font-mono">{n}</span>
+                    </div>
+                    <div className="mt-0.5 h-1.5 rounded-full bg-zinc-100">
+                      <div className="h-full rounded-full bg-azure-600" style={{ width: `${(n / 9) * 100}%` }} />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-4 rounded-lg bg-azure-50/70 p-3 ring-1 ring-azure-100">
+            <p className="text-[11px] font-semibold text-ink-950">{t('What we did this month', 'Šta smo radili ovog meseca')}</p>
+            <ul className="mt-1.5 space-y-1">
+              {done.map((d) => (
+                <li key={d} className="flex items-start gap-1.5 text-[10px] text-zinc-600">
+                  <Check className="mt-px h-3 w-3 shrink-0 text-azure-600" aria-hidden />
+                  {d}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <p className="mt-4 flex justify-between border-t border-zinc-100 pt-2 font-mono text-[9px] text-zinc-400">
+            <span>{t('Sample data', 'Primer podaci')}</span>
+            <span>1 / 3</span>
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-8 flex flex-wrap justify-center gap-3">
+        <Link
+          href={`/demo/report?lang=${sr ? 'sr' : 'en'}`}
+          target="_blank"
+          className="group inline-flex items-center gap-2 rounded-full bg-ink-950 px-5 py-2.5 text-sm font-semibold text-white hover:bg-ink-900"
+        >
+          <Printer className="h-4 w-4 text-accent" aria-hidden />
+          {t('Open the full sample report', 'Otvorite ceo primer izveštaja')}
+          <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
+        </Link>
+      </div>
     </div>
   );
 }
