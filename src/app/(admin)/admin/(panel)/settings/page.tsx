@@ -27,6 +27,7 @@ const SCHEMA: { label: L; table: string; column: string; file: string }[] = [
   { label: { en: 'Customer sites', sr: 'Sajtovi klijenata' }, table: 'crm_customer_sites', column: 'site_id', file: '20261025_crm_customer_sites.sql' },
   { label: { en: 'Price list', sr: 'Cenovnik' }, table: 'crm_items', column: 'slug', file: '20261025_crm_items_slug.sql' },
   { label: { en: 'Newsletter', sr: 'Newsletter' }, table: 'newsletter_subscribers', column: 'token', file: '20261025_newsletter.sql' },
+  { label: { en: 'Subscribers apart from leads', sr: 'Pretplatnici odvojeni od lidova' }, table: 'newsletter_subscribers', column: 'deal_id', file: '20261030_subscribers_split.sql' },
   { label: { en: 'Finance', sr: 'Finansije' }, table: 'fin_invoices', column: 'number', file: '20261025_finance.sql' },
 ];
 

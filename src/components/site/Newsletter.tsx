@@ -58,8 +58,9 @@ export function NewsletterForm({ source, dark = false, onDone }: { source: 'popu
     );
 
   const id = `nl-${source}`;
+  // data-lead-ignore: a sign-up is not a lead, so leads.js leaves this form alone.
   return (
-    <form action={action} noValidate>
+    <form action={action} noValidate data-lead-ignore>
       <input type="hidden" name="source" value={source} />
       <input type="hidden" name="lang" value={lang} />
       <div className="hidden" aria-hidden>

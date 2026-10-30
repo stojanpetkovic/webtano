@@ -92,6 +92,23 @@ export function extractContact(fields: Record<string, string>) {
   return { name, email, phone };
 }
 
+// Fields a newsletter form sends besides the address: none of them makes it an inquiry.
+const SIGNUP_META =
+  /^(e-?mail.*|source|lang|locale|language|consent|gdpr|agree.*|acceptance.*|terms|privacy|subscribe|newsletter|list|tags?|redirect|form.*|page|url|company_url)$/i;
+const SIGNUP_FORM = /newsletter|subscri|pretplat|signup|sign-up|mailing/i;
+
+/**
+ * True for a newsletter sign-up rather than an inquiry: an email with no name
+ * and no phone, from a form named like a newsletter or with nothing else filled in.
+ * Those go to the subscriber list, not to the leads.
+ */
+export function isSignupOnly(formName: string | null, fields: Record<string, string>): boolean {
+  const contact = extractContact(fields);
+  if (!contact.email || contact.name || contact.phone) return false;
+  if (formName && SIGNUP_FORM.test(formName)) return true;
+  return Object.keys(fields).every((k) => SIGNUP_META.test(k));
+}
+
 export function parseUtm(raw: unknown) {
   const utm = (raw && typeof raw === "object" ? raw : {}) as Record<
     string,
