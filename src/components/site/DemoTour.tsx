@@ -8,6 +8,7 @@ import {
   ArrowLeft,
   ArrowRight,
   ArrowUpRight,
+  ChevronUp,
   BellRing,
   Check,
   FileText,
@@ -212,6 +213,8 @@ export function DemoTour() {
   const [toast, setToast] = useState<string | null>(null);
   const [small, setSmall] = useState(false);
   const [full, setFull] = useState(false);
+  // On a phone the step's explanation starts folded, so the demo itself gets the screen.
+  const [open, setOpen] = useState(false);
   // False while rendering on the server, true in the browser.
   const mounted = useSyncExternalStore(noop, () => true, () => false);
   // The tour's own box at the end of <body>. React manages <body> itself and can
@@ -226,6 +229,7 @@ export function DemoTour() {
   const go = (next: number) => {
     setIndex(Math.max(0, Math.min(last, next)));
     setToast(null);
+    setOpen(false);
     panelRef.current?.scrollTo({ top: 0 });
   };
 
@@ -288,6 +292,7 @@ export function DemoTour() {
 
   // Rendered into <body>, so no section's stacking or clipping (the phone layout rounds and isolates them) can hold it.
   if (!mounted || !host) return null;
+  const compact = small && !open;
   // translate="no": a browser translating the page rewrites text React still updates, which crashes it.
   return createPortal(
     <div translate="no" role="dialog" aria-modal="true" aria-label={t('WebTano demo', 'WebTano demo')} className="fixed inset-0 z-[80] flex flex-col bg-white">
@@ -416,15 +421,26 @@ export function DemoTour() {
         </div>
 
         {/* Explanation: a side panel on computers, a bottom sheet on phones. */}
-        <aside className="flex shrink-0 flex-col border-zinc-200 bg-white max-lg:max-h-[46%] max-lg:border-t max-lg:shadow-[0_-8px_24px_-12px_rgb(10_14_30/0.18)] lg:w-[420px] lg:border-l">
-          <div ref={panelRef} className="min-h-0 flex-1 overflow-y-auto px-6 pt-6 pb-4 max-lg:px-5 max-lg:pt-4" aria-live="polite">
+        <aside className={`flex shrink-0 flex-col border-zinc-200 bg-white ${small ? (open ? 'max-h-[78%]' : '') : 'max-lg:max-h-[46%]'} max-lg:border-t max-lg:shadow-[0_-8px_24px_-12px_rgb(10_14_30/0.18)] lg:w-[420px] lg:border-l`}>
+          <div ref={panelRef} className={`min-h-0 flex-1 overflow-y-auto px-6 pt-6 pb-4 max-lg:px-5 max-lg:pt-4 ${compact ? 'max-lg:pt-3 max-lg:pb-2' : ''}`} aria-live="polite">
             <p className="font-mono text-[11px] tracking-[0.14em] text-azure-700 uppercase">
               {t('Step', 'Korak')} {index + 1} · {stageLabel[step.stage]}
             </p>
-            <h2 className="mt-2 font-display text-2xl text-balance text-ink-950 max-lg:text-xl">{step.title}</h2>
-            <p className="mt-3 leading-relaxed text-pretty text-zinc-600 max-lg:mt-2 max-lg:text-[15px] max-lg:leading-snug">{step.text}</p>
+            <h2 className={`mt-2 font-display text-2xl text-balance text-ink-950 max-lg:text-xl ${compact ? 'max-lg:mt-1 max-lg:text-[18px]' : ''}`}>{step.title}</h2>
+            <p className={`mt-3 leading-relaxed text-pretty text-zinc-600 max-lg:mt-2 max-lg:text-[15px] max-lg:leading-snug ${compact ? 'line-clamp-2 max-lg:mt-1 max-lg:text-[14px]' : ''}`}>{step.text}</p>
+            {small && (step.wrong || step.gets.length > 0 || step.tryIt) && (
+              <button
+                type="button"
+                onClick={() => setOpen(!open)}
+                aria-expanded={open}
+                className="mt-2 inline-flex items-center gap-1 text-[13px] font-semibold text-azure-700"
+              >
+                {open ? t('Show less', 'Prikaži manje') : t('What this means for you', 'Šta ovo znači za vas')}
+                <ChevronUp className={`h-4 w-4 transition-transform ${open ? 'rotate-180' : ''}`} aria-hidden />
+              </button>
+            )}
 
-            {step.wrong && (
+            {!compact && step.wrong && (
               <p className="mt-4 flex gap-2.5 rounded-2xl bg-red-50/70 px-4 py-3 text-sm leading-snug text-red-900/80 ring-1 ring-red-100">
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-500" aria-hidden />
                 <span>
@@ -434,7 +450,7 @@ export function DemoTour() {
               </p>
             )}
 
-            {step.gets.length > 0 && (
+            {!compact && step.gets.length > 0 && (
               <ul className="mt-4 flex flex-wrap gap-2">
                 {step.gets.map((g) => (
                   <li key={g} className="inline-flex items-center gap-1.5 rounded-full bg-azure-50 px-3 py-1 text-xs font-medium text-azure-700 ring-1 ring-azure-100">
@@ -445,7 +461,7 @@ export function DemoTour() {
               </ul>
             )}
 
-            {step.tryIt && (
+            {!compact && step.tryIt && (
               <p className="mt-4 flex items-center gap-2 text-sm font-medium text-ink-950">
                 <Hand className="h-4 w-4 shrink-0 text-accent" aria-hidden />
                 {step.tryIt}
