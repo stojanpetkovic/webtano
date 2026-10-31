@@ -702,6 +702,52 @@ function SeoStage() {
         </Panel>
       )}
 
+      {view === 'code' && (
+        <div className="mt-4">
+          <Panel title={t('What this does for your business', 'Šta ovo radi za vaš posao')}>
+            <ul className="divide-y divide-zinc-100">
+              {[
+                [
+                  t('name, phone, address', 'ime, telefon, adresa'),
+                  t('Google and Maps show the right number and the way to you', 'Google i Mape prikazuju tačan broj i put do vas'),
+                  t('One tap to call from search, and no customer lost to an old number or the wrong address.', 'Kupac vas zove jednim dodirom iz pretrage, i nijedan se ne izgubi zbog starog broja ili pogrešne adrese.'),
+                ],
+                [
+                  t('opening hours', 'radno vreme'),
+                  t('Search shows when you are open', 'Pretraga prikazuje kada radite'),
+                  t('People call while you are there to answer, instead of finding a closed door and calling the next firm.', 'Ljudi zovu dok ste tu da se javite, umesto da naiđu na zatvoreno i pozovu sledeću firmu.'),
+                ],
+                [
+                  t('area served', 'područje rada'),
+                  t('You come up in the places you actually work', 'Pojavljujete se u mestima gde zaista radite'),
+                  t('Someone searching from a nearby town finds you too, not only people in the city centre.', 'Nađe vas i neko ko traži iz Futoga ili Kaća, a ne samo ljudi iz centra grada.'),
+                ],
+                [
+                  t('rating', 'ocena'),
+                  t('Google and AI know customers trust you', 'Google i AI znaju da vam kupci veruju'),
+                  t('When someone asks for a recommendation, a well-rated firm that is described clearly is the one that gets named.', 'Kada neko pita za preporuku, imenuje se firma koja je dobro ocenjena i jasno opisana.'),
+                ],
+              ].map(([code, what, why]) => (
+                <li key={code} className="flex gap-3 py-3 first:pt-0 last:pb-0 max-sm:flex-col max-sm:gap-1.5">
+                  <span className="mt-0.5 h-fit w-fit shrink-0 rounded-md bg-ink-975 px-2 py-0.5 text-center font-mono text-[10.5px] whitespace-nowrap text-accent sm:w-36">{code}</span>
+                  <span className="min-w-0">
+                    <span className="block text-[13.5px] font-semibold text-ink-950">{what}</span>
+                    <span className="mt-0.5 block text-[12.5px] leading-snug text-zinc-500">{why}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-4 flex items-start gap-2 rounded-xl bg-azure-50/70 px-3.5 py-2.5 text-[12.5px] leading-snug text-ink-950 ring-1 ring-azure-100">
+              <Check className="mt-0.5 h-4 w-4 shrink-0 text-azure-600" aria-hidden />
+              {t(
+                'We write this for every page of your site and keep it up to date when your hours, phone or services change. You do not have to touch any code.',
+                'Mi ovo pišemo za svaku stranicu vašeg sajta i ažuriramo kad promenite radno vreme, telefon ili usluge. Vi ne morate da dirate nikakav kod.',
+              )}
+            </p>
+          </Panel>
+        </div>
+      )}
+
       {view === 'ai' && (
         <Panel title={t('An AI assistant', 'AI asistent')} note={t('Illustration', 'Ilustracija')}>
           <p className="ml-auto w-fit max-w-[85%] rounded-2xl rounded-br-md bg-zinc-100 px-4 py-2 text-[13px] text-ink-950">
