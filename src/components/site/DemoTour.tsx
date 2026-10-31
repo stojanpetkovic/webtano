@@ -772,6 +772,47 @@ function SeoStage() {
           </p>
         </Panel>
       )}
+
+      {view === 'ai' && (
+        <div className="mt-4">
+          <Panel title={t('Why this matters for your business', 'Zašto je ovo važno za vaš posao')}>
+            <ul className="divide-y divide-zinc-100">
+              {[
+                [
+                  t('new habit', 'nova navika'),
+                  t('More and more customers ask AI instead of searching', 'Sve više kupaca pita AI umesto da pretražuje'),
+                  t('ChatGPT, Gemini and the AI answer at the top of Google now reply before anyone sees a list of sites.', 'ChatGPT, Gemini i AI odgovor na vrhu Google-a odgovore pre nego što iko vidi listu sajtova.'),
+                ],
+                [
+                  t('one answer', 'jedan odgovor'),
+                  t('AI names two or three firms, not ten', 'AI imenuje dve-tri firme, ne deset'),
+                  t('There is no page two. If you are not in the answer, that customer never hears of you.', 'Nema druge strane. Ako niste u odgovoru, taj kupac za vas nikad ne čuje.'),
+                ],
+                [
+                  t('where AI looks', 'odakle AI zna'),
+                  t('It reads your site, your Google profile and reviews', 'Čita vaš sajt, Google profil i recenzije'),
+                  t('When the facts are vague or do not match from place to place, it plays safe and recommends someone else.', 'Kad su podaci nejasni ili se razlikuju od mesta do mesta, igra na sigurno i preporuči nekog drugog.'),
+                ],
+              ].map(([code, what, why]) => (
+                <li key={code} className="flex gap-3 py-3 first:pt-0 last:pb-0 max-sm:flex-col max-sm:gap-1.5">
+                  <span className="mt-0.5 h-fit w-fit shrink-0 rounded-md bg-ink-975 px-2 py-0.5 text-center font-mono text-[10.5px] whitespace-nowrap text-accent sm:w-36">{code}</span>
+                  <span className="min-w-0">
+                    <span className="block text-[13.5px] font-semibold text-ink-950">{what}</span>
+                    <span className="mt-0.5 block text-[12.5px] leading-snug text-zinc-500">{why}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-4 flex items-start gap-2 rounded-xl bg-azure-50/70 px-3.5 py-2.5 text-[12.5px] leading-snug text-ink-950 ring-1 ring-azure-100">
+              <Check className="mt-0.5 h-4 w-4 shrink-0 text-azure-600" aria-hidden />
+              {t(
+                'We write pages that say plainly what you do, where and how you price it, and keep the same facts on your site and your Google profile, so AI has a clear, trustworthy picture of you.',
+                'Pišemo stranice koje jasno kažu šta radite, gde i kako formirate cenu, i držimo iste podatke na sajtu i Google profilu. Tako AI ima jasnu sliku o vama kojoj može da veruje.',
+              )}
+            </p>
+          </Panel>
+        </div>
+      )}
     </div>
   );
 }
