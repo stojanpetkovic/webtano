@@ -73,6 +73,7 @@ export function DemoSite({
     {
       label: t('Cooling', 'Hlađenje'),
       icon: Snowflake,
+      pitch: t('Cool again today, with no surprises on the bill.', 'Hladno već danas, bez iznenađenja na računu.'),
       items: [
         { slug: ['ac-repair', 'servis-klima'], name: t('AC repair', 'Popravka klima'), text: t('Same-day diagnosis, fixed price before we start.', 'Dijagnoza isti dan, fiksna cena pre početka.'), icon: Wrench },
         { slug: ['ac-installation', 'ugradnja-klima'], name: t('AC installation', 'Ugradnja klima'), text: t('Sized for your home, installed in one day.', 'Snaga prema prostoru, ugradnja za jedan dan.'), icon: Snowflake },
@@ -82,6 +83,7 @@ export function DemoSite({
     {
       label: t('Heating', 'Grejanje'),
       icon: Flame,
+      pitch: t('Warm before the cold sets in.', 'Toplo pre nego što zahladi.'),
       items: [
         { slug: ['furnace-repair', 'servis-kotlova'], name: t('Furnace repair', 'Servis kotlova'), text: t('Back to warm the same day in most cases.', 'U većini slučajeva toplo već istog dana.'), icon: Flame },
         { slug: ['heat-pumps', 'toplotne-pumpe'], name: t('Heat pumps', 'Toplotne pumpe'), text: t('Lower bills, one system for summer and winter.', 'Manji računi, jedan sistem za leto i zimu.'), icon: Thermometer },
@@ -91,6 +93,7 @@ export function DemoSite({
     {
       label: t('Air quality', 'Kvalitet vazduha'),
       icon: Wind,
+      pitch: t('Clean air for the whole family.', 'Čist vazduh za celu porodicu.'),
       items: [
         { slug: ['duct-cleaning', 'ciscenje-kanala'], name: t('Duct cleaning', 'Čišćenje kanala'), text: t('Less dust, fewer allergies, better airflow.', 'Manje prašine i alergija, bolji protok vazduha.'), icon: Wind },
         { slug: ['air-purifiers', 'preciscivaci'], name: t('Air purifiers', 'Prečišćivači vazduha'), text: t('Whole-home filtration that works quietly.', 'Filtracija za ceo stan, tiho i stalno.'), icon: Fan },
@@ -390,7 +393,30 @@ export function DemoSite({
               </dl>
             </div>
 
-            <div className={`space-y-16 pb-24 ${wide ? 'pt-16' : 'pt-10'}`}>
+            <div className={`space-y-16 ${wide ? 'pt-12' : 'pt-10 pb-24'}`}>
+              {/* Credentials */}
+              {wide && (
+                <div className={`${shell} ${dim()}`}>
+                  <div className="flex items-center justify-between gap-6 rounded-2xl border border-dashed border-zinc-200 px-6 py-4">
+                    <p className="text-[10.5px] font-bold tracking-[0.16em] whitespace-nowrap text-zinc-400 uppercase">{t('Certified & insured', 'Sertifikovani i osigurani')}</p>
+                    {[
+                      [BadgeCheck, t('Certified F-gas technicians', 'F-gas sertifikovani serviseri')],
+                      [ShieldCheck, t('Insured on every job', 'Osiguranje za svaki posao')],
+                      [Tag, t('All major brands', 'Svi brendovi klima')],
+                      [Clock, t('24/7 emergencies', 'Hitno 0–24')],
+                    ].map(([Icon, label]) => {
+                      const I = Icon as typeof Star;
+                      return (
+                        <span key={label as string} className="flex items-center gap-2 text-[12.5px] font-semibold whitespace-nowrap text-[#0d2340]">
+                          <I className="h-4 w-4 text-[#f26b1d]" aria-hidden />
+                          {label as string}
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {/* Problems */}
               <div className={`${shell} ${dim()}`}>
                 <div className="text-center">
@@ -441,36 +467,48 @@ export function DemoSite({
                       ))}
                     </div>
                   </div>
-                  <div className={`mt-6 grid gap-4 ${wide ? 'grid-cols-3' : ''}`}>
-                    {tabs[tab].items.map((sv, i) => {
-                      const href = `/${sr ? 'usluge' : 'services'}/${sv.slug[sr ? 1 : 0]}`;
-                      const on = path === href;
-                      return (
-                        <button
-                          key={sv.name}
-                          type="button"
-                          onClick={() => onPath(href, sv.name)}
-                          className={`group overflow-hidden rounded-2xl bg-white text-left ring-1 transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_20px_40px_-20px_rgb(13_35_64/0.45)] ${on ? 'ring-2 ring-[#f26b1d]' : 'ring-zinc-200'}`}
-                        >
-                          <span
-                            className={`relative block ${wide ? 'h-36' : 'h-28'}`}
-                            style={photo(['cooling', 'heating', 'air'][tab], 'linear-gradient(180deg, rgb(13 35 64 / 0.1), rgb(13 35 64 / 0.75))', ['left center', 'center', 'right center'][i])}
+                  <div className={`mt-6 grid gap-4 ${wide ? 'grid-cols-[1.05fr_1fr]' : ''}`}>
+                    <div
+                      className={`relative overflow-hidden rounded-2xl ${wide ? 'min-h-[290px]' : 'h-44'}`}
+                      style={photo(['cooling', 'heating', 'air'][tab], 'linear-gradient(180deg, rgb(13 35 64 / 0) 25%, rgb(13 35 64 / 0.92))')}
+                    >
+                      <div className="absolute inset-x-0 bottom-0 p-5 text-white">
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[11px] font-semibold ring-1 ring-white/25 backdrop-blur">
+                          {(() => {
+                            const TabIcon = tabs[tab].icon;
+                            return <TabIcon className="h-3.5 w-3.5" aria-hidden />;
+                          })()}
+                          {tabs[tab].label}
+                        </span>
+                        <p className={`mt-2 font-display leading-tight ${wide ? 'text-[23px]' : 'text-[19px]'}`}>{tabs[tab].pitch}</p>
+                        {wide && <p className="mt-1.5 text-[12.5px] text-white/75">{t('Fixed price before we start · 2-year guarantee', 'Fiksna cena pre početka · 2 godine garancije')}</p>}
+                      </div>
+                    </div>
+                    <div className="grid gap-3">
+                      {tabs[tab].items.map((sv) => {
+                        const href = `/${sr ? 'usluge' : 'services'}/${sv.slug[sr ? 1 : 0]}`;
+                        const on = path === href;
+                        return (
+                          <button
+                            key={sv.name}
+                            type="button"
+                            onClick={() => onPath(href, sv.name)}
+                            className={`group flex items-center gap-4 rounded-2xl bg-white p-4 text-left ring-1 transition duration-300 hover:shadow-[0_18px_40px_-22px_rgb(13_35_64/0.5)] ${on ? 'ring-2 ring-[#f26b1d]' : 'ring-zinc-200 hover:ring-zinc-300'}`}
                           >
-                            <span className="absolute bottom-3 left-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white text-[#f26b1d] shadow-lg">
+                            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-orange-50 text-[#f26b1d] ring-1 ring-orange-100 transition group-hover:bg-[#f26b1d] group-hover:text-white">
                               <sv.icon className="h-5 w-5" aria-hidden />
                             </span>
-                          </span>
-                          <span className="block p-4">
-                            <span className="block text-[15px] font-bold text-[#0d2340]">{sv.name}</span>
-                            <span className="mt-1 block text-[12.5px] leading-snug text-zinc-500">{sv.text}</span>
-                            <span className="mt-3 inline-flex items-center gap-1 text-[12.5px] font-bold text-[#f26b1d]">
-                              {t('Learn more', 'Saznajte više')}
-                              <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" aria-hidden />
+                            <span className="min-w-0 flex-1">
+                              <span className="block text-[15px] font-bold text-[#0d2340]">{sv.name}</span>
+                              <span className="mt-0.5 block text-[12.5px] leading-snug text-zinc-500">{sv.text}</span>
                             </span>
-                          </span>
-                        </button>
-                      );
-                    })}
+                            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[#0d2340] ring-1 ring-zinc-200 transition group-hover:bg-[#0d2340] group-hover:text-white group-hover:ring-[#0d2340]">
+                              <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               </section>
@@ -523,18 +561,26 @@ export function DemoSite({
                       [t('20% off', '−20%'), t('your first AC tune-up', 'na prvi servis klime'), t('Limited time', 'Ograničeno')],
                       [t('Free', 'Besplatna'), t('estimate on a new system', 'procena za novi sistem'), t('Always', 'Uvek')],
                       [t('Free', 'Besplatno'), t('second opinion on any quote', 'drugo mišljenje na tuđu ponudu'), t('New', 'Novo')],
-                    ].map(([big, small, badge]) => (
-                      <div key={small} className="relative overflow-hidden rounded-2xl bg-white p-6 text-center shadow-[0_15px_40px_-25px_rgb(13_35_64/0.5)] ring-1 ring-zinc-100">
-                        <span className="absolute top-1/2 -left-3 h-6 w-6 -translate-y-1/2 rounded-full bg-zinc-50" aria-hidden />
-                        <span className="absolute top-1/2 -right-3 h-6 w-6 -translate-y-1/2 rounded-full bg-zinc-50" aria-hidden />
-                        <span className="rounded-full bg-orange-50 px-2.5 py-0.5 text-[10px] font-bold tracking-wide text-[#f26b1d] uppercase">{badge}</span>
-                        <p className="mt-3 font-display text-[34px] leading-none tracking-tight text-[#0d2340]">{big}</p>
-                        <p className="mt-2 text-[13px] text-zinc-600">{small}</p>
-                        <span className="mt-5 block border-t border-dashed border-zinc-200 pt-4">
-                          <span className={`inline-block rounded-lg px-4 py-2 text-[12px] font-bold ${ORANGE}`}>{t('Claim offer', 'Iskoristite')}</span>
-                        </span>
-                      </div>
-                    ))}
+                    ].map(([big, small, badge], i) => {
+                      const hot = i === 0;
+                      return (
+                        <div
+                          key={small}
+                          className={`relative overflow-hidden rounded-2xl p-6 text-center ${hot ? `${NAVY} text-white shadow-[0_25px_50px_-25px_rgb(13_35_64/0.8)]` : 'bg-white shadow-[0_15px_40px_-25px_rgb(13_35_64/0.5)] ring-1 ring-zinc-100'}`}
+                        >
+                          <span className={`pointer-events-none absolute inset-2 rounded-xl border border-dashed ${hot ? 'border-white/20' : 'border-zinc-200'}`} aria-hidden />
+                          <span className="absolute top-[58%] -left-3 h-6 w-6 -translate-y-1/2 rounded-full bg-zinc-50" aria-hidden />
+                          <span className="absolute top-[58%] -right-3 h-6 w-6 -translate-y-1/2 rounded-full bg-zinc-50" aria-hidden />
+                          <span className={`relative rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wide uppercase ${hot ? 'bg-[#f26b1d] text-white' : 'bg-orange-50 text-[#f26b1d]'}`}>{badge}</span>
+                          <p className={`relative mt-3 font-display text-[36px] leading-none tracking-tight ${hot ? 'text-white' : 'text-[#0d2340]'}`}>{big}</p>
+                          <p className={`relative mt-2 text-[13px] ${hot ? 'text-white/75' : 'text-zinc-600'}`}>{small}</p>
+                          <span className="relative mt-5 block">
+                            <span className={`inline-block rounded-lg px-4 py-2 text-[12px] font-bold ${hot ? ORANGE : 'bg-[#0d2340] text-white'}`}>{t('Claim offer', 'Iskoristite')}</span>
+                          </span>
+                          <p className={`relative mt-3 text-[10.5px] ${hot ? 'text-white/50' : 'text-zinc-400'}`}>{t('Valid until 30 Nov', 'Važi do 30. novembra')}</p>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -688,18 +734,26 @@ export function DemoSite({
               <div className={dim()}>
                 <div className={shell}>
                   <div
-                    className={`relative overflow-hidden rounded-3xl text-white ${wide ? 'p-10' : 'p-6 text-center'}`}
-                    style={photo('cta', 'linear-gradient(100deg, rgb(242 107 29 / 0.97), rgb(217 92 18 / 0.85))')}
+                    className={`relative overflow-hidden rounded-3xl text-white ${wide ? 'px-10 py-12' : 'p-6 text-center'}`}
+                    style={photo('cta', 'linear-gradient(90deg, rgb(13 35 64 / 0.97) 35%, rgb(13 35 64 / 0.55))')}
                   >
-                    <div className={`flex gap-5 ${wide ? 'items-center justify-between' : 'flex-col items-center'}`}>
+                    <span className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-[#f26b1d] to-transparent" aria-hidden />
+                    <div className={`flex gap-6 ${wide ? 'items-center justify-between' : 'flex-col items-center'}`}>
                       <div>
-                        <p className="font-display text-[26px] leading-tight">{t('Too hot or too cold?', 'Prevruće ili prehladno?')}</p>
-                        <p className="mt-1 text-[13.5px] text-white/85">{t('A technician can be at your door today.', 'Serviser može biti kod vas već danas.')}</p>
+                        <p className={eyebrow}>{t('Technicians available today', 'Serviseri slobodni danas')}</p>
+                        <p className={`mt-2 font-display leading-tight ${wide ? 'text-[30px]' : 'text-[24px]'}`}>{t('Too hot or too cold?', 'Prevruće ili prehladno?')}</p>
+                        <p className="mt-1.5 text-[13.5px] text-white/75">{t('Book now and a technician can be at your door today.', 'Zakažite sada i serviser može biti kod vas već danas.')}</p>
                       </div>
-                      <span className="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-3 text-[14px] font-bold text-[#0d2340] shadow-lg">
-                        <Phone className="h-4 w-4 text-[#f26b1d]" aria-hidden />
-                        {phoneNo}
-                      </span>
+                      <div className={`flex shrink-0 gap-2.5 ${wide ? '' : 'flex-col self-stretch'}`}>
+                        <span className={`inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 text-[14px] font-bold shadow-[0_10px_25px_-10px_#f26b1d] ${ORANGE}`}>
+                          {t('Book service', 'Zakažite servis')}
+                          <ArrowRight className="h-4 w-4" aria-hidden />
+                        </span>
+                        <button type="button" onClick={onCall} className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-5 py-3 text-[14px] font-bold text-[#0d2340]">
+                          <Phone className="h-4 w-4 text-[#f26b1d]" aria-hidden />
+                          {phoneNo}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -713,6 +767,10 @@ export function DemoSite({
                         <span className="font-display text-[16px] text-white">Summit</span>
                       </span>
                       <p className="mt-3 leading-relaxed">{t('Heating, cooling and air quality for Springfield homes since 2003.', 'Grejanje, hlađenje i kvalitet vazduha za domove u Novom Sadu od 2003.')}</p>
+                      <span className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-white/5 px-2.5 py-1.5 text-[11px] text-white/80 ring-1 ring-white/10">
+                        <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" aria-hidden />
+                        {t('4.9 on Google · 312 reviews', '4.9 na Google-u · 312 ocena')}
+                      </span>
                     </div>
                     <div>
                       <p className="font-bold text-white">{t('Services', 'Usluge')}</p>
@@ -744,7 +802,10 @@ export function DemoSite({
                     </div>
                   </div>
                   <div className="border-t border-white/10">
-                    <p className={`${shell} py-4 text-[11px] text-white/40`}>© 2026 {brand}</p>
+                    <div className={`${shell} flex justify-between gap-4 py-4 text-[11px] text-white/40`}>
+                      <p>© 2026 {brand}</p>
+                      {wide && <p>{t('Privacy · Terms · Sitemap', 'Privatnost · Uslovi · Mapa sajta')}</p>}
+                    </div>
                   </div>
                 </div>
               </div>
