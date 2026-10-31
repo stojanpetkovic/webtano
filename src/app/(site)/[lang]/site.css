@@ -29,6 +29,20 @@
   --animate-float-slow: float 9s ease-in-out infinite;
   --animate-pulse-dot: pulse-dot 2s ease-out infinite;
   --animate-marquee: marquee 40s linear infinite;
+  --animate-tab-glow: tab-glow 1.8s ease-in-out infinite;
+}
+
+/* A soft, blinking glow on the next thing to click. */
+@keyframes tab-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 1px rgb(1 175 233 / 0.25), 0 0 0 0 rgb(1 175 233 / 0);
+    background-color: rgb(255 255 255 / 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 1px rgb(1 175 233 / 0.6), 0 0 18px 2px rgb(1 175 233 / 0.45);
+    background-color: rgb(255 255 255 / 0.9);
+  }
 }
 
 @keyframes float {

@@ -629,6 +629,7 @@ function SeoStage() {
   const t = useT();
   const sr = useLang() === 'sr';
   const [view, setView] = useState<'google' | 'code' | 'ai'>('google');
+  const [seen, setSeen] = useState<string[]>(['google']);
   const tabs = [
     ['google', Search, t('What customers see', 'Šta vidi kupac')],
     ['code', Code2, t('What Google reads', 'Šta čita Google')],
@@ -637,19 +638,29 @@ function SeoStage() {
   return (
     <div className="space-y-3">
       <div role="tablist" aria-label={t('Views', 'Prikazi')} className="grid grid-cols-3 gap-1 rounded-2xl bg-zinc-100 p-1">
-        {tabs.map(([value, Icon, label]) => (
-          <button
-            key={value}
-            type="button"
-            role="tab"
-            aria-selected={view === value}
-            onClick={() => setView(value)}
-            className={`inline-flex items-center justify-center gap-1.5 rounded-xl px-2 py-2 text-xs font-semibold transition ${view === value ? 'bg-white text-ink-950 shadow-sm' : 'text-zinc-500 hover:text-ink-950'}`}
-          >
-            <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden />
-            <span className="truncate">{label}</span>
-          </button>
-        ))}
+        {tabs.map(([value, Icon, label]) => {
+          // The first view not opened yet glows, so the visitor goes through all three in order.
+          const next = value === tabs.find(([v]) => !seen.includes(v))?.[0];
+          return (
+            <button
+              key={value}
+              type="button"
+              role="tab"
+              aria-selected={view === value}
+              onClick={() => {
+                setView(value);
+                if (!seen.includes(value)) setSeen([...seen, value]);
+              }}
+              className={`relative inline-flex items-center justify-center gap-1.5 rounded-xl px-2 py-2 text-xs font-semibold transition ${
+                view === value ? 'bg-white text-ink-950 shadow-sm' : next ? 'text-ink-950 motion-safe:animate-tab-glow' : 'text-zinc-500 hover:text-ink-950'
+              }`}
+            >
+              <Icon className={`h-3.5 w-3.5 shrink-0 ${next ? 'text-azure-600' : ''}`} aria-hidden />
+              <span className="truncate">{label}</span>
+              {next && <span className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-accent motion-safe:animate-pulse-dot" aria-hidden />}
+            </button>
+          );
+        })}
       </div>
 
       {view === 'google' && (
