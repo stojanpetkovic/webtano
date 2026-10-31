@@ -679,3 +679,31 @@ html {
     border-radius: 24px;
   }
 }
+
+/* Homepage comparison on phones: the timer under the active side, and the list fading in. */
+.compare-progress {
+  animation: compare-progress 4s linear forwards;
+}
+@keyframes compare-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.compare-in {
+  animation: compare-in 0.5s ease-out both;
+}
+@keyframes compare-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .compare-progress,
+  .compare-in {
+    animation: none;
+  }
+}
