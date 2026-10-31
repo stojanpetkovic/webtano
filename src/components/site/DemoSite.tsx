@@ -344,15 +344,16 @@ export function DemoSite({
                         'Licencirani serviseri, fiksna cena pre početka rada i 2 godine garancije na svaku popravku.',
                       )}
                     </p>
-                    <div className="mt-6 flex flex-wrap gap-2.5">
-                      <span className={`inline-flex items-center gap-2 rounded-lg px-5 py-3 text-[14px] font-bold shadow-[0_10px_25px_-10px_#f26b1d] ${ORANGE}`}>
+                    {/* One row on every screen: on a phone the two buttons share the width. */}
+                    <div className={`mt-6 gap-2.5 ${wide ? 'flex' : 'grid grid-cols-2 gap-2'}`}>
+                      <span className={`inline-flex items-center justify-center gap-2 rounded-lg py-3 font-bold whitespace-nowrap shadow-[0_10px_25px_-10px_#f26b1d] ${wide ? 'px-5 text-[14px]' : 'px-2 text-[13px]'} ${ORANGE}`}>
                         {t('Book service', 'Zakažite servis')}
-                        <ArrowRight className="h-4 w-4" aria-hidden />
+                        <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
                       </span>
                       <button
                         type="button"
                         onClick={onCall}
-                        className="inline-flex items-center gap-2 rounded-lg bg-white/10 px-5 py-3 text-[14px] font-bold ring-1 ring-white/25 backdrop-blur transition hover:bg-white/15"
+                        className={`inline-flex items-center justify-center gap-2 rounded-lg bg-white/10 py-3 font-bold whitespace-nowrap ring-1 ring-white/25 backdrop-blur transition hover:bg-white/15 ${wide ? 'px-5 text-[14px]' : 'px-2 text-[13px]'}`}
                       >
                         <Phone className="h-4 w-4" aria-hidden />
                         {phoneNo}
@@ -744,12 +745,12 @@ export function DemoSite({
                         <p className={`mt-2 font-display leading-tight ${wide ? 'text-[30px]' : 'text-[24px]'}`}>{t('Too hot or too cold?', 'Prevruće ili prehladno?')}</p>
                         <p className="mt-1.5 text-[13.5px] text-white/75">{t('Book now and a technician can be at your door today.', 'Zakažite sada i serviser može biti kod vas već danas.')}</p>
                       </div>
-                      <div className={`flex shrink-0 gap-2.5 ${wide ? '' : 'flex-col self-stretch'}`}>
-                        <span className={`inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 text-[14px] font-bold shadow-[0_10px_25px_-10px_#f26b1d] ${ORANGE}`}>
+                      <div className={`shrink-0 gap-2.5 ${wide ? 'flex' : 'grid grid-cols-2 gap-2 self-stretch'}`}>
+                        <span className={`inline-flex items-center justify-center gap-2 rounded-lg py-3 font-bold whitespace-nowrap shadow-[0_10px_25px_-10px_#f26b1d] ${wide ? 'px-5 text-[14px]' : 'px-2 text-[13px]'} ${ORANGE}`}>
                           {t('Book service', 'Zakažite servis')}
                           <ArrowRight className="h-4 w-4" aria-hidden />
                         </span>
-                        <button type="button" onClick={onCall} className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-5 py-3 text-[14px] font-bold text-[#0d2340]">
+                        <button type="button" onClick={onCall} className={`inline-flex items-center justify-center gap-2 rounded-lg bg-white py-3 font-bold whitespace-nowrap text-[#0d2340] ${wide ? 'px-5 text-[14px]' : 'px-2 text-[13px]'}`}>
                           <Phone className="h-4 w-4 text-[#f26b1d]" aria-hidden />
                           {phoneNo}
                         </button>
