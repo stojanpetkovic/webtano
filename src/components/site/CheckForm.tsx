@@ -114,10 +114,10 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
             {t('Reply in 1 day', 'Odgovor za 1 dan')}
           </span>
         </div>
-        <p className="mt-3 font-display text-2xl text-ink-950 max-md:mt-0 max-md:text-[1.35rem] max-md:leading-tight sm:text-[1.7rem] sm:leading-tight">{t('Is your website sending customers away?', 'Da li vam sajt tera mušterije?')}</p>
+        <p className="mt-3 font-display text-2xl text-ink-950 max-md:mt-0 max-md:text-[1.35rem] max-md:leading-tight sm:text-[1.7rem] sm:leading-tight">{t('Customers find you, then call your competitor.', 'Mušterije vas nađu, a pozovu konkurenciju.')}</p>
         <p className="mt-1 text-[13px] text-zinc-500 md:hidden">{t('Send the link. Free, answer in 1 day.', 'Pošaljite link. Besplatno, odgovor za 1 dan.')}</p>
         <p className="mt-1.5 text-sm text-zinc-500 max-md:hidden">
-          {t('Send us the link. Within one business day you will know where you are losing customers and what to fix first. Free.', 'Pošaljite nam link. Za jedan radni dan znaćete gde gubite mušterije i šta prvo da popravite. Besplatno.')}
+          {t('Send us your website link. We will show you why, and what to fix first. Free, within one business day.', 'Pošaljite link sajta. Besplatno vam pokazujemo zašto i šta prvo da popravite, za jedan radni dan.')}
         </p>
 
         <div className="mt-5 flex items-center gap-3 rounded-2xl bg-zinc-50 px-4 py-3 ring-1 ring-zinc-200/70 max-md:hidden">
