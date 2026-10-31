@@ -48,7 +48,7 @@ export default async function DemoReportPage({ searchParams }: Props) {
               <FlaskConical className="size-3.5" />
               Demo
             </span>
-            <p className="flex-1 text-white/75">
+            <p className="flex-1 text-white/75 max-sm:basis-full max-sm:text-xs">
               {sr
                 ? 'Primer izveštaja sa izmišljenim podacima. Promeni period, jezik ili budžet za oglase.'
                 : 'An example report with made-up data. Change the period, the language or the ad spend.'}

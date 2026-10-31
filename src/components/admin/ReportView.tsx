@@ -161,11 +161,11 @@ export function ReportView({
     <div className="min-h-screen bg-zinc-100 print:bg-white">
       {banner}
       {/* Toolbar: on screen only. */}
-      <div className="sticky top-0 z-10 border-b border-zinc-200 bg-white print:hidden">
+      <div className="top-0 z-10 border-b border-zinc-200 bg-white sm:sticky print:hidden">
         <div className="mx-auto flex max-w-[210mm] flex-wrap items-center gap-3 px-4 py-3">
-          <Link href={back.href} className="btn btn-sm btn-light">
+          <Link href={back.href} className="btn btn-sm btn-light" aria-label={back.label}>
             <ArrowLeft className="size-4" />
-            {back.label}
+            <span className="max-sm:hidden">{back.label}</span>
           </Link>
           <form method="get" className="flex w-full flex-wrap items-end gap-2 order-last">
             <input type="hidden" name="lang" value={locale} />
@@ -189,7 +189,7 @@ export function ReportView({
                 />
               </label>
             </PeriodSelect>
-            <fieldset className="flex flex-wrap items-end gap-2 border-s border-zinc-200 ps-3" title={t.spendHint}>
+            <fieldset className="flex flex-wrap items-end gap-2 border-s border-zinc-200 ps-3 max-sm:grid max-sm:w-full max-sm:grid-cols-3 max-sm:items-end max-sm:border-s-0 max-sm:border-t max-sm:ps-0 max-sm:pt-2" title={t.spendHint}>
               <legend className="sr-only">{t.spendHeading}</legend>
               <label className="text-xs text-zinc-500">
                 {t.spendGoogle}
@@ -198,7 +198,7 @@ export function ReportView({
                   inputMode="decimal"
                   defaultValue={field('spendGoogle')}
                   placeholder="0"
-                  className="form-input mt-0.5 block w-24 py-1.5"
+                  className="form-input mt-0.5 block w-24 py-1.5 max-sm:w-full"
                 />
               </label>
               <label className="text-xs text-zinc-500">
@@ -208,7 +208,7 @@ export function ReportView({
                   inputMode="decimal"
                   defaultValue={field('spendMeta')}
                   placeholder="0"
-                  className="form-input mt-0.5 block w-24 py-1.5"
+                  className="form-input mt-0.5 block w-24 py-1.5 max-sm:w-full"
                 />
               </label>
               <label className="text-xs text-zinc-500">
@@ -218,7 +218,7 @@ export function ReportView({
                   inputMode="decimal"
                   defaultValue={field('spendOther')}
                   placeholder="0"
-                  className="form-input mt-0.5 block w-24 py-1.5"
+                  className="form-input mt-0.5 block w-24 py-1.5 max-sm:w-full"
                 />
               </label>
               <label className="text-xs text-zinc-500">
@@ -242,14 +242,14 @@ export function ReportView({
                   inputMode="decimal"
                   defaultValue={field('jobValue')}
                   placeholder="0"
-                  className="form-input mt-0.5 block w-28 py-1.5"
+                  className="form-input mt-0.5 block w-28 py-1.5 max-sm:w-full"
                 />
               </label>
             </fieldset>
-            <button className="btn btn-sm btn-outline" type="submit">
+            <button className="btn btn-sm btn-outline max-sm:w-full max-sm:justify-center" type="submit">
               {t.apply}
             </button>
-            <p className="w-full text-[11px] text-zinc-400">{t.spendHint}</p>
+            <p className="w-full text-[11px] text-zinc-400 max-sm:hidden">{t.spendHint}</p>
             {customRejected && <p className="w-full text-xs text-orange-700">{t.invalidPeriod}</p>}
           </form>
           <div className="inline-flex rounded border border-zinc-200 p-0.5 text-xs font-medium">
@@ -275,13 +275,13 @@ export function ReportView({
         lang={locale}
         className="report-sheet mx-auto my-6 max-w-[210mm] space-y-6 bg-white p-5 shadow-sm sm:p-10 print:m-0 print:max-w-none print:space-y-4 print:p-0 print:shadow-none"
       >
-        <header className="flex flex-wrap items-start justify-between gap-6 border-b border-zinc-200 pb-6 print:flex-nowrap print:pb-4">
+        <header className="flex flex-wrap items-start justify-between gap-6 border-b border-zinc-200 pb-6 max-sm:gap-4 max-sm:pb-4 print:flex-nowrap print:pb-4">
           <div>
             <p className="text-xs font-bold tracking-widest text-primary uppercase">{t.title}</p>
             <h1 className="mt-1 text-2xl font-semibold text-zinc-900">{site.name}</h1>
             <p className="mt-1 text-sm text-zinc-500">{site.domain}</p>
           </div>
-          <div className="text-end text-sm">
+          <div className="text-end text-sm max-sm:w-full max-sm:rounded-lg max-sm:bg-zinc-50 max-sm:p-3 max-sm:text-start">
             <p className="text-zinc-500">{t.period}</p>
             <p className="font-semibold text-zinc-800">{period.label}</p>
             <p className="text-xs text-zinc-500">{rangeText}</p>
