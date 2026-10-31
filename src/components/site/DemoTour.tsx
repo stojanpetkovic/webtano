@@ -657,6 +657,20 @@ function SeoStage() {
               )}
             </p>
           </div>
+          {/* Other results, blurred: only ours matters here. */}
+          <div aria-hidden className="pointer-events-none mt-3 space-y-4 px-1 blur-[3px] select-none [mask-image:linear-gradient(180deg,#000_40%,transparent)]">
+            {[
+              [sr ? 'klimaservis-ns.rs' : 'coolfixpros.com', t('Air Conditioning Service and Repair | CoolFix', 'Servis i popravka klima uređaja | KlimaFix'), t('We repair all brands of air conditioners. Contact us for a quote and more information.', 'Popravljamo sve vrste klima uređaja. Kontaktirajte nas za ponudu i više informacija.')],
+              [sr ? 'grejanje-hladjenje.com' : 'springfieldhvac.net', t('Heating & Cooling Services – Home', 'Grejanje i hlađenje – Početna'), t('Welcome to our website. We have many years of experience in heating and cooling.', 'Dobro došli na naš sajt. Imamo dugogodišnje iskustvo u grejanju i hlađenju.')],
+              [sr ? 'oglasi.rs › usluge' : 'localdirectory.com › hvac', t('Top 10 AC repair near Springfield', 'Servis klima Novi Sad – oglasi'), t('Compare local technicians, prices and reviews in your area.', 'Uporedite servisere, cene i ocene u vašem gradu.')],
+            ].map(([url, title, text]) => (
+              <div key={url}>
+                <p className="text-[12px] text-zinc-500">{url}</p>
+                <p className="mt-0.5 text-[16px] leading-snug text-[#1a0dab]">{title}</p>
+                <p className="mt-1 text-[13px] leading-snug text-zinc-600">{text}</p>
+              </div>
+            ))}
+          </div>
           <p className="mt-4 text-[12px] leading-snug text-zinc-500">
             {t(
               'The title, the description and the stars come from the page itself. We write them; Google only displays them.',
