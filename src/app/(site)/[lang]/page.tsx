@@ -21,13 +21,13 @@ import {
   Wallet,
   Zap,
 } from 'lucide-react';
-import { CaseTabs } from '@/components/site/CaseTabs';
 import { CheckForm } from '@/components/site/CheckForm';
 import { CountUp } from '@/components/site/CountUp';
 import { FaqList } from '@/components/site/FaqList';
 import { HeroBackdrop } from '@/components/site/HeroBackdrop';
 import { Reveal } from '@/components/site/Reveal';
 import { SectionHeading } from '@/components/site/Section';
+import { SiteAnatomy } from '@/components/site/SiteAnatomy';
 import { AdsVisual, LeadsVisual, SearchVisual, SpeedVisual } from '@/components/site/ServiceVisuals';
 import { caseStudiesIn } from '@/content/work';
 import { usd, type Lang, type T } from '@/lib/i18n';
@@ -353,10 +353,10 @@ export default async function HomePage() {
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
                 </Link>
                 <Link
-                  href="#work"
+                  href={lp('/demo')}
                   className="inline-flex w-full items-center justify-center rounded-full border border-white/20 bg-white/5 px-6 py-3.5 font-semibold text-white backdrop-blur transition duration-300 hover:-translate-y-0.5 hover:border-white/35 hover:bg-white/10 sm:w-auto"
                 >
-                  {t('See the results', 'Pogledajte rezultate')}
+                  {t('Try the demo site', 'Pogledajte demo sajt')}
                 </Link>
               </div>
               <p className="mt-5 flex items-center justify-center gap-2 text-sm text-white/55 lg:justify-start">
@@ -598,32 +598,22 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Results */}
-      {/* On phones the client cards above already carry the results, so this section is desktop only. */}
-      <section id="work" className="bg-results relative scroll-mt-16 overflow-hidden py-24 max-md:hidden sm:py-32">
+      {/* Under the hood: what a WebTano site carries, and what a site without it loses. */}
+      <section id="site" className="bg-results relative scroll-mt-16 overflow-hidden py-24 max-md:py-8 sm:py-32">
         <div className="grid-lines-light pointer-events-none absolute inset-x-0 top-0 h-[36rem] [mask-image:linear-gradient(#000,transparent)]" aria-hidden />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal>
             <SectionHeading
-              eyebrow={t('Results', 'Rezultati')}
-              title={t('Real results from real client websites', 'Pravi rezultati sa sajtova naših klijenata')}
+              eyebrow={t('Under the hood', 'Ispod haube')}
+              title={t('What your website should be doing, and probably isn’t', 'Šta vaš sajt treba da radi, a verovatno ne radi')}
               lead={t(
-                'Every figure below comes from the client’s own enquiry tracking, ad account or a Google speed test of the live site. Nothing is a mock-up.',
-                'Svaki broj ispod potiče iz praćenja upita, naloga za oglase ili Google testa brzine na živom sajtu. Ništa nije izmišljeno.',
+                'Most small-business websites look fine and still lose enquiries in places the owner never sees. Here is a typical site next to the one we build.',
+                'Većina sajtova malih firmi izgleda u redu, a ipak gubi upite na mestima koja vlasnik ne vidi. Ovako izgleda tipičan sajt pored sajta koji mi pravimo.',
               )}
             />
           </Reveal>
-          <Reveal className="mt-14 max-md:mt-5">
-            <CaseTabs cases={caseStudies} />
-          </Reveal>
-          <Reveal className="mt-10 flex flex-col items-center gap-3 text-center max-md:mt-5">
-            <Link
-              href={lp('/work')}
-              className="group inline-flex items-center gap-2 rounded-full border border-azure-200 bg-white px-5 py-3 font-semibold text-ink-800 shadow-soft transition duration-300 hover:-translate-y-0.5 hover:border-azure-700 hover:shadow-lift"
-            >
-              {t('All case studies', 'Sve studije slučaja')}
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
-            </Link>
+          <Reveal className="mt-10 max-md:mt-5">
+            <SiteAnatomy />
           </Reveal>
         </div>
       </section>
@@ -662,8 +652,8 @@ export default async function HomePage() {
                 {t('Get a free website audit', 'Zatražite besplatnu analizu')}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
               </Link>
-              <Link href="#work" className="rounded-full px-4 py-3 text-sm font-semibold text-white/75 transition hover:text-white">
-                {t('See the results', 'Pogledajte rezultate')}
+              <Link href={lp('/work')} className="rounded-full px-4 py-3 text-sm font-semibold text-white/75 transition hover:text-white">
+                {t('See the case studies', 'Pogledajte studije slučaja')}
               </Link>
             </div>
           </Reveal>
