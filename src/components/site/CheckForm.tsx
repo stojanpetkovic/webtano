@@ -108,16 +108,16 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
         className="scroll-mt-24 rounded-3xl border border-white/10 bg-white p-6 text-zinc-700 shadow-float shadow-black/40 max-md:rounded-[24px] max-md:border-0 max-md:p-5 sm:p-7"
       >
         <div className="flex items-center justify-between gap-3 max-md:hidden">
-          <p className="font-mono text-[11px] font-medium tracking-[0.14em] text-azure-700 uppercase">{t('Free website audit', 'Besplatna analiza sajta')}</p>
+          <p className="font-mono text-[11px] font-medium tracking-[0.14em] text-azure-700 uppercase">{t('Free website check', 'Besplatna provera sajta')}</p>
           <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-azure-50 px-2.5 py-1 text-[11px] font-semibold whitespace-nowrap text-ink-800 ring-1 ring-azure-100">
             <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-azure-600" aria-hidden />
             {t('Reply in 1 day', 'Odgovor za 1 dan')}
           </span>
         </div>
-        <p className="mt-3 font-display text-2xl text-ink-950 max-md:mt-0 max-md:text-[1.35rem] max-md:leading-tight sm:text-[1.7rem] sm:leading-tight">{t('Find out what your website is costing you', 'Saznajte koliko vas košta loš sajt')}</p>
-        <p className="mt-1 text-[13px] text-zinc-500 md:hidden">{t('Free audit, reply within one business day.', 'Besplatna analiza, odgovor u roku od jednog radnog dana.')}</p>
+        <p className="mt-3 font-display text-2xl text-ink-950 max-md:mt-0 max-md:text-[1.35rem] max-md:leading-tight sm:text-[1.7rem] sm:leading-tight">{t('Is your website sending customers away?', 'Da li vam sajt tera mušterije?')}</p>
+        <p className="mt-1 text-[13px] text-zinc-500 md:hidden">{t('Send the link. Free, answer in 1 day.', 'Pošaljite link. Besplatno, odgovor za 1 dan.')}</p>
         <p className="mt-1.5 text-sm text-zinc-500 max-md:hidden">
-          {t('An honest review of your website and your top competitors, within one business day.', 'Iskrena analiza vašeg sajta i glavne konkurencije, u roku od jednog radnog dana.')}
+          {t('Send us the link. Within one business day you will know where you are losing customers and what to fix first. Free.', 'Pošaljite nam link. Za jedan radni dan znaćete gde gubite mušterije i šta prvo da popravite. Besplatno.')}
         </p>
 
         <div className="mt-5 flex items-center gap-3 rounded-2xl bg-zinc-50 px-4 py-3 ring-1 ring-zinc-200/70 max-md:hidden">
@@ -196,7 +196,7 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
           className={`group mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 font-semibold text-ink-950 shadow-glow transition hover:-translate-y-px hover:bg-accent-dark disabled:translate-y-0 disabled:opacity-70 ${submit}`}
         >
           {pending && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
-          {pending ? t('Sending…', 'Šaljem…') : t('Get my free website audit', 'Zatražite besplatnu analizu')}
+          {pending ? t('Sending…', 'Šaljem…') : t('Check my website for free', 'Proverite moj sajt besplatno')}
         </button>
         <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-xs text-zinc-500">
           <Lock className="h-3.5 w-3.5" aria-hidden />
