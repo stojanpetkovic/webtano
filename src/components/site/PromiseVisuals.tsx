@@ -1,14 +1,15 @@
-import { BellRing, Code2, FileText, Globe, Lock, MapPin, Megaphone, Phone, Server } from 'lucide-react';
+import { BellRing, Code2, FileText, Globe, MapPin, Megaphone, Phone, Server } from 'lucide-react';
 import { getI18n } from '@/lib/i18n-site';
 
 // Small illustrations for the three rules in "How we work". They play once
 // their card is revealed, like the service visuals.
 
-/** A service area map with one area reserved and the rest locked. */
+/** A service area map: the client's town in the middle, nearby areas around it. */
 export async function AreaVisual() {
   const { t } = await getI18n();
   const cells = Array.from({ length: 12 }, (_, i) => i);
   const yours = 5;
+  const nearby = [1, 4, 6, 9];
   return (
     <div>
       <ul className="mx-auto grid max-w-[13rem] grid-cols-4 gap-1.5" aria-hidden>
@@ -16,17 +17,21 @@ export async function AreaVisual() {
           <li
             key={i}
             className={`svc-row flex aspect-square items-center justify-center rounded-lg ring-1 ${
-              i === yours ? 'bg-accent text-ink-950 shadow-glow ring-accent' : 'bg-white/[0.03] text-white/20 ring-white/[0.07]'
+              i === yours
+                ? 'bg-accent text-ink-950 shadow-glow ring-accent'
+                : nearby.includes(i)
+                  ? 'bg-accent/15 text-accent ring-accent/30'
+                  : 'bg-white/[0.03] text-white/20 ring-white/[0.07]'
             }`}
             style={{ '--row-delay': `${150 + i * 40}ms` } as React.CSSProperties}
           >
-            {i === yours ? <MapPin className="h-4 w-4" /> : <Lock className="h-3 w-3" />}
+            {i === yours ? <MapPin className="h-4 w-4" /> : nearby.includes(i) ? <span className="h-1.5 w-1.5 rounded-full bg-accent" /> : null}
           </li>
         ))}
       </ul>
       <p className="mx-auto mt-3 flex max-w-[13rem] items-center justify-between gap-3 font-mono text-[10px] tracking-wide text-white/45 uppercase">
         <span className="text-accent">{t('Your area', 'Vaša oblast')}</span>
-        <span>{t('Closed to others', 'Zatvoreno za druge')}</span>
+        <span>{t('Nearby areas', 'Okolina')}</span>
       </p>
     </div>
   );

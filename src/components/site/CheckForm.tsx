@@ -115,9 +115,9 @@ export function CheckForm({ compact = false }: { compact?: boolean }) {
           </span>
         </div>
         <p className="mt-3 font-display text-2xl text-ink-950 max-md:mt-0 max-md:text-[1.35rem] max-md:leading-tight sm:text-[1.7rem] sm:leading-tight">{t('Customers find you, then call your competitor.', 'Mušterije vas nađu, a pozovu konkurenciju.')}</p>
-        <p className="mt-1 text-[13px] text-zinc-500 md:hidden">{t('Send the link. Free, answer in 1 day.', 'Pošaljite link. Besplatno, odgovor za 1 dan.')}</p>
+        <p className="mt-1 text-[13px] text-zinc-500 md:hidden">{t('Send your link and we will help you stop it.', 'Pošaljite link i pomoći ćemo da se to ne dešava.')}</p>
         <p className="mt-1.5 text-sm text-zinc-500 max-md:hidden">
-          {t('Send us your website link. We will show you why, and what to fix first. Free, within one business day.', 'Pošaljite link sajta. Besplatno vam pokazujemo zašto i šta prvo da popravite, za jedan radni dan.')}
+          {t('Send us your website link. We will show you where they slip away and help you put a stop to it. Free, within one business day.', 'Pošaljite nam link sajta. Pokazaćemo vam gde ih gubite i pomoći da se to više ne dešava. Besplatno, za jedan radni dan.')}
         </p>
 
         <div className="mt-5 flex items-center gap-3 rounded-2xl bg-zinc-50 px-4 py-3 ring-1 ring-zinc-200/70 max-md:hidden">
