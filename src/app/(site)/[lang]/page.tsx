@@ -136,11 +136,11 @@ const services = (t: T) => [
 const promises = (t: T) => [
   {
     icon: MapPin,
-    title: t('One business per industry, per area', 'Jedna firma po delatnosti u gradu'),
+    title: t('Built for your area', 'Prilagođeno vašem mestu'),
     visual: AreaVisual,
     text: t(
-      'We never work for two competitors in the same area. Everything we build for you works only for you.',
-      'Ne radimo za dve konkurentske firme u istom mestu. Sve što napravimo za vas radi samo za vas.',
+      'Your site, Google profile and ads target the town and nearby areas where your customers are, not the whole country.',
+      'Sajt, Google profil i oglasi ciljaju vaše mesto i okolinu, tamo gde su vaše mušterije, a ne celu zemlju.',
     ),
   },
   {
@@ -250,10 +250,10 @@ const faqList = (lang: Lang, t: T, { monthlyPlans, websitePlans }: Pricing) => {
       ),
     },
     {
-      q: t('Do you work with my competitors?', 'Da li radite i za moju konkurenciju?'),
+      q: t('Do you also work for my competitors?', 'Da li radite i za moju konkurenciju?'),
       a: t(
-        'No. We take one business per industry in each area, so what we build for you never competes with another client of ours.',
-        'Ne. U jednom mestu radimo samo sa jednom firmom iz iste delatnosti, pa se ono što napravimo za vas nikad ne takmiči sa drugim našim klijentom.',
+        'We may, but what we build for you stays yours alone. Your domain, content, ad accounts and data are never shared or reused for anyone else.',
+        'Može se desiti, ali ono što napravimo za vas pripada samo vama. Domen, tekstovi, oglasni nalozi i podaci se nikad ne dele niti koriste za nekog drugog.',
       ),
     },
     {
@@ -325,7 +325,7 @@ export default async function HomePage() {
             <Reveal className="max-md:hidden">
               <p className="inline-flex items-center gap-2.5 rounded-full border border-white/12 bg-white/[0.04] px-3.5 py-1.5 font-mono text-xs tracking-wide text-white/75 shadow-[inset_0_1px_0_rgb(255_255_255/0.06)] backdrop-blur">
                 <span className="h-2 w-2 animate-pulse-dot rounded-full bg-accent" aria-hidden />
-                {t('Taking on one business per industry in each area', 'Primamo jednu firmu po delatnosti u svakom gradu')}
+                {t('Taking on new clients', 'Primamo nove klijente')}
               </p>
             </Reveal>
             <Reveal delay={80}>
@@ -904,7 +904,7 @@ export default async function HomePage() {
                 {[
                   ['1', t('fixed price', 'fiksna cena')],
                   ['0', t('lock-in', 'vezivanja')],
-                  ['1', t('client per industry and area', 'klijent po delatnosti u gradu')],
+                  ['1', t('business day for a free check', 'radni dan za besplatnu proveru')],
                 ].map(([v, k]) => (
                   <li key={k} className="px-2 py-4">
                     <p className="font-display text-2xl text-accent">{v}</p>
@@ -930,7 +930,7 @@ export default async function HomePage() {
           <Reveal>
             <p className="inline-flex items-center gap-2 rounded-full bg-white/[0.04] px-3 py-1 font-mono text-[11px] font-medium tracking-[0.14em] text-accent uppercase ring-1 ring-white/12">
               <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-accent" aria-hidden />
-              {t('Taking new clients, one per industry in each area', 'Primamo nove klijente, jednog po delatnosti u gradu')}
+              {t('Taking on new clients', 'Primamo nove klijente')}
             </p>
             <h2 className="mt-5 font-display text-4xl text-balance max-md:text-3xl md:text-[3.5rem] md:leading-[1.02]">
               {t('The business that shows up first gets the customer. Let’s make that', 'Kupca dobija firma koja se prva pojavi. Neka to budete')}{' '}

@@ -151,7 +151,7 @@ export const addOns: AddOn[] = [
 
 /** What every client gets, whatever they buy. */
 export const included = [
-  { title: 'One business per industry', text: 'We take on one business per industry in each area, so we never work for your competitor.' },
+  { title: 'Built for your area', text: 'Your site, Google profile and ads target the town and nearby areas where your customers are.' },
   { title: 'You own everything', text: 'Domain, code, hosting and ad accounts are in your name from day one.' },
   { title: 'No long contracts', text: 'Monthly plans run month to month. Cancel with 30 days’ notice.' },
   { title: 'Every enquiry tracked', text: 'Every call and form tied to its source, in a report you can read in two minutes.' },

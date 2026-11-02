@@ -100,7 +100,7 @@ export const addOnsSr: Record<string, Pick<AddOn, 'name' | 'text'>> = {
 };
 
 export const includedSr = [
-  { title: 'Jedna firma po delatnosti', text: 'U svakom gradu radimo sa samo jednom firmom iz iste delatnosti, nikada sa vašom konkurencijom.' },
+  { title: 'Prilagođeno vašem mestu', text: 'Sajt, Google profil i oglasi ciljaju vaše mesto i okolinu, tamo gde su vaše mušterije.' },
   { title: 'Sve je na vaše ime', text: 'Domen, kod, hosting i oglasni nalozi su na vaše ime od prvog dana.' },
   { title: 'Bez dugoročnih ugovora', text: 'Mesečne pakete otkazujete kad god želite, uz otkazni rok od 30 dana.' },
   { title: 'Svaki upit se prati', text: 'Za svaki poziv i upit znate odakle je došao, u izveštaju koji pročitate za dva minuta.' },
