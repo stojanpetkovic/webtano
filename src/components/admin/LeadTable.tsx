@@ -1,8 +1,7 @@
 import Link from 'next/link';
 import { ChevronRight, Inbox } from 'lucide-react';
 import { STATUS_LABELS, timeAgo, formatDateTime } from '@/lib/admin/format';
-import { leadSource } from '@/lib/admin/leads';
-import { channelLabel } from '@/lib/admin/channels';
+import { leadSourceLabel } from '@/lib/admin/leads';
 import { getAdminI18n } from '@/lib/admin/i18n';
 import type { Lead, Site } from '@/lib/admin/types';
 
@@ -77,7 +76,7 @@ export async function LeadTable({
                       <span className={`badge badge-${lead.status}`}>{STATUS_LABELS[lead.status][lang]}</span>
                     )}
                     <span className="truncate">
-                      {[showSite ? sites.get(lead.site_id)?.name : null, channelLabel(leadSource(lead), lang)].filter(Boolean).join(' · ')}
+                      {[showSite ? sites.get(lead.site_id)?.name : null, leadSourceLabel(lead, lang)].filter(Boolean).join(' · ')}
                     </span>
                   </span>
                 </span>
@@ -123,7 +122,7 @@ export async function LeadTable({
                   {showSite && <td className="whitespace-nowrap">{sites.get(lead.site_id)?.name ?? '—'}</td>}
                   <td className="max-w-[18ch] truncate">{lead.form_name}</td>
                   <td className="whitespace-nowrap">
-                    <span className="rounded-md bg-zinc-100 px-2 py-1 text-xs text-zinc-600">{channelLabel(leadSource(lead), lang)}</span>
+                    <span className="rounded-md bg-zinc-100 px-2 py-1 text-xs text-zinc-600">{leadSourceLabel(lead, lang)}</span>
                   </td>
                   <td>
                     {lead.is_spam ? (

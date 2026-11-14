@@ -1,10 +1,9 @@
 import { db } from '@/lib/admin/supabase';
 import { readFilters, leadQuery } from '@/lib/admin/leadQuery';
 import { webtanoSiteId } from '@/lib/admin/crm/data';
-import { leadSource } from '@/lib/admin/leads';
+import { leadSourceLabel } from '@/lib/admin/leads';
 import { STATUS_LABELS } from '@/lib/admin/format';
 import type { Lead, Site } from '@/lib/admin/types';
-import { channelLabel } from '@/lib/admin/channels';
 import { getAdminI18n } from '@/lib/admin/i18n';
 
 function cell(value: unknown): string {
@@ -47,7 +46,7 @@ export async function GET(request: Request) {
     l.visitor_name,
     l.visitor_email,
     l.visitor_phone,
-    channelLabel(leadSource(l), lang),
+    leadSourceLabel(l, lang),
     l.utm_campaign,
     l.page_url,
     ...fieldKeys.map((k) => l.data[k] ?? ''),

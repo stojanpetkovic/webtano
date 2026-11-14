@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import type { Lead } from "./types";
-import { channelOf, referrerHost, type Channel } from "./channels";
+import { aiSourceOf, channelLabel, channelOf, referrerHost, type AiSource, type Channel } from "./channels";
 
 const MAX_FIELDS = 60;
 const MAX_VALUE_LENGTH = 5000;
@@ -151,4 +151,19 @@ export function leadSource(
     referrerHost: referrerHost(lead.referrer),
     userAgent: lead.user_agent,
   });
+}
+
+/** The AI assistant a lead came from (ChatGPT, Perplexity…), or null. */
+export function leadAiSource(lead: Pick<Lead, "utm_source" | "referrer">): AiSource | null {
+  return aiSourceOf({ utm_source: lead.utm_source, referrerHost: referrerHost(lead.referrer) });
+}
+
+/** The lead's source as shown in lists: the channel, plus which AI for an AI search ("AI pretraga · ChatGPT"). */
+export function leadSourceLabel(
+  lead: Pick<Lead, "utm_source" | "utm_medium" | "referrer"> & { user_agent?: string | null },
+  locale: "en" | "sr",
+): string {
+  const label = channelLabel(leadSource(lead), locale);
+  const ai = leadAiSource(lead);
+  return ai ? `${label} · ${ai}` : label;
 }

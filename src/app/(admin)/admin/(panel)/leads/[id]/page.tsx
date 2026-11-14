@@ -6,10 +6,9 @@ import { MarkLeadsSeen } from '@/components/admin/MarkLeadsSeen';
 import { unseenLeadCount } from '@/lib/admin/seen';
 import { ConfirmSubmit } from '@/components/admin/ConfirmSubmit';
 import { db } from '@/lib/admin/supabase';
-import { leadSource } from '@/lib/admin/leads';
+import { leadSourceLabel } from '@/lib/admin/leads';
 import { STATUS_LABELS, formatDateTime } from '@/lib/admin/format';
 import type { EmailLog, Lead, Site } from '@/lib/admin/types';
-import { channelLabel } from '@/lib/admin/channels';
 import { getAdminI18n } from '@/lib/admin/i18n';
 import type { T } from '@/lib/i18n';
 import { deleteLead, resendLead, toggleSpam, updateLead } from './actions';
@@ -58,7 +57,7 @@ export default async function LeadPage({
         tz !== 'Europe/Belgrade' ? ` · ${formatDateTime(lead.created_at, lang, tz)} (${t('client', 'klijent')})` : ''
       }`,
     ],
-    [t('Source', 'Izvor'), channelLabel(leadSource(lead), lang)],
+    [t('Source', 'Izvor'), leadSourceLabel(lead, lang)],
     [t('Campaign', 'Kampanja'), [lead.utm_campaign, lead.utm_content, lead.utm_term].filter(Boolean).join(' · ') || null],
     [t('Page', 'Stranica'), lead.page_url],
     [t('Came from', 'Došao sa'), lead.referrer],

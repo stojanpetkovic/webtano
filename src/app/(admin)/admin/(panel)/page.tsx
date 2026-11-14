@@ -9,13 +9,14 @@ import { SERIES } from '@/components/admin/chartColors';
 import { LeadTable } from '@/components/admin/LeadTable';
 import { db } from '@/lib/admin/supabase';
 import { dailySeries, summarize, daysAgo } from '@/lib/admin/stats';
-import { sitesOverview, rate } from '@/lib/admin/analytics';
+import { aiOverview, sitesOverview, rate } from '@/lib/admin/analytics';
+import { ConversionTable } from '@/components/admin/ConversionTable';
 import { STATUS_LABELS } from '@/lib/admin/format';
 import type { Lead, Site } from '@/lib/admin/types';
 import type { Deal } from '@/lib/admin/crm/types';
 import { syncDeals, webtanoSiteId } from '@/lib/admin/crm/data';
 import { money } from '@/lib/admin/crm/labels';
-import { channelLabel } from '@/lib/admin/channels';
+import { AI_FOOTNOTE, channelLabel } from '@/lib/admin/channels';
 import { getAdminI18n } from '@/lib/admin/i18n';
 import { HTML_LANG } from '@/lib/i18n';
 
@@ -74,7 +75,8 @@ export default async function DashboardPage() {
   const bySource = summarize(last30).bySource.map((s) => ({ ...s, label: channelLabel(s.label, lang) }));
   const newCount = leads.filter((l) => l.status === 'new').length;
 
-  const overview = (await sitesOverview(sites, 30)).sort((a, b) => b.visitors - a.visitors || b.contacts - a.contacts);
+  const [siteNumbers, ai] = await Promise.all([sitesOverview(sites, 30), aiOverview(sites, 30)]);
+  const overview = siteNumbers.sort((a, b) => b.visitors - a.visitors || b.contacts - a.contacts);
   const visitors30 = overview.reduce((n, o) => n + o.visitors, 0);
   const changeNote =
     stats.change === null
@@ -246,6 +248,33 @@ export default async function DashboardPage() {
           </div>
         </div>
         <DonutChart title={t('Where leads come from', 'Odakle dolaze lidovi')} sub={t('Source, last 30 days', 'Izvor, poslednjih 30 dana')} items={bySource} />
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <ConversionTable
+          title={t('AI search', 'AI pretrage')}
+          sub={
+            ai.totals.visits || ai.totals.leads || ai.totals.calls
+              ? t(
+                  `${num(ai.totals.visits)} visits, ${ai.totals.leads + ai.totals.calls} contacts from AI assistants, last 30 days`,
+                  `${num(ai.totals.visits)} poseta i ${ai.totals.leads + ai.totals.calls} kontakata sa AI asistenata, poslednjih 30 dana`,
+                )
+              : t('Visitors from AI assistants, last 30 days', 'Posetioci sa AI asistenata, poslednjih 30 dana')
+          }
+          columnLabel={t('AI assistant', 'AI asistent')}
+          countLabel={t('Visits', 'Posete')}
+          rows={ai.bySource.map((a) => ({ label: a.label, count: a.visits, leads: a.leads, calls: a.calls }))}
+          empty={t('No visits from ChatGPT, Perplexity, Gemini, Claude or Copilot yet.', 'Još nema poseta sa ChatGPT-a, Perplexity-ja, Gemini-ja, Claude-a ni Copilot-a.')}
+          footnote={AI_FOOTNOTE[lang]}
+        />
+        <ConversionTable
+          title={t('AI search by site', 'AI pretrage po sajtu')}
+          sub={t('Which sites AI assistants recommend, last 30 days', 'Koje sajtove AI asistenti preporučuju, poslednjih 30 dana')}
+          columnLabel={t('Site', 'Sajt')}
+          countLabel={t('Visits', 'Posete')}
+          rows={ai.bySite.map((s) => ({ label: s.site.name, count: s.visits, leads: s.leads, calls: s.calls }))}
+          empty={t('No site has AI visitors yet.', 'Nijedan sajt još nema posetioce sa AI pretraga.')}
+        />
       </div>
 
       <div className="card">

@@ -281,6 +281,7 @@ export function demoReport(current: string[], previous: string[], locale: Report
         calls: [...d.channels.values()].reduce((n, c) => n + c.calls, 0),
       })),
       channels,
+      ai: [],
       pages,
       clicks,
       devices,

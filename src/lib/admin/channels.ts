@@ -4,6 +4,7 @@
  * admin can divide one by the other per channel.
  */
 export const CHANNELS = [
+  "AI pretraga",
   "Google pretraga",
   "Google oglasi",
   "Facebook/Instagram oglasi",
@@ -17,6 +18,51 @@ export const CHANNELS = [
   "Direktno",
 ] as const;
 export type Channel = (typeof CHANNELS)[number];
+
+/**
+ * AI assistants that send visitors to a site, recognised by the referring
+ * host or by utm_source (ChatGPT adds utm_source=chatgpt.com to its links).
+ * Google's AI Overviews and AI Mode cannot be told apart from a normal
+ * Google search: they send the same google.com referrer and no tag.
+ */
+export const AI_SOURCES = [
+  { name: "ChatGPT", host: /(^|\.)(chatgpt\.com|openai\.com)$/, utm: /chatgpt|openai/ },
+  { name: "Perplexity", host: /(^|\.)perplexity\.ai$/, utm: /perplexity/ },
+  { name: "Gemini", host: /^(gemini|bard)\.google\.com$/, utm: /gemini|bard/ },
+  { name: "Claude", host: /(^|\.)claude\.ai$/, utm: /claude|anthropic/ },
+  {
+    name: "Microsoft Copilot",
+    host: /^copilot\.(microsoft\.com|cloud\.microsoft)$|(^|\.)m365copilot\.com$/,
+    utm: /copilot/,
+  },
+  { name: "DeepSeek", host: /(^|\.)deepseek\.com$/, utm: /deepseek/ },
+  { name: "Grok", host: /(^|\.)grok\.com$/, utm: /grok/ },
+  { name: "Meta AI", host: /(^|\.)meta\.ai$/, utm: /meta\.ai/ },
+  { name: "Mistral Le Chat", host: /^chat\.mistral\.ai$/, utm: /mistral/ },
+  { name: "You.com", host: /(^|\.)you\.com$/, utm: /^you\.com$/ },
+  { name: "Phind", host: /(^|\.)phind\.com$/, utm: /phind/ },
+] as const;
+export type AiSource = (typeof AI_SOURCES)[number]["name"];
+
+/** Which AI assistant a visit or lead came from, or null when it did not come from one. */
+export function aiSourceOf(input: {
+  utm_source?: string | null;
+  referrerHost?: string | null;
+}): AiSource | null {
+  const source = input.utm_source?.toLowerCase().trim() ?? "";
+  const host = input.referrerHost?.toLowerCase() ?? "";
+  for (const ai of AI_SOURCES) {
+    if ((source && ai.utm.test(source)) || (host && ai.host.test(host)))
+      return ai.name;
+  }
+  return null;
+}
+
+/** What AI numbers cannot show, said under every AI table. */
+export const AI_FOOTNOTE = {
+  sr: 'Google AI Overviews i AI Mode šalju posetioce kao običnu Google pretragu, pa se vode pod „Google pretraga”. Neke AI aplikacije ne šalju izvor i vode se kao „Direktno”.',
+  en: 'Google AI Overviews and AI Mode send visitors like a normal Google search, so they count under "Google Search". Some AI apps send no source and count as "Direct".',
+} as const;
 
 const SEARCH = /(^|\.)(google|bing|duckduckgo|yahoo|yandex|ecosia|brave)\./;
 const META =
@@ -64,6 +110,9 @@ export function channelOf(input: {
   const medium = input.utm_medium?.toLowerCase().trim() ?? "";
   const host = input.referrerHost ?? "";
 
+  // First, since gemini.google.com would otherwise count as a Google search.
+  if (aiSourceOf(input)) return "AI pretraga";
+
   if (source) {
     // Google Business Profile links are tagged by many agencies as
     // utm_source=…gbp / gmb, or utm_medium=organic with source=google-business.
@@ -106,6 +155,7 @@ export function channelOf(input: {
 }
 
 const CHANNEL_EN: Record<Channel, string> = {
+  'AI pretraga': 'AI search',
   'Google pretraga': 'Google Search',
   'Google oglasi': 'Google Ads',
   'Facebook/Instagram oglasi': 'Facebook/Instagram Ads',

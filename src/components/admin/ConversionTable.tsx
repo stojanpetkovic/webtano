@@ -10,8 +10,13 @@ export async function ConversionTable({
   countLabel,
   rows,
   empty,
+  sub,
+  footnote,
 }: {
   title: string;
+  sub?: string;
+  /** A short note under the table, e.g. what the numbers cannot show. */
+  footnote?: string;
   columnLabel: string;
   countLabel: string;
   rows: { label: string; count: number; leads: number; calls: number }[];
@@ -21,7 +26,10 @@ export async function ConversionTable({
   return (
     <div className="card">
       <div className="card-header">
-        <h2 className="card-title">{title}</h2>
+        <div>
+          <h2 className="card-title">{title}</h2>
+          {sub && <p className="card-sub">{sub}</p>}
+        </div>
       </div>
       <div className="overflow-x-auto">
         <table className="table">
@@ -56,6 +64,7 @@ export async function ConversionTable({
           </tbody>
         </table>
       </div>
+      {footnote && <p className="border-t border-line px-5 py-3 text-xs text-muted">{footnote}</p>}
     </div>
   );
 }
