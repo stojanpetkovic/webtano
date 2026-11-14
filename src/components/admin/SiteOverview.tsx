@@ -11,7 +11,7 @@ import { db } from '@/lib/admin/supabase';
 import { summarize, countBy, daysAgo } from '@/lib/admin/stats';
 import type { Lead, Site } from '@/lib/admin/types';
 import { getAdminI18n } from '@/lib/admin/i18n';
-import { channelLabel } from '@/lib/admin/channels';
+import { AI_FOOTNOTE, channelLabel } from '@/lib/admin/channels';
 import { HTML_LANG } from '@/lib/i18n';
 
 /** One site's numbers for a period: visitors, contacts, sources, pages and the latest leads. */
@@ -99,6 +99,16 @@ export async function SiteOverview({ site, range }: { site: Site; range: RangeDa
           rows={analytics.pages.map((pg) => ({ label: pg.label, count: pg.views, leads: pg.leads, calls: pg.calls }))}
         />
       </div>
+
+      <ConversionTable
+        title={tr('AI search', 'AI pretrage')}
+        sub={tr('Visitors who came from an AI assistant', 'Posetioci koji su došli preko AI asistenta')}
+        columnLabel={tr('AI assistant', 'AI asistent')}
+        countLabel={tr('Visits', 'Posete')}
+        rows={analytics.ai.map((a) => ({ label: a.label, count: a.visits, leads: a.leads, calls: a.calls }))}
+        empty={tr('No visits from ChatGPT, Perplexity, Gemini, Claude or Copilot in this period.', 'U ovom periodu nema poseta sa ChatGPT-a, Perplexity-ja, Gemini-ja, Claude-a ni Copilot-a.')}
+        footnote={AI_FOOTNOTE[lang]}
+      />
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <DonutChart title={tr('Devices', 'Uređaji')} items={analytics.devices} />

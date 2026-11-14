@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { ArrowLeft, Inbox, MousePointerClick, Percent, Phone, Users } from 'lucide-react';
 import { ReportChart } from '@/components/admin/ReportChart';
 import type { ReportLocale, SiteAnalytics } from '@/lib/admin/analytics';
-import { leadSource } from '@/lib/admin/leads';
+import { leadSourceLabel } from '@/lib/admin/leads';
 import {
   T,
   channelLabel,
@@ -399,7 +399,7 @@ export function ReportView({
                     </td>
                   </tr>
                 )}
-                {analytics.channels.map((c) => (
+                {analytics.channels.flatMap((c) => [
                   <tr key={c.label}>
                     <td className="truncate" title={channelLabel(c.label, locale)}>
                       {channelLabel(c.label, locale)}
@@ -408,8 +408,20 @@ export function ReportView({
                     <td className="text-right font-semibold tabular-nums">{c.leads}</td>
                     <td className="text-right font-semibold tabular-nums">{c.calls}</td>
                     <td className="text-right text-zinc-500 tabular-nums">{formatRate(c.leads + c.calls, c.visits, locale) ?? '—'}</td>
-                  </tr>
-                ))}
+                  </tr>,
+                  // AI search is split by assistant, so the client sees which one sends visitors.
+                  ...(c.label === 'AI pretraga'
+                    ? analytics.ai.map((a) => (
+                        <tr key={`ai-${a.label}`} className="text-zinc-500">
+                          <td className="truncate pl-6">↳ {a.label}</td>
+                          <td className="text-right tabular-nums">{n(a.visits)}</td>
+                          <td className="text-right tabular-nums">{a.leads}</td>
+                          <td className="text-right tabular-nums">{a.calls}</td>
+                          <td className="text-right tabular-nums">{formatRate(a.leads + a.calls, a.visits, locale) ?? '—'}</td>
+                        </tr>
+                      ))
+                    : []),
+                ])}
               </tbody>
             </table>
           </div>
@@ -495,7 +507,7 @@ export function ReportView({
                     <tr key={`${l.created_at}-${i}`} className="avoid-break">
                       <td className="whitespace-nowrap">{dateFmt.format(new Date(l.created_at))}</td>
                       <td>{l.visitor_name || l.visitor_email || '—'}</td>
-                      <td>{channelLabel(leadSource(l), locale)}</td>
+                      <td>{leadSourceLabel(l, locale)}</td>
                       <td>{l.form_name}</td>
                     </tr>
                   ))}

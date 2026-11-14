@@ -1,7 +1,7 @@
 import { db } from './supabase';
-import { leadSource } from './leads';
+import { leadAiSource, leadSource } from './leads';
 import { dayKey, pagePath } from './stats';
-import { CHANNELS } from './channels';
+import { AI_SOURCES, aiSourceOf, CHANNELS } from './channels';
 import type { Lead, Site } from './types';
 
 /*
@@ -71,6 +71,8 @@ export interface SiteAnalytics {
   previous: Totals;
   daily: { day: string; visitors: number; leads: number; calls: number }[];
   channels: Breakdown[];
+  /** Visits, inquiries and calls per AI assistant (ChatGPT, Perplexity…), busiest first. */
+  ai: Breakdown[];
   pages: { label: string; views: number; leads: number; calls: number }[];
   clicks: { kind: ClickKind; label: string; count: number }[];
   devices: { key: string; label: string; count: number }[];
@@ -99,6 +101,46 @@ function countryName(code: string, locale: ReportLocale): string {
 function addInto(target: Map<string, number>, source: Record<string, number> | undefined) {
   for (const [key, value] of Object.entries(source ?? {})) target.set(key, (target.get(key) ?? 0) + value);
 }
+
+/*
+ * Words that appear in an AI assistant's referrer host or utm_source. Used
+ * only to narrow the database query; aiSourceOf() then decides precisely.
+ */
+const AI_HINTS = ['chatgpt', 'openai', 'perplexity', 'gemini', 'bard', 'claude', 'anthropic', 'copilot', 'deepseek', 'grok', 'meta.ai', 'mistral', 'you.com', 'phind'];
+const AI_FILTER = AI_HINTS.flatMap((w) => [`referrer_host.ilike.*${w}*`, `utm_source.ilike.*${w}*`]).join(',');
+
+type AiRow = { site_id: string; created_at: string; utm_source: string | null; referrer_host: string | null };
+
+/** First page views of visits that came from an AI assistant, for the given sites and time window. */
+async function aiVisits(siteIds: string[], from: string, to: string): Promise<AiRow[]> {
+  if (!siteIds.length) return [];
+  const { data } = await db()
+    .from('page_views')
+    .select('site_id, created_at, utm_source, referrer_host')
+    .in('site_id', siteIds)
+    .eq('entry', true)
+    .gte('created_at', from)
+    .lt('created_at', to)
+    .or(AI_FILTER)
+    .limit(10_000);
+  return ((data ?? []) as AiRow[]).filter((r) => aiSourceOf({ utm_source: r.utm_source, referrerHost: r.referrer_host }));
+}
+
+/** Rows per AI assistant in the fixed AI_SOURCES order, only those with any activity, busiest first. */
+function aiBreakdown(visits: Map<string, number>, leads: Map<string, number>, calls: Map<string, number>): Breakdown[] {
+  return AI_SOURCES.map(({ name }) => ({
+    label: name,
+    visits: visits.get(name) ?? 0,
+    leads: leads.get(name) ?? 0,
+    calls: calls.get(name) ?? 0,
+  }))
+    .filter((c) => c.visits || c.leads || c.calls)
+    .sort((a, b) => b.visits - a.visits || b.leads + b.calls - (a.leads + a.calls));
+}
+
+const bump = (map: Map<string, number>, key: string | null) => {
+  if (key) map.set(key, (map.get(key) ?? 0) + 1);
+};
 
 const sorted = (map: Map<string, number>, limit: number) =>
   [...map.entries()].sort((a, b) => b[1] - a[1]).slice(0, limit);
@@ -142,7 +184,7 @@ export async function analyzeDays(
   const leadsFrom = new Date(Date.parse(`${first}T00:00:00Z`) - 86_400_000).toISOString();
   const leadsTo = new Date(Date.parse(`${last}T00:00:00Z`) + 2 * 86_400_000).toISOString();
 
-  const [{ data: dailyData }, { data: leadData }, { data: eventData }] = await Promise.all([
+  const [{ data: dailyData }, { data: leadData }, { data: eventData }, aiRows] = await Promise.all([
     db().from('page_view_daily').select('*').eq('site_id', site.id).gte('day', first).lte('day', last),
     db()
       .from('leads')
@@ -153,10 +195,11 @@ export async function analyzeDays(
       .lt('created_at', leadsTo),
     db()
       .from('site_events')
-      .select('created_at, kind, path, channel, visitor_hash')
+      .select('created_at, kind, path, channel, visitor_hash, utm_source, referrer_host')
       .eq('site_id', site.id)
       .gte('created_at', leadsFrom)
       .lt('created_at', leadsTo),
+    aiVisits([site.id], leadsFrom, leadsTo),
   ]);
   const rows = (dailyData ?? []) as DailyRow[];
   const leads = (leadData ?? []) as Pick<Lead, 'created_at' | 'page_url' | 'utm_source' | 'utm_medium' | 'referrer'>[];
@@ -164,7 +207,15 @@ export async function analyzeDays(
   // on the same number is the same call, not two conversions.
   const seen = new Set<string>();
   const events = (
-    (eventData ?? []) as { created_at: string; kind: ClickKind; path: string; channel: string; visitor_hash: string }[]
+    (eventData ?? []) as {
+      created_at: string;
+      kind: ClickKind;
+      path: string;
+      channel: string;
+      visitor_hash: string;
+      utm_source: string | null;
+      referrer_host: string | null;
+    }[]
   ).filter((e) => {
     const key = `${e.visitor_hash}:${e.kind}:${dayKey(new Date(e.created_at), site.timezone)}`;
     if (seen.has(key)) return false;
@@ -239,6 +290,17 @@ export async function analyzeDays(
     callsByDay.set(day, (callsByDay.get(day) ?? 0) + 1);
   }
 
+  const aiVisitsBy = new Map<string, number>();
+  const aiLeadsBy = new Map<string, number>();
+  const aiCallsBy = new Map<string, number>();
+  for (const r of aiRows) {
+    if (inCurrent.has(leadDay(r))) bump(aiVisitsBy, aiSourceOf({ utm_source: r.utm_source, referrerHost: r.referrer_host }));
+  }
+  for (const l of currentLeads) bump(aiLeadsBy, leadAiSource(l));
+  for (const e of currentEvents) {
+    if (isContact(e)) bump(aiCallsBy, aiSourceOf({ utm_source: e.utm_source, referrerHost: e.referrer_host }));
+  }
+
   const channels = CHANNELS.map((label) => ({
     label,
     visits: channelVisits.get(label) ?? 0,
@@ -259,6 +321,7 @@ export async function analyzeDays(
       calls: callsByDay.get(day) ?? 0,
     })),
     channels,
+    ai: aiBreakdown(aiVisitsBy, aiLeadsBy, aiCallsBy),
     pages: sorted(pageViews, 12).map(([label, views]) => ({
       label,
       views,
@@ -304,6 +367,77 @@ export async function sitesOverview(sites: Site[], days: RangeDays) {
     const visits = rows.reduce((n, r) => n + r.visits, 0);
     return { site, visitors, visits, leads, calls, contacts: leads + calls };
   });
+}
+
+/**
+ * AI search across the given sites over the last `days` days: visits,
+ * inquiries and calls per AI assistant, and per site.
+ */
+export async function aiOverview(sites: Site[], days: RangeDays) {
+  const since = new Date(Date.now() - (days + 1) * 86_400_000).toISOString();
+  const until = new Date(Date.now() + 86_400_000).toISOString();
+  const ids = sites.map((s) => s.id);
+  const [rows, { data: leadData }, { data: eventData }] = await Promise.all([
+    aiVisits(ids, since, until),
+    ids.length
+      ? db().from('leads').select('site_id, created_at, utm_source, referrer').in('site_id', ids).eq('is_spam', false).gte('created_at', since).or(AI_FILTER.replaceAll('referrer_host', 'referrer'))
+      : Promise.resolve({ data: [] }),
+    ids.length
+      ? db()
+          .from('site_events')
+          .select('site_id, created_at, kind, visitor_hash, utm_source, referrer_host')
+          .in('site_id', ids)
+          .in('kind', CONTACT_KINDS)
+          .gte('created_at', since)
+          .or(AI_FILTER)
+      : Promise.resolve({ data: [] }),
+  ]);
+
+  const siteById = new Map(sites.map((s) => [s.id, s]));
+  const windows = new Map(sites.map((s) => [s.id, new Set(dayList(days, s.timezone))]));
+  const inWindow = (r: { site_id: string; created_at: string }) => {
+    const site = siteById.get(r.site_id);
+    return !!site && windows.get(site.id)!.has(dayKey(new Date(r.created_at), site.timezone));
+  };
+
+  const visits = new Map<string, number>();
+  const leads = new Map<string, number>();
+  const calls = new Map<string, number>();
+  const perSite = new Map<string, { visits: number; leads: number; calls: number }>();
+  const siteRow = (id: string) => {
+    if (!perSite.has(id)) perSite.set(id, { visits: 0, leads: 0, calls: 0 });
+    return perSite.get(id)!;
+  };
+
+  for (const r of rows.filter(inWindow)) {
+    bump(visits, aiSourceOf({ utm_source: r.utm_source, referrerHost: r.referrer_host }));
+    siteRow(r.site_id).visits++;
+  }
+  for (const l of ((leadData ?? []) as { site_id: string; created_at: string; utm_source: string | null; referrer: string | null }[]).filter(inWindow)) {
+    const ai = leadAiSource(l);
+    if (!ai) continue;
+    bump(leads, ai);
+    siteRow(l.site_id).leads++;
+  }
+  // One contact of each kind per visitor per day, as in analyzeDays.
+  const seen = new Set<string>();
+  for (const e of ((eventData ?? []) as (AiRow & { kind: string; visitor_hash: string })[]).filter(inWindow)) {
+    const ai = aiSourceOf({ utm_source: e.utm_source, referrerHost: e.referrer_host });
+    const key = `${e.site_id}:${e.visitor_hash}:${e.kind}:${e.created_at.slice(0, 10)}`;
+    if (!ai || seen.has(key)) continue;
+    seen.add(key);
+    bump(calls, ai);
+    siteRow(e.site_id).calls++;
+  }
+
+  const bySource = aiBreakdown(visits, leads, calls);
+  return {
+    bySource,
+    bySite: [...perSite.entries()]
+      .map(([id, n]) => ({ site: siteById.get(id)!, ...n }))
+      .sort((a, b) => b.visits - a.visits || b.leads + b.calls - (a.leads + a.calls)),
+    totals: bySource.reduce((t, r) => ({ visits: t.visits + r.visits, leads: t.leads + r.leads, calls: t.calls + r.calls }), { visits: 0, leads: 0, calls: 0 }),
+  };
 }
 
 /** "3.2%" / "3,2%" — contacts per visit, or a dash when there were no visits to divide by. */
