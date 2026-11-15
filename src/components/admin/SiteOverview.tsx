@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { BellRing, CalendarCheck, CalendarDays, Handshake, Inbox, MousePointerClick, Percent, Phone, Users } from 'lucide-react';
+import { BellRing, FileSpreadsheet, Sparkles, CalendarCheck, CalendarDays, Handshake, Inbox, MousePointerClick, Percent, Phone, Users } from 'lucide-react';
 import { StatCard } from '@/components/admin/StatCard';
 import { DailyChart } from '@/components/admin/DailyChart';
 import { BarList } from '@/components/admin/BarList';
@@ -13,12 +13,15 @@ import type { Lead, Site } from '@/lib/admin/types';
 import { getAdminI18n } from '@/lib/admin/i18n';
 import { AI_FOOTNOTE, channelLabel } from '@/lib/admin/channels';
 import { HTML_LANG } from '@/lib/i18n';
+import { siteAiImpressions } from '@/lib/admin/aiImpressions';
+import { AdsCallsOverview } from '@/components/admin/AdsCalls';
+import { SiteGoogleFiles } from '@/components/admin/SiteGoogleFiles';
 
 /** One site's numbers for a period: visitors, contacts, sources, pages and the latest leads. */
-export async function SiteOverview({ site, range }: { site: Site; range: RangeDays }) {
+export async function SiteOverview({ site, range, query }: { site: Site; range: RangeDays; query: URLSearchParams }) {
   const { lang, t: tr } = await getAdminI18n();
   const num = (n: number) => n.toLocaleString(HTML_LANG[lang]);
-  const [{ data: leadsData }, analytics] = await Promise.all([
+  const [{ data: leadsData }, analytics, googleAi] = await Promise.all([
     db()
       .from('leads')
       .select('*')
@@ -27,7 +30,10 @@ export async function SiteOverview({ site, range }: { site: Site; range: RangeDa
       .gte('created_at', daysAgo(range))
       .order('created_at', { ascending: false }),
     siteAnalytics(site, range, lang),
+    siteAiImpressions(site.id, site.timezone, range),
   ]);
+  const shortDate = (d: string) =>
+    new Intl.DateTimeFormat(HTML_LANG[lang], { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(new Date(`${d}T12:00:00Z`));
   const leads = (leadsData ?? []) as Lead[];
   const stats = summarize(leads);
   const t = analytics.totals;
@@ -59,6 +65,8 @@ export async function SiteOverview({ site, range }: { site: Site; range: RangeDa
           note={tr('inquiries and calls per 100 visits', 'upiti i pozivi na 100 poseta')}
         />
       </div>
+
+      <AdsCallsOverview site={site} range={range} />
 
       {/* Two charts rather than one with two scales: visitors run in hundreds, contacts in units. */}
       <div className="grid gap-4 xl:grid-cols-5">
@@ -100,15 +108,41 @@ export async function SiteOverview({ site, range }: { site: Site; range: RangeDa
         />
       </div>
 
-      <ConversionTable
-        title={tr('AI search', 'AI pretrage')}
-        sub={tr('Visitors who came from an AI assistant', 'Posetioci koji su došli preko AI asistenta')}
-        columnLabel={tr('AI assistant', 'AI asistent')}
-        countLabel={tr('Visits', 'Posete')}
-        rows={analytics.ai.map((a) => ({ label: a.label, count: a.visits, leads: a.leads, calls: a.calls }))}
-        empty={tr('No visits from ChatGPT, Perplexity, Gemini, Claude or Copilot in this period.', 'U ovom periodu nema poseta sa ChatGPT-a, Perplexity-ja, Gemini-ja, Claude-a ni Copilot-a.')}
-        footnote={AI_FOOTNOTE[lang]}
-      />
+      <div className="grid gap-4 lg:grid-cols-3">
+        <div className="min-w-0 lg:col-span-2">
+        <ConversionTable
+          title={tr('AI search', 'AI pretrage')}
+          sub={tr('Visitors who came from an AI assistant', 'Posetioci koji su došli preko AI asistenta')}
+          columnLabel={tr('AI assistant', 'AI asistent')}
+          countLabel={tr('Visits', 'Posete')}
+          rows={analytics.ai.map((a) => ({ label: a.label, count: a.visits, leads: a.leads, calls: a.calls }))}
+          empty={tr('No visits from ChatGPT, Perplexity, Gemini, Claude or Copilot in this period.', 'U ovom periodu nema poseta sa ChatGPT-a, Perplexity-ja, Gemini-ja, Claude-a ni Copilot-a.')}
+          footnote={AI_FOOTNOTE[lang]}
+        />
+        </div>
+        <div className="flex flex-col gap-3">
+          <StatCard
+            icon={Sparkles}
+            color="secondary"
+            label={tr('Shown in Google AI answers', 'Prikazi u Google AI odgovorima')}
+            value={googleAi ? num(googleAi.total) : '—'}
+            note={
+              googleAi
+                ? googleAi.previous
+                  ? `${googleAi.total >= googleAi.previous ? '+' : ''}${Math.round(((googleAi.total - googleAi.previous) / googleAi.previous) * 100)}% ${tr('vs the previous period', 'u odnosu na prethodni period')}`
+                  : tr(`AI Overviews and AI Mode, data up to ${shortDate(googleAi.lastDay)}`, `AI Overviews i AI Mode, podaci do ${shortDate(googleAi.lastDay)}`)
+                : tr('Add a Search Console file below', 'Dodaj Search Console fajl ispod')
+            }
+            tone={googleAi?.previous ? (googleAi.total >= googleAi.previous ? 'up' : 'down') : 'neutral'}
+            trend={googleAi?.daily.map((d) => d.count)}
+          />
+          <Link href="#google-ai" className="btn btn-sm btn-light self-start">
+            <FileSpreadsheet className="size-4" /> {tr('Search Console AI files', 'Search Console AI fajlovi')}
+          </Link>
+        </div>
+      </div>
+
+      <SiteGoogleFiles site={site} range={range} query={query} />
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <DonutChart title={tr('Devices', 'Uređaji')} items={analytics.devices} />

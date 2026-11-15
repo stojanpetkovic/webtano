@@ -29,6 +29,7 @@ const SCHEMA: { label: L; table: string; column: string; file: string }[] = [
   { label: { en: 'Newsletter', sr: 'Newsletter' }, table: 'newsletter_subscribers', column: 'token', file: '20261025_newsletter.sql' },
   { label: { en: 'Subscribers apart from leads', sr: 'Pretplatnici odvojeni od lidova' }, table: 'newsletter_subscribers', column: 'deal_id', file: '20261030_subscribers_split.sql' },
   { label: { en: 'Finance', sr: 'Finansije' }, table: 'fin_invoices', column: 'number', file: '20261025_finance.sql' },
+  { label: { en: 'Google AI impressions', sr: 'Google AI prikazi' }, table: 'site_ai_reports', column: 'daily', file: '20261114_site_ai_reports.sql' },
 ];
 
 // Only whether each variable is set: values never reach the page.

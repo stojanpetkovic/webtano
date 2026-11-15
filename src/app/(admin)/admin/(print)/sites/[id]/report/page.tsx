@@ -7,6 +7,10 @@ import { dayKey } from '@/lib/admin/stats';
 import { toParams } from '@/lib/admin/params';
 import { T, reportPeriod } from '@/lib/admin/report';
 import type { Site } from '@/lib/admin/types';
+import { aiImpressionsFor, aiReports } from '@/lib/admin/aiImpressions';
+import { AiReportSection } from '@/components/admin/GoogleAi';
+import { adCallReports, adCallsFor } from '@/lib/admin/adsCalls';
+import { AdCallsReportSection } from '@/components/admin/AdsCalls';
 
 export const dynamic = 'force-dynamic';
 
@@ -34,7 +38,13 @@ export default async function ReportPage({ params: routeParams, searchParams }: 
   if (!site) redirect('/admin/sites');
   const params = toParams(await searchParams);
   const { locale, all, period, customRejected } = reportPeriod(site, params);
-  const analytics = await analyzeDays(site, period.current, period.previous, locale);
+  const [analytics, ai, adCalls] = await Promise.all([
+    analyzeDays(site, period.current, period.previous, locale),
+    aiReports(site.id),
+    adCallReports(site.id),
+  ]);
+  const aiData = aiImpressionsFor(ai.rows, period.current, period.previous);
+  const callsData = adCallsFor(adCalls.rows, period.current, period.previous);
 
   const inPeriod = new Set(period.current);
   const { data: leadData } = await db()
@@ -60,6 +70,14 @@ export default async function ReportPage({ params: routeParams, searchParams }: 
       period={period}
       customRejected={customRejected}
       back={{ href: `/admin/sites/${site.id}`, label: T[locale].back }}
+      aiSection={
+        aiData || callsData ? (
+          <>
+            {callsData && <AdCallsReportSection data={callsData} locale={locale} />}
+            {aiData && <AiReportSection data={aiData} locale={locale} />}
+          </>
+        ) : undefined
+      }
     />
   );
 }
