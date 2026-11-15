@@ -39,6 +39,8 @@ export function ReportView({
   customRejected,
   back,
   banner,
+  aiManager,
+  aiSection,
 }: {
   site: Site;
   analytics: SiteAnalytics;
@@ -50,6 +52,10 @@ export function ReportView({
   customRejected: boolean;
   back: { href: string; label: string };
   banner?: React.ReactNode;
+  /** On-screen panel for Search Console AI files (admin only). */
+  aiManager?: React.ReactNode;
+  /** The Google AI impressions section, when an upload covers the period. */
+  aiSection?: React.ReactNode;
 }) {
   const t = T[locale];
   // Spend entered on this page for the period, and what it bought.
@@ -270,6 +276,8 @@ export function ReportView({
         </div>
       </div>
 
+      {aiManager}
+
       {/* The sheet: A4 width on screen, the whole page in print. */}
       <article
         lang={locale}
@@ -458,6 +466,8 @@ export function ReportView({
             </table>
           </div>
         </section>
+
+        {aiSection}
 
         <section className="space-y-6">
           {[

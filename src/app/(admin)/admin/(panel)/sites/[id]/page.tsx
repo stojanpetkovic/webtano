@@ -40,7 +40,7 @@ export default async function SitePage({
       </PageHeading>
       <SiteHeader site={site} customer={await siteCustomer(site.id, lang)} current="overview" />
 
-      <SiteOverview site={site} range={range} />
+      <SiteOverview site={site} range={range} query={query} />
     </>
   );
 }
