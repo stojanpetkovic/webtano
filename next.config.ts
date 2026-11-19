@@ -30,6 +30,11 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        // Client design previews are shared by link only, never indexed.
+        source: "/preview/:path*",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      },
+      {
         // The collector every client site loads. A short cache keeps it cheap
         // without leaving an old copy on visitors' devices for hours.
         source: "/leads.js",
